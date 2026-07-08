@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 9 · 生态分工与耦合度 · 半导体投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 页面专属样式（保持克制） ---------- */
+  .tri {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0 22px;
+  }
+  .tri > div {
+    border: 1px solid var(--line); border-radius: var(--radius-m);
+    padding: 14px 16px; background: var(--surface);
+  }
+  .tri .cap {
+    font-size: var(--fs-13); font-weight: 650; color: var(--muted);
+    display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px;
+  }
+  .tri .big {
+    font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums;
+    line-height: 1.25; color: var(--ink);
+  }
+  .tri .lo { color: var(--danger-ink); }
+  .tri .md { color: var(--primary); }
+  .tri .hi { color: var(--accent-ink); }
+  .tri .row {
+    font-size: var(--fs-13); color: var(--muted); margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tri .delta {
+    display: inline-block; font-size: var(--fs-12); font-weight: 650;
+    padding: 0 8px; border-radius: 99px; margin-top: 6px;
+  }
+  .tri .delta-lo { background: var(--surface-2); color: var(--muted); }
+  .tri .delta-md { background: var(--primary-tint); color: var(--primary); }
+  .tri .delta-hi { background: var(--accent-tint); color: var(--accent-ink); }
+  @media (max-width: 640px) { .tri { grid-template-columns: 1fr; } }
+
+  .qa {
+    border-left: 3px solid var(--primary);
+    background: var(--primary-tint);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    padding: 12px 16px 4px;
+    margin: 14px 0;
+  }
+  .qa .q { font-weight: 650; color: var(--primary); margin: 0 0 8px; font-size: var(--fs-16); }
+  .qa .q::before { content: "问："; }
+  .qa ul { margin: 6px 0 10px; padding-left: 1.2em; }
+
+  .preset-row {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;
+  }
+  .preset-row .btn { font-size: var(--fs-13); padding: 6px 12px; }
+
+  #coupChart { min-height: 240px; }
+
+  .rowlbl { font-size: 11px; fill: var(--muted); font-weight: 600; }
+</style>
+</head>
+<body data-page="s09">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 9 · 生态分工与耦合度</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 9 / 15</p>
+      <h1>卡 9 · 生态分工与耦合度</h1>
+      <p class="core-q"><b>一句话：</b>一部分半导体是「分工型」生意——设计（fabless）从 EDA、IP、代工里拼积木，工艺进步的成本由代工厂承担；这类公司毛利率能一步一台阶。另一部分是「耦合型」生意——存储的每一代产品与工艺同代绑死，只能一体化经营、产品无法拆开卖，工艺跳代要全厂重投；这类公司必然经历极凶周期。差别不是「运营好不好」，是<strong>「技术分工能不能拆」</strong>。判断一个标的的周期风险，先判断它所处的环节是「能拆开卖」还是「绑死一体」。</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">读完这张卡你要能答的三个问题（现在答不上来是正常的）</span>
+      <ol style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>英伟达 FY23-FY25 GAAP 毛利率 57% → 75%（+18pt），同期美光 -9% → 40%（+49pt）——同一波 AI 需求，波动幅度差 3 倍。差别在哪？</li>
+        <li>台积电 2020-2025 GAAP 毛利率区间 52-60%（跨度 8pt），美光 FY20-FY25 跨度 54pt——两家都自建工厂，都是重资产，为什么波动幅度差 7 倍？</li>
+        <li>拿到一家你从没听过的半导体公司名字，第一反应问什么才能预判它的周期烈度？（提示：不是「最近订单如何」）</li>
+      </ol>
+    </div>
+
+    <section class="prose">
+
+      <h2>1 · 现象：同一波 AI 需求，三种毛利率轨迹</h2>
+
+      <p>先看三条已核验、放在一起就有反差的曲线。三家公司、同一时间窗（AI 需求全面起飞的三年）、都在赚 AI 的钱：</p>
+
+      <div class="tri">
+        <div>
+          <div class="cap"><span>英伟达（fabless）</span><span>FY23 → FY25</span></div>
+          <div class="big md">57% → 73% → 75%</div>
+          <div class="row">GAAP 毛利率 · 稳步一台阶<span class="badge badge-verified">已核验</span></div>
+          <span class="delta delta-md">三年 +18 pt</span>
+        </div>
+        <div>
+          <div class="cap"><span>台积电（foundry）</span><span>2023 → 2025</span></div>
+          <div class="big md">54% → 56% → 60%</div>
+          <div class="row">GAAP 毛利率 · 小幅上行<span class="badge badge-verified">已核验</span></div>
+          <span class="delta delta-lo">三年 +6 pt</span>
+        </div>
+        <div>
+          <div class="cap"><span>美光（IDM 存储）</span><span>FY23 → FY25</span></div>
+          <div class="big hi">-9% → 22% → 40%</div>
+          <div class="row">GAAP 毛利率 · 从深亏到暴利<span class="badge badge-verified">已核验</span></div>
+          <span class="delta delta-hi">三年 +49 pt</span>
+        </div>
+      </div>
+
+      <p>三家都是重资产（都自建工厂或先进封装厂），三家都在赚同一波 AI 的钱，波动幅度却差得离谱——英伟达 +18pt 是「涨了一波」，美光 +49pt 是「一年翻转」，台积电 +6pt 是「几乎没波动」。而且深跌点也差——英伟达 FY23 最低是 <strong>57%</strong>（依然赚钱），美光 FY23 最低是 <strong>-9%</strong>（卖一美元亏九分）。</p>
+
+      <p>为什么会这样？不是「英伟达比美光会做生意」，是<strong>这三家在半导体的生态结构里，站的位置根本不一样</strong>。这个位置决定了它们的产品能不能拆开卖、工艺进步的成本由谁承担、产能过剩时能不能软着陆。这就是这张卡要讲的一个模型：<strong>耦合度决定周期烈度</strong>。</p>
+
+      <h2>2 · 机制：设计能不能与工艺分开，决定了周期是软是硬</h2>
+
+      <p>把半导体世界按「设计和工艺是不是同一伙人在做」切一刀，能看出三种典型的公司-工艺关系。这一节把它讲透。</p>
+
+      <h3>2.1 分工型（低耦合）：fabless</h3>
+
+      <p>英伟达画版图（GPU 架构），交给台积电印（工艺进步的成本由台积电承担）。CoWoS 先进封装是台积电做的、HBM 是 SK 海力士给的、传统封测外包给日月光/长电——英伟达自己账上只有研发、软件生态（CUDA）和一些采购。这就是 <strong>fabless（无厂设计）</strong>模式。</p>
+
+      <p>这种结构下：</p>
+      <ul>
+        <li>固定成本主要在<strong>人和 EDA 工具</strong>，不是折旧——英伟达 FY2025 财报里厂房设备净值不到 60 亿美元、折旧占收入个位数<span class="badge badge-verified">已核验 · 手册模块 5 工具一</span>；</li>
+        <li>产品升级不需要重建厂房——下一代 Blackwell 换台积电新制程就是（自己不用改厂）；</li>
+        <li>周期回落时可以砍订单、减工程投入，成本能收缩；</li>
+        <li>周期回升时量能立刻放大，因为不用等新产线。</li>
+      </ul>
+
+      <p><strong>波动结构</strong>：软周期，一步一台阶，涨得慢、跌得也慢。AMD、博通、高通、联发科都是这类。</p>
+
+      <h3>2.2 耦合型（高耦合）：IDM 存储</h3>
+
+      <p>美光、SK 海力士、三星 DS 部门——DRAM 的存储单元是几千亿个几乎完全一样的极小电容，一代新工艺要既缩存储单元、又调外围电路、又改材料——设计与工艺必须由同一伙人做同一次<span class="badge badge-expert">专家判断 · 存储物理特性</span>。这不是历史选择，是物理约束。所以存储三家都是 <strong>IDM（整合器件制造商，设计+制造+封测一条龙）</strong>。</p>
+
+      <p>存储厂的结构：</p>
+      <ul>
+        <li>工厂建成就跑，跑不满就亏折旧（<strong>卡 2</strong> 已讲的经营杠杆机制）；</li>
+        <li>产品高度同质化——DDR5 8Gb 就是那个规格，谁便宜谁走货；</li>
+        <li>周期回落时，只能减产但折旧照提，越卖越亏——2023 年美光 FY23 卖一美元亏九分（GAAP 毛利率 -9.1%）就是这个；</li>
+        <li>周期回升时，量+价双击，前一段的深亏压制变成经营杠杆的正向兑现——2025 美光 FY25 毛利率跳到 40% 是这个。</li>
+      </ul>
+
+      <p><strong>波动结构</strong>：硬周期，一年爆亏几十亿一年暴利几十亿。三星 DS 部门 2023 年营业亏损 14.87 万亿韩元、2024 年营业利润 15.09 万亿韩元<span class="badge badge-verified">已核验 · 卡 2 已展开</span>——同一部门一年翻转 30 万亿韩元。</p>
+
+      <h3>2.3 中间态：foundry 与逻辑 IDM</h3>
+
+      <p>半导体世界不止两端，还有中间态。</p>
+
+      <p><strong>foundry（中耦合）</strong>：工艺自己做但产品是客户的。台积电、联电、SMIC 都是。产能空转时也痛（折旧照提），但客户分散在几十家 fabless——一家砍单其他家补，波动比存储小。</p>
+
+      <p><strong>这里有个反直觉的推论</strong>：中耦合公司（foundry）反而比低耦合公司（fabless）波动更小。原因是分工把风险摊到了成百上千家客户身上——任何一家 fabless 的产品周期波动，被其他家的稳态摊平了。这是「耦合度→周期烈度」这个模型的一个漂亮的中间态。台积电 2020-2025 六年跨度 8pt，英伟达六年跨度 13pt——foundry 反而是所有环节里波动最小的。</p>
+
+      <p><strong>逻辑 IDM（中高耦合）</strong>：设计+工艺+封测一体，但产品可以代际升级（CPU 每两年一代，工艺同一节点可以支撑几代产品）。英特尔（未拆分前）、TI、ADI 都是。周期居中——工艺不出问题时最稳（设计和工艺互相知道对方所有细节），工艺一掉队时最痛（工艺慢产品也慢，两头都塌）。英特尔 2019-2024 GAAP 毛利率从 58.6% 掉到 32.7%<span class="badge badge-verified">已核验 · Intel 各年 10-K</span>——主要是工艺掉队的结构性衰退，不是纯周期。</p>
+
+      <div class="note">
+        <span class="note-label">核心洞察</span>
+        <p>耦合度不是「运营好不好」，是<strong>「技术分工能不能拆」</strong>。差别写在半导体的物理约束里，不是管理层能改的。存储的物理决定了它必须一体化经营；GPU 的物理决定了它可以分工——公司选择的是能不能顺着物理走。</p>
+      </div>
+
+      <h3>2.4 亲手拉一下：耦合度评分器</h3>
+
+      <p>下面这台评分器把上面的分工/耦合谱系开放给你调。<strong>看什么：</strong>①拉滑块从 fabless（0-3）向 IDM 存储（8-10）滑，看蓝色的<strong>预测毛利率年波动区间</strong>怎么变宽——这是耦合度→周期烈度的直接可视化；②特别注意在 <strong>foundry（5 附近）</strong>那个「波动谷」——中耦合反而比低耦合更平，因为客户分散把风险摊到了几十家 fabless 身上；③每个耦合度会匹配一家已核验公司，下方橙点显示它<strong>实际历史六年的毛利率</strong>——用真实数据校验模型的判断。</p>
+
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-title">耦合度评分器 · 预测周期烈度 vs 实际历史</span>
+          <span class="viz-sub">教学简化：分工型/耦合型/中间态三档，预测区间由已核验四家公司的历史峰谷跨度拟合而来</span>
+        </div>
+        <div class="ctl-panel">
+          <div class="ctl">
+            <label for="coupSlider">耦合度评分</label>
+            <input type="range" id="coupSlider" min="0" max="10" step="0.5" value="0">
+            <output id="coupSliderOut">0.0 / 10</output>
+          </div>
+          <div>
+            <div style="font-size:var(--fs-13);color:var(--muted);margin-bottom:6px">按公司画像跳到对应耦合度：</div>
+            <div class="preset-row">
+              <button class="btn btn-ghost" type="button" data-preset-coup="1">fabless 样（英伟达 · 1/10）</button>
+              <button class="btn btn-ghost" type="button" data-preset-coup="5">foundry 样（台积电 · 5/10）</button>
+              <button class="btn btn-ghost" type="button" data-preset-coup="7">IDM 逻辑样（英特尔 · 7/10）</button>
+              <button class="btn btn-ghost" type="button" data-preset-coup="10">IDM 存储样（美光 · 10/10）</button>
+            </div>
+          </div>
+        </div>
+        <div id="coupChart" role="img" aria-label="耦合度评分器可视化：横轴为毛利率，一条彩色带显示当前耦合度对应的预测年波动区间，几个橙点显示相似公司的实际历史数据。"></div>
+        <div class="viz-readout" id="coupReadout" aria-live="polite"></div>
+      </div>
+
+      <h2>3 · 真实锚点：三家公司的毛利率区间</h2>
+
+      <p>三家已核验的样本，放在一起就是「耦合度决定波动结构」这句话的证据。</p>
+
+      <h3>锚点一 · 英伟达（低耦合）</h3>
+      <table class="tbl">
+        <caption>英伟达 FY2020-FY2025 GAAP 毛利率<span class="badge badge-verified">已核验 · 英伟达各年 10-K，序列见手册模块 5 页脚</span></caption>
+        <thead>
+          <tr><th>财年（结束）</th><th>FY20</th><th>FY21</th><th>FY22</th><th>FY23</th><th>FY24</th><th>FY25</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GAAP 毛利率</td><td class="num">62%</td><td class="num">65%</td><td class="num">65%</td><td class="num">57%</td><td class="num">73%</td><td class="num">75%</td></tr>
+        </tbody>
+      </table>
+      <p>六年区间跨度 <strong>13pt</strong>（低点 FY23 57%、高点 FY25 75%）。深跌点 FY23（截止 2023-01-29）主要是产品周期（游戏卡砍单）和竞争压力（AMD 短暂追平 RDNA/Ada），不是折旧压出来的。fabless 的深跌是「被追平」，不是「被折旧压死」——<strong>卡 8（技术代际是生死）</strong>会展开代际之间的胜负逻辑。</p>
+
+      <h3>锚点二 · 台积电（中耦合，foundry）</h3>
+      <table class="tbl">
+        <caption>台积电 2020-2025 GAAP 毛利率（自然年）<span class="badge badge-verified">已核验 · 台积电各年 6-K，序列见手册模块 5 页脚</span></caption>
+        <thead>
+          <tr><th>年份</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GAAP 毛利率</td><td class="num">53%</td><td class="num">52%</td><td class="num">60%</td><td class="num">54%</td><td class="num">56%</td><td class="num">60%</td></tr>
+        </tbody>
+      </table>
+      <p>六年区间跨度 <strong>8pt</strong>——比 fabless 英伟达还小 5pt。稍微被拉低的 2023-2024 是 N3 稀释期（先进制程爬坡时的时间性成本，<strong>手册模块 2</strong> 讲过 3-4pt 稀释）。波动比 fabless 更小的原因：客户分散在几十家 fabless，任意一家砍单被其他家的增单摊平——分工的物理结构本身就是一个稳态器。</p>
+
+      <h3>锚点三 · 美光（极高耦合，IDM 存储）</h3>
+      <table class="tbl">
+        <caption>美光 FY2020-FY2025 GAAP 毛利率<span class="badge badge-verified">已核验 · 美光各年 10-K，FY25 数据见卡 2 页脚</span></caption>
+        <thead>
+          <tr><th>财年（结束）</th><th>FY20</th><th>FY21</th><th>FY22</th><th>FY23</th><th>FY24</th><th>FY25</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GAAP 毛利率</td><td class="num">30%</td><td class="num">37%</td><td class="num">45%</td><td class="num" style="color:var(--danger-ink);font-weight:650">-9%</td><td class="num">22%</td><td class="num" style="color:var(--primary);font-weight:650">40%</td></tr>
+        </tbody>
+      </table>
+      <p>六年区间跨度 <strong>54pt</strong>（低点 FY23 -9%、高点 FY22 45%）——比 fabless 大 4 倍，比 foundry 大 7 倍。FY23 -9% 意味着卖一美元亏九分：产品价格跌破可变成本+折旧的和，卖一片亏一片。FY25 40% 是同一批工厂在需求回来后的正向兑现（<strong>卡 2</strong> 已讲过经营杠杆的正向兑现）。SK 海力士、三星 DS 部门的波动结构类似（<strong>手册模块 5</strong> 已核验：SK 海力士 2023 深亏、2024 经营利润率 35%）。</p>
+
+      <div class="note">
+        <span class="note-label">三家合起来读</span>
+        <p>低耦合 13pt、中耦合 8pt、极高耦合 54pt——差距不是量级差，是<strong>结构差</strong>。同样的 AI 需求打下来，三条曲线的形状根本不是一回事。同样从 2023 底部反弹到 2025，英伟达是「一步一台阶」，美光是「一年翻转」，台积电是「几乎没波动」——三种周期，三种投资节奏，三种估值方式（<strong>手册模块 11</strong> 展开）。</p>
+      </div>
+
+      <h2>4 · 投资含义：两个反射问句</h2>
+
+      <p>骨架卡的用法是<strong>把两个问句刻进反射弧</strong>——以后看到相关新闻，不是先想「该不该买」，而是先自动问以下两个问题，答完再判断。</p>
+
+      <div class="qa">
+        <p class="q">拿到一家新公司的名字，我第一反应问什么？</p>
+        <p style="margin:0 0 8px"><strong>耦合度是什么</strong>——沿三个问题拆：</p>
+        <ul>
+          <li><strong>它做设计还是做工艺，还是两个都做？</strong>——只做设计（fabless）耦合低；只做工艺（foundry）耦合中；设计+工艺+封装一体（IDM）耦合高。</li>
+          <li><strong>下一代产品的工艺是自己开发还是外包？</strong>——外包给代工厂耦合低（可以随代工进步吃红利）；自己开发耦合高（工艺跳代要全厂重投）。</li>
+          <li><strong>切换产品线要几个月还是几年？</strong>——数月（fabless 换设计）耦合低；数年（IDM 换工艺+设计+封装）耦合高；折中（foundry 用现有工艺接新客户）耦合中。</li>
+        </ul>
+        <p style="margin:6px 0 0;font-size:var(--fs-14)">三问答完，耦合度大概就定了。<strong>10-K 里 PP&amp;E 净值/收入 是最快的一票</strong>：≤10% 是 fabless、80%+ 是 IDM/foundry（<strong>手册模块 5 工具一</strong>详解）。</p>
+      </div>
+
+      <div class="qa">
+        <p class="q">看到毛利率单季度跳变 10pt 以上，我第一反应问什么？</p>
+        <p style="margin:0 0 8px"><strong>这是「高耦合环节的正常波动」还是「低耦合环节的异常事件」？</strong>两种解读的下一步动作完全不同——</p>
+        <ul>
+          <li><strong>如果标的是 IDM 存储（美光、海力士、三星 DS）</strong>——10pt+ 是周期常态，问方向不是幅度：往上跳看是不是需求刚回来（买点信号）；往下掉看是不是产能开始过剩（卖点信号）。</li>
+          <li><strong>如果标的是 fabless（英伟达、AMD、博通、联发科）</strong>——10pt+ 是重大事件，多半是产品结构切换（英伟达从游戏为主到数据中心为主）或竞争格局变化（AMD 追平/掉队）。要判断结构性拐点是否可持续。</li>
+          <li><strong>如果标的是 foundry（台积电、联电、SMIC）</strong>——10pt+ 罕见，通常是工艺节点节奏（如 N3 稀释期）或大客户砍单事件（如通富微电对 AMD 依赖 50%+ 时）。</li>
+          <li><strong>如果标的是逻辑 IDM（英特尔）</strong>——10pt+ 要区分是周期还是结构性衰退：连续多个季度往下走是掉队信号，不是周期。</li>
+        </ul>
+        <p style="margin:6px 0 0;font-size:var(--fs-14)">写成动作：<strong>看到毛利率跳变新闻，先按标的的耦合度分四类，再决定它是买点、卖点还是要继续观察。</strong></p>
+      </div>
+
+      <h2>5 · 边界：这张卡什么时候不适用</h2>
+
+      <ul>
+        <li><strong>分工型不等于「稳赢」。</strong>fabless 之间也有代际生死。英伟达曾几次濒临破产（放弃平板与通信、押注 CUDA），AMD 一度跌到破产边缘，Cyrix、3dfx 曾与对手实力相当押错一两个路口就消失。低耦合意味着周期烈度低，不等于「公司不会死」。<strong>卡 8（技术代际是生死）</strong>展开。</li>
+        <li><strong>高耦合不等于「必败」。</strong>耦合越深，进入壁垒越高——存储只剩三家（三星、海力士、美光），先进封装台积电一家做主力。周期底部（如 2023 存储深亏）往往是买点，深度亏损时期是估值重估的机会。<strong>卡 14（产业周期与股价周期错位）</strong>展开。</li>
+        <li><strong>中间态很多，本卡只讲三个主类。</strong>
+          <ul>
+            <li>HBM 是存储厂（IDM 高耦合）的耦合业务，但走长约锁价，短期波动被压制——SK 海力士 2024 HBM 已占 DRAM 40%+，海力士整体波动比过去平缓（<strong>手册模块 5、7</strong> 讲过）；</li>
+            <li>CoWoS 是台积电（foundry 中耦合）内部的耦合业务，产能瓶颈时定价权在台积电（<strong>卡 4（出货 = 最短板）</strong>讲过）；</li>
+            <li>定制 ASIC（博通给谷歌做的 TPU）是 fabless 的一种但客户高度集中，砍单风险放大到少数几家云厂商身上（<strong>手册模块 5</strong> 讲过）。</li>
+          </ul>
+        </li>
+        <li><strong>本卡与卡 2 的关系。</strong>卡 2（固定成本主导）讲<strong>同一家公司</strong>在杠杆两端的两个截面——为什么美光同一批工厂能一年深亏一年暴利。本卡讲<strong>跨公司</strong>的耦合度差异——为什么英伟达的杠杆方向和幅度与美光完全不同。两张卡合起来是「周期烈度」的完整解释：<strong>耦合度决定「能不能拆开卖」，固定成本主导决定「拆不开时利润率跳多凶」</strong>。</li>
+        <li><strong>本卡与手册模块 5 的关系。</strong>手册模块 5 是七层产业链地图 + 三种商业模式全景 + 定位工具（10 分钟定位陌生标的）。本卡只从「投资定性」角度讲耦合度这一个模型。遇到需要判断陌生标的属于哪一层，回到手册模块 5；遇到需要判断标的周期烈度，回到本卡。</li>
+        <li><strong>本卡与手册模块 11（估值）的关系。</strong>低耦合公司适 PE 估值（软件式增长），英伟达按 AI 平台公司估；高耦合公司适 PB 估值（周期股），美光按周期股估。把美光当英伟达估、或把英伟达当美光估，是最常见的估值错误（<strong>手册模块 11</strong> 展开）。</li>
+      </ul>
+
+      <h2>6 · 练习两道</h2>
+
+      <div class="scenario">
+        <h4>练习一 · 复述题（合上卡片，3 分钟讲给完全不懂的人听）</h4>
+        <p>题目：<strong>为什么英伟达毛利率能一步一台阶而美光要一年爆亏一年暴利？</strong></p>
+        <p class="scenario-hint">提示：不用出现「耦合度」这三个字。从两句大白话入手就够——「英伟达把厂交给台积电，美光把厂建在自己账上」＋「英伟达的产品可以每代换个设计不动工艺，美光每代都要重建电路和工艺」。讲完后再自问：台积电和 SK 海力士也可以做参照，它们的波动结构分别像英伟达还是美光？答不出来回来重读第 2 节。</p>
+      </div>
+
+      <div class="scenario">
+        <h4>练习二 · 推演题（用已核验事实做前提，用本卡机制推）</h4>
+        <p>已核验的两件真事作为背景：</p>
+        <ul>
+          <li>博通 FY2024（截止 2024-11）AI 芯片收入 122 亿美元、+220%；博通不做通用 GPU，专为几家超大规模云客户（谷歌、Meta 等）定制 ASIC；GAAP 毛利率约 63%<span class="badge badge-verified">已核验 · 博通 FY2024 press release 2024-12-12（手册模块 5 页脚）</span>；</li>
+          <li>英特尔 Foundry 部门 2024 全年营业亏损 134 亿美元——产能建成、客户还没起量<span class="badge badge-verified">已核验 · Intel 10-K FY2024（卡 2 页脚）</span>。</li>
+        </ul>
+        <p>请你推：某虚构公司「XYZ Semi」披露 2025 年商业模型——<strong>做定制 AI 加速器设计（ASIC，为 3 家头部云厂商定制）+ 自建先进封装厂（因为通用先进封装产能不够）</strong>。</p>
+        <ol style="padding-left:1.5em">
+          <li>XYZ 的耦合度在 0-10 分位的哪里？拆开算——设计部分是几分，先进封装部分是几分，整体加权是几分？</li>
+          <li>假设 2027 年 AI 需求进入下行调整期。XYZ 的毛利率波动会像博通、台积电还是美光？为什么？</li>
+          <li>如果 2027 年下行期 XYZ 股票跌到年初的 60%，你用 PE 还是 PB 判断底部？为什么？</li>
+        </ol>
+        <p class="scenario-hint">提示：拆两块看——ASIC 设计部分是 fabless（低耦合，但客户高度集中，砍单风险放大），先进封装部分是自建（高耦合，折旧刚性像英特尔 Foundry）。整体耦合度取决于哪部分是主要收入源——如果封装是配套（占收入 &lt;30%），整体接近博通；如果封装是独立业务且客户没起量（占收入 &gt;50%），整体接近逻辑 IDM 掉队期。估值方式：fabless 部分用 PE，先进封装重资产部分用 PB。<strong>不给标准答案。</strong></p>
+      </div>
+
+      <div class="note">
+        <span class="note-label">这张卡要带走的两个反射弧</span>
+        <ol style="margin:0;padding-left:1.3em">
+          <li>拿到新公司，第一反应问：<strong>「耦合度是什么？」</strong>——设计与工艺分不分家、下一代工艺谁开发、切换产品线要多久。</li>
+          <li>看到毛利率跳变 10pt+ 新闻，第一反应问：<strong>「这是高耦合环节的正常波动还是低耦合环节的异常事件？」</strong>——两种解读，下一步动作完全不同。</li>
+        </ol>
+        <p style="margin:8px 0 0">写不出来，回到第 4 节重看。</p>
+      </div>
+
+    </section>
+
+    <section class="src">
+      <strong>卡 9 来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581025000023/nvda-20250126.htm">英伟达 FY2025 10-K（GAAP 毛利率 75.0%）</a>——FY20-FY24 序列来自各年 10-K，汇编见 <a href="m05.html">手册模块 5 页脚</a></li>
+        <li><a href="https://investor.tsmc.com/static/annualReports/2024/english/pdf/2024_tsmc_ar_e_ch2.pdf">台积电 2024 年报（GAAP 毛利率 56.1%）</a>· <a href="https://www.macrotrends.net/stocks/charts/TSM/taiwan-semiconductor-manufacturing/gross-margin">台积电毛利率历史序列（据公司 6-K）</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312525000028/mu-20250828.htm">美光 FY2025 10-K（GAAP 毛利率 40%）</a>· <a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312523000051/a2023q4ex991-pressrelease.htm">美光 FY23 4Q 财报（GAAP 全年毛利率 -9.1%）</a>· <a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312524000027/mu-20240829.htm">美光 FY2024 10-K（GAAP 毛利率约 22%）</a></li>
+        <li><a href="https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-fourth-quarter-and-fiscal-year-2024">博通 FY2024 press release 2024-12-12（AI 芯片 122 亿美元 +220%）</a>· <a href="https://www.sec.gov/Archives/edgar/data/0001730168/000173016824000139/avgo-20241103.htm">博通 FY2024 10-K</a></li>
+        <li><a href="https://download.intel.com/newsroom/2025/c8e6h3a2/intel-q4-2024y-earnings.pdf">英特尔 FY2024 财报（Intel Foundry 全年营业亏损约 134 亿美元）</a>· <a href="https://www.macrotrends.net/stocks/charts/INTC/intel/gross-margin">英特尔毛利率历史序列（据各年 10-K）</a></li>
+        <li><a href="https://news.skhynix.com/sk-hynix-announces-4q24-financial-results/">SK 海力士 4Q24 财报（2024 经营利润率 35%、HBM 占 DRAM 40%+）</a></li>
+        <li><a href="https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2024-results">Samsung 4Q24/FY24 press release（DS 部门 2024 全年营业利润 15.09 万亿韩元）</a>· <a href="https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2023-results">Samsung 4Q23/FY23 press release（DS 部门 2023 全年亏损）</a></li>
+        <li><a href="m02.html">卡 2 · 固定成本主导</a>——同一家公司经营杠杆两端的展开</li>
+        <li><a href="m05.html">手册模块 5 · 半导体产业链总地图</a>——七层产业链、三种商业模式、10 分钟定位工具</li>
+      </ul>
+      <p style="margin-top:14px;font-size:var(--fs-12)">徽章说明：<span class="badge badge-verified">已核验</span> 直接引用一手来源（年报、10-K、8-K、官方公告）或经权威媒体转述的一手数据 · <span class="badge badge-expert">专家判断</span> 综合行业口径或物理约束的判断性表达 · <span class="badge badge-assume">估算</span> 明确的推算，标注方法与年份。</p>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine08.html"><span class="dir">← 上一张</span>卡 8 · 技术代际是生死</a>
+        <a href="spine10.html" style="text-align:right"><span class="dir">下一张 →</span>卡 10 · 需求传导链</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- 耦合度评分器 ---------- */
+  (function () {
+    const chart = document.getElementById("coupChart");
+    if (!chart) return;
+
+    const W = 720, H = 240, PX = 68, PY = 30, PR = 24, PB = 44;
+    const IW = W - PX - PR, IH = H - PY - PB;
+    const xMin = -20, xMax = 80;
+
+    /* 已核验的公司画像 */
+    const COMPANIES = [
+      {
+        threshold: 2.5,
+        name: "英伟达（fabless · 低耦合）",
+        years: ["FY20", "FY21", "FY22", "FY23", "FY24", "FY25"],
+        data:  [62,      65,      65,      57,      73,      75],
+        flavor: "低耦合环节。设计与工艺分工，工艺进步的成本由代工厂承担。周期是软周期——一步一台阶。看毛利率跳变要先问是不是产品结构变化或竞争格局变化。"
+      },
+      {
+        threshold: 6,
+        name: "台积电（foundry · 中耦合）",
+        years: ["2020", "2021", "2022", "2023", "2024", "2025"],
+        data:  [53,     52,     60,     54,     56,     60],
+        flavor: "中耦合环节。工艺自己做但产品分给几十家客户——一家砍单其他家补，波动被摊平。周期反而比 fabless 更平。看毛利率跳变要先问是不是工艺节点节奏（如 N3 稀释）。"
+      },
+      {
+        threshold: 8.5,
+        name: "英特尔（IDM 逻辑 · 含结构性衰退）",
+        years: ["2019", "2020", "2021", "2022", "2023", "2024"],
+        data:  [58.6,   56.0,   55.4,   42.6,   40.0,   32.7],
+        flavor: "中高耦合环节。设计+工艺+封测一体，产品可以代际升级。工艺不出问题时最稳，掉队时最痛。此案例含掉队引起的结构性下滑，非纯周期。"
+      },
+      {
+        threshold: 10.1,
+        name: "美光（IDM 存储 · 极高耦合）",
+        years: ["FY20", "FY21", "FY22", "FY23", "FY24", "FY25"],
+        data:  [30,     37,     45,     -9,     22,     40],
+        flavor: "极高耦合环节。设计与工艺同代绑死、产品高度同质化。周期是硬周期——一年爆亏几十亿一年暴利几十亿。看毛利率跳变要问方向不是幅度——正在爬坡还是坠落。"
+      }
+    ];
+
+    /* 耦合度 → 预测毛利率区间中位 & 跨度（由已核验数据拟合） */
+    function coupling2Baseline(c) {
+      /* fabless(0)→67 · foundry(5)→56 · logic IDM(8)→46 · storage IDM(10)→18 */
+      if (c <= 5) return 67 - (c / 5) * 11;
+      if (c <= 8) return 56 - ((c - 5) / 3) * 10;
+      return 46 - ((c - 8) / 2) * 28;
+    }
+    function coupling2Range(c) {
+      /* fabless(0)→13pt · foundry(5)→8pt · logic IDM(8)→26pt · storage IDM(10)→54pt */
+      if (c <= 5) return 13 - (c / 5) * 5;
+      if (c <= 8) return 8 + ((c - 5) / 3) * 18;
+      return 26 + ((c - 8) / 2) * 28;
+    }
+    function pickCompany(c) {
+      for (const co of COMPANIES) if (c <= co.threshold) return co;
+      return COMPANIES[COMPANIES.length - 1];
+    }
+
+    const svg = APP.svgEl("svg", {
+      viewBox: "0 0 " + W + " " + H, role: "img",
+      "aria-label": "耦合度评分器可视化：横轴为毛利率百分点，蓝色带显示当前耦合度对应的预测年波动区间，橙色点显示相似公司实际历史六年的毛利率数据。"
+    });
+    chart.appendChild(svg);
+
+    const xM = (v) => PX + (v - xMin) / (xMax - xMin) * IW;
+
+    /* 网格线与刻度 */
+    for (let v = xMin; v <= xMax; v += 20) {
+      const x = xM(v);
+      svg.appendChild(APP.svgEl("line", {
+        x1: x, y1: PY, x2: x, y2: PY + IH,
+        stroke: "var(--viz-grid)", "stroke-width": 1
+      }));
+      const lbl = APP.svgEl("text", { x: x, y: PY + IH + 18, "text-anchor": "middle", class: "axis-txt" });
+      lbl.textContent = v + "%";
+      svg.appendChild(lbl);
+    }
+    /* 零线加重 */
+    svg.appendChild(APP.svgEl("line", {
+      x1: xM(0), y1: PY, x2: xM(0), y2: PY + IH,
+      stroke: "var(--viz-axis)", "stroke-width": 1.5
+    }));
+    /* 轴标题 */
+    const axTitle = APP.svgEl("text", {
+      x: PX + IW / 2, y: PY + IH + 36,
+      "text-anchor": "middle", class: "axis-txt"
+    });
+    axTitle.textContent = "GAAP 毛利率 (%)";
+    svg.appendChild(axTitle);
+
+    /* 两行布局：预测带（上）+ 实际点（下） */
+    const rowA_y = PY + 12;   /* 预测带 */
+    const rowA_h = 34;
+    const rowB_y = PY + 100;  /* 实际点 */
+
+    /* 行标签 */
+    const rowA_lbl = APP.svgEl("text", {
+      x: 8, y: rowA_y + rowA_h / 2 + 4, class: "rowlbl"
+    });
+    rowA_lbl.textContent = "预测区间";
+    svg.appendChild(rowA_lbl);
+    const rowB_lbl = APP.svgEl("text", {
+      x: 8, y: rowB_y + 4, class: "rowlbl"
+    });
+    rowB_lbl.textContent = "实际历史";
+    svg.appendChild(rowB_lbl);
+
+    /* 预测带矩形（动态更新） */
+    const predBand = APP.svgEl("rect", {
+      y: rowA_y, height: rowA_h,
+      fill: "var(--primary-tint)",
+      stroke: "var(--primary-2)", "stroke-width": 1.5,
+      rx: 4
+    });
+    svg.appendChild(predBand);
+
+    /* 预测带端点数值 */
+    const predLo = APP.svgEl("text", {
+      y: rowA_y - 6, "text-anchor": "end", class: "end-lbl",
+      fill: "var(--primary)"
+    });
+    const predHi = APP.svgEl("text", {
+      y: rowA_y - 6, "text-anchor": "start", class: "end-lbl",
+      fill: "var(--primary)"
+    });
+    const predMid = APP.svgEl("text", {
+      y: rowA_y + rowA_h / 2 + 5, "text-anchor": "middle", class: "end-lbl",
+      fill: "var(--primary)"
+    });
+    svg.appendChild(predLo);
+    svg.appendChild(predHi);
+    svg.appendChild(predMid);
+
+    /* 实际点容器 */
+    const refG = APP.svgEl("g", {});
+    svg.appendChild(refG);
+
+    /* Readout */
+    const readout = document.getElementById("coupReadout");
+    const cInput = document.getElementById("coupSlider");
+    const cOut = document.getElementById("coupSliderOut");
+
+    function paint() {
+      const c = parseFloat(cInput.value);
+      const baseline = coupling2Baseline(c);
+      const range = coupling2Range(c);
+      const lo = baseline - range / 2;
+      const hi = baseline + range / 2;
+
+      cOut.textContent = c.toFixed(1) + " / 10";
+
+      /* 预测带（clamp 到轴内） */
+      const loClamp = Math.max(xMin, lo), hiClamp = Math.min(xMax, hi);
+      predBand.setAttribute("x", xM(loClamp));
+      predBand.setAttribute("width", Math.max(2, xM(hiClamp) - xM(loClamp)));
+      predLo.setAttribute("x", xM(loClamp) - 4);
+      predLo.textContent = lo.toFixed(0) + "%";
+      predHi.setAttribute("x", xM(hiClamp) + 4);
+      predHi.textContent = hi.toFixed(0) + "%";
+      predMid.setAttribute("x", (xM(loClamp) + xM(hiClamp)) / 2);
+      predMid.textContent = "跨度 " + range.toFixed(0) + " pt";
+
+      /* 实际点 */
+      const co = pickCompany(c);
+      refG.innerHTML = "";
+      const minV = Math.min.apply(null, co.data);
+      const maxV = Math.max.apply(null, co.data);
+      /* 连线 */
+      let d = "";
+      co.data.forEach((v, i) => {
+        const vv = Math.max(xMin, Math.min(xMax, v));
+        d += (i ? " L " : "M ") + xM(vv).toFixed(1) + " " + rowB_y;
+      });
+      refG.appendChild(APP.svgEl("path", {
+        d, fill: "none", stroke: "var(--muted)", "stroke-width": 1
+      }));
+      /* 点+年份+数值 */
+      co.data.forEach((v, i) => {
+        const vv = Math.max(xMin, Math.min(xMax, v));
+        refG.appendChild(APP.svgEl("circle", {
+          cx: xM(vv), cy: rowB_y, r: 5,
+          fill: "var(--accent)", stroke: "var(--bg)", "stroke-width": 1.5
+        }));
+        /* 年份（上） */
+        const yl = APP.svgEl("text", {
+          x: xM(vv), y: rowB_y - 10, "text-anchor": "middle", class: "axis-txt"
+        });
+        yl.textContent = co.years[i];
+        refG.appendChild(yl);
+        /* 数值（下） */
+        const vl = APP.svgEl("text", {
+          x: xM(vv), y: rowB_y + 18, "text-anchor": "middle", class: "end-lbl"
+        });
+        vl.textContent = v + "%";
+        refG.appendChild(vl);
+      });
+      /* 公司名 */
+      const nameLbl = APP.svgEl("text", {
+        x: PX, y: rowB_y + 42, class: "axis-txt", "font-weight": 650, fill: "var(--accent-ink)"
+      });
+      const spread = (maxV - minV).toFixed(1);
+      nameLbl.textContent = co.name + " · 六年跨度 " + spread + " pt";
+      refG.appendChild(nameLbl);
+
+      /* Readout */
+      const spreadDelta = ((maxV - minV) - range).toFixed(0);
+      const cmp = spreadDelta > 5 ? "接近实际历史峰谷差" :
+                  spreadDelta < -5 ? "实际历史比预测更凶" : "与实际历史大致相符";
+      readout.innerHTML =
+        "<b>耦合度 " + c.toFixed(1) + "/10</b> · 预测年波动跨度 <b>" + range.toFixed(0) +
+        " pt</b>（毛利率 " + lo.toFixed(0) + "% 到 " + hi.toFixed(0) + "%）。" +
+        "<br>参照：" + co.name + " · 实际六年区间 " + minV + "% 到 " + maxV + "%（跨度 " +
+        spread + " pt · " + cmp + "）。" +
+        "<br><span>" + co.flavor + "</span>";
+    }
+
+    cInput.addEventListener("input", paint);
+    document.querySelectorAll("[data-preset-coup]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        cInput.value = btn.dataset.presetCoup;
+        paint();
+      });
+    });
+
+    paint();
+  })();
+
+});
+</script>
+</body>
+</html>

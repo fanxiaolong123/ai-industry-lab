@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 6 · 库存结构决定波动结构 · 半导体投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 本卡专属样式（保持克制） ---------- */
+  .flip {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0;
+  }
+  .flip > div {
+    border: 1px solid var(--line); border-radius: var(--radius-m);
+    padding: 14px 16px; background: var(--surface);
+  }
+  .flip .cap {
+    font-size: var(--fs-13); font-weight: 650; color: var(--muted); margin-bottom: 6px;
+    display: flex; justify-content: space-between; gap: 8px;
+  }
+  .flip .big {
+    font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums;
+    line-height: 1.25; color: var(--ink);
+  }
+  .flip .neg .big { color: var(--danger-ink); }
+  .flip .pos .big { color: var(--primary); }
+  .flip .row { font-size: var(--fs-14); color: var(--ink); margin-top: 4px; }
+  .flip .row + .row { border-top: 1px dashed var(--line); padding-top: 6px; margin-top: 6px; }
+  @media (max-width: 640px) { .flip { grid-template-columns: 1fr; } }
+
+  .qa {
+    border-left: 3px solid var(--primary);
+    background: var(--primary-tint);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    padding: 12px 16px 4px;
+    margin: 14px 0;
+  }
+  .qa .q { font-weight: 650; color: var(--primary); margin: 0 0 8px; font-size: var(--fs-16); }
+  .qa .q::before { content: "问："; }
+  .qa ul { margin: 6px 0 10px; padding-left: 1.2em; }
+
+  #waveLegend { display: flex; gap: 18px; font-size: var(--fs-13); color: var(--muted);
+    margin: 6px 0 0; padding: 0; list-style: none; flex-wrap: wrap; justify-content: center; }
+  #waveLegend .key { display: inline-block; width: 14px; height: 3px; border-radius: 2px;
+    vertical-align: 0.22em; margin-right: 6px; }
+
+  .contrast-cols {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0;
+  }
+  .contrast-cols > div {
+    border: 1px solid var(--line); border-radius: var(--radius-m);
+    padding: 14px 16px; background: var(--bg);
+  }
+  .contrast-cols .head {
+    font-weight: 650; margin-bottom: 6px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--line); font-size: var(--fs-15);
+  }
+  .contrast-cols .contract .head { color: var(--primary); }
+  .contrast-cols .spot .head { color: var(--accent-ink); }
+  .contrast-cols ul { margin: 0; padding-left: 1.2em; font-size: var(--fs-14); }
+  .contrast-cols li { margin-bottom: 4px; }
+  @media (max-width: 640px) { .contrast-cols { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body data-page="s06">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 6 · 库存结构决定波动结构</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 6 / 15</p>
+      <h1>卡 6 · 库存结构决定波动结构</h1>
+      <p class="core-q"><b>一句话：</b>同样是「缺货 / 过剩」，不同品类的波动幅度可以差几个数量级。差别不在需求端，在合同结构与销售链条——HBM / CoWoS 走直供长约，波形被合同拉平；DDR / NAND / 成熟制程走现货和短期合同，波形被中间层放大到最凶。判断一个存储或芯片标的的周期风险，先把它的收入拆成「合同锁死的量」和「随现货起伏的量」两栏。</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">读完这张卡你要能答的三个问题（现在答不上来是正常的）</span>
+      <ol style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>同一批 12 吋 DRAM 车间在同一时间窗生产 HBM3E 和 DDR5——HBM3E 2026 年只涨 20%、DDR5 现货一季度就涨 +90%。同一批车间、同一批产品家族，波动幅度为什么能差 5 倍？</li>
+        <li>看到一家存储厂公告涨价 X%，你的第一反应问什么？（答案不是「毛利率会涨 X%」）</li>
+        <li>「HBM 直供长约」听起来是无风险稳态生意——它反向的风险藏在哪里？</li>
+      </ol>
+    </div>
+
+    <section class="prose">
+
+      <h2>1 · 现象：同一批车间，两条产品线波动幅度差 5 倍</h2>
+
+      <p>先看两个真实的、可对照的反差现场——都发生在同一批 12 吋 DRAM 晶圆的车间里，但形状完全不同。</p>
+
+      <div class="flip">
+        <div class="neg">
+          <div class="cap"><span>DDR5 现货 · 2025 Q4 → 2026 Q1</span><span>商品化现货</span></div>
+          <div class="big">+90–95%</div>
+          <div class="row">1Q26 常规 DRAM 涨幅（单季环比）<span class="badge badge-verified">已核验 · TrendForce 2026-02-02</span></div>
+          <div class="row">TrendForce 4Q25 曾把涨幅从原本预期的 8-13% 上修到 18-23% QoQ</div>
+          <div class="row">同一 TrendForce 口径：1Q26 PC DRAM 单季 +100%</div>
+        </div>
+        <div class="pos">
+          <div class="cap"><span>HBM3E 长约 · 2026 全年</span><span>直供 take-or-pay</span></div>
+          <div class="big">+20%</div>
+          <div class="row">2026 年年度涨幅（对上一代锁定的定价重议）<span class="badge badge-verified">已核验 · TrendForce 2025-12-24</span></div>
+          <div class="row">三家（三星 / SK 海力士 / 美光）向 Nvidia、AMD、Google TPU 直供</div>
+          <div class="row">价格几年前就在多年 take-or-pay 协议里锁定</div>
+        </div>
+      </div>
+
+      <p>同一时间窗、同一批车间、同一批产品家族（DRAM）——现货一个季度涨 +90-95%、长约一整年涨 +20%。单季速率差 15 倍以上。<strong>这不是需求侧的差别</strong>——HBM 的需求增速比 DDR 还快（AI 训练直接拉动，多家 CEO 已公开说 medium term 供给只能满足需求的 50-2/3）；差别在<strong>合同结构本身</strong>。</p>
+
+      <div class="flip">
+        <div class="neg">
+          <div class="cap"><span>三星电子 DS 部门 · 2023 全年</span><span>DRAM/NAND 现货塌方</span></div>
+          <div class="big">-14.87 万亿韩元</div>
+          <div class="row">全年营业亏损，约 -111 亿美元<span class="badge badge-verified">已核验 · Samsung FY23 press release</span></div>
+          <div class="row">Q1 单季亏损 4.58 万亿韩元（三星集团 Q1 利润从上年 14.12 万亿跳崖到 6,400 亿、-96%）</div>
+          <div class="row">4 月 7 日三星官方宣布 meaningful level 减产</div>
+        </div>
+        <div class="pos">
+          <div class="cap"><span>SK 海力士 · 3Q25</span><span>HBM 长约兑现</span></div>
+          <div class="big">47%</div>
+          <div class="row">季度营业利润率<span class="badge badge-verified">已核验 · SK 海力士 3Q25 财报</span></div>
+          <div class="row">HBM / DRAM / NAND 2026 产能全部售罄（合同侧）</div>
+          <div class="row">这个季度是历史第一次营业利润破 10 万亿韩元</div>
+        </div>
+      </div>
+
+      <p>这不是「一家赢、一家输」的公司差别——两家其实都是三家 DRAM 大厂之一、都同时做 HBM 和 DDR。区别是<strong>时间点的合同侧覆盖率不同</strong>：2023 年时 HBM 长约的量还没起来，公司利润里主要是现货那半边（塌方）；到 2025-2026 年，HBM 长约那半边已经能撑起 47% 的营业利润率、把商品化那半边可能出现的波动稀释掉。</p>
+
+      <p>这就是卡 6 要讲透的一个模型：<strong>同样是「缺货 / 过剩」，不同品类的波动幅度可以差几个数量级。差别在合同结构与销售链条</strong>——合同锁多少、走现货多少，决定了同一次需求变化会在利润里长成什么形状。存储手册全景（详见 m07）已经讲过五种存储的分层与格局；本卡只从「波动幅度」这一个维度重新组织。</p>
+
+      <h2>2 · 机制：两条销售链条，把同一次需求变化压成两种波形</h2>
+
+      <h3>2.1 直供长约（HBM、CoWoS、部分定制芯片）——波形被合同拉平</h3>
+
+      <p>从「下单」到「结账」的完整链条是一段直线：<strong>GPU 厂 / 云厂 → 存储厂或代工厂 → 出货</strong>。中间没有分销商、贸易商、模组厂。三个关键动作把波形一层层压平：</p>
+
+      <ul>
+        <li><strong>客户预付款 + take-or-pay 承诺</strong>：客户在产能建成前几年就把预付款打过来、把「不拿货也要付钱」的承诺写进合同。真实刻度：美光 FY26 Q3 一个季度里就签下 <strong>16 份 take-or-pay 战略客户协议、合同最低收入合计约 1000 亿美元</strong>，覆盖 2026-2030 年 HBM 供应<span class="badge badge-verified">已核验 · Micron FY26 Q3 电话会备稿</span>。这一步把<strong>量的波动</strong>提前锁死——客户不能因为下季度需求疲软就撤单。</li>
+        <li><strong>认证周期 12-18 个月</strong>：一颗新 HBM 芯片进入 Nvidia 平台要通过整套认证测试，动辄一年到一年半（HBM 认证竞赛：Silicon Analysts 已核验、m07 引用）。<strong>认证是双向锁</strong>：卖方前期投入太重不能随便换客户，买方重新认证一颗新供应商又要再等一年——所以关系被合同期限锁定，短期的市场波动进不来。</li>
+        <li><strong>代际锁定</strong>：每代 HBM 只服务一个 GPU 代际、商业寿命 12 个月上下（对应 Nvidia / AMD 12-18 个月的 GPU 迭代节奏）。一代产品的合同结构和下代要重新谈——所以定价周期天然是「按代际、按年」，不是按季度、按周。</li>
+      </ul>
+
+      <p>三件事叠加的效果：<strong>同一次下游需求变化传到 HBM 侧，被前置锁量、前置锁价、前置锁客户三层过滤后，只剩下一小截波幅落到当期报表</strong>。所以 HBM3E 2026 年只涨 20%——不是因为供需只错配了 20%（实际错配远大于此，多家 CEO 说 medium term 供给只能满足需求的 50-2/3），是因为合同结构把大部分错配都过滤掉、留给下一代或下一次合同签订窗口。</p>
+
+      <h3>2.2 商品化现货（DDR、NAND、成熟制程逻辑）——波形被中间层放大到最凶</h3>
+
+      <p>从「下单」到「结账」的完整链条隔着三层：<strong>终端客户 → 模组厂 / 贸易商 / 中盘商 → 存储厂或代工厂</strong>。每一层都可以库存、可以撤单、可以观望、可以套利。三个关键动作把波形一层层放大：</p>
+
+      <ul>
+        <li><strong>订单可撤、库存可抛</strong>：贸易商看到现货价起飞就多囤货抢货、看到现货价下跌就抛货甚至撤单——终端需求变 10%，经过中间三层放大后到存储厂手里可以变 30-50%。这就是<strong>卡 5 讲过的牛鞭效应</strong>，本卡引用不重推。</li>
+        <li><strong>价格靠现货每天重新出清</strong>：没有长约锁定，价格就必须靠现货报价随时更新——TrendForce 每季（有时每月）发一次涨跌口径，2023 年跌破成本、2025-2026 年季度涨 +18-23% → +90-95%，都是这个价格发现机制在正常工作。<strong>没有合同锁在中间，价格就是波动的一部分而不是它的滤波器</strong>。</li>
+        <li><strong>产能可移动、切换成本低</strong>：DDR 是三家（三星 / SK / 美光）都能做的通用商品，谁便宜谁多买；NAND 是五家，切换成本更低。<strong>切换成本低反向意味着价格竞争激烈</strong>——下游一软化，价格立刻反噬到卖家，因为客户随时可以换供应商。</li>
+      </ul>
+
+      <p>三件事叠加的效果：<strong>同一次下游需求变化传到 DDR/NAND 现货侧，被中间三层放大后砸到存储厂的季度报表上</strong>。所以 2023 Q1 三星 DS 部门单季亏损 4.58 万亿韩元、2026 Q1 又季度涨 +90-95%——都是同一个链条在两个方向上的正常工作结果。产能挤压（HBM 每 GB 消耗 DDR5 的 3 倍晶圆产能<span class="badge badge-verified">已核验 · Tom's Hardware 2026-06</span>）会放大波形的高峰段，但基础机制是链条本身。</p>
+
+      <h3>2.3 关键洞察：同一批车间里的产品，可以有完全不同的波动结构</h3>
+
+      <div class="contrast-cols">
+        <div class="contract">
+          <div class="head">直供长约的波形</div>
+          <ul>
+            <li>量：几年前锁定、take-or-pay 违约有代价</li>
+            <li>价：按代际、按年调整，幅度 15-25% 数量级</li>
+            <li>关系：认证锁客户，切换要 12-18 个月</li>
+            <li>时间常数：<strong>年</strong>——更接近债券</li>
+          </ul>
+        </div>
+        <div class="spot">
+          <div class="head">商品化现货的波形</div>
+          <ul>
+            <li>量：每季调整，牛鞭放大 30-50%</li>
+            <li>价：每周 / 每月出清，单季可涨 +90%、可跌 -30%</li>
+            <li>关系：切换成本低，价格竞争激烈</li>
+            <li>时间常数：<strong>季度甚至月</strong>——更接近垃圾债</li>
+          </ul>
+        </div>
+      </div>
+
+      <p>这是本卡最反直觉的地方——多数人会误以为「一家存储厂就是一家存储厂、周期都一样」。事实是：<strong>同一家存储厂里，HBM 那块盘子的波动结构和 DDR 那块盘子的波动结构，几乎在不同数量级上</strong>。判断一个存储 / 芯片标的的周期风险，第一步就是把它的收入拆成「合同锁死的量」和「随现货起伏的量」两栏，然后分别估波动幅度。这个动作先于任何估值判断。</p>
+
+      <h3>2.4 亲手拉一下：同一次需求脉冲，两条曲线的形状差多少</h3>
+
+      <p>下面这台模拟器把上面两条链条的价格响应并排画在一张图里。<strong>看什么：</strong>①先按「2023 现货塌方」预设——蓝色现货线立即塌到底、绿色长约线几乎不动，同一次需求萎缩，两条业务的价格反应差一个数量级；②再按「2026 上行」预设——蓝色现货线暴涨过头、绿色长约线只按每年 15-20% 幅度阶梯上调；③手动把「需求脉冲幅度」拉到极端，长约那条曲线的斜率基本封顶（合同里明写不能一次涨过多），现货那条曲线可以直接冲破图框——<strong>合同结构就是给波形封顶的东西</strong>。</p>
+
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-title">库存 / 合同结构波动模拟器 · 同一次需求脉冲的两种价格响应</span>
+          <span class="viz-sub">教学简化：需求脉冲是理想化的方波（起 → 保持 → 落）；现货曲线立即反映需求变化并被牛鞭放大 1.5×，回落时因库存去化再多跌一段；长约曲线延后 4 个季度、每季按需求方向调整 5%（对应真实 HBM 长约 20%/年的年度重议）</span>
+        </div>
+        <div class="ctl-panel">
+          <div class="ctl">
+            <label for="waveAmp">需求脉冲幅度</label>
+            <input type="range" id="waveAmp" min="-40" max="80" step="5" value="50">
+            <output id="waveAmpOut">+50%</output>
+          </div>
+          <div class="ctl">
+            <label for="waveHold">需求维持时长</label>
+            <input type="range" id="waveHold" min="2" max="10" step="1" value="6">
+            <output id="waveHoldOut">6 个季度</output>
+          </div>
+          <div class="ctl">
+            <label for="waveBull">牛鞭放大系数</label>
+            <input type="range" id="waveBull" min="1.0" max="2.5" step="0.1" value="1.5">
+            <output id="waveBullOut">1.5×</output>
+          </div>
+          <div class="viz-foot" style="margin:0">
+            <button class="btn btn-ghost" type="button" data-preset-wave="crash">2023 现货塌方（-40% · 4 季 · 1.8×）</button>
+            <button class="btn btn-ghost" type="button" data-preset-wave="spike">2026 现货上行（+70% · 6 季 · 1.6×）</button>
+            <button class="btn btn-ghost" type="button" data-preset-wave="cycle">全周期先涨后落（+50% · 4 季 · 1.5×）</button>
+          </div>
+        </div>
+        <div id="waveChart" role="img" aria-label="双线图：现货价格曲线立即随需求脉冲变化并被牛鞭放大，长约曲线延后几个季度后按小幅度阶梯调整"></div>
+        <ul id="waveLegend"></ul>
+        <div class="viz-readout" id="waveReadout" aria-live="polite"></div>
+        <p style="font-size:var(--fs-13);color:var(--muted);margin:8px 0 0">读完这条：<strong>「同样是 DRAM，HBM 和 DDR 是两种波形」不是修辞</strong>——它是合同结构在数学上必然的结果。真实数据校准点：2023 Q1 三星 DS 亏损 4.58 万亿韩元、2026 Q1 现货 DRAM 涨 +90-95%（现货侧）；HBM3E 2026 涨价 20%（长约侧）。</p>
+      </div>
+
+      <h2>3 · 真实锚点</h2>
+
+      <h3>锚点一 · HBM 长约的合同层锁定能力：一个季度锁到三年营收</h3>
+
+      <p>Micron FY26 Q3 电话会（2026 年 6 月发布）披露：<strong>单一季度签下 16 份 take-or-pay 战略客户协议、合同最低收入合计约 1000 亿美元、覆盖 2026-2030 年 HBM 供应</strong><span class="badge badge-verified">已核验 · Micron FY26 Q3 电话会备稿</span>。这个规模是什么概念——美光 FY25 全年营收 374 亿美元<span class="badge badge-verified">已核验 · Micron 10-K FY2025</span>，<strong>一个季度签的合同就锁到公司三年的营收</strong>。</p>
+
+      <p>「合同锁死量」不是营销话术、是有法律拘束力的书面承诺：take-or-pay 意味着客户不拿货也要付钱，违约有明确对价。同期 SK 海力士 3Q25 财报（2025-10-29）：HBM / DRAM / NAND 2026 产能全部售罄、<strong>季度营业利润率 47%、季度营业利润首次破 10 万亿韩元</strong><span class="badge badge-verified">已核验 · SK 海力士 3Q25 财报</span>。利润率能到 47% 靠的不是运气——是<strong>产能在几个季度前锁在长约里，涨价的兑现时点到了直接落到当期报表</strong>。这套「合同层证据先于收入兑现」的完整时间线，m07「怎么判断」页工具二里有完整拆解。</p>
+
+      <h3>锚点二 · DDR / NAND 现货的季度暴涨暴跌能力</h3>
+
+      <p><strong>现货塌方端 · 2023 Q1：</strong>三星电子集团 Q1 营业利润从上年同期 14.12 万亿韩元跳崖到 6,400 亿韩元（-96%）；<strong>DS（半导体）部门单季亏损 4.58 万亿韩元</strong>；4 月 7 日三星官方宣布 meaningful level 减产、加入 SK 海力士与美光的减产阵营<span class="badge badge-verified">已核验 · CNBC 2023-04-27、TechCrunch 2023-04-06</span>。全年 DS 部门累计亏损 <strong>14.87 万亿韩元</strong>（约 -111 亿美元）<span class="badge badge-verified">已核验 · Samsung FY23 press release</span>。</p>
+
+      <p><strong>现货冲高端 · 2025 Q4 → 2026 Q1：</strong>TrendForce 2025-09-24 把 4Q25 常规 DRAM 涨幅从原本预期的 8-13% 上修到 <strong>18-23% QoQ</strong>；2026-02-02 又把 1Q26 涨幅上修到 <strong>+90-95% QoQ、PC DRAM 单季 +100%</strong><span class="badge badge-verified">已核验 · TrendForce 报告</span>。同一批 DRAM 车间的商品化产品，两年时间内可以走完「季度亏损 111 亿美元 → 季度价格翻倍」的全谱波动。</p>
+
+      <h3>锚点三 · 同一时间窗、同一产品家族的直接对比</h3>
+
+      <table class="tbl">
+        <caption>2026 年 · 同一批 12 吋 DRAM 车间生产的两条产品线<span class="badge badge-verified">已核验 · TrendForce 2025-12-24、2026-02-02</span></caption>
+        <thead>
+          <tr><th>产品</th><th>销售路径</th><th>2026 年价格变动</th><th>波动时间常数</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>HBM3E</td><td>三家直供 Nvidia / AMD / Google TPU，多年 take-or-pay</td><td class="num">+20%（年度）</td><td>按代际、按年</td></tr>
+          <tr><td>DDR5 服务器 / PC 内存</td><td>模组厂 → 贸易商 → 存储厂三层，现货 + 短期合同</td><td class="num">+90-95%（单季）</td><td>按季度、按周</td></tr>
+        </tbody>
+      </table>
+
+      <p>单季速率差 15 倍以上——这不是「HBM 更贵」这一个维度，是「HBM 波动更平缓」这一个独立维度。同一批车间生产、同一时间窗、同一批客户群里的两条产品线，因为合同结构不同、能长成完全不同的波形。</p>
+
+      <p>三个锚点合起来读：<strong>合同层的锁定能力（锚点一）把 HBM 侧的波动压平；商品化的现货机制（锚点二）把 DDR / NAND 侧的波动放大；同一时间窗的两条产品线因为合同结构不同长成完全不同的波形（锚点三）</strong>。判断存储标的第一步的物理依据，就是这三个锚点。</p>
+
+      <h2>4 · 投资含义：两个「第一反应问句」</h2>
+
+      <p>骨架卡的用法是<strong>把两个问句刻进反射弧</strong>——以后拿到相关材料，不是先想「这家公司好不好」，而是自动先问以下两个问题，答完再下结论。</p>
+
+      <div class="qa">
+        <p class="q">拿到一份存储 / 芯片标的报告，我第一反应问什么？</p>
+        <ul>
+          <li><strong>它的收入盘子里，合同锁死的量占多少、现货或短期合同占多少？</strong>——美光 FY25 HBM + 高容量 DIMM + LP DRAM 已占 100 亿美元 / 374 亿美元 ≈ 27%（长约或长约意向部分），其余 73% 是现货或短期合同（估算，公司未明确披露口径）；SK 海力士 3Q25 财报显示 HBM 已能单独把公司季度营业利润率推到 47%，说明长约那半边已经足够重、可以稀释现货那半边的波动。这个比例直接决定了它的利润会跟着现货波形走、还是被长约拉平。</li>
+          <li><strong>mix shift 方向如何？</strong>——收入盘子在往长约那头挪（美光、SK 海力士、SanDisk 都在这个方向），还是往现货那头挪（部分二线厂被迫回到现货竞争）？方向不同、估值方式完全不同（长约那侧走 PB → PE 重估，现货那侧还是周期股）。</li>
+          <li><strong>长约的硬度是哪一档？</strong>——take-or-pay（客户不拿货也要付钱）> 已分配 allocated（软一档，客户还能议价）> 意向（更软）> 宣布投资（最软）。硬度不同、兑现概率不同——不要看到「售罄」两个字就直接翻译成「价格锁死」。</li>
+        </ul>
+      </div>
+
+      <div class="qa">
+        <p class="q">看到某厂公告涨价 X%，我第一反应问什么？</p>
+        <ul>
+          <li><strong>涨价走的是长约签订还是现货成交？</strong>——HBM3E 2026 涨 20% 是「新签的长约把合同价重定了」，一签就落到未来几年的报表；DDR5 现货 1Q26 涨 +90% 是「现货报价即时更新」，但存储厂能拿到的只有其中还没锁在旧合同里的那部分，滞后一到两个季度到财报（卡 12 讲价格滞后于交期与长约）。</li>
+          <li><strong>涨价是新签的合同还是老合同重议？</strong>——老合同重议的效力低（客户可以拖、可以谈延期），新签合同即时生效。查合同披露里有没有 quarterly reset 条款、有没有价格重议触发机制。</li>
+          <li><strong>涨价能持续几季？</strong>——长约锁定的涨价可以持续到合同期结束（多年）；现货涨价只能持续到「新产能到货 + 客户情绪回落」（卡 1 告诉你新产能到货 24-36 个月，卡 5 告诉你订单波形可以在两三个季度内反转）。</li>
+        </ul>
+      </div>
+
+      <p>把两个问句变成动作：<strong>看到「存储 / 芯片标的报告」，先自动分「合同锁死」和「现货」两栏；看到「涨价」新闻，先自动分「长约签订」和「现货成交」两种路径</strong>。答完了，才决定它是不是买点、能撑多久、按周期股估还是按长期结构性资产估。</p>
+
+      <h2>5 · 边界（这张卡什么时候不适用）</h2>
+
+      <ul>
+        <li><strong>直供长约不是无风险——反向锁死同样凶。</strong>认证一颗新 HBM 品要 12-18 个月、投入巨大；一旦客户流失（比如 Nvidia 换供应商）或路线切换（从 HBM3 到 HBM4E），锁定会反过来变成负担。三星 HBM3E 在 Nvidia 面前反复受挫、这一代产品收入实际就被压缩了很多——这是长约模型的反面（详见 m07 决策复盘）。<strong>合同锁死的稳定性是双向的</strong>——顺风时是稳定器，逆风时是拖累。</li>
+        <li><strong>长约里也可能有价格重议条款。</strong>不是所有长约都是价格锁死的：部分长约锁量不锁价（价格按季度或半年重议）、部分带 quarterly reset。判断硬度前要看合同披露的具体条款——「多年 take-or-pay」和「多年 supply agreement」在硬度上差一档。</li>
+        <li><strong>现货侧的稳定也可能是幻觉。</strong>切换成本低的另一面是客户可换供应商——如果一家存储厂在制程或成本上掉队（卡 8 讲技术代际），份额流失会比长约客户流失更快。现货波动的机制里包含「谁贵谁被砍」的即时惩罚。</li>
+        <li><strong>本卡不重复展开的部分：</strong>
+          <ul>
+            <li>牛鞭机制的物理起因 —— <strong>卡 5</strong>已经推过，本卡引用不重推；</li>
+            <li>价格是滞后读数、先行量是交期与长约 —— <strong>卡 12</strong>是本卡的姐妹卡（合同结构 vs 价格滞后）；</li>
+            <li>存储五种品类的完整分层与格局 —— <strong>m07</strong>手册全景给了金字塔和玩家名单，本卡只在「波动幅度」这一个维度上做深度对比；</li>
+            <li>固定成本高的公司为什么涨价时利润跳变 —— <strong>卡 2</strong>展开经营杠杆；本卡讲的是价格本身的波动结构，两者叠加起来才是完整的利润波动模型。</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h2>6 · 练习两道</h2>
+
+      <div class="scenario">
+        <h4>练习一 · 复述题（合上卡片，3 分钟讲给完全不懂的人听）</h4>
+        <p>题目：<strong>为什么同一家存储厂 HBM 业务能稳如老狗、DDR 业务能一年爆亏一年暴利？</strong></p>
+        <p class="scenario-hint">提示：不用出现「合同结构」或「牛鞭效应」这些词。用两句大白话入手就够——「HBM 是几年前就跟客户把量和价签死的」、「DDR 是每天上市场对价的」。三星 DS 部门 2023 亏 111 亿美元、2024 赚 113 亿美元是同一批车间的现货那半边；同期 SK 海力士的 HBM 长约业务几乎不受这场波动影响、稳步爬升，到 2025 Q3 直接把公司季度营业利润率推到 47%。两半边的波形不一样——这就是本卡的模型。</p>
+      </div>
+
+      <div class="scenario">
+        <h4>练习二 · 推演题（用已核验事实做前提，用本卡机制推）</h4>
+        <p>已核验的两件真事：</p>
+        <ul>
+          <li><strong>SK 海力士 3Q25 财报（2025-10-29）</strong>：HBM / DRAM / NAND 2026 产能全部售罄，季度营业利润率 47%；美光 FY26 Q3（2026-06）签下 16 份 take-or-pay 战略客户协议、合同最低收入合计 100 亿美元 × 10 = <strong>1000 亿美元</strong>；</li>
+          <li><strong>TrendForce 4Q25 / 1Q26 数据（2025-09、2026-02）</strong>：常规 DRAM 现货涨幅从 8-13% 上修到 18-23% QoQ、再上修到 +90-95% QoQ。</li>
+        </ul>
+        <p>请你推：<strong>假设 2026 下半年 DRAM 现货价格开始软化（比如 3Q26 环比 -20%）而 HBM 长约维持已签订水平，一线厂（SK 海力士 / 三星 / 美光）和二线厂（南亚科 / 华邦 / 长江存储）2026-2027 年的利润路径会有什么不同？波动幅度差别会体现在哪几个报表指标上？</strong></p>
+        <p class="scenario-hint">提示：先把每家公司的收入盘子拆成「HBM 长约业务」和「标准 DDR / NAND 现货业务」两栏，各自套一遍本卡的机制。HBM 长约业务在下半年基本不受现货软化影响（除非长约里有 quarterly reset）；DDR / NAND 现货业务立刻反映到毛利率里，且下修速度可能比涨价时更快（因为固定成本还压着——参考卡 2 的经营杠杆机制）。二线厂几乎全在现货那半边、没有 HBM 长约的稳定器——他们的季度利润波动幅度会明显大于一线厂。查什么报表指标：毛利率变动幅度、库存周转天数、合同负债 / 客户预付款、存货减值科目。<em>这题没有标准答案。你的推理链是不是完整、有没有落在两条真事和一张卡的机制上，就是评分标准。</em></p>
+      </div>
+
+      <div class="note">
+        <span class="note-label">这张卡要带走的两个反射弧</span>
+        <ol style="margin:0;padding-left:1.3em">
+          <li>拿到一份存储 / 芯片标的，先把收入拆成<strong>「合同锁死」和「现货」</strong>两栏——不拆就估不了波动；</li>
+          <li>看到<strong>「涨价」</strong>新闻，先分「长约签订」和「现货成交」两种路径——两种含义完全不同。</li>
+        </ol>
+        <p style="margin:8px 0 0">写不出来，回来重看第 4 节。</p>
+      </div>
+
+    </section>
+
+    <section class="src">
+      <strong>卡 6 来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.trendforce.com/news/2025/12/24/news-samsung-sk-hynix-reportedly-plan-20-hbm3e-price-hike-for-2026-as-nvidia-h200-asic-demand-rises/" rel="noopener noreferrer">TrendForce 2025-12-24：三星与 SK 海力士 HBM3E 2026 年涨价约 20%</a></li>
+        <li><a href="https://www.trendforce.com/presscenter/news/20250924-12733.html" rel="noopener noreferrer">TrendForce 2025-09-24：4Q25 常规 DRAM 涨幅从 8-13% 上修到 18-23% QoQ</a> · <a href="https://www.trendforce.com/presscenter/news/20260202-12911.html" rel="noopener noreferrer">TrendForce 2026-02-02：1Q26 常规 DRAM 涨幅上修至 +90-95% QoQ、PC DRAM +100%</a></li>
+        <li><a href="https://investors.micron.com/static-files/631b1a32-5537-46ae-8f40-82e42fc79dfe" rel="noopener noreferrer">Micron FY26 Q3 电话会备稿（2026-06）：16 份 take-or-pay 战略客户协议、$100B 最低合同收入</a></li>
+        <li><a href="https://news.skhynix.com/sk-hynix-announces-3q25-financial-results/" rel="noopener noreferrer">SK 海力士 3Q25 财报公告（2025-10-29）：HBM / DRAM / NAND 2026 产能全部售罄、季度营业利润率 47%</a></li>
+        <li><a href="https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2023-results" rel="noopener noreferrer">Samsung Electronics 4Q23 / FY23 press release（2024-01-31）：DS 部门 2023 全年亏损 14.87 万亿韩元、Q1 亏损 4.58 万亿</a></li>
+        <li><a href="https://www.cnbc.com/2023/04/27/samsung-earnings-q1-2023.html" rel="noopener noreferrer">CNBC 2023-04-27：三星 Q1 2023 集团营业利润 6,400 亿韩元、同比 -96%（上年同期 14.12 万亿）</a> · <a href="https://techcrunch.com/2023/04/06/samsung-cuts-memory-chip-production-as-it-hits-worst-quarterly-profit-since-2009/" rel="noopener noreferrer">TechCrunch 2023-04-06：三星官方宣布 meaningful level 减产</a></li>
+        <li><a href="https://www.koreaherald.com/article/3382821" rel="noopener noreferrer">Korea Herald 2024-05-02：SK 海力士 CEO Kwak Noh-jung「HBM 2024 已售罄、2025 也差不多售罄」（HBM 长约先于收入兑现的时间线）</a></li>
+        <li><a href="https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-fourth-quarter-and-full-8" rel="noopener noreferrer">Micron FY25 Q4 及全年业绩公告（2025-09）：全年营收 374 亿美元、+49%、HBM + 高容量 DIMM + LP DRAM 合计 100 亿美元</a> · <a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312525000028/mu-20250828.htm" rel="noopener noreferrer">Micron Form 10-K FY2025（SEC filing）</a></li>
+        <li><a href="https://www.tomshardware.com/pc-components/ram/hbm-is-eating-your-ram" rel="noopener noreferrer">Tom's Hardware 2026-06：HBM 每 GB 消耗 DDR5 的 3 倍晶圆产能</a></li>
+        <li><a href="https://siliconanalysts.com/analysis/hbm-qualification-race-2022-2026" rel="noopener noreferrer">Silicon Analysts：HBM 认证竞赛与 12-18 个月认证周期</a></li>
+      </ul>
+      <p style="margin-top:14px;font-size:var(--fs-12)">徽章说明：<span class="badge badge-verified">已核验</span> 直接引用一手来源（年报、10-K、8-K、电话会转录、官方公告）或经权威媒体转述的一手数据 · <span class="badge badge-expert">专家判断</span> 综合行业口径的判断性表达，无单一权威来源 · <span class="badge badge-assume">估算</span> 明确的推算，标注方法与年份。</p>
+    </section>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine05.html"><span class="dir">← 上一张</span>卡 5 · 缺货是牛鞭极值信号</a>
+        <a href="spine07.html" style="text-align:right"><span class="dir">下一张 →</span>卡 7 · 需求分两种（换机式 vs 范式革命）</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- A 类组件：库存 / 合同结构波动模拟器 ---------- */
+  (function () {
+    const W = 720, H = 340, PX = 54, PY = 28, PR = 26, PB = 46;
+    const IW = W - PX - PR, IH = H - PY - PB;
+    const Q_MAX = 12;              /* X 轴：12 个季度 */
+    const V_MIN = 40, V_MAX = 220; /* Y 轴：价格指数 */
+
+    const xQ = (q) => PX + (q / Q_MAX) * IW;
+    const yV = (v) => PY + (V_MAX - v) / (V_MAX - V_MIN) * IH;
+
+    /* 需求脉冲：0 前 = 0, [0, hold] = amp, [hold, hold+2] 线性回到 0, 之后维持 0 */
+    function demand(q, amp, hold) {
+      if (q < 0) return 0;
+      if (q <= hold) return amp;
+      if (q <= hold + 2) return amp * (1 - (q - hold) / 2);
+      return 0;
+    }
+
+    /* 现货价格：立即反映需求 × 牛鞭放大系数；回落时因库存去化再多跌一段（约 0.3 × amp × bull 的过冲） */
+    function spotPrice(q, amp, hold, bull) {
+      const d = demand(q, amp, hold);
+      /* 需求已回落但库存还在去化：hold+2 到 hold+5 期间有反向过冲 */
+      let overshoot = 0;
+      if (q > hold + 2 && q <= hold + 5) {
+        const t = (q - (hold + 2)) / 3;              /* 0 → 1 */
+        overshoot = -amp * bull * 0.35 * Math.sin(Math.PI * t); /* 反向过冲，正弦包络 */
+      }
+      return 100 + d * bull + overshoot;
+    }
+
+    /* 长约价格：延后 4 季度、每季按需求方向调整 5%、最多累计到 20%（一年）；超过一年再看下一次代际重议 */
+    function contractPrice(q, amp, hold) {
+      const delay = 4;
+      if (q < delay) return 100;
+      /* 长约调整期：延后开始，每季 amp 方向的 5%，累计不超过 20%（一整年） */
+      const adjQ = Math.min(q - delay, 4);                 /* 最多 4 季度调整期 */
+      const dir = amp === 0 ? 0 : (amp > 0 ? 1 : -1);
+      const cap = Math.min(Math.abs(amp) * 0.25, 20);      /* 长约调整上限：需求变化的 25% 或 20 个基点 */
+      const adjMag = Math.min(cap, adjQ * 5);
+      let v = 100 + dir * adjMag;
+      /* 长约调整完成后维持，除非需求已完全回落且长约期到 —— 简化：不做二次重议，一直维持 */
+      return v;
+    }
+
+    const chart = document.getElementById("waveChart");
+    const svg = APP.svgEl("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+      "aria-label": "双线图：X 轴 12 个季度、Y 轴价格指数。现货曲线立即随需求变化、被牛鞭放大；长约曲线延后 4 个季度、按小幅度调整。" });
+    chart.appendChild(svg);
+
+    /* 背景：需求脉冲的时段用淡色标出 */
+    const bgG = APP.svgEl("g", {});
+    svg.appendChild(bgG);
+
+    /* 网格与坐标轴 */
+    const gridG = APP.svgEl("g", {});
+    svg.appendChild(gridG);
+
+    /* Y 网格：40, 60, 80, 100, 120, 140, 160, 180, 200, 220 */
+    for (let v = V_MIN; v <= V_MAX + 1e-6; v += 20) {
+      const y = yV(v);
+      const line = APP.svgEl("line", { x1: PX, y1: y, x2: PX + IW, y2: y,
+        stroke: "var(--viz-grid)", "stroke-width": 1 });
+      if (Math.abs(v - 100) < 1e-6) line.setAttribute("stroke", "var(--viz-axis)");
+      gridG.appendChild(line);
+      const lbl = APP.svgEl("text", { x: PX - 8, y: y + 4, "text-anchor": "end", class: "axis-txt" });
+      lbl.textContent = v + (Math.abs(v - 100) < 1e-6 ? " (基线)" : "");
+      gridG.appendChild(lbl);
+    }
+    /* X 网格：每季度一根 */
+    for (let q = 0; q <= Q_MAX; q += 1) {
+      const x = xQ(q);
+      gridG.appendChild(APP.svgEl("line", { x1: x, y1: PY, x2: x, y2: PY + IH,
+        stroke: "var(--viz-grid)", "stroke-width": 1, opacity: (q % 2 === 0 ? 1 : 0.5) }));
+      if (q % 2 === 0) {
+        const lbl = APP.svgEl("text", { x: x, y: PY + IH + 18, "text-anchor": "middle", class: "axis-txt" });
+        lbl.textContent = "Q" + q;
+        gridG.appendChild(lbl);
+      }
+    }
+    /* 轴标题 */
+    const axX = APP.svgEl("text", { x: PX + IW / 2, y: PY + IH + 38, "text-anchor": "middle", class: "axis-txt" });
+    axX.textContent = "季度（Q0 = 需求脉冲开始）";
+    svg.appendChild(axX);
+    const axY = APP.svgEl("text", { x: 14, y: PY + IH / 2, "text-anchor": "middle",
+      class: "axis-txt", transform: "rotate(-90 14 " + (PY + IH / 2) + ")" });
+    axY.textContent = "价格指数（基线 100）";
+    svg.appendChild(axY);
+
+    /* 两条曲线 */
+    const spotPath = APP.svgEl("path", { fill: "none", stroke: "var(--accent)",
+      "stroke-width": 2.6, "stroke-linejoin": "round", "stroke-linecap": "round" });
+    const ctrPath = APP.svgEl("path", { fill: "none", stroke: "var(--primary)",
+      "stroke-width": 2.6, "stroke-linejoin": "round", "stroke-linecap": "round" });
+    svg.appendChild(spotPath);
+    svg.appendChild(ctrPath);
+
+    /* 需求脉冲背景带（浅蓝）*/
+    const demandBand = APP.svgEl("rect", { fill: "var(--info-tint)", opacity: 0.4 });
+    bgG.appendChild(demandBand);
+    const demandLbl = APP.svgEl("text", { class: "anno-txt",
+      "text-anchor": "middle", "font-size": "11" });
+    demandLbl.textContent = "需求脉冲期";
+    svg.appendChild(demandLbl);
+
+    const waveAmp = document.getElementById("waveAmp"),
+          waveHold = document.getElementById("waveHold"),
+          waveBull = document.getElementById("waveBull");
+    const waveAmpOut = document.getElementById("waveAmpOut"),
+          waveHoldOut = document.getElementById("waveHoldOut"),
+          waveBullOut = document.getElementById("waveBullOut");
+    const readout = document.getElementById("waveReadout");
+    const legend = document.getElementById("waveLegend");
+
+    function buildPath(fn, amp, hold, bull) {
+      const pts = [];
+      for (let q = 0; q <= Q_MAX; q += 0.1) {
+        const v = fn(q, amp, hold, bull);
+        const vv = Math.max(V_MIN, Math.min(V_MAX, v));
+        pts.push(xQ(q).toFixed(1) + "," + yV(vv).toFixed(1));
+      }
+      return "M " + pts.join(" L ");
+    }
+
+    function paint() {
+      const amp = parseFloat(waveAmp.value);   /* -40 到 80 */
+      const hold = parseFloat(waveHold.value); /* 2 到 10 */
+      const bull = parseFloat(waveBull.value); /* 1.0 到 2.5 */
+
+      waveAmpOut.textContent = (amp >= 0 ? "+" : "") + amp + "%";
+      waveHoldOut.textContent = hold + " 个季度";
+      waveBullOut.textContent = bull.toFixed(1) + "×";
+
+      spotPath.setAttribute("d", buildPath((q, a, h, b) => spotPrice(q, a, h, b), amp, hold, bull));
+      ctrPath.setAttribute("d", buildPath((q, a, h) => contractPrice(q, a, h), amp, hold, bull));
+
+      /* 需求脉冲背景带 */
+      const x1 = xQ(0), x2 = xQ(Math.min(hold, Q_MAX));
+      demandBand.setAttribute("x", x1);
+      demandBand.setAttribute("y", PY);
+      demandBand.setAttribute("width", Math.max(0, x2 - x1));
+      demandBand.setAttribute("height", IH);
+      demandLbl.setAttribute("x", (x1 + x2) / 2);
+      demandLbl.setAttribute("y", PY + 14);
+
+      /* 计算两条曲线各自的最大偏离幅度 */
+      let spotMax = 100, spotMin = 100, ctrMax = 100, ctrMin = 100;
+      let spotPeakQ = 0, ctrPeakQ = 0;
+      for (let q = 0; q <= Q_MAX; q += 0.1) {
+        const s = spotPrice(q, amp, hold, bull);
+        const c = contractPrice(q, amp, hold);
+        if (s > spotMax) { spotMax = s; spotPeakQ = q; }
+        if (s < spotMin) spotMin = s;
+        if (c > ctrMax) ctrMax = c;
+        if (c < ctrMin) ctrMin = c;
+      }
+      const spotRange = spotMax - spotMin;
+      const ctrRange = ctrMax - ctrMin;
+      const ratio = ctrRange > 1 ? (spotRange / ctrRange).toFixed(1) : "∞";
+
+      let flavor = "";
+      if (amp <= -20) flavor = "现货侧塌方——供给去化时价格跌破基线；长约侧几乎不动，长约就是塌方期的稳定器。";
+      else if (amp >= 60) flavor = "现货侧暴涨——牛鞭把需求变化放大到极端；长约侧按代际重议幅度阶梯上调，被合同封顶。";
+      else if (amp >= 20) flavor = "现货侧强上行——单季峰值明显跑赢长约；但库存去化时会有反向过冲。";
+      else flavor = "波动幅度中等——两条曲线差距缩小，但形状仍然完全不同。";
+
+      readout.innerHTML =
+        "现货价格：<b>" + spotMax.toFixed(0) + " → " + spotMin.toFixed(0) +
+        "</b>（区间 " + spotRange.toFixed(0) + " 个基点，最大偏离出现在第 " + Math.round(spotPeakQ) + " 季度）。" +
+        "<br>长约价格：<b>" + ctrMax.toFixed(0) + " → " + ctrMin.toFixed(0) +
+        "</b>（区间 " + ctrRange.toFixed(0) + " 个基点）。" +
+        "<br><b>波动幅度比 ≈ " + ratio + " ×</b>——同一次需求脉冲，现货侧的价格区间是长约侧的 " + ratio + " 倍。" +
+        "<br><span" + (amp < 0 ? ' class="warn"' : "") + ">" + flavor + "</span>";
+
+      legend.innerHTML =
+        '<li><span class="key" style="background:var(--accent)"></span>现货价格（DDR / NAND / 成熟制程）</li>' +
+        '<li><span class="key" style="background:var(--primary)"></span>长约价格（HBM / CoWoS / take-or-pay）</li>' +
+        '<li><span class="key" style="background:var(--info-tint);height:8px;border-radius:2px"></span>需求脉冲期</li>';
+    }
+
+    [waveAmp, waveHold, waveBull].forEach((el) => el.addEventListener("input", paint));
+
+    document.querySelectorAll("[data-preset-wave]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const k = btn.dataset.presetWave;
+        if (k === "crash")      { waveAmp.value = -40; waveHold.value = 4; waveBull.value = 1.8; }
+        else if (k === "spike") { waveAmp.value = 70;  waveHold.value = 6; waveBull.value = 1.6; }
+        else if (k === "cycle") { waveAmp.value = 50;  waveHold.value = 4; waveBull.value = 1.5; }
+        paint();
+      });
+    });
+
+    paint();
+  })();
+
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 2 · 固定成本主导 · 半导体投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 页面专属样式（保持克制，只做本卡必需） ---------- */
+  .flip {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0;
+  }
+  .flip > div {
+    border: 1px solid var(--line); border-radius: var(--radius-m);
+    padding: 14px 16px; background: var(--surface);
+  }
+  .flip .cap {
+    font-size: var(--fs-13); font-weight: 650; color: var(--muted); margin-bottom: 6px;
+    display: flex; justify-content: space-between; gap: 8px;
+  }
+  .flip .big {
+    font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums;
+    line-height: 1.25; color: var(--ink);
+  }
+  .flip .neg .big { color: var(--danger-ink); }
+  .flip .pos .big { color: var(--primary); }
+  .flip .row { font-size: var(--fs-14); color: var(--ink); margin-top: 4px; }
+  .flip .row + .row { border-top: 1px dashed var(--line); padding-top: 6px; margin-top: 6px; }
+  @media (max-width: 640px) { .flip { grid-template-columns: 1fr; } }
+
+  .qa {
+    border-left: 3px solid var(--primary);
+    background: var(--primary-tint);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    padding: 12px 16px 4px;
+    margin: 14px 0;
+  }
+  .qa .q { font-weight: 650; color: var(--primary); margin: 0 0 8px; font-size: var(--fs-16); }
+  .qa .q::before { content: "问："; }
+  .qa ul { margin: 6px 0 10px; padding-left: 1.2em; }
+
+  #levLegend { display: flex; gap: 18px; font-size: var(--fs-13); color: var(--muted);
+    margin: 6px 0 0; padding: 0; list-style: none; flex-wrap: wrap; }
+  #levLegend .key { display: inline-block; width: 14px; height: 3px; border-radius: 2px;
+    vertical-align: 0.22em; margin-right: 6px; }
+</style>
+</head>
+<body data-page="s02">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 2 · 固定成本主导</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 2 / 15</p>
+      <h1>卡 2 · 固定成本主导</h1>
+      <p class="core-q"><b>一句话：</b>半导体是极致的重资产——一旦产能装好，多卖一片的边际成本很低、多卖出去的钱几乎全变利润；反过来，一旦砍单一片，折旧照提、卖不出去的部分立刻吞掉利润。所以毛利率随价格与利用率的变化不是「多卖 10%、多赚 10%」，是<strong>跳变</strong>。</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">读完这张卡你要能答的三个问题（现在答不上来是正常的）</span>
+      <ol style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>三星电子的半导体（DS）部门 2023 年亏了 14.87 万亿韩元、2024 年赚了 15.09 万亿韩元——同一批工厂、同一批设备，一年之间为什么能翻转 30 万亿韩元？</li>
+        <li>看到一家存储厂公告涨价 10%，你的第一反应问什么？（答案不是「收入涨 10%」）</li>
+        <li>英伟达毛利率变动 5 个百分点和美光毛利率变动 5 个百分点，读出来的信息有没有可比性？</li>
+      </ol>
+    </div>
+
+    <section class="prose">
+
+      <h2>1 · 现象：同一批车间，一年是深亏、下一年是暴利</h2>
+
+      <p>先看两个已核验、放在一起的反差现场——同一家公司、同一批车间、时间相距一到两年：</p>
+
+      <div class="flip">
+        <div class="neg">
+          <div class="cap"><span>美光（Micron）· FY23</span><span>截止 2023-08-31</span></div>
+          <div class="big">-9.1%</div>
+          <div class="row">GAAP 毛利率<a class="badge badge-verified" href="#src-micron-fy23-8k">已核验</a></div>
+          <div class="row">全年营收 155 亿美元</div>
+          <div class="row">GAAP 净亏损 <strong>58.3 亿美元</strong></div>
+        </div>
+        <div class="pos">
+          <div class="cap"><span>美光（Micron）· FY25</span><span>截止 2025-08-28</span></div>
+          <div class="big">40%</div>
+          <div class="row">GAAP 毛利率<a class="badge badge-verified" href="#src-micron-fy25-press">已核验</a></div>
+          <div class="row">全年营收 374 亿美元（+49%）</div>
+          <div class="row">HBM + 高容量 DIMM + LP 服务器 DRAM 合计 <strong>100 亿美元</strong>，是前一年的 5 倍</div>
+        </div>
+      </div>
+
+      <div class="flip">
+        <div class="neg">
+          <div class="cap"><span>三星电子 DS 部门 · 2023</span><span>半导体全部业务</span></div>
+          <div class="big">-14.87 万亿韩元</div>
+          <div class="row">全年营业亏损<a class="badge badge-verified" href="#src-samsung-fy23">已核验</a></div>
+          <div class="row">按当时汇率约 -111 亿美元</div>
+          <div class="row">四个季度分别亏损 4.58 / 4.36 / 3.75 / 2.18 万亿韩元</div>
+        </div>
+        <div class="pos">
+          <div class="cap"><span>三星电子 DS 部门 · 2024</span><span>同一部门</span></div>
+          <div class="big">+15.09 万亿韩元</div>
+          <div class="row">全年营业利润<a class="badge badge-verified" href="#src-samsung-fy24">已核验</a></div>
+          <div class="row">按当时汇率约 +113 亿美元</div>
+          <div class="row">全年营收 111.07 万亿韩元</div>
+        </div>
+      </div>
+
+      <p>三星这一部门，一年之间利润翻转 30 万亿韩元（约 224 亿美元）；美光两年之间毛利率跨了 49 个百分点。这不是发生了「10 倍的需求变化」，也不是全行业成本崩塌。真正变化的是两件事：<strong>产品的平均售价（ASP，一颗芯片能卖多少钱）</strong>与<strong>工厂开满没有（利用率）</strong>——这两个变量都只是中等幅度地变了变。但半导体制造的成本结构，会把这种「中等变化」放大成利润的跳变。</p>
+
+      <p>这就是卡 2 要讲透的一个模型：<strong>固定成本主导下的经营杠杆——不是收入涨 10%、利润涨 10%，是收入涨 10%、利润涨三成到一倍不止</strong>。反向同样凶。</p>
+
+      <h2>2 · 机制：一台机器，为什么能同时决定深亏和暴利</h2>
+
+      <h3>2.1 半导体是把钱变成设备、再靠时间摊回来的生意</h3>
+
+      <p>先看这个行业的第一个物理事实：<strong>它的钱大部分变成了设备和厂房</strong>。台积电在美国亚利桑那的扩产计划，2025 年 3 月官方公告加码到 <strong>1,650 亿美元</strong>（六座晶圆厂 + 两座先进封装厂 + 一个研发中心）；2026 年 5 月董事会又批准对亚利桑那子公司再注资 200 亿美元<a class="badge badge-verified" href="#src-tsmc-arizona">已核验 · 台积电官方公告 2025-03、Tom's Hardware/TechPowerUp 2026-05 报道</a>——单座先进 12 吋厂的量级就是<strong>百亿到两百亿美元</strong>。这笔钱下去，绝大部分不会立刻变成收入，会先变成 EUV 光刻机、刻蚀机、量测机、洁净室，然后按会计规则一年一年地折旧回来。</p>
+
+      <p>台积电的折旧规则是这样的：机器设备的折旧年限约 <strong>5 年</strong>（部分口径 5-7 年）；折旧占公司营业成本的比例约 <strong>48%</strong><a class="badge badge-verified" href="#src-tsmc-depr">已核验 · TSMC 财务报表附注机器设备折旧年限；48% 由第三方拆解 TSMC 2024 财报得出</a>。换成大白话：<strong>台积电每卖一块钱的服务，大约有五毛钱是在还机器和厂房的账</strong>。这五毛钱是不是每月都要还？是。工厂开满还是没开满，都要还？都要还——这就是「固定成本」的含义。它跟你今年卖了几片晶圆、卖到什么价格没关系。</p>
+
+      <p>存储厂（三星 DS、SK 海力士、美光）与代工厂（台积电、中芯国际）的成本结构差不多是同一套逻辑：折旧+厂房+基础运维占营业成本的一半上下，剩下的一半才是随产量变化的原材料（硅片、光刻胶、特气）和电力。这一半跟着卖多少走，那一半你今天卖零片也要照付。<a class="badge badge-expert" href="#src-cost-mix-expert">专家判断 · 综合行业口径</a></p>
+
+      <h3>2.2 反面：产量低、跌价时，固定成本吞掉利润</h3>
+
+      <p>把这个结构翻译成算术，最简单的一版（当面推）：</p>
+
+      <p>假设一家存储厂满载时一个季度可以出 <strong>1,000</strong> 片晶圆（Q），每片卖 <strong>100</strong> 美元（P）；每片的可变成本（材料+能耗）是 <strong>30</strong> 美元（Z）；每季固定成本（折旧+固定运维）是 <strong>55,000</strong> 美元（F）。这三个数把「固定成本占营收 55%、可变成本占 30%、营业利润率 15%」这套典型存储厂结构描出来。</p>
+
+      <div class="derive">
+        <span class="expr">满载 · 正常价：利润 = (100 - 30) × 1,000 - 55,000 =</span>
+        <span class="res">$15,000</span>
+        <span class="unit">营业利润率 15%（基线）</span>
+      </div>
+
+      <p>现在把两个变量往差的方向推——ASP 跌 10%（P = 90）、利用率降到 60%（Q = 600），其他不变：</p>
+
+      <div class="derive">
+        <span class="expr">砍价 + 半停产：利润 = (90 - 30) × 600 - 55,000 =</span>
+        <span class="res">-$19,000</span>
+        <span class="unit">营业利润率 约 -35%</span>
+      </div>
+
+      <p>看清了：售价只跌了 10%、产量只降了 40%，收入从 10 万美元跌到 5.4 万美元（-46%），但利润<strong>从正 1.5 万美元跳到负 1.9 万美元</strong>。为什么？因为那 55,000 美元的折旧和固定运维没有跟着停产走——工厂开不开都得付。<strong>可变的部分省了一大半（30×600 vs 30×1,000 = 少花 12,000），但没省下来的固定部分（55,000）直接吃掉本来的贡献毛利，还富余得多。</strong></p>
+
+      <p>这就是 2023 年存储三巨头（三星、SK 海力士、美光）的现场：产品价格跌破每片的现金成本（P - Z 甚至变负），越卖越亏；然而折旧照提，不生产也照提——结果是「减产也亏、生产也亏、越生产越亏」，最后三家先后大幅减产（卡 1 讲过）。</p>
+
+      <p>还有一个隐性放大器：会计上，产能利用率跌破某个阈值（一般 65-70%）时，一部分固定制造费用不能进存货、要直接进当期损益（unabsorbed overhead，未吸收制造费用）——2023 年三星、美光都在报表附注里明确列出过这一项<a class="badge badge-verified" href="#src-micron-10k-fy25">已核验 · Micron 2023 年报附注、Samsung 2023 年报附注</a>。数学上等价于 F 在低利用率时突然抬升，跳变更陡。</p>
+
+      <h3>2.3 正面：产量高、涨价时，多卖的钱几乎全变利润</h3>
+
+      <p>反过来，把两个变量往好的方向推——ASP 涨 10%（P = 110）、量同时涨 10%（Q = 1,100）：</p>
+
+      <div class="derive">
+        <span class="expr">涨价 + 加班：利润 = (110 - 30) × 1,100 - 55,000 =</span>
+        <span class="res">$33,000</span>
+        <span class="unit">营业利润率 约 27%</span>
+      </div>
+
+      <p>看清了：收入涨了约 21%（10×11 相对于 10×10），利润<strong>从 15,000 涨到 33,000，涨了 120%</strong>。收入涨 21%、利润涨 120%——这就是<strong>经营杠杆</strong>。同一台机器、同一群工人，因为它们的钱已经<strong>提前</strong>付出去了、每季固定的折旧已经计上，多卖出来的钱除了那点原材料成本几乎全变利润。</p>
+
+      <p>反过来看 2024 年三星 DS 部门：DRAM 涨价、HBM 满载出货、利用率从 2023 年的深度不足恢复到接近满载——同一批车间的营业利润从 -14.87 万亿韩元跳到 +15.09 万亿韩元。这个 30 万亿韩元的翻转不是奇迹，是<strong>经营杠杆的正向兑现</strong>。</p>
+
+      <h3>2.4 亲手拉一下：跳变有多陡取决于「固定成本占比」</h3>
+
+      <p>下面这台计算器把上面的算术开放给你调。<strong>看什么：</strong>①拉「固定成本占比」滑块——占比越高，同样的利用率下降，利润塌得越快，曲线越陡；②拉「ASP 变动」滑块——整条曲线上下平移，涨价整体抬高、跌价整体压低；③固定成本占比 15% 那条参照线是「无厂设计公司（如英伟达、博通）」的典型结构——它比存储厂/代工厂平缓得多，同一份新闻在两类公司身上是两种含义。</p>
+
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-title">经营杠杆计算器 · 利润率随利用率的跳变</span>
+          <span class="viz-sub">教学简化：只考虑一种产品、成本结构不变、无税；「基线营业利润率」固定为 15%，只让你调 f 与 ΔASP</span>
+        </div>
+        <div class="ctl-panel">
+          <div class="ctl">
+            <label for="levF">固定成本占营收比</label>
+            <input type="range" id="levF" min="0.15" max="0.70" step="0.01" value="0.55">
+            <output id="levFOut">55%</output>
+          </div>
+          <div class="ctl">
+            <label for="levDp">ASP 变动</label>
+            <input type="range" id="levDp" min="-0.30" max="0.30" step="0.01" value="0">
+            <output id="levDpOut">0%</output>
+          </div>
+          <div class="ctl">
+            <label for="levU">利用率</label>
+            <input type="range" id="levU" min="0.40" max="1.00" step="0.01" value="1.00">
+            <output id="levUOut">100%</output>
+          </div>
+          <div class="viz-foot" style="margin:0">
+            <button class="btn btn-ghost" type="button" data-preset-lev="storage">存储厂典型（f=55%、跌价 10%、开工 60%）</button>
+            <button class="btn btn-ghost" type="button" data-preset-lev="rebound">周期反转（f=55%、涨价 15%、满载）</button>
+            <button class="btn btn-ghost" type="button" data-preset-lev="fabless">设计公司参照（f=15%、跌价 10%、开工 60%）</button>
+          </div>
+        </div>
+        <div id="levChart" role="img" aria-label="曲线图：营业利润率随利用率变化，两条曲线对比不同固定成本占比下的斜率"></div>
+        <ul id="levLegend"></ul>
+        <div class="viz-readout" id="levReadout" aria-live="polite"></div>
+        <p style="font-size:var(--fs-13);color:var(--muted);margin:8px 0 0">读完这条：<strong>「跌价 10%」这条新闻放在存储厂身上和放在设计公司身上，是两个不同的世界</strong>——同一句新闻要按公司类型分别读。</p>
+      </div>
+
+      <h2>3 · 真实锚点：跳变在报表里长什么样</h2>
+
+      <h3>锚点一 · 美光两年三级跳</h3>
+
+      <table class="tbl">
+        <caption>美光（Micron）连续三个财年，同一家公司三张脸<a class="badge badge-verified" href="#src-micron-10k-fy25">已核验 · Micron FY23 / FY24 / FY25 Q4 8-K 及 10-K</a></caption>
+        <thead>
+          <tr><th>财年</th><th>营收</th><th>GAAP 毛利率</th><th>GAAP 净利润</th><th>标志性事件</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>FY23（截 2023-08）</td><td>$15.54B</td><td class="num">-9.1%</td><td>-$5.83B</td><td>存储行业深亏，三巨头集体减产</td></tr>
+          <tr><td>FY24（截 2024-08）</td><td>$25.11B（+62%）</td><td class="num">22%</td><td>+$0.78B</td><td>价格回升 + 利用率回升，回正</td></tr>
+          <tr><td>FY25（截 2025-08）</td><td>$37.40B（+49%）</td><td class="num">40%</td><td>大幅盈利</td><td>HBM+高容量 DIMM+LP 服务器 DRAM 合计 $10B，前一年 5 倍</td></tr>
+        </tbody>
+      </table>
+
+      <p>两年间毛利率从 -9 点跨到 +40 点，跨了 49 个百分点。管理层在 FY25 10-K 里自己归因（原话大意）：价格改善、制造成本下降、加上前期存货减值转回的正向影响——三个都是本卡讲的机制在同一份报表里的三种表现。<strong>它不是新建了什么工厂，也不是运气爆棚，是同一批车间在跌价周期与涨价周期两端的两个截面</strong>。</p>
+
+      <h3>锚点二 · 三星 DS 部门一年翻转 30 万亿韩元</h3>
+
+      <table class="tbl">
+        <caption>三星电子 DS（半导体）部门 · 2023 全年与 2024 全年<a class="badge badge-verified" href="#src-samsung-fy24">已核验 · Samsung 4Q23/FY23 与 4Q24/FY24 官方公告</a></caption>
+        <thead>
+          <tr><th>年份</th><th>DS 营收</th><th>DS 营业利润</th><th>季度节奏</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2023 全年</td><td>约 66.6 万亿韩元</td><td>-14.87 万亿韩元（亏）</td><td>Q1 -4.58 · Q2 -4.36 · Q3 -3.75 · Q4 -2.18（万亿韩元）</td></tr>
+          <tr><td>2024 全年</td><td>111.07 万亿韩元（+67%）</td><td>+15.09 万亿韩元</td><td>随 DRAM 涨价、HBM 放量、利用率恢复，一路走高</td></tr>
+        </tbody>
+      </table>
+
+      <p>三星这一部门的收入涨了约 67%，利润却从 -14.87 万亿翻到 +15.09 万亿——绝对值上跨了 30 万亿韩元。收入涨 67% 只是让你看到「量+价」两端都在恢复；利润的跳变，是<strong>被 2023 年那些一直照提的折旧、一直照付的固定运维「攒着」，等到 2024 年产量与价格双回升时一次性释放</strong>。</p>
+
+      <h3>锚点三（反面）· 英特尔 Foundry：产能建成、客户还没到</h3>
+
+      <p>Intel Corp. Form 10-K FY2024 里披露：Intel Foundry 部门 2024 全年营业亏损 <strong>134.08 亿美元</strong><a class="badge badge-verified" href="#src-intel-10k-fy24">已核验 · Intel 10-K FY2024（2025-01 提交 SEC）</a>。这笔亏损的性质，跟 2023 年存储厂的深亏不完全一样——它更早一步：<strong>先进产能（18A 等新节点）已经装完、折旧已经开始计提，但客户还没起量，利用率不足以覆盖固定成本</strong>。这是同一个模型的另一种表达：<strong>没有等到需求就先开始计提折旧的产能，第一年必然巨亏</strong>——不因为经营烂，因为经营杠杆先反向地开始工作了。</p>
+
+      <p>三个锚点合起来读：正向兑现（美光 FY23→FY25、三星 DS 2023→2024）与反向堆积（英特尔 Foundry 2024）——同一个成本结构，看你现在处在杠杆哪一端。</p>
+
+      <h2>4 · 投资含义：两个「第一反应问句」</h2>
+
+      <p>骨架卡的用法是<strong>把两个问句刻进反射弧</strong>——以后看到相关新闻，不是先想「涨还是跌」，而是先自动问以下这两个问题，答完再下结论。</p>
+
+      <div class="qa">
+        <p class="q">看到某厂公告涨价 X%，我第一反应问什么？</p>
+        <ul>
+          <li><strong>利用率在哪个位置？</strong>——如果本来在 70% 以下，涨价 + 复产双击，利润会跳；如果本来已经 95% 满载，涨价基本全部变利润，但没有量的乘数。</li>
+          <li><strong>这家公司固定成本占比多高？</strong>——存储厂、代工厂 &gt; 50%，无厂设计公司 &lt; 20%。同样涨 10%，前者利润弹性可能是后者的两三倍。</li>
+          <li><strong>供需拐点在哪、涨价能持续几季？</strong>——卡 1（供给慢，需求快）告诉你：新产能到位要 24-36 个月，红利期长度可估算，不是玄学。</li>
+        </ul>
+      </div>
+
+      <div class="qa">
+        <p class="q">看到毛利率单季跳变 5 个百分点以上，我第一反应查什么？</p>
+        <ul>
+          <li><strong>ASP 变动</strong>——去财报电话会读逐产品线均价，管理层往往会明说 blended ASP 环比涨跌几个百分点。</li>
+          <li><strong>产品结构变化（mix shift）</strong>——高毛利产品占比变了吗？例如美光 HBM 从个位数占比爬到 20%+，即使基础品价格没动，混合毛利率也会跳。</li>
+          <li><strong>利用率变化</strong>——有没有满载/停线？unabsorbed overhead 有没有在附注里出现或消失？</li>
+          <li><strong>一次性影响</strong>——存货减值转回（美光 FY25 就写了这一条）、设备减值、税收调整、诉讼——这一类跳变往往不可持续，要在电话会 Q&amp;A 里主动追问「其中多少是 recurring」。</li>
+        </ul>
+      </div>
+
+      <p>把两个问句变成动作：<strong>看到「涨价」新闻，先自动分三段问；看到「毛利率跳变」新闻，先自动分四类归因</strong>。答完了，才决定它是不是买点、是不是卖点、是不是一次性烟花。</p>
+
+      <h2>5 · 边界：这张卡什么时候不适用</h2>
+
+      <ul>
+        <li><strong>无厂设计公司经营杠杆结构完全不同。</strong>英伟达、博通、AMD、联发科不承担晶圆厂折旧——他们主要的固定成本在研发和人员，杠杆倍数远低于制造/存储。同样的下游涨价，英伟达毛利率变化会显得温和得多；反过来，同样的下游砍单，它们也不会跟着深亏——因为没有那堆一直照提的折旧压着。<strong>卡 11（财务估值手册）</strong>会展开经营杠杆的行业差异。</li>
+        <li><strong>长约锁定的产品价格没有跳变。</strong>HBM、部分定制芯片都是长期供货协议锁死价格，短期毛利率跳变来源主要是<strong>产品结构（mix shift）</strong>和工艺进度（良率爬坡带来单位成本下降），不是现货 ASP。<strong>卡 3（良率 = 成本曲线）</strong>展开单位成本的另一个维度。</li>
+        <li><strong>爬坡早期的「跳变」是另一种性质。</strong>台积电 N3 在 2024 年上半年电话会给的指引是「稀释毛利率 3-4 个百分点」——这是<strong>时间性成本</strong>（利用率还没上来、良率还在爬），不是结构性恶化。同一个模型下、方向是负的、性质完全不同。<strong>模块 2 · 制造 101</strong>已经完整拆过这个例子。</li>
+        <li><strong>会计口径切换会人为改变杠杆读数。</strong>英特尔 2023 年把服务器等设备的折旧年限从 5 年拉长到 8 年，会计上摊销压力人为放缓——毛利率会因此上升，但公司真实的经济现实没变。遇到毛利率的会计口径跳变，先查附注（10-K 里 Property, Plant and Equipment 会计政策段落）<a class="badge badge-verified" href="#src-intel-depr-2023">已核验 · Intel 2023 会计政策变更</a>。</li>
+        <li><strong>跨环节的利润转移。</strong>整条产业链存在一个瓶颈时，瓶颈环节拿走定价权，其他环节的经营杠杆会被压缩甚至消失。<strong>卡 4（出货 = 最短板）</strong>展开跨环节的利润再分配；<strong>卡 11</strong>展开由此引发的估值端 PB→PE 重估。</li>
+      </ul>
+
+      <h2>6 · 练习两道</h2>
+
+      <div class="scenario">
+        <h4>练习一 · 复述题（合上卡片，2-3 分钟讲给完全不懂的人听）</h4>
+        <p>题目：为什么存储厂能一年亏一百多亿美元、下一年赚一百多亿美元？</p>
+        <p class="scenario-hint">提示：不用出现「经营杠杆」这个词。从两句大白话入手就够——「工厂建好后钱花没花完」＋「工厂开不开满都要还机器的账」。三星 DS 部门 2023 和 2024 就是这两句话的最直接现场。</p>
+      </div>
+
+      <div class="scenario">
+        <h4>练习二 · 推演题（用已核验事实做前提，用本卡机制推）</h4>
+        <p>已核验的两件真事：</p>
+        <ul>
+          <li>美光 FY25（截止 2025-08）HBM + 高容量 DIMM + LP 服务器 DRAM 合计收入 <strong>100 亿美元</strong>，是前一年的 5 倍<a class="badge badge-verified" href="#src-micron-fy25-press">已核验 · Micron FY25 Q4 8-K</a>；</li>
+          <li>SK 海力士 <strong>2026 年 HBM 已售罄</strong>；三星与 SK 海力士 <strong>HBM3E 2026 年涨价约 20%</strong><a class="badge badge-verified" href="#src-hbm-2026-sold-out">已核验 · CNBC 2025-10-29、TrendForce 2025-12-24</a>。</li>
+        </ul>
+        <p>请你推：2026 年存储行业里，一线厂（三星 DS、SK 海力士、美光）在<strong>拿到 HBM 长约的部分</strong>和<strong>还留在标准 DDR/NAND 现货市场的部分</strong>，各自的利润弹性会有什么不同？二三线存储厂（南亚科、华邦、长江存储在现货市场那部分）追赶的时间常数是多少？</p>
+        <p class="scenario-hint">提示：先把公司拆成「HBM 长约业务」和「标准品现货业务」两个盘子，各自套一遍卡 2 的固定成本 + 经营杠杆算术；HBM 那部分价格已经锁在长约里、涨价不会立刻传递给一线厂，一线厂的弹性主要在<strong>量</strong>与<strong>产品结构</strong>；标准品那部分是现货，涨价直接放大杠杆。再用卡 1 的「新产能到位 24-36 个月」告诉你二三线厂能不能在 2026 内追上来。<strong>不给标准答案。</strong></p>
+      </div>
+
+      <div class="note">
+        <span class="note-label">这张卡要带走的两个反射弧</span>
+        <ol style="margin:0;padding-left:1.3em">
+          <li>看到<strong>涨价</strong>新闻，先问三个：利用率、固定成本占比、供需拐点；</li>
+          <li>看到<strong>毛利率单季跳变 5pt 以上</strong>，先分四类归因：ASP、mix shift、利用率、一次性。</li>
+        </ol>
+        <p style="margin:8px 0 0">写不出来，回来重看第 4 节。</p>
+      </div>
+
+    </section>
+
+    <div class="src">
+      <strong>卡 2 来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li id="src-micron-fy23-8k"><a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312523000051/a2023q4ex991-pressrelease.htm">Micron Technology FY23 Q4 8-K 财报公告（2023-09，全年营收 $15.54B、GAAP 毛利率 -9.1%、净亏损 $5.83B）</a></li>
+        <li id="src-micron-fy24-8k"><a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312524000023/a2024q4ex991-pressrelease.htm">Micron Technology FY24 Q4 8-K 财报公告（2024-09，全年营收 $25.11B、GAAP 净利润 $0.78B）</a></li>
+        <li id="src-micron-fy25-press"><a href="https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-fourth-quarter-and-full-8">Micron Technology FY25 Q4 及全年业绩公告（2025-09，全年营收 $37.4B、+49%、HBM+HC DIMM+LP DRAM $10B）</a></li>
+        <li id="src-micron-10k-fy25"><a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312525000028/mu-20250828.htm">Micron Technology Form 10-K FY2025（SEC filing，综合毛利率 40%、比较口径 FY24 22%→FY25 40%；附注含存货吸收/unabsorbed overhead 披露）</a></li>
+        <li id="src-samsung-fy24"><a href="https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2024-results">Samsung Electronics 4Q24/FY24 press release（2025-01-31，DS 部门全年营收 111.07 万亿韩元、营业利润 15.09 万亿韩元）</a></li>
+        <li id="src-samsung-fy23"><a href="https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2023-results">Samsung Electronics 4Q23/FY23 press release（2024-01-31，DS 部门季度亏损明细，全年累计约 -14.87 万亿韩元）</a></li>
+        <li id="src-samsung-fy23-alt"><a href="https://www.businesskorea.co.kr/news/articleView.html?idxno=118495">Businesskorea：三星半导体 2023 年营业亏损 14.87 万亿韩元的转述报道</a></li>
+        <li id="src-intel-10k-fy24"><a href="https://www.sec.gov/Archives/edgar/data/0000050863/000005086325000009/intc-20241228.htm">Intel Corp Form 10-K FY2024（SEC filing，2025-01，Intel Foundry 部门 2024 全年营业亏损 $13,408M）</a></li>
+        <li id="src-tsmc-arizona"><a href="https://pr.tsmc.com/english/news/3210">台积电官方公告：亚利桑那总投资扩至 1,650 亿美元（2025-03，6 座 fab + 2 座 CoWoS + 1 研发中心）</a></li>
+        <li id="src-tsmc-az-2026"><a href="https://www.tomshardware.com/tech-industry/semiconductors/tsmc-allocates-usd20-billion-to-arizona-expansion-project-faces-water-and-labor-shortages-complicated-by-visa-rules">Tom's Hardware / TechPowerUp：台积电 2026-05 批准对亚利桑那子公司再注资 $20B</a></li>
+        <li id="src-tsmc-depr"><a href="https://globaloutperformers.substack.com/p/taiwan-semiconductor-manufacturing-701">TSMC 财务报表附注（机器设备折旧年限 5 年，折旧占营业成本约 48%，第三方财报拆解）</a></li>
+        <li id="src-hbm-2026-sold-out"><a href="https://www.cnbc.com/2025/10/29/sk-hynix-q3-profit-revenue-record-.html">CNBC 2025-10-29：SK 海力士 2026 年 HBM 已售罄</a></li>
+        <li id="src-hbm-2026-pricing"><a href="https://www.trendforce.com/news/2025/12/24/news-samsung-sk-hynix-reportedly-plan-20-hbm3e-price-hike-for-2026-as-nvidia-h200-asic-demand-rises/">TrendForce 2025-12-24：三星与 SK 海力士 HBM3E 2026 年涨价约 20%</a></li>
+        <li id="src-intel-depr-2023"><a href="https://www.intc.com/filings-reports/all-sec-filings/content/0000050863-23-000005/0000050863-23-000005.pdf">Intel Q4-2022 财报 8-K（2023-01 提交 SEC）：明写「effective January 2023, we increased the estimated useful life of certain production machinery and equipment from five to eight years」——折旧年限 5→8 年的原始披露</a></li>
+        <li id="src-cost-mix-expert">通行行业口径：晶圆代工厂（TSMC、中芯国际）与存储厂（Samsung DS、SK Hynix、Micron）折旧+厂房+基础运维占营业成本约一半——各卖方研究与公司电话会通行口径（无单一权威链接）</li>
+      </ul>
+      <p style="margin-top:14px;font-size:var(--fs-12)">徽章说明：<a class="badge badge-verified" href="#src-micron-fy25-press">已核验</a> 直接引用一手来源（年报、10-K、8-K、官方公告）或经权威媒体转述的一手数据 · <a class="badge badge-expert" href="#src-cost-mix-expert">专家判断</a> 综合行业口径的判断性表达，无单一权威来源 · <a class="badge badge-assume" href="#src-tsmc-depr">估算</a> 明确的推算，标注方法与年份。</p>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine01.html"><span class="dir">← 上一张</span>卡 1 · 供给慢，需求快</a>
+        <a href="spine03.html" style="text-align:right"><span class="dir">下一张 →</span>卡 3 · 良率 = 成本曲线</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- 经营杠杆计算器 ---------- */
+  (function () {
+    const W = 720, H = 320, PX = 60, PY = 20, PR = 20, PB = 44;
+    const IW = W - PX - PR, IH = H - PY - PB;
+    const uMin = 0.40, uMax = 1.00;
+    const yMin = -0.60, yMax = 0.50;
+
+    /* 计算营业利润率：基线 P=100, Q=1（满载）, F=100·f, VC/unit = 85 - 100·f, 基线利润率 15%
+       变动后：P' = 100(1+Δp), Q' = U, VC = (85-100f)·U, F 不变
+       营业利润 = 100(1+Δp)·U - (85-100f)·U - 100f
+                = 100U·(Δp + 0.15 + f) - 100f
+       营业利润率 = 营业利润 / (100(1+Δp)·U) */
+    function opRate(f, dp, u) {
+      const rev = 100 * (1 + dp) * u;
+      if (rev <= 0) return null;
+      const profit = 100 * u * (dp + 0.15 + f) - 100 * f;
+      return profit / rev;
+    }
+
+    const chart = document.getElementById("levChart");
+    const svg = APP.svgEl("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+      "aria-label": "两条营业利润率对利用率的曲线：一条是用户设定的固定成本占比，一条是设计公司参照（15%）。" });
+    chart.appendChild(svg);
+
+    /* 坐标映射 */
+    const xU = (u) => PX + (u - uMin) / (uMax - uMin) * IW;
+    const yV = (v) => PY + (yMax - v) / (yMax - yMin) * IH;
+
+    /* 网格与坐标轴 */
+    const gridG = APP.svgEl("g", {});
+    svg.appendChild(gridG);
+    /* 横线 -60% ~ 50%，每 10% 一根 */
+    for (let v = -0.60; v <= 0.50 + 1e-9; v += 0.10) {
+      const y = yV(v);
+      const line = APP.svgEl("line", { x1: PX, y1: y, x2: PX + IW, y2: y,
+        stroke: "var(--viz-grid)", "stroke-width": 1 });
+      if (Math.abs(v) < 1e-6) line.setAttribute("stroke", "var(--viz-axis)");
+      gridG.appendChild(line);
+      const lbl = APP.svgEl("text", { x: PX - 8, y: y + 4, "text-anchor": "end", class: "axis-txt" });
+      lbl.textContent = Math.round(v * 100) + "%";
+      gridG.appendChild(lbl);
+    }
+    /* 纵线：40, 50, 60, 70, 80, 90, 100% */
+    for (let u = uMin; u <= uMax + 1e-9; u += 0.10) {
+      const x = xU(u);
+      gridG.appendChild(APP.svgEl("line", { x1: x, y1: PY, x2: x, y2: PY + IH,
+        stroke: "var(--viz-grid)", "stroke-width": 1 }));
+      const lbl = APP.svgEl("text", { x: x, y: PY + IH + 16, "text-anchor": "middle", class: "axis-txt" });
+      lbl.textContent = Math.round(u * 100) + "%";
+      gridG.appendChild(lbl);
+    }
+    /* 轴标题 */
+    const axX = APP.svgEl("text", { x: PX + IW / 2, y: PY + IH + 36, "text-anchor": "middle", class: "axis-txt" });
+    axX.textContent = "利用率 U";
+    svg.appendChild(axX);
+    const axY = APP.svgEl("text", { x: 14, y: PY + IH / 2, "text-anchor": "middle",
+      class: "axis-txt", transform: "rotate(-90 14 " + (PY + IH / 2) + ")" });
+    axY.textContent = "营业利润率";
+    svg.appendChild(axY);
+
+    /* 两条曲线：设计公司参照 f=0.15、用户设定 f */
+    const refPath = APP.svgEl("path", { fill: "none", stroke: "var(--muted)",
+      "stroke-width": 2, "stroke-dasharray": "5 4" });
+    const usrPath = APP.svgEl("path", { fill: "none", stroke: "var(--primary)", "stroke-width": 2.5 });
+    svg.appendChild(refPath);
+    svg.appendChild(usrPath);
+
+    /* 高亮当前点 */
+    const dot = APP.svgEl("circle", { r: 6, fill: "var(--primary)", stroke: "var(--bg)", "stroke-width": 2 });
+    svg.appendChild(dot);
+
+    /* 零线之上区域淡淡的绿色 */
+    const posBand = APP.svgEl("rect", { x: PX, y: PY, width: IW, height: yV(0) - PY,
+      fill: "var(--primary-tint)", opacity: 0.4 });
+    gridG.insertBefore(posBand, gridG.firstChild);
+
+    function buildPath(f, dp) {
+      const pts = [];
+      for (let u = uMin; u <= uMax + 1e-9; u += 0.01) {
+        const v = opRate(f, dp, u);
+        if (v == null) continue;
+        const vv = Math.max(yMin, Math.min(yMax, v));
+        pts.push(xU(u).toFixed(1) + "," + yV(vv).toFixed(1));
+      }
+      return "M " + pts.join(" L ");
+    }
+
+    const levF = document.getElementById("levF"),
+          levDp = document.getElementById("levDp"),
+          levU = document.getElementById("levU");
+    const levFOut = document.getElementById("levFOut"),
+          levDpOut = document.getElementById("levDpOut"),
+          levUOut = document.getElementById("levUOut");
+    const readout = document.getElementById("levReadout");
+    const legend = document.getElementById("levLegend");
+
+    function paint() {
+      const f = parseFloat(levF.value),
+            dp = parseFloat(levDp.value),
+            u = parseFloat(levU.value);
+      levFOut.textContent = Math.round(f * 100) + "%";
+      levDpOut.textContent = (dp >= 0 ? "+" : "") + Math.round(dp * 100) + "%";
+      levUOut.textContent = Math.round(u * 100) + "%";
+
+      usrPath.setAttribute("d", buildPath(f, dp));
+      refPath.setAttribute("d", buildPath(0.15, dp));
+
+      const cv = opRate(f, dp, u);
+      const cvClamp = Math.max(yMin, Math.min(yMax, cv));
+      dot.setAttribute("cx", xU(u));
+      dot.setAttribute("cy", yV(cvClamp));
+
+      const base = opRate(f, 0, 1.0);
+      const ref = opRate(0.15, dp, u);
+      const pct = (v) => (v * 100).toFixed(1) + "%";
+
+      let flavor = "";
+      if (cv < -0.15) flavor = "深亏区——固定成本吞掉全部贡献毛利，越生产越亏。";
+      else if (cv < 0) flavor = "薄亏——已经不能覆盖固定成本，减产又加深亏损。";
+      else if (cv < 0.10) flavor = "薄利——刚够覆盖固定成本，杠杆待启动。";
+      else if (cv < 0.25) flavor = "正常盈利区间——接近基线。";
+      else flavor = "超额盈利区——杠杆被完全启动，多卖的钱几乎全变利润。";
+
+      readout.innerHTML = "你调的公司（固定成本占比 " + Math.round(f * 100) + "%）：<b>营业利润率 " +
+        pct(cv) + "</b>（基线满载正常价 " + pct(base) + "）。"
+        + "<br>对照：同样 ASP 变动 " + (dp >= 0 ? "+" : "") + Math.round(dp * 100) + "%、利用率 "
+        + Math.round(u * 100) + "% 下，无厂设计公司（固定成本占比 15%）营业利润率 <b>" + pct(ref) + "</b>。"
+        + "<br><span" + (cv < 0 ? ' class="warn"' : "") + ">" + flavor + "</span>";
+
+      legend.innerHTML = '<li><span class="key" style="background:var(--primary)"></span>你设定的公司（f=' + Math.round(f * 100) + '%）</li>' +
+        '<li><span class="key" style="background:var(--muted)"></span>无厂设计公司参照（f=15%）</li>' +
+        '<li><span class="key" style="background:var(--primary-tint);height:8px;border-radius:2px"></span>盈利区</li>';
+    }
+
+    [levF, levDp, levU].forEach((el) => el.addEventListener("input", paint));
+
+    document.querySelectorAll("[data-preset-lev]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const k = btn.dataset.presetLev;
+        if (k === "storage") { levF.value = 0.55; levDp.value = -0.10; levU.value = 0.60; }
+        else if (k === "rebound") { levF.value = 0.55; levDp.value = 0.15; levU.value = 1.00; }
+        else if (k === "fabless") { levF.value = 0.15; levDp.value = -0.10; levU.value = 0.60; }
+        paint();
+      });
+    });
+
+    paint();
+  })();
+
+});
+</script>
+</body>
+</html>

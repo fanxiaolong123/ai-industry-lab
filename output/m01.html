@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模块 1 · AI 为什么会变成硬件和制造业问题</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="m01">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">模块 1 · AI 为什么会变成硬件和制造业问题</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">第一层 · 零基础体感 · 模块 1 / 14</p>
+      <h1>AI 为什么会变成硬件和制造业问题</h1>
+      <p class="core-q"><b>核心问题：</b>AI 不是软件吗？为什么投资人最后天天盯的是 GPU、HBM、CoWoS、存储、电力和液冷？</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">学完这个模块，你要能独立回答（现在答不上来是正常的）</span>
+      <ul style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>为什么一次 AI 对话不是「软件边际成本接近零」，而是会消耗真实算力、内存带宽和电力？</li>
+        <li>如果微软、Alphabet、亚马逊、Meta 同时上调资本开支，你要沿哪条链判断谁先收到订单、谁后确认收入？</li>
+        <li>新闻说「推理成本下降 80%」，为什么不能直接判定 GPU 需求利空？你要拆哪两个问题？</li>
+      </ul>
+    </div>
+
+    <ul class="concepts" aria-label="本模块概念清单">
+      <li>token</li><li>训练</li><li>推理</li><li>GPU</li><li>HBM</li><li>内存墙</li><li>数据中心</li><li>云厂商 CapEx</li><li>AI cloud</li><li>agent 对推理的放大</li>
+    </ul>
+
+    <div class="tabs" data-tabs>
+      <div class="tablist" role="tablist" aria-label="模块内容">
+        <button role="tab" id="tab-a" aria-controls="panel-a" aria-selected="true">本质</button>
+        <button role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false">怎么判断</button>
+        <button role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false">练习</button>
+      </div>
+
+      <!-- ==================== 本质 ==================== -->
+      <section role="tabpanel" id="panel-a" aria-labelledby="tab-a" class="prose">
+
+        <h2>1. token 不是文字单位，是一张小额电费单</h2>
+        <p>你在聊天框里发一句话，模型不会把它当成「一整段文字」处理，而是先切成 <strong>token</strong>（词元）。OpenAI 给的英文经验值是：1 个 token 约等于 4 个字符、约 3/4 个英文词；中文会因分词器不同而变化<a class="badge badge-verified" href="https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them" target="_blank" rel="noopener">已核验 · OpenAI Help</a>。投资上不必记住精确分词，只要记住：<strong>token 是 AI 服务的计量单位</strong>。</p>
+        <p>为什么一个文字单位会变成制造业问题？因为模型每生成一个 token，都要在 GPU 上做一次大规模矩阵运算：把当前上下文读出来、把参数搬进运算单元、算出下一个词的概率，再吐出一个 token。答案越长、上下文越长、同时在线用户越多，token 数就越多，算力、电力、内存带宽一起被消耗。</p>
+        <div class="derive">
+          <span class="expr">100 万用户 × 每天 20 次任务 × 每次 2 万 token =</span>
+          <span class="res">4,000 亿 token / 天</span>
+          <span class="unit">（教学情景，用来感受数量级）</span>
+        </div>
+        <p>这个推导的重点不是 4,000 亿这个假设数，而是方向：<strong>当 AI 从偶尔聊天变成日常工作流，需求单位就从「用户数」变成「token 流量」</strong>。所以你以后看到「AI 应用日活上涨」或「agent 调用量上涨」，第一反应不是看下载量，而是问：token 流量有没有真的涨？谁在为这些 token 买算力？</p>
+
+        <h2>2. 训练和推理：一个像建厂，一个像工厂开工</h2>
+        <p>AI 的算力需求分两种，混在一起会误判周期。</p>
+        <ul>
+          <li><strong>训练</strong>：把海量数据喂给模型，反复调整参数。它像建一座工厂：一次性、资本密集、项目制，下一代模型启动时需求冲一波，结束后这批任务就完成了。</li>
+          <li><strong>推理</strong>：模型上线后，每一次回答、搜索、写代码、生成图片都要跑。它像工厂每天开工：用户越多、任务越复杂、上下文越长，产量就越大，没有自然终点。</li>
+        </ul>
+        <p>这就是为什么「某实验室暂停训练下一代模型」不等于「AI 算力需求见顶」。它可能只影响训练脉冲，但推理这台工厂仍在开工。更关键的是 <strong>agent</strong>：一个 agent 任务不是一次模型调用，而是拆任务、查资料、写代码、自查、重试的多轮调用。单任务 token 消耗可以比单轮对话高一个数量级以上<a class="badge badge-expert" href="#src-agent-token-multiplier">专家判断 · 由工作流机制推导</a>。这件事是模块 10 判断「效率提升到底是利空还是利好」的入口。</p>
+
+        <h2>3. 为什么先变成 GPU 生意：矩阵乘法偏爱并行</h2>
+        <p>CPU 像少数几个很强的通用核心，擅长处理复杂分支；GPU 像成千上万个简单算术单元，擅长同时做大量相似计算。神经网络的核心运算是矩阵乘法，天然能拆成海量并行乘加，所以 AI 训练和推理首先吃 GPU。</p>
+        <p>英伟达 H100 的 GH100 GPU 有 800 亿晶体管、裸片面积 814 平方毫米<a class="badge badge-verified" href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/" target="_blank" rel="noopener">已核验 · NVIDIA Hopper</a>。这个数字在模块 2 会继续用：面积越大，制造良率越难，成本曲线越陡。你现在只要先建立直觉：AI 不是「多买几台普通服务器」的问题，而是要把几百亿美元的资本开支压到最先进的 GPU、HBM、封装、电力系统上。</p>
+        <p>还有一层护城河叫 <strong>CUDA</strong>：硬件之外，开发者工具、库、框架和调试经验都围绕英伟达生态展开。换芯片不是只换一块卡，而是迁移软件栈、性能调优和运维经验<a class="badge badge-expert" href="#src-cuda-moat">专家判断 · 生态切换成本</a>。所以英伟达数据中心收入不只是「芯片销量」，也是生态租金的报表化。</p>
+
+        <h2>4. 内存墙：很多时候不是算不动，是喂不饱</h2>
+        <p>GPU 算得再快，参数和上下文也要先从内存搬进运算单元。搬运速度跟不上，运算单元就空转等数据，这就是「内存墙」。推理尤其容易撞墙：每生成一个 token，都要读取上下文缓存（KV cache）；上下文越长、并发越高，内存带宽和容量越重要。</p>
+        <p>HBM（High Bandwidth Memory，高带宽内存）的作用，就是把多层 DRAM 叠起来，贴近 GPU，用超宽通道并行供数。H200 这一代把内存提升到 141GB HBM3e、带宽 4.8TB/s，官方说容量接近 H100 的两倍、带宽约 1.4 倍<a class="badge badge-verified" href="https://www.nvidia.com/en-us/data-center/h200/" target="_blank" rel="noopener">已核验 · NVIDIA H200</a>。为什么 GPU 升级要同时升级 HBM？因为只加算力不加供数速度，就像给工厂加机器但不给原料，机器只能空转。</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">内存墙 · 供数速度决定算力利用率</span>
+            <span class="viz-sub">看什么：同一块 GPU，换的只是「喂数据的车道」——亮起的运算单元比例就是利用率。车道数与比例为教学示意。</span>
+          </div>
+          <div id="memWall"></div>
+          <div class="viz-foot" role="group" aria-label="内存类型切换">
+            <button class="btn" type="button" id="mwNarrow" aria-pressed="true">普通显存 · 少量车道</button>
+            <button class="btn btn-ghost" type="button" id="mwHbm" aria-pressed="false">HBM · 宽车道并行</button>
+          </div>
+          <div class="viz-readout" id="mwReadout" aria-live="polite"></div>
+        </div>
+        <p>这张图是教学简化，但机制是真的：<strong>GPU 需求和 HBM 需求不是两条独立曲线，而是同一张 AI 卡的两面</strong>。模块 3 会拆 GPU、HBM、CoWoS 怎么被封装到一起；模块 7 会讲为什么 HBM 会把普通 DRAM 周期改写成更尖锐的供需周期。</p>
+
+        <h2>5. 云厂商 CapEx：软件需求变成制造业订单的那一跳</h2>
+        <p>模型公司大多不自己从零建完整数据中心，而是向云厂商买算力或与云厂商绑定。投资上真正要盯的那一跳，是云厂商把「客户要用 AI」翻译成 <strong>CapEx</strong>（资本开支）：买地、建数据中心、采购 GPU、网络、电力和散热设备。</p>
+        <ul>
+          <li>模型公司拿到融资和客户需求 → 向云厂商签算力合同；</li>
+          <li>云厂商把需求预期变成<strong>资本开支（CapEx）</strong>决策——批钱、买地、建数据中心；</li>
+          <li>CapEx 变成给英伟达（GPU）、存储厂（HBM/SSD）、光模块厂、电力设备厂的<strong>真实采购订单</strong>；</li>
+          <li>这些厂商再向上游的代工厂、设备商、材料商下单。</li>
+        </ul>
+        <p>几个已核验的锚能说明这不是口号。微软在 2025 年 1 月公开说，FY2025 计划投入约 800 亿美元建设 AI-enabled data centers<a class="badge badge-verified" href="https://blogs.microsoft.com/on-the-issues/2025/01/03/the-golden-opportunity-for-american-ai/" target="_blank" rel="noopener">已核验 · Microsoft 2025-01</a>；Alphabet 在 2025 年报后给出 2026 年 CapEx 1750-1850 亿美元区间<a class="badge badge-verified" href="https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm" target="_blank" rel="noopener">已核验 · Alphabet 2025Q4</a>；亚马逊 2025 年现金资本开支 1,283 亿美元，并在年报里说 2026 年约 2,000 亿美元 CapEx 不是凭感觉投，已有客户承诺支撑相当一部分<a class="badge badge-verified" href="https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm" target="_blank" rel="noopener">已核验 · Amazon 2025 10-K</a>；Meta 2025 年 CapEx（含融资租赁本金）为 722.2 亿美元<a class="badge badge-verified" href="https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Fourth-Quarter-and-Full-Year-2025-Results/default.aspx" target="_blank" rel="noopener">已核验 · Meta FY2025</a>。</p>
+        <p>这些钱不是直接等于英伟达收入，但它们决定了订单池。订单真正落地后，会在英伟达数据中心分部变成收入：FY2024 数据中心收入 475 亿美元（+217%）<a class="badge badge-verified" href="https://investor.nvidia.com/news/press-release-details/2024/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2024/" target="_blank" rel="noopener">已核验 · NVIDIA FY2024</a>，FY2026 做到 1,937 亿美元<a class="badge badge-verified" href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026" target="_blank" rel="noopener">已核验 · NVIDIA FY2026</a>。这条从 CapEx 到收入的链，是本模块最重要的投资动作。</p>
+
+        <h2>6. 一张 AI 卡不是一块芯片，是一整套物理约束</h2>
+        <p>最后把镜头拉远。你以为的「买一张 AI 卡」，物理上是一整套系统：</p>
+        <ul>
+          <li><strong>卡</strong> = GPU 芯片 + HBM 内存 + 先进封装把它们缝合在一起 + 基板；</li>
+          <li><strong>机柜</strong> = 几十张卡 + 高速互联（光模块）+ 供电 + 散热（风冷/液冷）；</li>
+          <li><strong>数据中心</strong> = 几万个机柜 + 电网接入 + 冷却系统 + 网络。</li>
+        </ul>
+        <p>每一环都是物理产能：GPU 要先进制程，HBM 要堆叠良率，CoWoS 要先进封装，光模块要 InP 和 DSP，电力要变压器和并网。需求可以一夜爆发，供给扩出来通常要几个季度到几年。于是 AI 从软件故事变成制造业故事：<strong>真正限制收入的，不是用户想不想用，而是哪块物理短板先卡住</strong>。这句话直接连接模块 3 的封装系统、模块 4 的行业周期、模块 9 的瓶颈铁律。</p>
+
+        <h2>把传导链走一遍</h2>
+        <p>下面这条链就是「AI 软件需求 → 制造业订单」的完整路径。逐层点开，看每层是谁、需求长什么样、用什么信号验证。</p>
+
+        <div class="chainmap" id="chainmap">
+          <div class="chainmap-item">
+            <button class="chainmap-btn" data-reveal data-reveal-group="chain" aria-controls="cm1" aria-expanded="false">
+              <span class="t">① 模型公司</span><span class="d">OpenAI · Anthropic · 谷歌 DeepMind 等</span>
+            </button>
+            <div class="chainmap-panel" id="cm1">
+              <dl>
+                <dt>需求表现</dt><dd>训练下一代模型 + 服务爆发的推理用量；自己大多不建厂，向云租算力。</dd>
+                <dt>验证信号</dt><dd>融资金额与估值、与云厂商的算力合同、token 价格调整、用量披露。</dd>
+                <dt>信号强度</dt><dd>最前置，但最软——融资传闻和意向合同都可能变卦。</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="chainmap-item">
+            <button class="chainmap-btn" data-reveal data-reveal-group="chain" aria-controls="cm2" aria-expanded="false">
+              <span class="t">② 云厂商</span><span class="d">微软 · 谷歌 · 亚马逊 · 甲骨文 · 阿里腾讯等</span>
+            </button>
+            <div class="chainmap-panel" id="cm2">
+              <dl>
+                <dt>需求表现</dt><dd>把算力需求变成资本开支：买地、建数据中心、下采购订单。</dd>
+                <dt>验证信号</dt><dd>财报里的 CapEx 实际数与下季指引、管理层电话会措辞（激进还是克制）、发债动作。</dd>
+                <dt>信号强度</dt><dd><strong>整条链最硬的前瞻信号</strong>：已发生的 CapEx > 指引 > 表态。云厂商开始靠发债支撑 CapEx，是需要警惕的转折信号（模块 10 详讲）。</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="chainmap-item">
+            <button class="chainmap-btn" data-reveal data-reveal-group="chain" aria-controls="cm3" aria-expanded="false">
+              <span class="t">③ 芯片设计商</span><span class="d">英伟达 · AMD · 博通（定制芯片）等</span>
+            </button>
+            <div class="chainmap-panel" id="cm3">
+              <dl>
+                <dt>需求表现</dt><dd>拿到云厂商订单，向代工厂和存储厂下单；自己不生产（fabless 模式）。</dd>
+                <dt>验证信号</dt><dd>数据中心业务收入、在手订单与交期（lead time）、大客户预付款。</dd>
+                <dt>信号强度</dt><dd>硬（已确认收入），但市场盯得最紧、定价最充分，往往缺少认知差。</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="chainmap-item">
+            <button class="chainmap-btn" data-reveal data-reveal-group="chain" aria-controls="cm4" aria-expanded="false">
+              <span class="t">④ 制造与封装</span><span class="d">台积电（代工 + CoWoS 先进封装）· 存储三强（HBM）</span>
+            </button>
+            <div class="chainmap-panel" id="cm4">
+              <dl>
+                <dt>需求表现</dt><dd>产能被预订，扩产决策启动；HBM、先进封装成为整卡出货的实际闸门。</dd>
+                <dt>验证信号</dt><dd>产能利用率、扩产公告、长期协议（LTA）签订、大客户锁产能的预付。</dd>
+                <dt>信号强度</dt><dd>硬，且因为「扩产以年计」，紧缺状态可以持续很久——认知差开始出现的地方。</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="chainmap-item">
+            <button class="chainmap-btn" data-reveal data-reveal-group="chain" aria-controls="cm5" aria-expanded="false">
+              <span class="t">⑤ 设备与材料</span><span class="d">ASML · 应用材料 · 泛林 · KLA · 基板与特种材料商</span>
+            </button>
+            <div class="chainmap-panel" id="cm5">
+              <dl>
+                <dt>需求表现</dt><dd>制造端扩产必须先买设备、订材料——设备订单是产能扩张的最早可见动作。</dd>
+                <dt>验证信号</dt><dd>设备商的订单与出货、交期变化；材料商的扩产表态。</dd>
+                <dt>信号强度</dt><dd>领先指标（下游还没放量，设备先动），但离终端需求隔了四跳，被砍单时也最先受伤。</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="chainmap-item">
+            <button class="chainmap-btn" data-reveal data-reveal-group="chain" aria-controls="cm6" aria-expanded="false">
+              <span class="t">⑥ 电力与散热</span><span class="d">电力设备 · 液冷 · 数据中心基建</span>
+            </button>
+            <div class="chainmap-panel" id="cm6">
+              <dl>
+                <dt>需求表现</dt><dd>算力密度上升 → 单机柜功耗和发热暴涨 → 电网接入和液冷从「配套」变成「约束」。</dd>
+                <dt>验证信号</dt><dd>电网并网排队时长、电力设备订单、液冷渗透率。</dd>
+                <dt>信号强度</dt><dd>最滞后的一波，但一旦成为约束，持续时间最长（电网建设以五年、十年计）。模块 8 详讲。</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+
+        <div class="note">
+          <span class="note-label">不要学太深</span>
+          <p>这个模块不需要你懂深度学习的数学、不需要会写 CUDA 代码、不需要读模型架构论文。你只需要建立三个物理直觉：<strong>token 消耗 = 算力消耗</strong>、<strong>推理是复利式需求</strong>、<strong>软件需求经过云厂商 CapEx 变成制造业订单</strong>。够了。</p>
+        </div>
+      </section>
+
+      <!-- ==================== 怎么判断 ==================== -->
+      <section role="tabpanel" id="panel-b" aria-labelledby="tab-b" class="prose" hidden>
+
+        <p style="font-size:var(--fs-15);color:var(--muted)">这一页只交付三件真实存在的工具。每件都按同一结构给齐：<strong>来源 → 为什么成立 → 真实案例 → 怎么操作 → 失效边界</strong>。找不到出处、无法用真实案例验证的「规则」，不会出现在这里。</p>
+
+        <h2>工具一：云厂商资本开支——需求链上最硬的前瞻数字</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>微软、Alphabet、亚马逊、Meta 每季在财报披露资本开支实际数、在电话会给指引——这是管理层对投资人的正式承诺口径，全市场把四家合计当作 AI 硬件需求的第一读数。量级已经进入「每家公司数百亿到上千亿美元」：微软 FY2025 约 800 亿美元 AI 数据中心投资计划，Alphabet 2026 CapEx 指引 1750-1850 亿美元，Amazon 2025 现金资本开支 1,283 亿美元且 2026 约 2,000 亿美元 CapEx 有客户承诺支撑，Meta 2025 CapEx 722.2 亿美元<a class="badge badge-verified" href="#src-hyperscaler-capex">已核验 · 公司公告/10-K</a>。</div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 5 节的那一跳：模型公司的需求经云厂商变成采购订单。资本开支是批了预算的真金白银，硬度只低于「已确认收入」，且领先硬件厂收入一到两个季度——先批钱、再下单、再交付确认。</div></div>
+          <div class="chain-row"><b>案例</b><div>ChatGPT 2022 年 11 月上线后，四家资本开支从 2023 年起逐年跳升到 2025 年计划的 3,000 亿以上；同一时间，英伟达数据中心收入从 2023 财年的 150 亿美元涨到 2024 财年的 475 亿（+217%），2026 财年全年 1,937 亿<a class="badge badge-verified" href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581024000028/q4fy24pr.htm" target="_blank" rel="noopener">已核验 · 公司业绩公告</a>——第②跳批的钱，变成第③跳确认的收入，传导链的完整现场。</div></div>
+          <div class="chain-row"><b>操作</b><div>每季读四家财报的资本开支实际数与指引；听电话会措辞（「加速投入」还是「保持纪律」）；四家加总看同比增速——<strong>增速拐点比绝对值更早报警</strong>，模块 10 的泡沫观察就建在这上面。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①口径含非 AI 开支（物流仓库、办公楼、常规服务器），读附注拆分；②指引会下调，行业转冷时兑现率系统性下降；③钱批了不等于货到了，交付瓶颈会让资本开支与硬件收入错位几个季度；④当开支越来越靠发债而非经营现金流支撑，这个指标的含金量本身在变化——2026 年初已有对四家现金流承压的公开讨论<a class="badge badge-verified" href="#src-cnbc-cashflow">已核验 · CNBC 2026-02</a>，模块 10 展开。</div></div>
+        </div>
+
+        <h2>工具二：英伟达数据中心收入——订单落地的温度计</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>英伟达季报的分部披露（数据中心收入），公开可审计，是全市场公认的 AI 硬件需求落地读数<a class="badge badge-verified" href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026" target="_blank" rel="noopener">已核验 · 公司 8-K 业绩公告</a>。</div></div>
+          <div class="chain-row"><b>机制</b><div>传导链第③跳的「已确认收入」——硬度最高的一级。云厂商说要花钱是承诺，英伟达收到钱是事实。叙事可以吹，收入曲线不会陪你演。</div></div>
+          <div class="chain-row"><b>案例</b><div>2023 财年 150 亿 → 2024 财年 475 亿（+217%）→ 2026 财年全年 1,937 亿美元<a class="badge badge-verified" href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026" target="_blank" rel="noopener">已核验</a>。任何「AI 到底是不是真需求」的争论，先放到这条曲线前面检验，再谈观点。</div></div>
+          <div class="chain-row"><b>操作</b><div>每季业绩公告（环比比同比灵敏）；配毛利率一起读（量价齐升还是以价换量）；与工具一的云厂商资本开支互为验证——钱批了没花、花了没确认，都能对出来。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①单一公司不等于行业：云厂商自研芯片的量不经过它，份额变化会让它低估行业总量；②出口管制等一次性事件会打断曲线；③它是落地读数，拐点滞后于订单层信号——交期、指引先动（模块 2 的交期工具）。</div></div>
+        </div>
+
+        <h2>工具三：杰文斯检验——「成本暴降」新闻的分析程序</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>经济学的杰文斯悖论：19 世纪的观察——蒸汽机效率提升后，煤炭总消耗不降反升。2025 年 1 月 DeepSeek 冲击当晚，微软 CEO 纳德拉公开引用：「杰文斯悖论又应验了：AI 越高效、越易得，用量会暴涨成我们买不够的商品」<a class="badge badge-verified" href="https://x.com/satyanadella/status/1883753899255046301" target="_blank" rel="noopener">已核验 · 2025-01-27 原帖与多家报道</a>——自此成为业内分析效率冲击的通用框架。</div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 1-2 节：AI 的账按 token 算。单位成本降 → 原先算不过账的应用（长上下文、agent、视频）变得可行 → 总用量上升；当需求弹性大于 1，总开支不降反升。必须与份额问题分开：效率来自算法，硬件格局不变；来自自研芯片，动的才是份额。</div></div>
+          <div class="chain-row"><b>案例</b><div>练习页「决策复盘一」就是这个工具的实战现场（DeepSeek 日，英伟达单日跌 17%）——先自己做，再回来对照。</div></div>
+          <div class="chain-row"><b>操作</b><div>遇到效率新闻拆三问：①来源（算法优化 / 硬件代际 / 自研芯片）；②弹性（被价格压住没做的应用清单有多长）；③份额（谁被替代）。三问答完，再谈利多利空。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①弹性不总是大于 1——饱和场景里效率提升就只是省钱；②这个工具管方向不管时点，市场可以按恐慌定价很久；③「成本降 95%」类宣称先质疑口径（只算电费还是含折旧？训练还是推理？）——DeepSeek 的 560 万美元训练成本口径当时就被广泛质疑<a class="badge badge-verified" href="#src-ds-cost-doubt">已核验 · 媒体报道</a>。</div></div>
+        </div>
+
+        <h2>操作清单：拆一条「AI 需求」新闻</h2>
+        <p style="font-size:var(--fs-14);color:var(--muted)">以下每项由本页机制直接推导，是三件工具的落地检查位，不是独立工具。</p>
+        <ul class="checklist">
+          <li><label><input type="checkbox"><span><b>它在传导链第几跳？离真实订单隔几层？</b>（依据：本质页传导链——隔得越远越软）</span></label></li>
+          <li><label><input type="checkbox"><span><b>钱到哪一步了：意向 / 指引 / 已发生 / 已确认收入？</b>（依据：工具一与工具二的硬度阶梯）</span></label></li>
+          <li><label><input type="checkbox"><span><b>是效率新闻？先过杰文斯三问再下结论。</b>（依据：工具三）</span></label></li>
+          <li><label><input type="checkbox"><span><b>是建数据中心公告？问钱、电、订单、客户、合同五件事。</b>（依据：本质页第 5-6 节，由机制推导；练习页迁移一专练）</span></label></li>
+          <li><label><input type="checkbox"><span><b>这条新闻到收入体现要隔几个季度？</b>别把远期故事当当季利润（依据：工具一失效③）</span></label></li>
+        </ul>
+      </section>
+
+      <!-- ==================== 练习 ==================== -->
+      <section role="tabpanel" id="panel-c" aria-labelledby="tab-c" class="prose" hidden>
+
+        <h2>决策复盘一 · 2025-01-27：DeepSeek 时刻，英伟达一天跌掉 5,890 亿美元</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2025-01-27 · 事件已核验</p>
+          <h4>当天你看到的信息：中国公司 DeepSeek 发布 R1 模型，性能对标前沿、宣称训练只花了 560 万美元。英伟达单日暴跌 17%，市值蒸发 5,890 亿美元——美股历史最大单日损失；戴尔、甲骨文等算力股齐跌。全市场叙事：「算力需求要崩了。」<a class="badge badge-verified" href="#src-deepseek-crash">已核验 · CNBC/Forbes 2025-01-27</a></h4>
+          <p class="case-note">你持有算力相关仓位。先选，再看拆解。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>恐慌卖出</button>
+            <button type="button" data-pick>持有不动</button>
+            <button type="button" data-pick>视为买点</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>来源三问</b><div>成本下降来自<strong>算法与工程优化</strong>，不是自研芯片——没有人直接抢英伟达的份额；且「560 万美元」口径当时就被广泛质疑（大概率只算了最后一轮训练的租卡费）<a class="badge badge-verified" href="#src-ds-cost-doubt">已核验</a>。质疑归质疑：效率大幅提升这件事本身是真的。</div></div>
+              <div class="chain-row"><b>量的反应</b><div>杰文斯检验：推理便宜一个数量级 → agent、长上下文这些原先算不过账的应用可行性大增 → token 总量预期上修。微软 CEO 纳德拉当晚原话引用杰文斯悖论「用量将暴涨」<a class="badge badge-verified" href="https://x.com/satyanadella/status/1883753899255046301" target="_blank" rel="noopener">已核验 · 2025-01-27 原帖</a>。</div></div>
+              <div class="chain-row"><b>真正的未知</b><div>前沿实验室的<strong>训练</strong>军备竞赛会不会收缩——这一点当天无法证伪，是这次下跌里真实的不确定性。诚实的做法是把它列为「待验证项」，盯两个信号：云厂商下一季资本开支指引、模型公司的融资节奏。</div></div>
+              <div class="chain-row"><b>后来的事实</b><div>不到一个月，股价基本收复全部跌幅<a class="badge badge-verified" href="https://sherwood.news/markets/nvidia-has-almost-recovered-all-of-its-deepseek-losses/" target="_blank" rel="noopener">已核验 · 2025-02 报道</a>；黄仁勋 2025-02-21 公开回应「投资者理解反了」<a class="badge badge-verified" href="https://fortune.com/2025/02/21/jensen-huang-deepseek-stock-sell-nvidia-value/" target="_blank" rel="noopener">已核验</a>；四大云厂商 2025 年资本开支计划 3,000 亿美元以上照常推进<a class="badge badge-verified" href="#src-hyperscaler-capex">已核验</a>；英伟达数据中心收入 2026 财年做到 1,937 亿美元<a class="badge badge-verified" href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026" target="_blank" rel="noopener">已核验</a>。「训练收缩」的担忧被后续资本开支数据逐季证伪。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>这个复盘受益于后视镜。当天「持有/加仓」的正确性来自过程（拆出已知与未知、定好验证信号），不来自结果——如果前沿训练真的收缩了，同样的过程会引导你在两个季度后止损，那也是好决策。<strong>单日 -17% 是市场对复杂问题的粗暴投票，不是分析；但它也真实提醒你：仓位大到扛不住 17% 的人，没有资格用「长期正确」安慰自己</strong>（模块 14 的仓位设计处理这个）。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>迁移题（模块里没有现成答案，用机制自己推）</h2>
+
+        <article class="scenario">
+          <h4>迁移一 · 五问清单拆公告（虚构演练）</h4>
+          <p>虚构新闻：「某房地产公司公告：拟转型智算产业，计划总投资 200 亿元，在西部某市建设万卡级 AI 数据中心，打造区域算力枢纽。」这条新闻对上游硬件订单的拉动有多大？</p>
+          <p class="scenario-hint">用「怎么判断」操作清单里的五问逐条过。</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="sc1" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="sc1">
+            <div class="chain">
+              <div class="chain-row"><b>钱</b><div>「计划总投资」四个字：钱没到位。房企现金流紧张的背景下，大概率靠画饼撬动地方资源。</div></div>
+              <div class="chain-row"><b>电与地</b><div>公告没提并网协议。万卡级数据中心的电力接入需要电网排队，没有它一切免谈。</div></div>
+              <div class="chain-row"><b>订单</b><div>没有采购对象、没有下单金额——上游一分钱订单都还没有。</div></div>
+              <div class="chain-row"><b>客户</b><div>「区域算力枢纽」没有指名客户。建成后租给谁？没有答案。</div></div>
+              <div class="chain-row"><b>结论</b><div>五问全部含糊，对上游订单的拉动按零处理；这更像借热点做市值管理。<strong>反过来记住真公告长什么样：有金额、有交付时间、有采购对象、有违约条款。</strong></div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario">
+          <h4>迁移二 · 「某模型公司与云厂商签订多年算力合同，金额百亿美元级」</h4>
+          <p>这条新闻你怎么定级？用什么公开信号验证它的成色？</p>
+          <p class="scenario-hint">提示：传导链第几跳？硬度阶梯放在哪一级？谁的报表会先出现痕迹？</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="sc2" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="sc2">
+            <div class="chain">
+              <div class="chain-row"><b>定级</b><div>传导链第①→②跳之间的合同层：比「战略合作」硬（有金额有年限），比资本开支软（兑现依赖模型公司未来的付款能力，而模型公司普遍靠融资输血）。</div></div>
+              <div class="chain-row"><b>验证</b><div>看云厂商这一侧：下一季资本开支指引是否上调、对应区域有没有数据中心开工与设备订单；云厂商财报的「剩余履约义务」科目会先出现痕迹。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>供应商入股客户、算力抵股权这类结构会让「合同额」的含金量打折——钱在圈子里转一圈又回来了。市场从 2025 年起对这类循环结构多有质疑<a class="badge badge-expert" href="#src-circular-deals">专家判断 · 公开讨论</a>；遇到时把「合同额」降一级处理，模块 13 教你去哪核实关联条款。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <h2>自测（拆得出来才算会）</h2>
+
+        <div class="quiz" data-quiz data-explain="训练像建厂，是一次性资本投入；推理像工厂开工生产，随用户量和使用深度持续增长。推理才是复利式、没有终点的需求。">
+          <p class="quiz-q">1. 关于训练和推理，哪个说法是对的？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q1"><span>训练是持续性需求，推理是一次性需求</span></label>
+            <label><input type="radio" name="q1" data-correct="1"><span>训练是一次性资本投入，推理随使用量持续增长</span></label>
+            <label><input type="radio" name="q1"><span>两者都是一次性需求，模型练完需求就结束</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="内存墙指数据搬运速度跟不上运算速度，GPU 空转等数据。HBM 用堆叠和超宽通道提高喂数据的带宽，这是它存在的物理理由。">
+          <p class="quiz-q">2. 「内存墙」说的是什么？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q2"><span>内存价格太贵，挡住了数据中心扩建</span></label>
+            <label><input type="radio" name="q2"><span>内存容量不够，模型存不下</span></label>
+            <label><input type="radio" name="q2" data-correct="1"><span>数据从内存搬进运算单元的速度跟不上算力，GPU 在空转等数据</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="已发生的资本开支是花出去的真金白银，最硬；指引是承诺，次之；合作意向没有金额和时间表；融资传闻最软。">
+          <p class="quiz-q">3. 以下四个「AI 硬件需求」信号，哪个最硬？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q3"><span>某模型公司被曝正在洽谈新一轮融资</span></label>
+            <label><input type="radio" name="q3"><span>某公司宣布与芯片厂达成战略合作</span></label>
+            <label><input type="radio" name="q3" data-correct="1"><span>云厂商财报披露本季资本开支同比增长 60%</span></label>
+            <label><input type="radio" name="q3"><span>行业自媒体报道「一卡难求」</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="一个 agent 任务背后是几十上百次模型调用（查资料、写代码、自查、重试），单任务 token 消耗比单轮对话高一到两个数量级——agent 普及是推理需求的乘数。">
+          <p class="quiz-q">4. 为什么说 agent 会放大推理需求？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q4"><span>agent 需要重新训练模型，拉动训练算力</span></label>
+            <label><input type="radio" name="q4" data-correct="1"><span>一个任务背后是几十上百次模型调用，token 消耗高一到两个数量级</span></label>
+            <label><input type="radio" name="q4"><span>agent 必须用最新的 GPU 才能运行</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="单位成本下降历史上往往引爆总用量（杰文斯悖论），总需求上升；但如果效率来自自研/专用芯片，龙头的份额会受损。「利好行业、利空龙头」可以并存，所以要先拆来源，再拆量和份额。">
+          <p class="quiz-q">5. 「推理成本大幅下降」对硬件需求的正确分析姿势是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q5"><span>成本降 = 需要的硬件变少 = 利空整个产业链</span></label>
+            <label><input type="radio" name="q5"><span>成本降 = 应用爆发 = 无脑利好所有硬件公司</span></label>
+            <label><input type="radio" name="q5" data-correct="1"><span>先拆成本下降的来源，再分别分析总量反应和份额反应</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="note">
+          <span class="note-label">本模块要带走的 memo 能力</span>
+          <p>写投资 memo 时，你要能独立完成「AI 需求如何传导到这家公司」这一段：它在传导链第几层、上一层的谁给它下订单、这个订单用什么公开信号验证（云厂商资本开支、英伟达数据中心收入这两条硬数据线怎么引用）、时滞大概多久。做不到就回来重学。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="src">
+      <strong>本页资料来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li id="src-openai-token"><a href="https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them" target="_blank" rel="noopener">OpenAI Help：tokens 的定义与经验换算（1 token 约 4 个英文字符、约 3/4 个英文词）</a></li>
+        <li id="src-nvidia-hopper"><a href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/" target="_blank" rel="noopener">NVIDIA Hopper 架构：GH100 / H100 800 亿晶体管、814 mm² 裸片</a></li>
+        <li id="src-nvidia-h200"><a href="https://www.nvidia.com/en-us/data-center/h200/" target="_blank" rel="noopener">NVIDIA H200 官方页：141GB HBM3e、4.8TB/s 带宽、容量接近 H100 两倍、带宽约 1.4 倍</a></li>
+        <li id="src-hyperscaler-capex"><a href="https://blogs.microsoft.com/on-the-issues/2025/01/03/the-golden-opportunity-for-american-ai/" target="_blank" rel="noopener">Microsoft 2025-01：FY2025 计划约 800 亿美元 AI 数据中心投资</a> · <a href="https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/googexhibit991q42025.htm" target="_blank" rel="noopener">Alphabet 2025Q4：2026 CapEx 1750-1850 亿美元</a> · <a href="https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm" target="_blank" rel="noopener">Amazon 2025 10-K：2025 现金资本开支 1,283 亿美元，2026 约 2,000 亿美元 CapEx 有客户承诺支撑</a> · <a href="https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Fourth-Quarter-and-Full-Year-2025-Results/default.aspx" target="_blank" rel="noopener">Meta FY2025：CapEx 含融资租赁本金 722.2 亿美元</a></li>
+        <li id="src-cnbc-cashflow"><a href="https://www.cnbc.com/2026/02/06/google-microsoft-meta-amazon-ai-cash.html" target="_blank" rel="noopener">CNBC 2026-02-06：谷歌 / 微软 / Meta / 亚马逊 AI 开支与现金流承压讨论</a></li>
+        <li id="src-nvda-fy24q4"><a href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581024000028/q4fy24pr.htm" target="_blank" rel="noopener">Nvidia FY2024 Q4 业绩公告（数据中心 FY24 全年 475 亿、+217%）</a></li>
+        <li id="src-nvda-fy26q4"><a href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026" target="_blank" rel="noopener">Nvidia FY2026 Q4 业绩公告（数据中心 FY26 全年 1,937 亿、+68%）</a></li>
+        <li id="src-deepseek-crash"><a href="https://www.cnbc.com/2025/01/27/nvidia-sheds-almost-600-billion-in-market-cap-biggest-drop-ever.html" target="_blank" rel="noopener">CNBC 2025-01-27：英伟达单日市值蒸发近 6,000 亿</a> / <a href="https://www.forbes.com/sites/dereksaul/2025/01/27/biggest-market-loss-in-history-nvidia-stock-sheds-nearly-600-billion-as-deepseek-shakes-ai-darling/" target="_blank" rel="noopener">Forbes 2025-01-27 同日报道（-17%、$5,890 亿市值蒸发）</a></li>
+        <li id="src-nadella-jevons"><a href="https://x.com/satyanadella/status/1883753899255046301" target="_blank" rel="noopener">纳德拉引用杰文斯悖论原帖（2025-01-27）</a> / <a href="https://fortune.com/2025/01/27/microsoft-ceo-satya-nadella-deepseek-optimism-jevons-paradox/" target="_blank" rel="noopener">Fortune 2025-01-27 解读</a></li>
+        <li id="src-nvda-recovery"><a href="https://sherwood.news/markets/nvidia-has-almost-recovered-all-of-its-deepseek-losses/" target="_blank" rel="noopener">Sherwood 2025-02-18：英伟达基本收复 DeepSeek 跌幅</a></li>
+        <li id="src-huang-reply"><a href="https://fortune.com/2025/02/21/jensen-huang-deepseek-stock-sell-nvidia-value/" target="_blank" rel="noopener">Fortune 2025-02-21：黄仁勋回应「投资者理解反了」</a></li>
+        <li id="src-token-size">通行口径：1 个 token 大致相当于半个到一个汉字、四分之三个英文单词——分词器因模型而异，此处为教学近似（无单一权威来源）</li>
+        <li id="src-train-vs-inference">通行口径：训练是一次性资本投入、推理是随使用量持续增长的复利式需求——AI 基础设施领域通行的教学口径（无单一权威链接）</li>
+        <li id="src-agent-token-multiplier">专家判断：agent 任务通常包含拆解、检索、生成、自查、重试等多轮模型调用，单任务 token 消耗可比单轮对话高一个数量级以上；这是由 agent 工作流机制推导的判断，无单一权威链接。</li>
+        <li id="src-cuda-moat">专家判断：CUDA 生态是英伟达定价权的重要来源——业界通行的护城河分析口径，见于各卖方研究（无单一权威链接）</li>
+        <li id="src-hbm-per-card">待核验假设：一张 AI 加速卡通常配 6-12 颗 HBM——各世代具体不同（H100 5-6 颗 HBM3、H200 6 颗 HBM3e、B200 8 颗 HBM3e），此处为教学近似区间</li>
+        <li id="src-hbm-cycle">专家判断：AI 上行周期中 HBM 需求增速不低于 GPU，且能量产 HBM 的仅 SK 海力士 / 三星 / 美光三家——模块 7 展开（无单一权威链接）</li>
+        <li id="src-ds-cost-doubt">通行口径：DeepSeek R1「560 万美元训练成本」被多家媒体质疑口径——大概率仅含最后一轮训练的租卡费，不含前期研发、失败实验、数据准备等，2025-01/02 的 CNBC / Forbes / Fortune 报道均已提及此点</li>
+        <li id="src-circular-deals">专家判断：供应商入股客户、算力抵股权等循环结构会稀释「合同额」的含金量，2025 年起市场有公开讨论——模块 13 教关联条款核实（无单一权威链接）</li>
+      </ul>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本模块为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine15.html"><span class="dir">← 上一层</span>骨架层 · 卡 15 · 规则五件套齐全</a>
+        <a href="m02.html" style="text-align:right"><span class="dir">下一模块 →</span>模块 2 · 芯片前端制造 101</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  /* ---------- 内存墙动画 ---------- */
+  const W = 720, H = 250;
+  const LIT = "oklch(0.62 0.11 148)";
+  const root = document.getElementById("memWall");
+  const svg = APP.svgEl("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+    "aria-label": "内存墙示意：内存与 GPU 之间的数据车道。车道少时大部分运算单元灰色空转；HBM 宽车道并行时大部分单元点亮" });
+  root.appendChild(svg);
+
+  function draw(mode) {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const hbm = mode === "hbm";
+
+    svg.appendChild(APP.svgEl("rect", { x: 36, y: 34, width: 122, height: 182, fill: "var(--surface)", stroke: "var(--line)", rx: 8 }));
+    const mt = APP.svgEl("text", { x: 97, y: 120, "text-anchor": "middle", class: "bar-lbl" });
+    mt.textContent = hbm ? "HBM" : "显存";
+    svg.appendChild(mt);
+    const ms = APP.svgEl("text", { x: 97, y: 140, "text-anchor": "middle", class: "axis-txt" });
+    ms.textContent = hbm ? "堆叠 · 就近 · 并行" : "远距 · 窄通道";
+    svg.appendChild(ms);
+
+    const lanes = hbm ? 12 : 3;
+    for (let i = 0; i < lanes; i++) {
+      const y = lanes === 1 ? 125 : 52 + i * (146 / (lanes - 1));
+      const lane = APP.svgEl("line", { x1: 162, y1: y, x2: 518, y2: y, stroke: "var(--viz-s3)", "stroke-width": 4, "stroke-linecap": "round", "stroke-dasharray": "9 13" });
+      lane.setAttribute("class", "lane-flow");
+      svg.appendChild(lane);
+    }
+
+    svg.appendChild(APP.svgEl("rect", { x: 520, y: 24, width: 168, height: 202, fill: "var(--surface)", stroke: "var(--line)", rx: 8 }));
+    const gt = APP.svgEl("text", { x: 604, y: 46, "text-anchor": "middle", class: "axis-txt" });
+    gt.textContent = "GPU · 运算单元";
+    svg.appendChild(gt);
+
+    const litCount = hbm ? 29 : 8, totalUnits = 32;
+    for (let i = 0; i < totalUnits; i++) {
+      const cx = 538 + (i % 8) * 17, cy = 58 + Math.floor(i / 8) * 40;
+      const lit = ((i * 7) % totalUnits) < litCount;
+      const u = APP.svgEl("rect", { x: cx, y: cy, width: 13, height: 30, rx: 2,
+        fill: lit ? LIT : "var(--surface-2)", stroke: "var(--line)", "stroke-width": 0.5 });
+      if (lit) u.setAttribute("class", "unit-pulse");
+      svg.appendChild(u);
+    }
+  }
+
+  const rd = document.getElementById("mwReadout");
+  const bN = document.getElementById("mwNarrow"), bH = document.getElementById("mwHbm");
+  function setMode(m) {
+    const hbm = m === "hbm";
+    draw(m);
+    bN.setAttribute("aria-pressed", String(!hbm));
+    bH.setAttribute("aria-pressed", String(hbm));
+    bN.className = hbm ? "btn btn-ghost" : "btn";
+    bH.className = hbm ? "btn" : "btn btn-ghost";
+    rd.innerHTML = hbm
+      ? "宽车道并行供数：约 <b>9 成</b>运算单元有活干。同一块芯片，产出翻了几倍——这就是 HBM 存在的意义，也是它跟着 AI 需求一起爆发的原因。"
+      : "车道太少：数据到得慢，只有约 <b>1/4</b> 的运算单元有活干，其余在空转等数据——<b>算力买到了，用不满</b>。瓶颈不在「算」，在「喂」。";
+  }
+  bN.addEventListener("click", () => setMode("narrow"));
+  bH.addEventListener("click", () => setMode("hbm"));
+  setMode("narrow");
+
+  /* ---------- 决策复盘卡 ---------- */
+  document.querySelectorAll("[data-case]").forEach((box) => {
+    const reveal = box.parentElement.querySelector(".case-reveal");
+    box.querySelectorAll("[data-pick]").forEach((btn) => {
+      btn.setAttribute("aria-pressed", "false");
+      btn.addEventListener("click", () => {
+        box.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        if (reveal) reveal.hidden = false;
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>

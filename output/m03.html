@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模块 3 · 封装、测试与系统集成 101</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="m03">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">模块 3 · 封装、测试与系统集成 101</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">第一层 · 零基础体感 · 模块 3 / 14</p>
+      <h1>封装、测试与系统集成 101</h1>
+      <p class="core-q"><b>核心问题：</b>为什么「GPU 芯片做出来了」不等于「AI 服务器能出货」？中间隔着什么？</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">学完这个模块，你要能独立回答（现在答不上来是正常的）</span>
+      <ul style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>为什么 H100 / H200 这种 AI 加速器不是「一颗芯片」，而是 GPU、HBM、CoWoS、ABF、主板、电力散热共同交付？</li>
+        <li>如果新闻说「CoWoS 产能翻倍」，你怎么判断整卡出货是否真的翻倍？还要看哪两个短板？</li>
+        <li>一家公司说「产能可达 50 万片/月」，你如何把它拆成 capable、实际产出、delivery、收入确认四个台阶？</li>
+      </ul>
+    </div>
+
+    <ul class="concepts" aria-label="本模块概念清单">
+      <li>封装</li><li>先进封装</li><li>CoWoS</li><li>HBM 堆叠</li><li>substrate</li><li>ABF</li><li>测试</li><li>burn-in</li><li>capable vs delivery</li><li>可靠性认证</li>
+    </ul>
+
+    <div class="tabs" data-tabs>
+      <div class="tablist" role="tablist" aria-label="模块内容">
+        <button role="tab" id="tab-a" aria-controls="panel-a" aria-selected="true">本质</button>
+        <button role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false">怎么判断</button>
+        <button role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false">练习</button>
+      </div>
+
+      <!-- ==================== 本质 ==================== -->
+      <section role="tabpanel" id="panel-a" aria-labelledby="tab-a" class="prose">
+
+        <h2>1. 裸片不是产品：封装把硅变成能卖的系统</h2>
+        <p>模块 2 结束时，我们只得到一颗裸片（die）。裸片很强，但它没有外壳、没有供电路径、没有散热路径，也不能直接和主板通信。<strong>封装</strong>做的第一件事，是把裸片接到外部世界：电从哪里进、热从哪里出、信号从哪里走、坏了怎么筛掉。</p>
+        <p>AI 加速器把这件事放大了。H100 的 GH100 裸片面积 814 mm²、800 亿晶体管<a class="badge badge-verified" href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/" target="_blank" rel="noopener">已核验 · NVIDIA Hopper</a>；H200 还要在同一类系统里接上 141GB HBM3e、4.8TB/s 内存带宽<a class="badge badge-verified" href="https://www.nvidia.com/en-us/data-center/h200/" target="_blank" rel="noopener">已核验 · NVIDIA H200</a>。这不是一颗芯片单独工作，而是 GPU、HBM、封装、基板、主板、散热和网络一起工作。</p>
+        <p>所以本模块的核心判断是：<strong>AI 服务器出货不是看 GPU 裸片够不够，而是看系统里最慢的交付环节够不够</strong>。模块 1 说软件需求会变成制造业订单；本模块告诉你，订单最后会被哪几道物理闸门卡住。</p>
+
+        <h2>2. 为什么先进封装突然重要：把「做大」改成「拼大」</h2>
+        <p>如果只靠把一颗芯片做得更大来提升性能，会撞上模块 2 的良率惩罚：面积越大，撞上缺陷的概率越高。于是行业换了一条路：把多颗芯片放得很近，用封装里的高密度互联把它们拼成一个系统。这个思路叫 chiplet（芯粒），AI GPU 与 HBM 的组合就是最直观的样本。</p>
+        <p>普通封装像给芯片装插头；先进封装像在芯片和芯片之间修高速路。GPU 与 HBM 必须贴得近、连得宽、延迟低，否则模块 1 的内存墙会把算力吃掉。台积电 CoWoS（Chip-on-Wafer-on-Substrate）就是这类先进封装的代表：先把 GPU 与 HBM 放在硅中介层上，再接到封装基板上。</p>
+        <p>台积电在 2025Q1 电话会里说，正努力在 2025 年把 CoWoS 产能再翻倍，以满足客户需求<a class="badge badge-verified" href="https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf" target="_blank" rel="noopener">已核验 · TSMC 2025Q1</a>；TrendForce 估算 2025 年月产能可达 7.5 万片级，接近 2024 年两倍<a class="badge badge-assume" href="https://www.trendforce.com/news/2025/01/02/news-tsmc-set-to-expand-cowos-capacity-to-record-75000-wafers-in-2025-doubling-2024-output/" target="_blank" rel="noopener">估算 · TrendForce 2025</a>。这说明先进封装不是「低附加值打包」，而是 AI 出货链上的产能闸门。</p>
+
+        <h2>3. 解剖一张 AI 加速卡：五层一起才叫交付</h2>
+        <p>先看结构，再逐层深挖。下面这张图是教学简化，但层级关系是真实的：GPU 和 HBM 并排坐在硅中介层上，中介层再接 ABF 载板，最后装到服务器主板。</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">AI 加速卡 · 分层解剖</span>
+            <span class="viz-sub">看什么：①和②并排「坐」在③上——先进封装的戏都在这三层之间。点「拆开」看层级关系，点任一层看详情。比例为教学示意。</span>
+          </div>
+          <div id="stackViz" style="max-width:640px;margin:0 auto"></div>
+          <div class="viz-foot">
+            <button class="btn" type="button" id="explodeBtn" aria-pressed="false">拆开看</button>
+            <span style="font-size:var(--fs-13);color:var(--muted)">HBM 塔本身就是 8-12 层内存芯片的堆叠——塔中之塔</span>
+          </div>
+        </div>
+
+        <p>点上图任一层（或下面的按钮），看它是什么、谁做、可能卡在哪：</p>
+
+        <div class="stackup">
+          <button class="stackup-layer" data-reveal data-reveal-group="stk" aria-controls="st1" aria-expanded="false">
+            <span class="t">① GPU 计算芯片</span><span class="d">运算核心 · 台积电先进制程代工</span>
+          </button>
+          <div class="stackup-panel" id="st1" hidden>
+            <p style="margin:0">负责计算，面积大、制程先进、价值高。H100 的 GH100 裸片 814 mm²<a class="badge badge-verified" href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/" target="_blank" rel="noopener">已核验 · NVIDIA</a>，模块 2 已经解释：大面积意味着高性能，也意味着良率和成本压力。<strong>可能卡在哪：</strong>先进制程产能、良率爬坡，以及它对 HBM/CoWoS 的连带需求。</p>
+          </div>
+          <button class="stackup-layer" data-reveal data-reveal-group="stk" aria-controls="st2" aria-expanded="false">
+            <span class="t">② HBM 内存堆叠 × 6-12 颗</span><span class="d">喂数据 · 全球仅三家能做</span>
+          </button>
+          <div class="stackup-panel" id="st2" hidden>
+            <p style="margin:0">每颗 HBM 是多层 DRAM 芯片垂直堆起来的小塔，层间用 TSV 通道连接，围在 GPU 旁边就近供数。H200 使用 141GB HBM3e、4.8TB/s 带宽<a class="badge badge-verified" href="https://www.nvidia.com/en-us/data-center/h200/" target="_blank" rel="noopener">已核验 · NVIDIA H200</a>。<strong>可能卡在哪：</strong>堆叠良率是乘法，扩产要和 DRAM 产能、封装产线、客户认证一起爬坡。</p>
+          </div>
+          <button class="stackup-layer" data-reveal data-reveal-group="stk" aria-controls="st3" aria-expanded="false">
+            <span class="t">③ 硅中介层（CoWoS 的主角）</span><span class="d">把 ①② 缝合起来 · 台积电主导</span>
+          </button>
+          <div class="stackup-panel" id="st3" hidden>
+            <p style="margin:0"><strong>CoWoS</strong> = Chip on Wafer on Substrate：把 GPU 和 HBM 先装在硅中介层上，再装到基板上。它是 GPU 和 HBM 之间超宽通信的物理载体。台积电连续强调 CoWoS 产能翻倍仍为满足 AI 客户需求服务<a class="badge badge-verified" href="https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf" target="_blank" rel="noopener">已核验 · TSMC</a>。<strong>可能卡在哪：</strong>GPU 和 HBM 都够，CoWoS 不够，整卡照样出不了货。</p>
+          </div>
+          <button class="stackup-layer" data-reveal data-reveal-group="stk" aria-controls="st4" aria-expanded="false">
+            <span class="t">④ ABF 载板（substrate）</span><span class="d">转接层 · 上游材料一家独大</span>
+          </button>
+          <div class="stackup-panel" id="st4" hidden>
+            <p style="margin:0">载板是芯片和主板之间的转接层，把中介层的微细线路逐级放大到主板能接的尺度。高端载板常用 ABF（Ajinomoto Build-up Film，味之素积层绝缘膜）；味之素官网称 ABF 是高性能 CPU 等复杂基板的标准材料，并在官方故事中提到约 95% 市占口径<a class="badge badge-verified" href="https://www.ajinomoto.com/stories/the-ajinomoto-groups-unexpected-role-in-semiconductor-manufacturing-the-insulating-film-abf-born-from-aminoscience" target="_blank" rel="noopener">已核验 · Ajinomoto</a>。<strong>可能卡在哪：</strong>材料很小，但一旦短缺，整条基板供应都会变慢。</p>
+          </div>
+          <button class="stackup-layer" data-reveal data-reveal-group="stk" aria-controls="st5" aria-expanded="false">
+            <span class="t">⑤ 服务器主板与整机</span><span class="d">供电 · 散热 · 互联</span>
+          </button>
+          <div class="stackup-panel" id="st5" hidden>
+            <p style="margin:0">卡装上主板，接入供电、液冷、光互联，成为服务器；几千台服务器组网成集群。<strong>可能卡在哪：</strong>电源、液冷、光模块——瓶颈会沿着这条路径继续往外传（模块 6、8 展开）。</p>
+          </div>
+        </div>
+
+        <h2>4. HBM 为什么难：堆叠良率是乘法</h2>
+        <p>普通芯片的良率像一次考试；HBM 像连续考很多场，任何一层出问题，整塔都要降级或报废。每层都要打孔、对准、键合、测试，单步良率看起来很高，连乘后才暴露真实难度。</p>
+
+        <div class="ctl-panel">
+          <div class="ctl">
+            <label for="stackN">堆叠层数</label>
+            <input type="range" id="stackN" min="4" max="16" step="1" value="12">
+            <output id="stackNOut">12 层</output>
+          </div>
+          <div class="ctl">
+            <label for="stackY">单步良率</label>
+            <input type="range" id="stackY" min="95" max="99.9" step="0.1" value="99">
+            <output id="stackYOut">99.0%</output>
+          </div>
+          <div class="viz-readout" id="stackReadout" aria-live="polite"></div>
+        </div>
+        <p>这不是示意逻辑，而是投资里会反复遇到的数学：<strong>99%<sup>12</sup> ≈ 88.6%；97%<sup>12</sup> ≈ 69.4%</strong>。所以 HBM 紧缺不能只问「DRAM 晶圆够不够」，还要问堆叠良率、先进封装、客户认证够不够。美光在 2024 年说 HBM 2024 售罄、2025 绝大部分已分配；到 FY2025 Q2，HBM 单季收入已突破 10 亿美元<a class="badge badge-verified" href="https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-second-quarter-fiscal-2025" target="_blank" rel="noopener">已核验 · Micron FY2025 Q2</a>。合同层紧缺最后要靠收入层兑现，这就是本模块的证据分级。</p>
+
+        <h2>5. 木桶定律：整卡出货 = 最短的那块板</h2>
+        <p>现在把解剖图变成生产问题。一张 AI 卡出厂，至少需要 GPU、HBM、CoWoS 三个环节同时到位。任何一环不足，其他环节都会变成库存。公式很朴素：</p>
+
+        <div class="derive">
+          <span class="expr">整卡出货 = min(GPU 可用量, HBM 可用量, CoWoS 可用量)</span>
+          <span class="unit">瓶颈是谁，定价权先到谁手里</span>
+        </div>
+        <p>拖动滑块，观察瓶颈怎么漂移。这里的数值是教学折算，单位统一成「万卡/月」，用于训练木桶直觉；真实测算要回到各公司产能、良率和认证口径。</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">整卡出货瓶颈模拟</span>
+            <span class="viz-sub">看什么：非瓶颈扩产不会增加出货；瓶颈解除后，新的短板立刻出现。数值为教学折算。</span>
+          </div>
+          <div class="ctl-panel" style="margin:10px 0">
+            <div class="ctl"><label for="capGpu">GPU 芯片产能</label><input type="range" id="capGpu" min="5" max="60" step="1" value="40"><output id="capGpuOut">40</output></div>
+            <div class="ctl"><label for="capHbm">HBM 产能（折算）</label><input type="range" id="capHbm" min="5" max="60" step="1" value="30"><output id="capHbmOut">30</output></div>
+            <div class="ctl"><label for="capCow">CoWoS 封装产能</label><input type="range" id="capCow" min="5" max="60" step="1" value="22"><output id="capCowOut">22</output></div>
+          </div>
+          <div id="barrelChart"></div>
+          <div class="viz-readout" id="barrelReadout" aria-live="polite"></div>
+        </div>
+
+        <p>玩这个模拟器要体会三件事：</p>
+        <ul>
+          <li><strong>非瓶颈环节扩产是无效的</strong>：GPU 产能从 40 拉到 60，出货一张不多——多出来的变成在手库存；</li>
+          <li><strong>瓶颈会漂移</strong>：把 CoWoS 扩上去，HBM 立刻变成新的短板——这就是为什么瓶颈分析是动态功课，不是一次性结论；</li>
+          <li><strong>瓶颈环节拿走定价权</strong>：谁是短板，谁就能涨价、签长约、要预付款（模块 9 四铁律的入口）。</li>
+        </ul>
+
+        <h2>6. capable ≠ delivery：产能数字必须过四个台阶</h2>
+        <p>公司说「我们产能可达每月 50 万片」——这句话在投资上几乎不能直接用。因为从「有能力」到「变成收入」隔着四个台阶，少走一步都不是业绩。</p>
+        <div class="chain">
+          <div class="chain-row"><b>台阶一</b><div><strong>理论产能（capable）</strong>：设备全到位、24 小时不停机、良率 100%、工人不缺岗时的极限值。它是上限，不是预测。</div></div>
+          <div class="chain-row"><b>台阶二</b><div><strong>实际产出</strong>：打上真实良率、爬坡进度、人工瓶颈的折扣。爬坡期实际产出可能只有理论值的三五成。</div></div>
+          <div class="chain-row"><b>台阶三</b><div><strong>通过认证的交付（delivery）</strong>：大客户（云厂商）要做几个月的可靠性认证，认证没过，产出只能积压或降级贱卖。</div></div>
+          <div class="chain-row"><b>台阶四</b><div><strong>确认收入与毛利</strong>：交付、验收、计入报表，毛利率兑现。只有走到这里，「产能」才变成了「业绩」。</div></div>
+        </div>
+        <p>很多「扩产叙事股」死在台阶二和台阶三之间：产能喊得很大，出货和毛利率迟迟不来。<strong>执行差本身就是一种风险</strong>。同赛道两家公司，谁能更快从 capable 走到 delivery，谁才有资格把产能故事写进估值<a class="badge badge-expert" href="#src-capable-delivery">专家判断 · 由四台阶机制推导</a>。</p>
+
+        <h2>7. 测试设备：藏在出货前的领先指标</h2>
+        <p>出货前还有一道容易被忽略的门：测试。高可靠性芯片不能只做通电检查，还要做 burn-in（老化测试）和可靠性筛选，把早期失效的器件提前筛掉。测试设备先到，量产才有路。</p>
+        <p>这里不能再用本项目早期的「AEHR 订单领先 Wolfspeed」说法：项目深查后没有找到 AEHR 官方文件明确绑定 Wolfspeed，已经弃用。可用的真实锚点是另一个方向：AEHR 在 2026 年 3 月和 6 月连续公告，收到用于 AI 光互连 / 超大规模数据中心硅光器件的晶圆级老化测试系统追单<a class="badge badge-verified" href="https://www.aehr.com/2026/03/aehr-receives-follow-on-order-for-fully-automated-wafer-level-burn-in-systems-powering-ai-optical-i-o-and-data-center-interconnects/" target="_blank" rel="noopener">已核验 · AEHR 2026-03</a><a class="badge badge-verified" href="https://www.aehr.com/2026/06/aehr-receives-follow-on-order-from-major-silicon-photonics-customer-for-fully-automated-wafer-level-burn-in-system-for-hyperscale-data-center-optical-interconnect/" target="_blank" rel="noopener">已核验 · AEHR 2026-06</a>。这类订单的正确读法是：它是放量前的前哨，不是下游收入已经兑现。</p>
+
+        <div class="note">
+          <span class="note-label">不要学太深</span>
+          <p>不需要懂封装的材料力学，不需要会写测试程序。带走四个可生成判断的模型：<strong>封装把裸片变成系统</strong>；<strong>HBM 难在堆叠良率连乘</strong>；<strong>整卡出货看 GPU/HBM/CoWoS 的最短板</strong>；<strong>产能故事必须从 capable 走到 delivery 再到收入和毛利</strong>。</p>
+        </div>
+      </section>
+
+      <!-- ==================== 怎么判断 ==================== -->
+      <section role="tabpanel" id="panel-b" aria-labelledby="tab-b" class="prose" hidden>
+
+        <p style="font-size:var(--fs-15);color:var(--muted)">这一页只交付两件真实存在的工具。每件都按同一结构给齐：<strong>来源 → 为什么成立 → 真实案例 → 怎么操作 → 失效边界</strong>。找不到出处、无法用真实案例验证的「规则」，不会出现在这里。</p>
+
+        <h2>工具一：长约、预付与「售罄」——需求真实性的合同层证据</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>厂商在财报电话会与业绩材料里披露长期协议、预付款和产能分配状态，这是公开可查的合同层信息。范例即原话：美光 CEO 桑贾伊·梅赫罗特拉 2024 年电话会——「我们的 HBM 2024 年已售罄，2025 年供应的绝大部分也已分配完毕」<a class="badge badge-verified" href="#src-micron-soldout">已核验 · 电话会/报道</a>；此后公司在 FY2025 Q1 备稿披露 calendar 2025 HBM 已售罄、价格已确定<a class="badge badge-verified" href="#src-micron-q1-2025">已核验 · Micron FY2025 Q1</a>。账面对应物是资产负债表附注里的合同负债/客户预付款。</div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 6 节说了 capable≠delivery——产能宣称是软的。反过来推：客户肯签多年协议、押预付款，等于把违约成本写进合同——这是公开信息里<strong>需求真实性的最高等级证据</strong>。与模块 2 的交期工具互补：交期量的是缺口大小，长约量的是缺口的确定性和期限。</div></div>
+          <div class="chain-row"><b>案例</b><div>美光 2024 年宣布售罄时，HBM 收入几乎从零起步；随后逐季兑现——2025 财年第二财季 HBM 单季收入首破 10 亿美元<a class="badge badge-verified" href="https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-second-quarter-fiscal-2025" target="_blank" rel="noopener">已核验 · Micron FY2025 Q2</a>，第四财季约 20 亿、年化近 80 亿；HBM 加高容量内存条等组合全年收入 100 亿美元、五倍于上年<a class="badge badge-verified" href="#src-micron-q4-2025">已核验 · Micron FY2025 Q4</a>。合同预告的需求，被收入逐季坐实——这就是「合同层证据领先报表证据」的完整现场。</div></div>
+          <div class="chain-row"><b>操作</b><div>财报电话会转录里检索 sold out / allocated / LTA / prepayment；跟踪财报附注合同负债科目的环比变化；区分有约束力的长约与备忘录（后者没有违约成本，含金量低一档）。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①下行期长约历史上会被重谈甚至撕毁——合同约束力与行业景气同向<a class="badge badge-expert" href="#src-contract-fail">专家判断 · 行业通例</a>；②「售罄」的分母是当前产能，大扩产之后同一句话的含金量被稀释；③售罄不等于利润兑现——爬坡良率与竞争定价仍能吃掉利润（模块 2 工具三）；④被长约覆盖的品类，现货价与交期只反映残余市场，信号钝化（呼应模块 2 工具一失效②）。</div></div>
+        </div>
+
+        <h2>工具二：测试与封装设备订单——放量前的最后一道前哨</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>测试设备商自己的订单公告与季报是一手信源。实例：晶圆级老化测试设备商 AEHR 于 2026 年 3 月和 6 月两度公告，获硅光互连客户为超大规模数据中心光互连器件量产追加的测试系统订单<a class="badge badge-verified" href="#src-aehr-2026">已核验 · AEHR 官网新闻稿</a>。</div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 7 节：芯片放量出货前，必须先把测试和老化产能备齐——采购动作领先收入体现一个季度以上；且买设备是真金白银，比「产能规划」硬一个数量级。</div></div>
+          <div class="chain-row"><b>案例</b><div><strong>进行中案例（结局未定，明确标注）</strong>：上述 2026 年的连续追单指向 AI 光互连器件正处在放量前夜。请把你此刻的判断记下来，2026 年底用光模块/CPO 的出货数据回来对照——进行中的案例不构成证据，构成你的第一个实盘跟踪练习（操作方案见 Learn Plan 实盘练习）。</div></div>
+          <div class="chain-row"><b>操作</b><div>跟踪泰瑞达、爱德万、AEHR 等测试设备商的订单公告与指引；留意「封装产能被谁包下」的公告（真金占坑）；与模块 2 工具二（前端设备订单）拼成一套完整的设备前哨。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①小设备商单笔订单噪音大——看连续性，不看单笔；②设备订单可推迟、可取消；③下行期同样领先：砍单先砍设备，同一指标在周期两端都放大波动（与模块 2 工具二失效①同源）。</div></div>
+        </div>
+
+        <h2>操作清单：把「产能故事」翻译成四台阶</h2>
+        <p style="font-size:var(--fs-14);color:var(--muted)">以下每项由本页第 6 节的四台阶机制直接推导，是两件工具的落地检查位，不是独立工具。</p>
+        <ul class="checklist">
+          <li><label><input type="checkbox"><span><b>它说的是 capable 还是 delivery？</b>「可达」「规划」在台阶一，「已验收」「已确认收入」才在台阶四（依据：本质页第 6 节）</span></label></li>
+          <li><label><input type="checkbox"><span><b>良率和爬坡到哪了？</b>没有良率信息的产能数字，默认对折起步（依据：本质页第 4 节 + 模块 2 工具三）</span></label></li>
+          <li><label><input type="checkbox"><span><b>大客户认证过了吗？有没有长约或预付把需求钉死？</b>「送样」「验证中」都不是订单（依据：工具一）</span></label></li>
+          <li><label><input type="checkbox"><span><b>测试、封装环节的配套采购动了没有？</b>（依据：工具二）</span></label></li>
+          <li><label><input type="checkbox"><span><b>毛利率跟上出货了吗？</b>量增利不增 = 低端线或让利换单，故事成色差一档（依据：本质页第 6 节台阶四）</span></label></li>
+        </ul>
+      </section>
+
+      <!-- ==================== 练习 ==================== -->
+      <section role="tabpanel" id="panel-c" aria-labelledby="tab-c" class="prose" hidden>
+
+        <h2>决策复盘一 · 2024 年：美光宣布「HBM 全年售罄」</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2024 年 · 事件已核验</p>
+          <h4>你看到的信息：美光 CEO 在财报电话会明示——「HBM 2024 年已售罄，2025 年供应的绝大部分也已分配完毕」。此时美光的 HBM 业务收入几乎从零起步，市场对 AI 存储的争论正激烈。<a class="badge badge-verified" href="#src-micron-soldout">已核验 · 电话会/报道</a></h4>
+          <p class="case-note">你怎么处理这只股票？先选，再看拆解。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>追买</button>
+            <button type="button" data-pick>观望</button>
+            <button type="button" data-pick>利好已出尽，回避</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>证据分级</b><div>「售罄 + 已分配」是合同层证据——本页工具一里需求真实性的最高等级，比任何「AI 需求旺盛」的叙事硬得多。第一步先确认：这不是情绪，是合同。</div></div>
+              <div class="chain-row"><b>机制推演</b><div>更大的一层在二阶效应：HBM 和普通内存用同一批晶圆产能，HBM 吃掉的产能会收紧普通内存的供给 → 全产品线定价权回归。这条推演后来被公司披露证实：HBM 的排挤效应与数据中心高价值产品共同带动全线涨价<a class="badge badge-verified" href="#src-micron-q4-2025">已核验 · Micron FY2025 Q4</a>。模块 7 深挖这条产能转移机制。</div></div>
+              <div class="chain-row"><b>该问的下一问</b><div>售罄兑现成利润还要过两关：HBM 爬坡良率（模块 2 工具三）、三家争夺下的定价；以及最难的一问——<strong>市场价格已经计入了多少</strong>？这一问当天没有公开答案，它属于模块 10-11 的估值功课。</div></div>
+              <div class="chain-row"><b>后来的事实</b><div>需求侧完全兑现：2025 财年 HBM 单季收入从首破 10 亿美元（第二财季）到约 20 亿（第四财季、年化近 80 亿），相关组合全年 100 亿、五倍于上年<a class="badge badge-verified" href="#src-micron-q4-2025">已核验 · 公司业绩材料</a>。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>需求兑现不等于股价一路向上——持有期内的深度回撤照样发生，「基本面对、拿不住」是这类标的最真实的风险。本复盘训练的是证据分级和机制推演；回撤怎么扛，是模块 14 仓位与持有期设计的功课，别混在一起。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>迁移题（模块里没有现成答案，用机制自己推）</h2>
+
+        <article class="scenario">
+          <h4>迁移一 · 「我们产能可达 50 万片/月」（虚构演练）</h4>
+          <p>某光模块厂在业绩说明会上表示产能可达每月 50 万片。有分析按「50 万片 × 单价 × 毛利率」直接算出利润弹性并给出目标价。这个算法错在哪？</p>
+          <p class="scenario-hint">提示：四个台阶。每个台阶各打多少折？</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="sc1" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="sc1">
+            <div class="chain">
+              <div class="chain-row"><b>拆解</b><div>「可达」是台阶一（理论产能）：设备全到位、全天候运转、良率完美、工人不缺岗的上限值。</div></div>
+              <div class="chain-row"><b>折扣一</b><div>实际产出：新产线爬坡期良率低、手工工序多，实际可能只有理论值的一半以下。</div></div>
+              <div class="chain-row"><b>折扣二</b><div>交付：能不能进大客户的合格供应商名单？认证以季度计，且高端型号可能根本过不了。</div></div>
+              <div class="chain-row"><b>折扣三</b><div>价格与毛利：挤进去的往往是竞争激烈的型号，单价和毛利率都要再打折。</div></div>
+              <div class="chain-row"><b>结论</b><div>「产能 × 单价 × 利润率」的线性外推是这个行业最经典的陷阱——产能口径、客户认证、价格和毛利都可能同时打折<a class="badge badge-expert" href="#src-capacity-linear">专家判断 · 产能外推陷阱</a>。正确姿势：盯出货量、毛利率、大客户验收三个硬指标，产能宣称只当背景。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario">
+          <h4>迁移二 · HBM 突然充足了，出货就能上来吗？</h4>
+          <p>假设存储厂集体扩产成功，HBM 供应充足。此时 CoWoS 封装产能仍然只有需求的七成。整卡出货会发生什么？谁受益、谁尴尬？</p>
+          <p class="scenario-hint">提示：用木桶模拟器的逻辑推。定价权在谁手里？</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="sc2" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="sc2">
+            <div class="chain">
+              <div class="chain-row"><b>出货</b><div>不变。木桶换了块长板，最短的还是 CoWoS——出货依旧被封装产能钉死在需求的七成。</div></div>
+              <div class="chain-row"><b>价格结构</b><div>HBM 从紧缺转向充足，涨价逻辑和定价权衰减；CoWoS 成为唯一短板，封装环节的议价能力反而增强。</div></div>
+              <div class="chain-row"><b>受益方</b><div>握有封装产能的公司（及其设备、材料供应商）；GPU 设计商中性偏好（等米下锅的对象从两个变一个）。</div></div>
+              <div class="chain-row chain-fail"><b>尴尬方与警惕</b><div>扩产成功的存储厂：产能出来了，紧缺溢价没了——<strong>供给解除的那一刻，就是超额利润消失的那一刻</strong>。这是模块 9「库存弹性」和模块 10「周期拐点」的预告。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <h2>自测（算得出来才算会）</h2>
+
+        <div class="quiz" data-quiz data-explain="良率是乘法：99%^12 ≈ 88.6%。错一层全塔报废，这是 HBM 比普通 DRAM 难做、玩家少、扩产慢的技术根源。">
+          <p class="quiz-q">1. 单步良率 99%，堆 12 层的 HBM 成品率大约是多少？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q1"><span>99%——每层都合格就行</span></label>
+            <label><input type="radio" name="q1" data-correct="1"><span>约 89%——良率按层数连乘</span></label>
+            <label><input type="radio" name="q1"><span>约 50%——层数越多越随机</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="出货 = min(GPU, HBM, CoWoS)。非瓶颈环节扩产不增加出货，只堆库存；瓶颈环节才有定价权。">
+          <p class="quiz-q">2. GPU、HBM、CoWoS 折算产能分别是 40、30、22 万卡/月。GPU 扩产到 60 万，整卡出货变成多少？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q2"><span>60 万卡/月</span></label>
+            <label><input type="radio" name="q2"><span>30 万卡/月</span></label>
+            <label><input type="radio" name="q2" data-correct="1"><span>22 万卡/月，一张不多</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="capable 是理论上限（设备全到位、良率完美、不停机），delivery 是通过客户认证、真实交付、能确认收入。中间隔着良率爬坡和认证周期两大折扣。">
+          <p class="quiz-q">3. capable 和 delivery 的区别，哪个说法对？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q3"><span>是同一件事的两种说法</span></label>
+            <label><input type="radio" name="q3" data-correct="1"><span>capable 是理想极限产能，delivery 是通过认证并确认收入的真实交付</span></label>
+            <label><input type="radio" name="q3"><span>capable 指国内产能，delivery 指海外产能</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="芯片放量前必须先备好测试/老化设备，所以测试设备订单领先下游财报一个季度以上——设备订单是比财报更早的复苏信号。">
+          <p class="quiz-q">4. 为什么测试设备商的订单能领先芯片厂的财报改善？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q4"><span>测试设备商消息灵通，喜欢炒作</span></label>
+            <label><input type="radio" name="q4" data-correct="1"><span>放量出货前必须先采购测试老化设备，采购动作先于收入体现</span></label>
+            <label><input type="radio" name="q4"><span>测试设备接受期货交易</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="note">
+          <span class="note-label">本模块要带走的 memo 能力</span>
+          <p>对任何一个喊产能故事的标的，你要能把它的数字放到四个台阶上：现在在哪个台阶、到下个台阶要多久、每个台阶打几折——最终区分<strong>理论产能、实际交付、收入确认、毛利兑现</strong>，不再被「产能 × 单价」的算术骗到。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="src">
+      <strong>本页资料来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li id="src-nvidia-hopper"><a href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/" target="_blank" rel="noopener">NVIDIA Hopper 架构：GH100 / H100 800 亿晶体管、814 mm² 裸片</a></li>
+        <li id="src-nvidia-h200"><a href="https://www.nvidia.com/en-us/data-center/h200/" target="_blank" rel="noopener">NVIDIA H200 官方页：141GB HBM3e、4.8TB/s 带宽</a></li>
+        <li id="src-tsmc-cowos"><a href="https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2025-04/7630274eecc1197a4e3ea6a415f44a47204fe10a/TSMC%201Q25%20Transcript.pdf" target="_blank" rel="noopener">TSMC 2025Q1 电话会转录：2025 年继续把 CoWoS 产能翻倍以支持客户需求</a> · <a href="https://www.trendforce.com/news/2025/01/02/news-tsmc-set-to-expand-cowos-capacity-to-record-75000-wafers-in-2025-doubling-2024-output/" target="_blank" rel="noopener">TrendForce 2025-01：估算 CoWoS 月产能 2025 年达 7.5 万片级、接近 2024 两倍</a></li>
+        <li id="src-ajinomoto-abf"><a href="https://www.ajinomoto.com/stories/the-ajinomoto-groups-unexpected-role-in-semiconductor-manufacturing-the-insulating-film-abf-born-from-aminoscience" target="_blank" rel="noopener">Ajinomoto 官方故事：ABF 半导体绝缘膜、约 95% 市占口径</a> · <a href="https://www.ajinomoto.com/innovation/our_innovation/buildupfilm" target="_blank" rel="noopener">Ajinomoto ABF 创新页：高性能 CPU 复杂基板标准材料</a></li>
+        <li id="src-micron-soldout"><a href="https://www.tomshardware.com/pc-components/gpus/micron-says-high-bandwidth-memory-is-sold-out-for-2024-and-most-of-2025-intense-demand-portends-potential-ai-gpu-production-bottleneck" target="_blank" rel="noopener">Tom's Hardware 2024-03 转述美光 CEO 电话会原话：HBM 2024 售罄、2025 绝大部分已分配</a></li>
+        <li id="src-micron-q1-2025"><a href="https://investors.micron.com/static-files/21b50828-dd30-429f-9502-b1ebc452c6e3" target="_blank" rel="noopener">Micron FY2025 Q1 电话会备稿：calendar 2025 HBM 已售罄，价格已确定</a></li>
+        <li id="src-micron-q2-2025"><a href="https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-second-quarter-fiscal-2025" target="_blank" rel="noopener">Micron FY2025 Q2 业绩稿：HBM revenue crosses $1 billion milestone</a></li>
+        <li id="src-micron-q4-2025"><a href="https://investors.micron.com/static-files/5ea95475-639b-4cfc-91fd-b9b4a2bb5e63" target="_blank" rel="noopener">Micron FY2025 Q4 电话会备稿：FY2025 收入 374 亿美元、毛利率 41%，HBM + high-capacity DIMM + LP server DRAM 组合收入 100 亿美元、约为上一年五倍</a></li>
+        <li id="src-aehr-2026"><a href="https://www.aehr.com/2026/03/aehr-receives-follow-on-order-for-fully-automated-wafer-level-burn-in-systems-powering-ai-optical-i-o-and-data-center-interconnects/" target="_blank" rel="noopener">AEHR 2026-03 公告：AI 光互连晶圆级老化测试追单</a> · <a href="https://www.aehr.com/2026/06/aehr-receives-follow-on-order-from-major-silicon-photonics-customer-for-fully-automated-wafer-level-burn-in-system-for-hyperscale-data-center-optical-interconnect/" target="_blank" rel="noopener">AEHR 2026-06 公告：硅光客户再度追单</a></li>
+        <li id="src-capable-delivery">专家判断：capable 到 delivery 的四台阶，是由封装/测试/客户认证/收入确认机制推出的买方检查框架，无单一权威链接。</li>
+        <li id="src-contract-fail">专家判断：下行期长约可能被重谈，合同约束力与行业景气同向变化；这是存储和周期行业通行经验，无单一权威链接。</li>
+        <li id="src-capacity-linear">专家判断：「产能 × 单价 × 利润率」线性外推忽略良率、客户认证、价格和毛利折扣，是扩产叙事常见陷阱，无单一权威链接。</li>
+      </ul>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本模块为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="m02.html"><span class="dir">← 上一模块</span>模块 2 · 芯片前端制造 101</a>
+        <a href="m04.html" style="text-align:right"><span class="dir">下一模块 →</span>模块 4 · 半导体行业前史</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  /* ---------- 堆叠良率计算器 ---------- */
+  const stackN = document.getElementById("stackN");
+  const stackY = document.getElementById("stackY");
+  const stackNOut = document.getElementById("stackNOut");
+  const stackYOut = document.getElementById("stackYOut");
+  const stackReadout = document.getElementById("stackReadout");
+  function paintStack() {
+    const n = +stackN.value, y = +stackY.value;
+    stackNOut.textContent = n + " 层";
+    stackYOut.textContent = y.toFixed(1) + "%";
+    const final = Math.pow(y / 100, n) * 100;
+    stackReadout.innerHTML = "成品率 = " + y.toFixed(1) + "%<sup>" + n + "</sup> ≈ <b>" + final.toFixed(1) + "%</b>" +
+      (final < 75 ? "　<span class='warn'>每四塔就报废一塔以上——这样的成本结构撑不起量产</span>" : "");
+  }
+  stackN.addEventListener("input", paintStack);
+  stackY.addEventListener("input", paintStack);
+  paintStack();
+
+  /* ---------- 木桶模拟器 ---------- */
+  const ids = ["Gpu", "Hbm", "Cow"];
+  const names = { Gpu: "GPU 芯片", Hbm: "HBM（折算）", Cow: "CoWoS 封装" };
+  const W = 720, H = 280, L = 56, R = 24, T = 30, B = 40, MAXV = 60;
+  const root = document.getElementById("barrelChart");
+  const svg = APP.svgEl("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+    "aria-label": "柱状图：GPU、HBM、CoWoS 三个环节的月产能对比，最矮的一根决定整卡出货，用琥珀色标出" });
+  root.appendChild(svg);
+
+  const y = (v) => T + (1 - v / MAXV) * (H - T - B);
+
+  function draw() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const vals = ids.map((id) => +document.getElementById("cap" + id).value);
+    ids.forEach((id, i) => { document.getElementById("cap" + id + "Out").textContent = vals[i]; });
+    const minV = Math.min(...vals);
+    const minIdx = vals.indexOf(minV);
+
+    for (let v = 0; v <= MAXV; v += 15) {
+      svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: "var(--viz-grid)", "stroke-width": 1 }));
+      const t = APP.svgEl("text", { x: L - 8, y: y(v) + 4, "text-anchor": "end", class: "axis-txt" });
+      t.textContent = v;
+      svg.appendChild(t);
+    }
+    /* 出货水位线 */
+    svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: y(minV), y2: y(minV), stroke: "var(--accent)", "stroke-width": 1.5, "stroke-dasharray": "none", opacity: 0.85 }));
+    const wl = APP.svgEl("text", { x: W - R, y: y(minV) - 7, "text-anchor": "end", class: "anno-txt" });
+    wl.textContent = "整卡出货水位 " + minV + " 万卡/月";
+    svg.appendChild(wl);
+
+    const slot = (W - L - R) / 3;
+    vals.forEach((v, i) => {
+      const bw = 24, cx = L + slot * i + slot / 2, x0 = cx - bw / 2, yTop = y(v), yBase = H - B, r = 4;
+      const d = "M" + x0 + " " + yBase + " L" + x0 + " " + (yTop + r) +
+        " Q" + x0 + " " + yTop + " " + (x0 + r) + " " + yTop +
+        " L" + (x0 + bw - r) + " " + yTop +
+        " Q" + (x0 + bw) + " " + yTop + " " + (x0 + bw) + " " + (yTop + r) +
+        " L" + (x0 + bw) + " " + yBase + " Z";
+      const bar = APP.svgEl("path", { d, fill: i === minIdx ? "var(--accent)" : "var(--viz-s3)", tabindex: "0" });
+      bar.addEventListener("mousemove", (e) => APP.showTip("<b>" + names[ids[i]] + "</b><br>产能 " + v + " 万卡/月" + (i === minIdx ? "<br><b>当前瓶颈</b>" : ""), e.clientX, e.clientY));
+      bar.addEventListener("mouseleave", APP.hideTip);
+      svg.appendChild(bar);
+      const lbl = APP.svgEl("text", { x: cx, y: yTop - 8, "text-anchor": "middle", class: "bar-lbl" });
+      lbl.textContent = v + (i === minIdx ? "（瓶颈）" : "");
+      svg.appendChild(lbl);
+      const name = APP.svgEl("text", { x: cx, y: H - B + 18, "text-anchor": "middle", class: "axis-txt" });
+      name.textContent = names[ids[i]];
+      svg.appendChild(name);
+    });
+    svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: H - B, y2: H - B, stroke: "var(--viz-axis)", "stroke-width": 1 }));
+
+    const idle = vals.map((v) => v - minV);
+    const readout = document.getElementById("barrelReadout");
+    readout.innerHTML = "整卡出货 = min(" + vals.join(", ") + ") = <b>" + minV + " 万卡/月</b>，卡在 <b>" + names[ids[minIdx]] + "</b>。" +
+      ids.map((id, i) => idle[i] > 0 ? names[id] + " 有 " + idle[i] + " 万套产能闲置（变成库存/等米下锅）" : "").filter(Boolean).join("；") +
+      (idle.every((v) => v === 0) ? "三个环节完全匹配——现实中几乎不会发生。" : "。");
+  }
+  ids.forEach((id) => document.getElementById("cap" + id).addEventListener("input", draw));
+  draw();
+
+  /* ---------- 加速卡分层爆炸图 ---------- */
+  (function () {
+    const SW = 660, SH = 380;
+    const root = document.getElementById("stackViz");
+    const svg = APP.svgEl("svg", { viewBox: "0 0 " + SW + " " + SH, role: "img",
+      "aria-label": "AI 加速卡分层示意：GPU 芯片与 HBM 堆叠并排放在硅中介层上，下面依次是 ABF 载板和服务器主板，可拆开查看" });
+    root.appendChild(svg);
+
+    const groups = [];
+    function makeGroup(explodeY, chipId) {
+      const g = APP.svgEl("g", {});
+      g.setAttribute("class", "stk-g");
+      g.dataset.explodeY = explodeY;
+      g.dataset.chip = chipId;
+      svg.appendChild(g);
+      groups.push(g);
+      return g;
+    }
+    function label(g, x, y, txt, anchor) {
+      const t = APP.svgEl("text", { x, y, "text-anchor": anchor || "start", class: "bar-lbl" });
+      t.textContent = txt;
+      g.appendChild(t);
+    }
+
+    /* ⑤ 主板 */
+    const gPcb = makeGroup(54, "st5");
+    gPcb.appendChild(APP.svgEl("rect", { x: 60, y: 312, width: 540, height: 30, rx: 4, fill: "oklch(0.88 0.02 145)", stroke: "var(--line)" }));
+    label(gPcb, 608, 332, "⑤ 服务器主板", "end");
+
+    /* ④ 载板 */
+    const gSub = makeGroup(28, "st4");
+    gSub.appendChild(APP.svgEl("rect", { x: 150, y: 278, width: 360, height: 30, rx: 4, fill: "oklch(0.90 0.05 80)", stroke: "var(--line)" }));
+    label(gSub, 518, 298, "④ ABF 载板", "start");
+
+    /* ③ 中介层 */
+    const gInt = makeGroup(0, "st3");
+    gInt.appendChild(APP.svgEl("rect", { x: 190, y: 254, width: 280, height: 20, rx: 3, fill: "oklch(0.84 0.035 250)", stroke: "var(--line)" }));
+    label(gInt, 478, 270, "③ 硅中介层（CoWoS）", "start");
+
+    /* ① GPU + ② HBM（同坐中介层上） */
+    const gTop = makeGroup(-44, "st1");
+    gTop.appendChild(APP.svgEl("rect", { x: 205, y: 194, width: 118, height: 58, rx: 3, fill: "oklch(0.38 0.03 250)" }));
+    const gl = APP.svgEl("text", { x: 264, y: 228, "text-anchor": "middle", class: "bar-lbl", fill: "#fff" });
+    gl.textContent = "GPU";
+    gl.setAttribute("style", "fill:#fff");
+    gTop.appendChild(gl);
+    label(gTop, 205, 184, "① GPU 计算芯片");
+
+    const gHbm = makeGroup(-44, "st2");
+    [352, 404, 456].forEach((hx) => {
+      for (let i = 0; i < 8; i++) {
+        gHbm.appendChild(APP.svgEl("rect", { x: hx, y: 194 + i * 7.3, width: 40, height: 5.6, rx: 1.5, fill: "var(--viz-s2)", stroke: "var(--bg)", "stroke-width": 0.6 }));
+      }
+    });
+    label(gHbm, 352, 184, "② HBM 堆叠 ×6-12");
+
+    /* 点图 → 触发对应按钮 */
+    const chipFor = (id) => document.querySelector('[aria-controls="' + id + '"]');
+    groups.forEach((g) => {
+      g.addEventListener("click", () => {
+        const chip = chipFor(g.dataset.chip);
+        if (chip) { chip.click(); chip.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+        highlight(g.dataset.chip);
+      });
+    });
+    function highlight(chipId) {
+      groups.forEach((g) => {
+        g.querySelectorAll("rect").forEach((r) => {
+          if (g.dataset.chip === chipId) r.setAttribute("stroke-width", g.dataset.chip === "st2" ? 1.2 : 2.2);
+          if (g.dataset.chip === chipId) r.setAttribute("stroke", "var(--primary-2)");
+          else { r.setAttribute("stroke", g.dataset.chip === "st2" ? "var(--bg)" : "var(--line)"); r.setAttribute("stroke-width", g.dataset.chip === "st2" ? 0.6 : 1); }
+        });
+      });
+    }
+    /* 从按钮点击同步高亮 */
+    document.querySelectorAll(".stackup-layer").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        setTimeout(() => {
+          if (btn.getAttribute("aria-expanded") === "true") highlight(btn.getAttribute("aria-controls"));
+        }, 0);
+      });
+    });
+
+    /* 拆开 / 合上 */
+    const eb = document.getElementById("explodeBtn");
+    eb.addEventListener("click", () => {
+      const open = eb.getAttribute("aria-pressed") !== "true";
+      eb.setAttribute("aria-pressed", String(open));
+      eb.textContent = open ? "合上" : "拆开看";
+      groups.forEach((g) => {
+        g.style.transform = open ? "translateY(" + g.dataset.explodeY + "px)" : "translateY(0)";
+      });
+    });
+  })();
+
+  /* ---------- 决策复盘卡 ---------- */
+  document.querySelectorAll("[data-case]").forEach((box) => {
+    const reveal = box.parentElement.querySelector(".case-reveal");
+    box.querySelectorAll("[data-pick]").forEach((btn) => {
+      btn.setAttribute("aria-pressed", "false");
+      btn.addEventListener("click", () => {
+        box.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        if (reveal) reveal.hidden = false;
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>

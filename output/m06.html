@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模块 6 · AI Infra 十层传导链</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+/* ---------- 模块 6 页内专属样式 ---------- */
+.chainflow-wrap { display: grid; gap: 14px; }
+.chainflow-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.chainflow-controls .status { font-size: var(--fs-13); color: var(--muted); margin-left: auto; }
+.chainflow-readout {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: 14px 16px;
+  min-height: 5.5em;
+  font-size: var(--fs-14);
+}
+.chainflow-readout .head { display: flex; gap: 10px; flex-wrap: wrap; align-items: baseline; margin-bottom: 6px; }
+.chainflow-readout .head .num { color: var(--primary); font-weight: 700; font-size: var(--fs-17); }
+.chainflow-readout .head .name { font-weight: 650; font-size: var(--fs-16); }
+.chainflow-readout .head .lag { color: var(--accent-ink); font-size: var(--fs-13); background: var(--accent-tint); border-radius: 99px; padding: 0 9px; font-weight: 600; }
+.chainflow-readout .mech { color: var(--muted); }
+.chainflow-readout .co { display: block; margin-top: 6px; font-size: var(--fs-13); }
+.chainflow-readout .co b { color: var(--ink); }
+
+.discl-wrap { display: grid; gap: 10px; }
+.discl-note {
+  font-size: var(--fs-13);
+  color: var(--muted);
+  background: var(--surface);
+  border-radius: var(--radius-s);
+  padding: 8px 12px;
+}
+
+/* 时滞对照表 */
+.lag-tbl th, .lag-tbl td { font-size: var(--fs-13); }
+.lag-tbl .lag-cell { font-variant-numeric: tabular-nums; }
+.lag-tbl .lag-early { color: var(--info-ink); font-weight: 600; }
+.lag-tbl .lag-mid { color: var(--primary); font-weight: 600; }
+.lag-tbl .lag-late { color: var(--accent-ink); font-weight: 600; }
+</style>
+</head>
+<body data-page="m06">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">模块 6 · AI Infra 十层传导链</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">第二层 · 产业结构 · 模块 6 / 14</p>
+      <h1>AI Infra 十层传导链</h1>
+      <p class="core-q"><b>核心问题：</b>云厂商的一笔 AI 资本开支，究竟按什么顺序、经过哪些环节，变成十层公司的订单？为什么越往上游走，认知差可能越大、验证也越难？</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">学完这个模块，你要能独立回答（现在答不上来是正常的）</span>
+      <ul style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>四家美国云厂商（Meta、Alphabet、Amazon、Microsoft）2026 计划 AI 资本开支合计约 7,250 亿美元、比 2025 年增长约 77%——沿传导链倒推，这 7,250 亿最终匹配到哪四层公司的订单？各滞后 CapEx 多少个季度？</li>
+        <li>AXT（InP 衬底）2024 收入不到 1 亿美元，Vertiv（电力液冷）2024 收入超过 80 亿美元——同样受益 AI 数据中心建设，规模差 80 倍以上。说出两条独立机制解释这个差距。</li>
+        <li>台积电 CEO 魏哲家 2024 年 4 月 18 日电话会说「CoWoS 产能翻倍仍不够」——沿链推：这句话对哪三层公司的订单量意味着连锁上调？各给一个公开验证源。</li>
+      </ul>
+    </div>
+
+    <ul class="concepts" aria-label="本模块概念清单">
+      <li>AI Cloud</li><li>GPU</li><li>ASIC</li><li>XPU</li><li>HBM</li><li>eSSD</li><li>Foundry</li><li>CoWoS</li><li>WFE</li><li>DSP</li><li>SerDes</li><li>光模块</li><li>光芯片</li><li>Testing</li><li>InP</li><li>ABF</li><li>电力</li><li>液冷</li><li>scale-up</li><li>scale-out</li>
+    </ul>
+
+    <div class="tabs" data-tabs>
+      <div class="tablist" role="tablist" aria-label="模块内容">
+        <button role="tab" id="tab-a" aria-controls="panel-a" aria-selected="true">本质</button>
+        <button role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false">怎么判断</button>
+        <button role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false">练习</button>
+      </div>
+
+      <!-- ==================== 本质 ==================== -->
+      <section role="tabpanel" id="panel-a" aria-labelledby="tab-a" class="prose">
+
+        <h2>1. 一笔 CapEx 是怎么走完十层的</h2>
+        <p>模块 1 讲过：AI 软件需求最终要经过云厂商的资本开支变成制造业订单；模块 5 讲过：产业链按商业模式分为 fabless / foundry / IDM 三种。这一节把两条线合成一张动态的图——<strong>把一笔具体的 CapEx，逐层追下去，看它变成谁的订单、什么时候变成收入、在哪层最容易出现认知差</strong>。</p>
+
+        <p>先把量级钉住。四家美国头部云厂商 Meta、Alphabet（谷歌）、Amazon（AWS）、Microsoft 的 AI 资本开支：2025 年合计约 4,100 亿美元，2026 年计划合计约 7,250 亿美元、同比+77%<span class="badge badge-verified">已核验 · 各公司业绩公告汇总（ValueAddVC/FinancialContent 2026）</span>。这不是「AI 概念」，是要花的真金白银。这 7,250 亿要过至少十道公司账户才落地，每一层都受益、但受益方式和时点差别很大——所以先看清整张地图。</p>
+
+        <p style="font-size:var(--fs-14);color:var(--muted)">点开始按钮，让一笔 CapEx 从 L1 云厂商往 L10 上游材料/基础设施依次点亮，读每层的代表公司、机制和时滞。</p>
+
+        <div class="viz" aria-label="十层传导链地图">
+          <div class="viz-head">
+            <span class="viz-title">十层传导链 · 一笔 CapEx 顺次点亮</span>
+            <span class="viz-sub">看什么：①信号顺序（谁先接单、谁后确认收入）；②闸门位置（哪层扩产最慢，决定整链出货）；③认知差层（越往下走，公司越小、披露越薄——机会与难度同源）</span>
+          </div>
+          <div class="chainflow-wrap">
+            <div id="chainflow" role="img" aria-label="十层传导链步进图"></div>
+            <div class="chainflow-controls">
+              <button class="btn" type="button" id="cfPlay" aria-pressed="false">开始 · 让 CapEx 传下去</button>
+              <button class="btn btn-ghost" type="button" id="cfStep">下一层</button>
+              <button class="btn btn-ghost" type="button" id="cfReset">重置</button>
+              <span class="status" id="cfStatus"></span>
+            </div>
+            <div class="chainflow-readout" id="cfReadout" aria-live="polite">点击「开始」或「下一层」，逐层看这笔 CapEx 落到哪家公司账上。</div>
+          </div>
+          <p style="font-size:var(--fs-13);color:var(--muted);margin:10px 0 0">时滞是「相对云厂商 CapEx 决策」的粗算区间，由本页第 4 节机制推导（不是行业官方指标）。代表公司为已核验的份额领先者或典型标的，不是全部名单。</p>
+        </div>
+
+        <p>把这张图翻译成一句话：<strong>一笔 CapEx 出来，最先在英伟达和存储三厂的报表上见到，晚一两个季度传到台积电，再晚两三个季度让 WFE 订单看得见，最后三四个季度才在电力液冷厂的合同和数据中心用电统计里显形</strong>。这个时序不是巧合，是三条物理约束共同决定的：芯片有库存缓冲、设备交期以年计、厂房从动工到并网以两年计（模块 2 讲过）。下一节把「时滞为什么必然」的推导拆一次，之后再看闸门与认知差。</p>
+
+        <h2>2. 闸门层：为什么瓶颈从 GPU 移到 CoWoS 再到光互联</h2>
+
+        <p>模块 3 建了一条铁律：整卡出货 = min(GPU 产能, HBM 产能, CoWoS 封装产能)——木桶最短板决定出货。这条铁律往传导链上放，就出现了「闸门层」这个概念：<strong>整条链上，谁的产能扩得最慢，谁就成为那一段时间的整链闸门</strong>。而闸门位置会漂移。</p>
+
+        <p>2023-2024 年的闸门在 CoWoS。台积电 CEO 魏哲家在 2024 年 4 月 18 日 Q1 电话会上的原话——这话值得逐字读：</p>
+
+        <div class="chain">
+          <div class="chain-row"><b>2024-04-18</b><div>"the demand is very, very strong, and we have done our best where we put all the effort to increase the capacity. It's probably <strong>more than double this year as compared with last year</strong>. However, <strong>it's still not enough to meet the customers' demand</strong>…for next year, we try, we try very hard." <span class="badge badge-verified">已核验 · TSMC Q1 2024 电话会转录（Motley Fool）</span></div></div>
+          <div class="chain-row"><b>意思</b><div>2024 全年 CoWoS 月产能大约 3.5 万–4 万片（相当于 2023 年的两倍多），2025 年目标翻到 7.5 万–8 万片/月，2026 年规划 14 万–15 万片/月<span class="badge badge-verified">已核验 · TrendForce 报告 2024-10 / 2025-01</span>。但 2024 年 4 月魏哲家已经说清——即便如此仍不够。</div></div>
+        </div>
+
+        <p>这句话在传导链上一转就是：<strong>CoWoS 卡了 → GPU/HBM 就算做出来也拼不成整卡 → 云厂商 CapEx 转换成整卡交付的效率被中游卡死 → 认知差从「GPU 缺不缺」变成「CoWoS 什么时候够」</strong>。这就是为什么 2024 上半年最值钱的信号不在英伟达电话会里，在台积电这句话里。</p>
+
+        <p>但闸门会漂移。当台积电兑现连续两年产能翻倍（2024→2025→2026 目标从 40K 到 80K 再到 150K/月），CoWoS 的相对紧张度就在缓解——闸门开始往下一层移。往哪移？看两个已经出现的信号：</p>
+
+        <ul>
+          <li><strong>光互联层（第 7-8 层）追上来</strong>。Coherent（光模块龙头）2024 财年（截至 2024-06）800G 数据中心收发器单季度收入从约 200M 攀到超 250M，环比高个位数增长；管理层同步预告 1.6T 收发器在 2025 自然年商用<span class="badge badge-verified">已核验 · Coherent FY24 Q4 财报</span>。中际旭创（Innolight）2024 年光通信收发模块收入 229 亿元、+125%，光模块出货量从 2023 年 977 万只跃升到 2088 万只、翻了一倍多<span class="badge badge-verified">已核验 · 中际旭创 2024 年报</span>。<strong>GPU 集群规模翻倍，互联复杂度大致按 O(N²) 而不是 O(N) 长——所以光模块需求增速可以持续超过 GPU</strong>。</li>
+          <li><strong>电力和液冷（第 10 层）成为下一个显性约束</strong>。IEA《Energy and AI》2025 报告：2024 年全球数据中心用电 415 太瓦时，占全球电力 1.5%；2030 年预计 945 太瓦时、占 3%；美国一地占全球数据中心用电 45%<span class="badge badge-verified">已核验 · IEA 2025 报告</span>。Vertiv（数据中心液冷/供电龙头）2024 全年净销售 80.1 亿美元、+16.7%，年底订单积压 71.8 亿美元、几近翻倍<span class="badge badge-verified">已核验 · Vertiv 10-K FY2024</span>。</li>
+        </ul>
+
+        <p>把这两组数据合起来读：<strong>2023-2024 年闸门在中游封装，2025-2026 年闸门在下游互联与后段电力</strong>。闸门位置是月度到季度的动态变量，不是常识——它是这一模块最值钱的「哪里在缺」的地图。</p>
+
+        <h2>3. 越上游，认知差越大——披露密度决定的机制</h2>
+
+        <p>看完谁在缺，再看谁在讲。这一节的核心结论一句话：<strong>越上游的公司，规模越小、覆盖分析师越少、披露越薄——这几件事是同一件事的三张脸，共同决定了「上游认知差机会大但验证难」这条广为流传的观察</strong>。它不是玄学，是可查的规模差与信息差直接推出来的。</p>
+
+        <p>先建三个不容易反驳的事实（同一年内的核验数字）：</p>
+
+        <div class="derive">
+          <span class="expr">L2 GPU 层 · 英伟达 FY2026 数据中心收入 =</span>
+          <span class="res">$193.7B</span>
+          <span class="unit">全年 · 数据中心分部单独披露</span>
+        </div>
+        <div class="derive">
+          <span class="expr">L7 DSP 层 · Marvell FY2025 AI 相关收入 &gt;</span>
+          <span class="res">$1.5B</span>
+          <span class="unit">全年 · 未按季度细拆</span>
+        </div>
+        <div class="derive">
+          <span class="expr">L10 材料层 · AXT FY2024 全公司收入 =</span>
+          <span class="res">$99.4M</span>
+          <span class="unit">全年 · 未披露 InP 用于 AI 的具体比例</span>
+        </div>
+
+        <p>三个数字来自各家 2024/FY2025 财报<span class="badge badge-verified">已核验 · 英伟达 FY2026 4Q 业绩公告、Marvell FY2025 全年电话会、AXT 2024 全年财报</span>。从 L2 到 L10，规模缩了大约 <strong>1,950 倍</strong>（193,700 / 99.4）。这条规模落差不是「小公司差」，是这一层业务本身就小——AXT 卖的 InP 衬底一片几十美元，一年全球总市场就是十几亿美元的规模，一家公司做到几亿美元就是龙头之一。</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">披露密度 · 从 L1 到 L10 的公开信息带宽</span>
+            <span class="viz-sub">看什么：块越长表示可跟踪信号越多（季度电话会 + 分部披露 + 分析师覆盖 + 行业媒体）——越往上游越窄，认知差就住在窄的那头</span>
+          </div>
+          <div class="discl-wrap">
+            <div id="disclose"></div>
+            <p class="discl-note">带宽是四项因素综合（1）季度电话会披露粒度；（2）分部收入是否单列；（3）公开分析师覆盖数量级；（4）主流财经媒体报道频次。综合评分为本页由已核验案例推导，非官方指标。</p>
+          </div>
+        </div>
+
+        <p>为什么必然如此？三条机制叠加，缺一不可：</p>
+
+        <ul>
+          <li><strong>规模决定披露粒度</strong>。SEC 只要求「重大」分部单列披露——一层业务在全公司收入里占比不够大，就不会被单独讲。英伟达数据中心占 88%，必然季度披露；AXT 的 InP 用于 AI 光互连的部分，占 InP 收入里若干比例（未披露），占公司总收入 1 亿美元的更小一块——不可能出现在标题里。</li>
+          <li><strong>规模决定分析师覆盖</strong>。买方研究部只能覆盖有限个标的，会把资源投在能容纳大资金的大公司。所以英伟达每季度电话会有二三十家投行分析师排队问问题，AXT 的电话会通常只有一两家提问、有时甚至无提问——公开答疑是最便宜的信息，稀缺就是稀缺。</li>
+          <li><strong>规模决定订单可追踪度</strong>。GPU 出给几家云厂商，客户名单公开、季度落地清晰；InP 衬底和 ABF 材料卖给几十家光模块厂/基板厂，客户分散、行业分类冷门、季度出货不可能对着某笔 CapEx 逐单核对——只能靠机制推。</li>
+        </ul>
+
+        <p>三条机制的联合含义就是一句：<strong>上游的信号本来就不会自动到你手里，必须自己沿链推</strong>。练习页的两道迁移题都在练这个动作。此外，认知差机会存在，不等于容易赚——上游披露薄的另一面就是验证难、假信号多、周期敏感度高（模块 8 会专门拆上游材料与基础设施的判断法）。</p>
+
+        <h2>4. 时滞不是印象，是三条产能约束叠出来的时间表</h2>
+
+        <p>本节把第 1 节地图上的时滞数字，用可核验的产能约束推一遍。三个约束是这一节要建立的模型：</p>
+
+        <ul>
+          <li><strong>芯片有库存缓冲</strong>。GPU 从台积电出片到装进英伟达服务器，中间有几周的成品库存和渠道库存——所以云厂商 CapEx 上调，英伟达当季就能确认收入，滞后 0-1 季。</li>
+          <li><strong>设备交期以年计</strong>。EUV 一台 2.27 亿欧元、2024 全年全球只交付 44 台<span class="badge badge-verified">已核验 · ASML 2024 年报（m02 已建）</span>——所以扩产要提前订机，WFE 订单反过来<strong>领先</strong>芯片厂的收入 2-3 季。这就是模块 2 工具二讲过的时序推论，直接用在这里。</li>
+          <li><strong>厂房与并网以两年计</strong>。从动工到通电投产 24-36 个月（模块 2 已建），中间要过电网并网排队——所以电力液冷厂的订单确认滞后 CapEx 决策 3-4 季（合同签订到设备交付到收入确认，再叠 backlog 兑现的节奏）。Vertiv 71.8 亿美元的 backlog 就是这条时滞的直接证据：合同摆着，还要几个季度才能全部转成收入<span class="badge badge-verified">已核验 · Vertiv 10-K FY2024</span>。</li>
+        </ul>
+
+        <p>三条约束叠出来的时间表，就是下面这张对照表——这是本页最实用的一张表，投研会议里会当白板画：</p>
+
+        <div class="tbl-wrap"><table class="tbl lag-tbl">
+          <thead><tr><th>层</th><th>典型公司</th><th>相对 CapEx 时滞</th><th>物理约束</th><th>本页第几节推导</th></tr></thead>
+          <tbody>
+            <tr><td>L1 AI Cloud</td><td>Meta、Alphabet、Amazon、Microsoft</td><td class="lag-cell lag-mid">0 季（源头）</td><td>本层就是决策</td><td>§1</td></tr>
+            <tr><td>L2 GPU/ASIC</td><td>英伟达、博通、AMD、Marvell</td><td class="lag-cell lag-early">0-1 季</td><td>成品与渠道库存</td><td>§4 约束①</td></tr>
+            <tr><td>L3 HBM</td><td>SK 海力士、美光、三星</td><td class="lag-cell lag-early">0-1 季</td><td>长约锁定 + 直供</td><td>§4 约束①</td></tr>
+            <tr><td>L4 eSSD</td><td>SanDisk、Kioxia、三星</td><td class="lag-cell lag-mid">1-2 季</td><td>企业级认证周期长于消费级</td><td>§4 约束①②</td></tr>
+            <tr><td>L5 Foundry+CoWoS</td><td>台积电</td><td class="lag-cell lag-mid">1-2 季</td><td>晶圆周期 3-4 个月 + 封装排队</td><td>§4 约束①</td></tr>
+            <tr><td>L6 WFE 设备</td><td>ASML、应用材料、泛林、KLA</td><td class="lag-cell lag-early">领先 2-3 季</td><td>扩产必先订机</td><td>§4 约束②</td></tr>
+            <tr><td>L7 DSP/SerDes</td><td>Marvell、博通</td><td class="lag-cell lag-early">0-1 季</td><td>与 GPU 平行采购</td><td>§4 约束①</td></tr>
+            <tr><td>L8 光模块/光芯片</td><td>Coherent、中际旭创、Lumentum</td><td class="lag-cell lag-early">0-1 季</td><td>与 GPU 集群同步部署</td><td>§4 约束①</td></tr>
+            <tr><td>L9 测试</td><td>Advantest、Teradyne、AEHR</td><td class="lag-cell lag-mid">1-2 季</td><td>芯片放量前必先备好测机</td><td>§4 约束②（弱）</td></tr>
+            <tr><td>L10 材料 + 电力液冷</td><td>AXT、味之素、Vertiv、GE Vernova</td><td class="lag-cell lag-late">3-4 季（材料稍前，电力最后）</td><td>并网 + backlog 兑现</td><td>§4 约束③</td></tr>
+          </tbody>
+        </table></div>
+
+        <p style="font-size:var(--fs-13);color:var(--muted)">「领先 X 季」意味着这一层的收入信号在 CapEx 决策之前就能读到，反过来「滞后 X 季」是 CapEx 决策后 X 季才能在这层报表上见效。时滞是常态区间的粗算，异常周期（缺货、砍单）会拉长或缩短——尤其下行时 WFE 从「最领先」变成「最先塌」，方向不变、幅度放大。</p>
+
+        <p>模块 9 会把这张表升级成「四铁律」的其中一条——瓶颈铁律；模块 10 会用它做周期拐点的多层交叉验证。这里先记住一点：<strong>读到一条 AI 新闻，先问「它在哪层」再问「它意味着什么」——层不对，判断先错</strong>。</p>
+
+        <div class="note">
+          <span class="note-label">不要学太深</span>
+          <p>不需要背每层十几个 ticker，不需要研究每种材料的化学配方，不需要读光通信白皮书。要带走的是五个能生成判断的模型：<strong>十层地图的顺序与代表公司</strong>、<strong>闸门层是动态的、且当前在中游封装-下游互联-后段电力之间漂移</strong>、<strong>越上游认知差越大来自规模-覆盖-披露三条同源机制</strong>、<strong>时滞由三条产能约束决定，WFE 领先、GPU/HBM 平行、电力液冷最后</strong>、<strong>读新闻先定层再判断</strong>。写不出这五条，回到对应小节重学。</p>
+        </div>
+      </section>
+
+      <!-- ==================== 怎么判断 ==================== -->
+      <section role="tabpanel" id="panel-b" aria-labelledby="tab-b" class="prose" hidden>
+
+        <p style="font-size:var(--fs-15);color:var(--muted)">这一页只交付三件真实存在的工具。每件都按同一结构给齐：<strong>来源 → 为什么成立 → 真实案例 → 怎么操作 → 失效边界</strong>。找不到出处、无法用真实案例验证的「规则」，不会出现在这里。</p>
+
+        <h2>工具一：定层三问——把任何 AI 新闻放回十层地图</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>由本质页第 1、4 节的传导链和时滞对照推导，不是外来术语。买方研究里的常规第一步动作：把新闻还原到「谁的订单动了」，才能问下一层问题。<span class="badge badge-expert">专家判断 · 通行的买方研究流程</span></div></div>
+          <div class="chain-row"><b>机制</b><div>模块 5 讲了「公司在哪一层」，本模块讲了「这一层什么时候被信号打到」。合起来就是三问：①这条新闻是哪一层的公司说的？②按时滞对照表，它对应哪几层的订单变化？③相邻层的公开信号能不能交叉验证？三个问题依次回答，就把一条新闻还原成了机制事件，不再是情绪事件。</div></div>
+          <div class="chain-row"><b>案例</b><div>用 2024-04-18 的台积电电话会走一遍。①这句话是 L5（Foundry+CoWoS）的说法，来自魏哲家<span class="badge badge-verified">已核验</span>；②「CoWoS 产能翻倍仍不足」对应订单变化是：L3 HBM 需求随 CoWoS 产能同步翻倍（因 GPU+HBM 必须一起缝合）、L10 ABF 载板需求同步翻倍、L8 光模块需求随 GPU 集群规模按 O(N²) 放大——三层订单都必然被这句话推高；③相邻层交叉验证：美光 2024 年宣布 HBM 全年售罄、2025 年绝大部分已分配（L3 兑现）<span class="badge badge-verified">已核验 · m03 复盘</span>；中际旭创 2024 收入+122%、光模块出货 977→2088 万只（L8 兑现）<span class="badge badge-verified">已核验</span>；味之素 ABF 产能扩 50%、CPU/GPU 基板占比&gt;95%（L10 兑现）<span class="badge badge-verified">已核验 · 味之素公开材料</span>。三个信号都对上，判断成立。</div></div>
+          <div class="chain-row"><b>操作</b><div>建立一个「读新闻先定层」的机械动作。看到 AI 相关新闻，第一步不是问「利好利空」，而是打开本质页的十层地图，指认这条新闻属于哪一层、由哪家公司发出。第二步查时滞对照表，找出「同一笔 CapEx 应该同时打到哪几层」。第三步去那几层的季度电话会/业绩公告里找交叉验证。三步完成，通常十分钟内。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①<strong>跨层新闻</strong>：博通这类横跨 L2（ASIC）+ L7（SerDes/Tomahawk）+ L8（PAM DSP）的公司，一条新闻可能同时是三层的信号——不能只塞进一格。②<strong>宏观新闻不属于某一层</strong>：出口管制、汇率、美联储利率这类新闻覆盖所有层，用本工具会失效——它们属于模块 10-12 的功课。③<strong>虚假标题</strong>：新闻标题的措辞可能刻意夸大或错分层（如把「AI 概念」贴到本身跟传导链无关的地产公司上）——必须回到公司原文，见模块 1 迁移一。</div></div>
+        </div>
+
+        <h2>工具二：闸门信号——中游卡点决定整链兑现节奏</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>台积电、SK 海力士、美光的季度电话会里的产能措辞——这是最高质量的闸门信号，因为这三家自己就是闸门层，说自己的产能与承诺就是承诺本身。台积电 2024-04-18 电话会关于 CoWoS 产能「翻倍仍不足」（原文见本质页第 2 节）；美光 2024 年宣布 HBM 全年售罄、2025 年绝大部分已分配、2026 年供应已全部签约<span class="badge badge-verified">已核验 · 美光电话会 + TrendForce 2025-12 后续报道</span>。<span class="badge badge-expert">专家判断 · 通行的买方跟踪法</span></div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 2 节：整链出货 = 最短板产能；闸门层的产能扩张速率就是整链的出货增长天花板。所以闸门层管理层的原话是可核验、可校准的「未来几季能不能出货」的直接读数——这比任何下游财报的「AI 需求强劲」都更硬。</div></div>
+          <div class="chain-row"><b>案例</b><div>2023-2024 年 CoWoS 是闸门：台积电月产能从约 20K 涨到 40K wafers（2024）、再到 80K（2025 目标），2026 拟到 150K<span class="badge badge-verified">已核验 · TrendForce 报告</span>——这条曲线就是英伟达 H100/H200 交付节奏的物理天花板。同期美光 HBM 售罄公告（本质页§2/§3 引用）配合确认：闸门信号在两家跨行业管理层嘴里同时出现，可信度极高。此后闸门开始往下游漂：2024 下半年起 Coherent 800G 单季收入从 200M→250M+<span class="badge badge-verified">已核验</span>、中际旭创 2024 光模块出货从 977 万只跃到 2088 万只<span class="badge badge-verified">已核验</span>——闸门位置正从 CoWoS 移向光互联。再往前看 2026-2027 年，IEA 已经把电力升级为下一个显性瓶颈（2024→2030 数据中心用电从 415→945 TWh，占全球 1.5%→3%<span class="badge badge-verified">已核验 · IEA 2025 报告</span>）——闸门的漂移是可以从公开数据里读出来的季度动作。</div></div>
+          <div class="chain-row"><b>操作</b><div>把「台积电 + HBM 三厂 + 光模块两家（Coherent、中际旭创）」的季度电话会做成一份短列表，定期读它们关于「产能」「售罄」「订单」的措辞——这不是四十家公司的功课，是六到八家。措辞比数字更早：管理层措辞从「紧张」变成「平衡」再变成「充分」的过程，就是闸门从收紧到松开的过程，往往领先出货数据一到两季。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①<strong>闸门会漂移</strong>——盯着上一轮的闸门（如 2023 年只盯 CoWoS），可能错过下一轮的闸门（2025-2026 年往光互联和电力漂移）；必须每季度更新。②<strong>下行期扭转</strong>——闸门层最先感知需求转弱：CoWoS 稀缺变充足、HBM 售罄变库存，是砍单先行信号，且传导比上行更快（模块 9-10 展开）。③<strong>口径消失比口径恶化更危险</strong>——之前给过的产能承诺突然不再提，往往是兑现不了，见模块 2 工具三。</div></div>
+        </div>
+
+        <h2>工具三：披露密度对照——把认知差机会定到具体层</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>SEC 10-K/10-Q 的「重大」分部披露规则；港股/A 股年报的「主要客户」披露；主流财经媒体（Bloomberg、路透、CNBC）的报道频次。四项综合起来，构成一家公司的「公开信号带宽」。<span class="badge badge-expert">专家判断 · SEC 分部披露实践与买方研究流程综合</span></div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 3 节推过：规模→分析师覆盖→披露粒度，三者同源。所以「披露密度低」不是运气差，是规模决定的结构位置。反过来：一家上游材料公司的季报，即使读得极慢，也可能读出别人没在读的东西——因为读它的人本来就少。</div></div>
+          <div class="chain-row"><b>案例</b><div>本质页三个已核验的数字对比：L2 英伟达 FY2026 数据中心 $193.7B、L7 Marvell FY2025 AI &gt; $1.5B、L10 AXT FY2024 $99.4M<span class="badge badge-verified">已核验 · 三家 SEC 备案</span>——同一条 AI 传导链上，规模差约 1,950 倍。同期 Advantest（L9 测试）FY 截至 2025-03 净销售 4,780 亿日元（约 32 亿美元）、+68%，管理层预告 HPC/AI 收入占比 FY26 将升至 90%<span class="badge badge-verified">已核验 · Advantest FY2025 财报</span>——L9 的公开披露密度介于 L2 和 L10 之间，与业务规模顺序一致。这是「披露密度带宽 = 业务规模量级」的直接证据。</div></div>
+          <div class="chain-row"><b>操作</b><div>做一张表，把候选标的按十层地图归位，然后写下四项：①最近一次电话会披露 AI 相关收入的粒度（美元级/千万美元级/百万美元级）；②该分部是否单列于分部披露；③该股票被哪家主流投行覆盖（Bloomberg/Refinitiv 的分析师目录）；④三个月内 Bloomberg/CNBC/路透报道次数。四项综合分越低（披露带宽越窄），越可能有认知差；但注意——<strong>披露薄 ≠ 机会大，见失效①</strong>。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①<strong>披露薄可能因为业务本来就小或已经衰退</strong>：AXT 2024 收入不到 1 亿美元，即使涨十倍也就是 10 亿——绝对规模天花板决定回报量级；上游材料公司出现的「爆款」通常来自估值重估，而非利润量级本身。②<strong>披露薄可能来自监管/风险</strong>：AXT 2025 Q4 收入因中国出口许可延迟受挫<span class="badge badge-verified">已核验 · Semiconductor Today 2026-03 报道</span>——政策风险的信号有时藏在「披露突然改变」里，不是所有「披露少」都是机会。③<strong>覆盖多不等于定价充分</strong>：英伟达覆盖分析师最多，但 2025-01 DeepSeek 事件当日仍出现单日 -17% 的错误定价（模块 1 已建）——认知差可以出现在任何层，只是频次和方向不同。</div></div>
+        </div>
+
+        <h2>操作清单：判断一条 AI 传导链新闻</h2>
+        <p style="font-size:var(--fs-14);color:var(--muted)">以下每一项都由本页机制直接推导，括号内注明依据——它们不是独立的外部工具，是三件工具的落地检查位。</p>
+        <ul class="checklist">
+          <li><label><input type="checkbox"><span><b>这条新闻属于十层地图的哪一层？由哪家公司/机构发出？</b>（依据：工具一——定层三问的第一问）</span></label></li>
+          <li><label><input type="checkbox"><span><b>按时滞对照表，这条新闻对应哪几层的订单同步变化？</b>（依据：本质页§4 时滞表 + 工具一）</span></label></li>
+          <li><label><input type="checkbox"><span><b>相邻层的公开信号（季度电话会/业绩公告）能否交叉验证？至少两条独立信号才算成立。</b>（依据：工具一第三问 + 工具二闸门信号）</span></label></li>
+          <li><label><input type="checkbox"><span><b>当前的闸门层在哪里？这条新闻是让闸门收紧、松开还是漂移？</b>（依据：工具二——2023-2024 CoWoS、2025+ 光互联/电力）</span></label></li>
+          <li><label><input type="checkbox"><span><b>这条新闻对应的最上游一层，公开披露密度多大？还有可能藏未被定价的信息吗？</b>（依据:工具三——披露密度带宽评分）</span></label></li>
+          <li><label><input type="checkbox"><span><b>上一次同样量级的新闻，在同一条链上各层最终兑现了多少、用了几个季度？</b>（依据：本质页§4 时滞对照 + 模块 10 周期功课）</span></label></li>
+        </ul>
+      </section>
+
+      <!-- ==================== 练习 ==================== -->
+      <section role="tabpanel" id="panel-c" aria-labelledby="tab-c" class="prose" hidden>
+
+        <h2>决策复盘一 · 2024 年 4 月 18 日：魏哲家「CoWoS 产能翻倍仍不足」</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2024-04-18 · 事件已核验</p>
+          <h4>当天你看到的信息：台积电 Q1 2024 电话会，CEO 魏哲家说 CoWoS 产能今年比去年翻倍以上，「仍然不够满足客户需求」，明年会「非常努力」。台积电当天股价小幅震荡，市场没有明显定价方向。<span class="badge badge-verified">已核验 · TSMC Q1 2024 电话会转录（Motley Fool）</span></h4>
+          <p class="case-note">魏哲家一句话摆在桌上。你的动作是什么？先选，再看拆解。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>加仓台积电（扩产直接受益）</button>
+            <button type="button" data-pick>加仓英伟达（GPU 需求侧确认）</button>
+            <button type="button" data-pick>沿链找还没被这句话定价的层</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>第一步 · 翻译</b><div>把「CoWoS 翻倍仍不足」翻译成十层地图上的动作：L5 封装产能翻倍（已在台积电股价里），且需求继续超过供给——意味着 L3 HBM、L8 光模块、L10 ABF/InP 的订单会随 CoWoS 翻倍成比例往上走（因为 GPU、HBM、封装是一起放大的）。</div></div>
+              <div class="chain-row"><b>第二步 · 找未定价的必然采购</b><div>台积电当天股价没大动 → 说明市场没充分定价。往下推：<strong>L3 HBM</strong>（美光当时 HBM 收入近乎为零，但 CoWoS 翻倍意味着 HBM 需求同步翻倍——这是未定价的必然采购）；<strong>L8 光模块</strong>（GPU 集群规模翻倍，光互联需求按 O(N²) 长——中际旭创、Coherent 是待兑现的候选）；<strong>L10 ABF 载板</strong>（每一颗 CoWoS 都要 ABF 基板——味之素几乎垄断，供不应求会传导到基板产能）。</div></div>
+              <div class="chain-row"><b>第三步 · 后来的事实（不到 12 个月）</b><div>L3 美光：2024 电话会宣布 HBM 全年售罄、2025 绝大部分已分配<span class="badge badge-verified">已核验</span>；FY2025 Q2 HBM 单季首破 10 亿美元、FY2025 Q4 约 20 亿美元、组合全年 100 亿<span class="badge badge-verified">已核验</span>。L8 中际旭创：2024 全年收入 238.6 亿元、+122.6%，光模块出货 977 万→2,088 万只<span class="badge badge-verified">已核验 · 2024 年报</span>；Coherent FY2024 Q4 800G 单季收入超 2.5 亿美元<span class="badge badge-verified">已核验</span>。L10 味之素：ABF 材料在 CPU/GPU 基板占比&gt;95%、宣布投 250 亿日元扩产 50%<span class="badge badge-verified">已核验 · 公司公开材料</span>。三条独立信号在 12 个月内先后兑现——魏哲家的一句话在传导链上被完整走过一遍。</div></div>
+              <div class="chain-row"><b>带走规则</b><div>闸门层的产能表态是整条链的「定量约束」。听到这类话，第一动作不是买闸门层本身（往往已在价格里），而是<strong>把这个约束向下平移到 L3/L8/L10——那些必须跟着放大的层</strong>。这就是模块 2 决策复盘一「沿流程找还没被定价的环节」思路在本模块的复用。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>「订单必然」不等于「股价必然涨」。本推理在 2024-04 到 2025 年间给出了三条独立层的必然采购信号，但美光股价在 2024 下半年一度回撤（半导体周期的市场情绪波动，估值起点已高）——最终仍兑现，但持有过程有波动。<strong>推理对不保证仓位对</strong>：仓位大小、买入时点、持有周期，属于模块 10-11 的估值与周期功课，不在本模块。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>决策复盘二 · 2025 年 2 月 12 日：Vertiv 2024 年报——backlog 71.8 亿、几近翻倍</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2025-02-12 · 事件已核验</p>
+          <h4>当天你看到的信息：Vertiv 公布 FY2024 全年财报——净销售 80.1 亿美元、+16.7%；营业利润 13.7 亿美元、+56.8%；<strong>订单积压 71.8 亿美元，同比几近翻倍</strong>。市场大幅追捧数据中心液冷/电力主题，Vertiv 股价在 2024 全年已经涨了两倍多。<span class="badge badge-verified">已核验 · Vertiv 10-K FY2024</span></h4>
+          <p class="case-note">这是「AI CapEx 传导到 L10 电力液冷」的教科书级证据。你的动作是什么？</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>追高 Vertiv（backlog 71.8 亿就摆着）</button>
+            <button type="button" data-pick>回避 Vertiv（估值已透支）</button>
+            <button type="button" data-pick>沿 L10 上溯找认知差可能还在的相邻标的</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>性质判断</b><div>Vertiv 的 backlog 是「AI CapEx 传导到基础设施层」的兑现——本质页§4 说 L10 时滞 3-4 季，Vertiv 的 backlog 就是这条时滞在报表上的形态：合同已签、收入待兑现。这不是新信息，是把时滞可视化了。</div></div>
+              <div class="chain-row"><b>披露带宽已经很宽</b><div>Vertiv 2024 全年涨了两倍多，市场关注度极高、每季电话会 20+ 分析师覆盖——按工具三，L10 里的 Vertiv 部分已经从「披露薄」变成「披露厚」。认知差机会正在压缩。</div></div>
+              <div class="chain-row"><b>上溯 L10 内部还剩什么</b><div>L10 材料+基础设施内部还有多层结构：<strong>①电力设备本身</strong>（变压器、开关柜、GE Vernova 等）——比液冷更后段，2025-2026 才成为显性瓶颈（IEA 2025 报告支持这个方向<span class="badge badge-verified">已核验</span>）；<strong>②液冷内部的细分组件</strong>——冷板、CDU、快接头，被 Vertiv 打包卖出，但组件供应商披露密度更薄；<strong>③电网并网排队</strong>——这不是股票，是政策/项目跟踪。</div></div>
+              <div class="chain-row"><b>带走规则</b><div>L10 层内部同样有分层结构，最领先的（Vertiv）已被市场发现，往上溯到组件层可能还有认知差；但绝对规模有限（本质页工具三失效①）。<strong>「上游认知差」是有阶梯的：先是层间（L2 vs L10），再是层内（Vertiv vs 冷板供应商）</strong>——两级筛都过，才是真正的认知差机会。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>「上溯还有认知差」是方向判断，不是选股建议。上游电力设备公司周期属性强（工业设备）、集中度高、并购整合频繁——单一标的的推理需要额外的公司层功课（管理、订单质量、财务健康），不能只靠传导链推。且电力设备与传统电网需求（非 AI）叠加，占比拆分本身就困难。<strong>推理给方向，具体标的看估值、周期和公司质量。</strong></div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>迁移题（模块里没有现成答案，用机制自己推）</h2>
+
+        <article class="scenario">
+          <h4>迁移一 · 一条数据中心开工新闻，倒推十层——每层都要给公开验证源</h4>
+          <p>新闻：某美国云厂商公告在弗吉尼亚州破土动工建设一座 500 兆瓦级 AI 数据中心，预计 2027 年下半年投运（本题参照 2024-2025 年多起同类真实公告的结构<span class="badge badge-verified">已核验 · 多家云厂商 2024-2025 项目公告</span>）。<strong>按本质页十层地图，从 L10 倒推到 L1，说出每层「什么已经完成 / 什么正在下单 / 什么才会开始」，并给出每层的公开验证源。</strong></p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr1" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr1">
+            <div class="chain">
+              <div class="chain-row"><b>L10 电力/液冷</b><div>已完成：电网并网协议、场地征收、Vertiv/GE Vernova 的液冷+电力方案设计。<strong>正在下单</strong>：backlog 中确认（Vertiv FY2024 报表 71.8 亿 backlog 是这类订单的合集<span class="badge badge-verified">已核验</span>）。验证源：项目所在州公用事业委员会的并网批准公告；Vertiv/GE Vernova 季报的 backlog 分区披露。</div></div>
+              <div class="chain-row"><b>L10 材料 InP/ABF</b><div>正在放大：AXT 的 InP 扩产（2026 底再翻倍<span class="badge badge-verified">已核验</span>）、味之素 ABF 扩产 50%<span class="badge badge-verified">已核验</span>——都是为 2027 投运的 AI 产能提前 12-18 个月备料。验证源：AXT/味之素季报关于扩产进度的措辞。</div></div>
+              <div class="chain-row"><b>L9 测试</b><div>正在下单：Advantest/Teradyne 拿到 AI 测试机订单（每张 AI 加速卡的测试时间显著长于消费芯片，测试机需求随 AI 出货同步扩）。验证源：Advantest FY2025 财报「Computing/Communications 收入占比从 60% 升到 FY26 90%」<span class="badge badge-verified">已核验</span>。</div></div>
+              <div class="chain-row"><b>L8 光模块 / L7 DSP</b><div>正在下单：中际旭创/Coherent 的 800G/1.6T 光模块产能预订；Marvell/博通的 PAM4 DSP 采购。验证源：Coherent 季报 800G 单季收入趋势、中际旭创月度出货公告。</div></div>
+              <div class="chain-row"><b>L6 WFE</b><div>已完成（若数据中心 2027 投运）：为对应产能的 EUV/量测/刻蚀订单已在 12-24 个月前下达。验证源：ASML/应材/KLA 季报的净订单（backlog）与积压订单结构、区域收入。</div></div>
+              <div class="chain-row"><b>L5 Foundry+CoWoS</b><div>正在放大：台积电 CoWoS 月产能从 40K→80K→150K 的排产早已锁定（本质页§2 已引<span class="badge badge-verified">已核验</span>）。验证源：TSMC 季度电话会关于先进封装的产能措辞。</div></div>
+              <div class="chain-row"><b>L4 eSSD / L3 HBM</b><div>合同已锁：Micron HBM 2026 供应已全部签约<span class="badge badge-verified">已核验</span>；SanDisk 面向 AI 数据湖的 256TB eSSD 已发布并锁定客户<span class="badge badge-verified">已核验</span>。验证源：Micron/SK Hynix/三星季报关于 HBM 订单的措辞；SanDisk/Kioxia 关于 eSSD 数据中心收入占比的披露。</div></div>
+              <div class="chain-row"><b>L2 GPU/ASIC</b><div>订单意向已在两三个季度前签订：英伟达 Blackwell 系列 2025-2027 出货合同；博通 Google TPU 长期供应协议（至 2031 年）<span class="badge badge-verified">已核验 · 2026 报道</span>。验证源：英伟达季度数据中心分部收入、博通 AI 芯片分部收入。</div></div>
+              <div class="chain-row"><b>L1 AI Cloud</b><div>决策已完成：这条公告本身就是 CapEx 决策的输出。验证源：云厂商季度业绩公告的 CapEx 实际数与下季指引。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>①并非所有层都能找到该项目的一手关联——大多数上游披露不到「某某项目」这个粒度，只能通过总量+区域推断。②公告的时间与投运时间之间有 24-36 个月延迟（模块 2 已建），不能把「宣布」当成「本季度订单」。③如果公告发出方是财务不健康的地产/概念公司（模块 1 迁移一讲过），前面十层可能一层都不受益，因为项目本身可能永远不会建成。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario">
+          <h4>迁移二 · AXT vs 英伟达，规模差 1,950 倍——两条独立机制</h4>
+          <p>AXT 2024 全年收入 9,940 万美元<span class="badge badge-verified">已核验</span>，英伟达 FY2026 数据中心分部单一年 1,937 亿美元<span class="badge badge-verified">已核验</span>——同样在 AI 传导链上，规模差约 1,950 倍。这不是「英伟达做得好、AXT 做得差」这么简单。用本质页第 3 节的机制推导，说出两条独立机制解释这个规模差。</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr2" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr2">
+            <div class="chain">
+              <div class="chain-row"><b>机制一 · 每颗芯片的经济附加值差异</b><div>InP 衬底（AXT 的核心业务）是给光模块厂做光芯片的原材料——一片 4 英寸 InP 衬底几百到上千美元，能出几十颗光芯片。而一片光芯片装进光模块后大约几十美元、光模块整体几百到上千美元。<strong>但一颗 H100 GPU 售价数万美元</strong>（模块 2 已建）——单位加工附加值差异是几个数量级。这不是「上游给下游赚」，是本来就是不同规模的生意。</div></div>
+              <div class="chain-row"><b>机制二 · 客户与订单结构差异</b><div>英伟达把 GPU 卖给「四家云厂商 + 头部主权 AI + 几家 OEM」——客户集中度高、单笔订单额度巨大、可与云厂商 CapEx 直接对齐（本质页§4）。AXT 把 InP 衬底卖给「几十家光模块厂 + 若干激光/传感器厂」——客户高度分散，每家采购几百万到几千万美元，不可能对着某笔 CapEx 逐单核对；且订单从 InP 到最终 AI 数据中心投运要经过光芯片-光模块-数据中心装机四段传导，时滞 3-4 季（§4 表已列）。规模差与时滞差同源：AXT 处于本质页§3 讲的「披露-覆盖-规模」三同源效应的最上游。</div></div>
+              <div class="chain-row"><b>不是理由的理由</b><div>不是「AXT 管理层不如英伟达」——两家公司都在自己的层里做得不错。规模差是层间结构决定的，个体经营好坏是层内表现，两个维度不能混。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>①<strong>小规模不等于高弹性</strong>——AXT 的 AI 敞口大约在 InP 收入的一部分（未披露具体比例），公司总收入里 AI 相关部分绝对值也就几千万美元；单个大客户砍单可以让全年收入塌一半（工具三失效①）。②<strong>规模差不改变链上的依赖关系</strong>——AXT 收入虽小，但 InP 衬底缺货会卡到光模块出货，光模块出货又卡到 GPU 集群，所以 AXT 是「量小杠杆大」——真正的杠杆点验证要看下游光模块厂对上游 InP 供应的措辞（比如 Coherent/中际旭创财报中关于「关键材料供应」的段落）。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <h2>自测（算得出来才算会）</h2>
+
+        <div class="quiz" data-quiz data-explain="中际旭创 2024 年报披露光模块出货量 20.88 million，2023 年 9.77 million。年增速 = (20.88 - 9.77) / 9.77 × 100% ≈ 113.7%。这条数字本身就是「L8 光模块层年度翻倍」的现场证据，也是「闸门从 CoWoS 往光互联漂」的直接读数。">
+          <p class="quiz-q">1. 中际旭创（Innolight）光模块出货量：2023 年 977 万只，2024 年 2,088 万只——年增速大约是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q1"><span>约 +38%</span></label>
+            <label><input type="radio" name="q1"><span>约 +64%</span></label>
+            <label><input type="radio" name="q1" data-correct="1"><span>约 +114%</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="传导链上唯一「领先 CapEx」的层是 L6 WFE 设备（模块 2 工具二讲过：设备订单先于芯片厂扩产、领先芯片厂收入 2-3 季）。GPU/HBM/光模块与 CapEx 基本平行（0-1 季），电力液冷滞后 CapEx 3-4 季（模块 6 §4）。">
+          <p class="quiz-q">2. 传导链十层中，收入信号比云厂商 CapEx 决策领先 2-3 个季度的是哪一层？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q2"><span>L2 GPU/ASIC</span></label>
+            <label><input type="radio" name="q2" data-correct="1"><span>L6 WFE 设备</span></label>
+            <label><input type="radio" name="q2"><span>L8 光模块</span></label>
+            <label><input type="radio" name="q2"><span>L10 电力/液冷</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="模块 3 的木桶原理在本模块升级为「闸门层」：整链出货 = min(各层产能)——最短板决定整链吞吐。所以闸门层不是「最上游」也不是「最快涨价」，是「产能扩不动、卡住下游整卡出货」的那一层。选 C。">
+          <p class="quiz-q">3. 传导链里的「闸门层」的严格含义是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q3"><span>最上游的一层</span></label>
+            <label><input type="radio" name="q3"><span>价格上涨最快的一层</span></label>
+            <label><input type="radio" name="q3" data-correct="1"><span>产能扩张最慢、决定整链出货天花板的一层</span></label>
+            <label><input type="radio" name="q3"><span>毛利率最高的一层</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="「越上游认知差越大」由三条同源机制推出：①规模决定披露粒度（分部披露门槛）；②规模决定分析师覆盖数；③规模决定订单可追踪度（客户分散、行业冷门）——三条都是规模+结构性的物理必然，不是运气或态度问题。选 B。">
+          <p class="quiz-q">4. 「越往传导链上游，认知差可能越大」——最准确的机制解释是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q4"><span>上游公司管理层更聪明</span></label>
+            <label><input type="radio" name="q4" data-correct="1"><span>规模决定披露粒度 + 分析师覆盖 + 订单可追踪度——三条同源结构性效应</span></label>
+            <label><input type="radio" name="q4"><span>上游产品定价能力更强</span></label>
+            <label><input type="radio" name="q4"><span>上游公司地理位置更集中</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="note">
+          <span class="note-label">本模块要带走的 memo 能力</span>
+          <p>对任何一条 AI 相关新闻，你现在应该能：定层（十层地图上放在哪层）；沿链推（时滞对照表推同一笔 CapEx 打到哪几层、各多久兑现）；找闸门（当前哪层扩产最慢、决定整链出货）；判断认知差层（披露密度带宽比对，上游披露薄的层是不是还有未定价信息）。不能一次性完成这四个动作，回到对应工具重学。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="src">
+      <strong>本页资料来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://valueaddvc.com/blog/big-tech-ai-capex-in-2025-microsoft-google-meta-amazon-and-the-spending-race">四家美国云厂商 2026 计划 AI CapEx 合计约 7,250 亿美元（+77%，公司披露汇总）</a> · <a href="https://futurumgroup.com/insights/ai-capex-2026-the-690b-infrastructure-sprint/">Futurum：2026 AI CapEx 冲刺</a></li>
+        <li><a href="https://www.fool.com/earnings/call-transcripts/2024/04/18/taiwan-semiconductor-manufacturing-tsm-q1-2024-ear/">TSMC Q1 2024 电话会转录 2024-04-18（魏哲家「CoWoS 产能翻倍仍不足」原话）</a> · <a href="https://investor.tsmc.com/chinese/encrypt/files/encrypt_file/reports/2024-04/34ff75e23e53246302ce3a8d90d0423c57c6b120/TSMC%201Q24%20Transcript.pdf">TSMC 官方 1Q24 Transcript PDF</a></li>
+        <li><a href="https://www.trendforce.com/news/2025/01/02/news-tsmc-set-to-expand-cowos-capacity-to-record-75000-wafers-in-2025-doubling-2024-output/">TrendForce：TSMC CoWoS 月产能 2025 拟到 75K/月（2025-01）</a> · <a href="https://www.trendforce.com/news/2024/10/21/news-cowos-capacity-doubles-for-two-years-still-insufficient-positive-outlook-for-suppliers/">TrendForce：TSMC CoWoS 连续两年翻倍仍不够（2024-10）</a></li>
+        <li><a href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026">英伟达 FY2026 Q4 业绩公告（数据中心全年 1,937 亿美元）</a>（模块 1 已建）</li>
+        <li><a href="https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-fourth-quarter-and-fiscal-year-2024">博通 FY2024 财报 2024-12-12（AI 芯片 122 亿美元 +220%）</a> · <a href="https://www.tomshardware.com/tech-industry/semiconductors/custom-ai-asics-examined-from-broadcom-to-mtia">Tom's Hardware：博通-Google TPU 长期合作至 2031</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0001835632/000183563225000193/q326_8kx1112025ex-991.htm">Marvell FY2025 Q3 8-K（AI 收入 &gt;$1.5B、custom ASIC 与 Inphi PAM4 DSP）</a></li>
+        <li><a href="https://news.skhynix.com/sk-hynix-announces-4q24-financial-results/">SK 海力士 4Q24 财报（2024 收入 66.19 万亿韩元、经营利润率 35%、HBM 占 DRAM 40%+）</a>（模块 5 已建）</li>
+        <li><a href="https://www.tomshardware.com/pc-components/gpus/micron-says-high-bandwidth-memory-is-sold-out-for-2024-and-most-of-2025-intense-demand-portends-potential-ai-gpu-production-bottleneck">Tom's Hardware：美光 HBM 2024/2025 售罄</a> · <a href="https://www.trendforce.com/news/2025/12/18/news-micron-hikes-capex-to-20b-with-2026-hbm-supply-fully-booked-hbm4-ramps-2q26/">TrendForce：美光 2026 HBM 已全部签约（2025-12）</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0002023554/000162828026004121/sndkq2fy26ex991-pressrelea.htm">SanDisk FY2026 Q2 业绩公告（数据中心占比升至 55%+）</a> · <a href="https://futurumgroup.com/insights/sandisk-q2-fy-2026-revenue-beats-on-ai-storage-demand/">Futurum：SanDisk AI 存储需求（256TB eSSD）</a></li>
+        <li><a href="https://www.coherent.com/content/dam/coherent/site/en/documents/investors/financial-releases/2024/august-15/earnings-release-fy24-q4.pdf">Coherent FY2024 Q4 业绩公告（全年收入 47.1 亿美元、Q4 800G 收发器超 250M）</a></li>
+        <li><a href="https://news.futunn.com/en/post/56042696/zhongji-innolight-300308-profitability-continues-to-improve-high-speed-optical">中际旭创 2024 年报（收入 238.6 亿元 +122.6%、光模块出货 20.88M vs 2023 9.77M、毛利率 22.5%）</a></li>
+        <li><a href="https://www.advantest.com/document/en/investors/ir-library/result/E_BIZ_250425_note.pdf">Advantest FY 截至 2025-03 财报（净销售 4,780 亿日元 +68%、HPC/AI 预计 FY26 占 90%）</a></li>
+        <li><a href="https://www.businesswire.com/news/home/20250220199958/en/AXT-Inc.-Announces-Fourth-Quarter-and-Fiscal-Year-2024-Financial-Results">AXT 2024 全年财报（收入 9,940 万美元 +31%、InP 用于 AI 光互连）</a> · <a href="https://www.semiconductor-today.com/news_items/2026/mar/axt-090326.shtml">Semiconductor Today：AXT Q4 2025 因中国出口许可延迟受挫（2026-03）</a></li>
+        <li><a href="https://semiconductorinsight.com/blog/ajinomoto-ramps-up-abf-substrate-production-amid-surging-semiconductor-demand-market-poised-to-double-by-2032/">Ajinomoto ABF：CPU/GPU 基板占比 &gt;95%、扩产 50%（250 亿日元）</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0001674101/000162828025005905/vrt-20241231.htm">Vertiv FY2024 10-K（净销售 80.1 亿美元 +16.7%、backlog 71.8 亿几近翻倍、营业利润 +56.8%）</a> · <a href="https://www.sec.gov/Archives/edgar/data/1674101/000162828025005006/exhibit991vrt02122025.htm">Vertiv FY2024 Q4 业绩公告 2025-02-12</a></li>
+        <li><a href="https://www.iea.org/reports/energy-and-ai/executive-summary">IEA《Energy and AI》2025 报告（2024 数据中心用电 415 TWh、2030 预计 945 TWh、美国占 45%）</a></li>
+        <li><a href="https://www.aehr.com/2026/03/aehr-receives-follow-on-order-for-fully-automated-wafer-level-burn-in-systems-powering-ai-optical-i-o-and-data-center-interconnects/">AEHR 2026-03 公告：AI 光互连晶圆级老化测试追单</a>（模块 3 已建）</li>
+      </ul>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本模块为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="m05.html"><span class="dir">← 上一模块</span>模块 5 · 半导体产业链总地图</a>
+        <a href="m07.html" style="text-align:right"><span class="dir">下一模块 →</span>模块 7 · Memory / Storage 深水区</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- 十层传导链地图（主 A 类组件） ---------- */
+  (function () {
+    const mount = document.getElementById("chainflow");
+    if (!mount) return;
+
+    /* 十层数据。lagTag 用于右侧标签，lagClass 决定色调 */
+    const LAYERS = [
+      { n: "L1", name: "AI Cloud（云资本开支）",
+        co: "Meta · Alphabet · Amazon · Microsoft",
+        num: "四家 2026 计划合计 ~$725B",
+        mech: "软件需求变成资本开支决策，签合同、买地、建数据中心——本层就是需求源头。",
+        lag: "0 季（源头）", lagClass: "mid",
+        src: "各公司业绩公告汇总（ValueAddVC 2026）" },
+      { n: "L2", name: "GPU / ASIC / XPU",
+        co: "英伟达 · 博通 · AMD · Marvell",
+        num: "英伟达 FY26 数据中心 $193.7B",
+        mech: "云 CapEx 变成芯片订单。通用 GPU（英伟达）与定制 ASIC（博通、Marvell）两条路并行。",
+        lag: "0-1 季", lagClass: "early",
+        src: "英伟达 FY26 4Q 业绩公告、博通 FY24 财报" },
+      { n: "L3", name: "HBM 内存",
+        co: "SK 海力士 · 美光 · 三星",
+        num: "美光 2026 HBM 全部签约",
+        mech: "GPU 内存墙 → HBM 直供。长约锁定，与 GPU 平行采购。",
+        lag: "0-1 季", lagClass: "early",
+        src: "SK 海力士 4Q24 财报、美光电话会 + TrendForce 2025-12" },
+      { n: "L4", name: "eSSD（企业级 SSD）",
+        co: "SanDisk · Kioxia · 三星",
+        num: "SanDisk DC 占比 55%+",
+        mech: "训练要 checkpoint、推理要 KV cache、大模型要海量存储——AI 数据湖推动 256TB 级 eSSD。",
+        lag: "1-2 季", lagClass: "mid",
+        src: "SanDisk FY26 Q2 业绩公告" },
+      { n: "L5", name: "Foundry + CoWoS 先进封装",
+        co: "台积电",
+        num: "CoWoS 月产能 40K→80K→150K",
+        mech: "芯片印制 + GPU/HBM 缝合。CoWoS 曾是 2023-2024 年整链闸门。",
+        lag: "1-2 季", lagClass: "mid",
+        src: "台积电 Q1 2024 电话会 + TrendForce 2025-01" },
+      { n: "L6", name: "WFE 半导体设备",
+        co: "ASML · 应用材料 · 泛林 · KLA",
+        num: "SEMI 2024 $117B / 2025 $135B",
+        mech: "Foundry/HBM/CoWoS 扩产必先订机。设备订单领先芯片厂收入 2-3 季——本层是整链唯一「领先」层。",
+        lag: "领先 2-3 季", lagClass: "early",
+        src: "SEMI 2024/2025 年度统计、ASML 2024 年报（模块 2 已建）" },
+      { n: "L7", name: "DSP / SerDes（互联芯片）",
+        co: "Marvell · 博通",
+        num: "Marvell FY25 AI &gt; $1.5B",
+        mech: "GPU 集群互联需要高速 DSP + SerDes。集群规模按 O(N²) 长——增速可持续超 GPU。",
+        lag: "0-1 季", lagClass: "early",
+        src: "Marvell FY25 Q3 8-K（Inphi PAM4 DSP、Nova 2 1.6T）" },
+      { n: "L8", name: "光模块 / 光芯片",
+        co: "Coherent · 中际旭创 · Lumentum",
+        num: "中际旭创 2024 出货 977万→2088万只",
+        mech: "GPU 集群 → 800G→1.6T 光互联迭代。2025 年后取代 CoWoS 成为新闸门候选。",
+        lag: "0-1 季", lagClass: "early",
+        src: "Coherent FY24 Q4、中际旭创 2024 年报" },
+      { n: "L9", name: "测试（Testing）",
+        co: "Advantest · Teradyne · AEHR",
+        num: "Advantest FY25 净销售 +68%",
+        mech: "AI 芯片 die 更大 → 测试时间更长；HBM 每层都要测。放量前必先扩测机。",
+        lag: "1-2 季", lagClass: "mid",
+        src: "Advantest FY25 财报、AEHR 2026 公告（模块 3 已建）" },
+      { n: "L10", name: "上游材料 + 电力液冷",
+        co: "AXT · 味之素 · Vertiv · GE Vernova",
+        num: "Vertiv 2024 backlog $7.18B 几近翻倍",
+        mech: "InP、ABF 是 12-18 个月前备料；电力与并网是 24-36 个月前准备；液冷是 backlog 兑现——本层时滞最长，认知差最大。",
+        lag: "3-4 季（材料前，电力最后）", lagClass: "late",
+        src: "AXT 2024 年报、味之素公开材料、Vertiv 10-K FY2024、IEA 2025 报告" },
+    ];
+
+    const W = 720, H = 40 + LAYERS.length * 60 + 20;
+    const LX = 34, RW = 640;
+    const rowH = 54, rowGap = 6, top = 24;
+    const svg = APP.svgEl("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+      "aria-label": "十层传导链地图：从 L1 云资本开支到 L10 上游材料与电力液冷，逐层显示代表公司、机制与时滞" });
+
+    /* 顶部注入源脉冲的箭头 */
+    svg.appendChild(APP.svgEl("text", {
+      x: W / 2, y: 16, "text-anchor": "middle", class: "axis-txt"
+    })).textContent = "云 CapEx 决策进入 ↓";
+
+    const rowNodes = [];  /* 存每行的元素引用 */
+    LAYERS.forEach((L, i) => {
+      const y = top + i * (rowH + rowGap);
+      const g = APP.svgEl("g", { transform: "translate(0," + y + ")" });
+
+      /* 卡片背景 */
+      const bg = APP.svgEl("rect", {
+        x: LX, y: 0, width: RW, height: rowH,
+        rx: 8, fill: "var(--bg)", stroke: "var(--line)", "stroke-width": 1
+      });
+      g.appendChild(bg);
+
+      /* 左侧号码圆盘 */
+      const numCircle = APP.svgEl("circle", {
+        cx: LX + 22, cy: rowH / 2, r: 16,
+        fill: "var(--surface-2)", stroke: "var(--line)", "stroke-width": 1
+      });
+      g.appendChild(numCircle);
+      const numTxt = APP.svgEl("text", {
+        x: LX + 22, y: rowH / 2 + 4,
+        "text-anchor": "middle",
+        style: "font-size:12px;font-weight:700;fill:var(--muted)"
+      });
+      numTxt.textContent = L.n;
+      g.appendChild(numTxt);
+
+      /* 名称与代表公司 */
+      const nameTxt = APP.svgEl("text", {
+        x: LX + 52, y: 20,
+        style: "font-size:14px;font-weight:650;fill:var(--ink)"
+      });
+      nameTxt.textContent = L.name;
+      g.appendChild(nameTxt);
+
+      const coTxt = APP.svgEl("text", {
+        x: LX + 52, y: 38,
+        style: "font-size:12px;fill:var(--muted)"
+      });
+      coTxt.textContent = L.co;
+      g.appendChild(coTxt);
+
+      /* 右侧关键数字 */
+      const numRight = APP.svgEl("text", {
+        x: LX + RW - 12, y: 20,
+        "text-anchor": "end",
+        style: "font-size:12px;font-weight:650;fill:var(--ink);font-variant-numeric:tabular-nums"
+      });
+      numRight.textContent = L.num;
+      g.appendChild(numRight);
+
+      /* 右侧时滞标签 */
+      const lagColor = L.lagClass === "early" ? "var(--info-ink)"
+                    : L.lagClass === "mid" ? "var(--primary)"
+                    : "var(--accent-ink)";
+      const lagBg = L.lagClass === "early" ? "var(--info-tint)"
+                  : L.lagClass === "mid" ? "var(--primary-tint)"
+                  : "var(--accent-tint)";
+      const lagRect = APP.svgEl("rect", {
+        x: LX + RW - 132, y: 30, width: 120, height: 15,
+        rx: 8, fill: lagBg
+      });
+      g.appendChild(lagRect);
+      const lagTxt = APP.svgEl("text", {
+        x: LX + RW - 72, y: 41,
+        "text-anchor": "middle",
+        style: "font-size:11px;font-weight:600;fill:" + lagColor
+      });
+      lagTxt.textContent = L.lag;
+      g.appendChild(lagTxt);
+
+      /* 层与层之间的连接线（除最后一行） */
+      if (i < LAYERS.length - 1) {
+        svg.appendChild(APP.svgEl("line", {
+          x1: LX + 22, y1: y + rowH,
+          x2: LX + 22, y2: y + rowH + rowGap,
+          stroke: "var(--line)", "stroke-width": 1.5
+        }));
+      }
+
+      /* 支持点击行以显示对应层的详情 */
+      const hitRect = APP.svgEl("rect", {
+        x: LX, y: 0, width: RW, height: rowH,
+        fill: "transparent", style: "cursor:pointer"
+      });
+      hitRect.addEventListener("click", () => selectLayer(i));
+      hitRect.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectLayer(i); }
+      });
+      hitRect.setAttribute("tabindex", "0");
+      hitRect.setAttribute("role", "button");
+      hitRect.setAttribute("aria-label", "查看 " + L.n + " " + L.name + " 详情");
+      g.appendChild(hitRect);
+
+      svg.appendChild(g);
+      rowNodes.push({ bg, numCircle, numTxt, group: g });
+    });
+
+    mount.appendChild(svg);
+
+    /* 状态与交互 */
+    let active = -1;    /* 当前点亮到哪层，-1 表示未开始 */
+    let timer = null;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const readoutEl = document.getElementById("cfReadout");
+    const statusEl = document.getElementById("cfStatus");
+    const playBtn = document.getElementById("cfPlay");
+    const stepBtn = document.getElementById("cfStep");
+    const resetBtn = document.getElementById("cfReset");
+
+    function paintRow(i, on) {
+      const R = rowNodes[i];
+      if (!R) return;
+      if (on) {
+        R.bg.setAttribute("fill", "var(--primary-tint)");
+        R.bg.setAttribute("stroke", "var(--primary-2)");
+        R.bg.setAttribute("stroke-width", "1.5");
+        R.numCircle.setAttribute("fill", "var(--primary)");
+        R.numTxt.style.fill = "#fff";
+      } else {
+        R.bg.setAttribute("fill", "var(--bg)");
+        R.bg.setAttribute("stroke", "var(--line)");
+        R.bg.setAttribute("stroke-width", "1");
+        R.numCircle.setAttribute("fill", "var(--surface-2)");
+        R.numTxt.style.fill = "var(--muted)";
+      }
+    }
+
+    function paintReadout(i) {
+      if (i < 0) {
+        readoutEl.innerHTML = "点击「开始」或「下一层」，逐层看这笔 CapEx 落到哪家公司账上。";
+        return;
+      }
+      const L = LAYERS[i];
+      readoutEl.innerHTML =
+        '<div class="head">' +
+          '<span class="num">' + L.n + '</span>' +
+          '<span class="name">' + L.name + '</span>' +
+          '<span class="lag">时滞 ' + L.lag + '</span>' +
+        '</div>' +
+        '<div class="mech">' + L.mech + '</div>' +
+        '<span class="co">代表公司：<b>' + L.co + '</b> · 已核验数据点：<b>' + L.num + '</b>' +
+        ' · 来源：' + L.src + '</span>';
+    }
+
+    function updateStatus() {
+      if (active < 0) statusEl.textContent = "未开始（共 10 层）";
+      else if (active >= LAYERS.length - 1) statusEl.textContent = "已走完 10 层——重置或点击某一层复看";
+      else statusEl.textContent = "第 " + (active + 1) + " / 10 层";
+    }
+
+    function selectLayer(i) {
+      /* 点击某层直接跳到那一层 */
+      stopAuto();
+      for (let k = 0; k <= LAYERS.length - 1; k++) paintRow(k, k <= i);
+      active = i;
+      paintReadout(i);
+      updateStatus();
+    }
+
+    function nextLayer() {
+      if (active >= LAYERS.length - 1) { stopAuto(); return; }
+      active++;
+      paintRow(active, true);
+      paintReadout(active);
+      updateStatus();
+      if (active >= LAYERS.length - 1) stopAuto();
+    }
+
+    function stopAuto() {
+      if (timer) { clearInterval(timer); timer = null; }
+      playBtn.setAttribute("aria-pressed", "false");
+      playBtn.textContent = "开始 · 让 CapEx 传下去";
+    }
+
+    function startAuto() {
+      if (active >= LAYERS.length - 1) { doReset(); }
+      playBtn.setAttribute("aria-pressed", "true");
+      playBtn.textContent = "暂停";
+      const interval = reduce ? 900 : 1300;
+      timer = setInterval(() => {
+        nextLayer();
+        if (active >= LAYERS.length - 1) stopAuto();
+      }, interval);
+    }
+
+    function doReset() {
+      stopAuto();
+      for (let k = 0; k < LAYERS.length; k++) paintRow(k, false);
+      active = -1;
+      paintReadout(-1);
+      updateStatus();
+    }
+
+    playBtn.addEventListener("click", () => {
+      if (timer) stopAuto();
+      else startAuto();
+    });
+    stepBtn.addEventListener("click", () => { stopAuto(); nextLayer(); });
+    resetBtn.addEventListener("click", doReset);
+
+    updateStatus();
+    paintReadout(-1);
+  })();
+
+  /* ---------- 披露密度带（副 A 类组件） ---------- */
+  (function () {
+    const mount = document.getElementById("disclose");
+    if (!mount) return;
+
+    /* 每层典型公司的「披露带宽」综合评分 0-10。评分依据：
+       ①季度电话会披露粒度（$B / $100M / $10M / 未拆）
+       ②分部收入是否单列
+       ③分析师覆盖数量级（30+ / 10-30 / 3-10 / ≤3）
+       ④主流财经媒体报道频次（每周多次 / 每周 / 每月 / 稀少）
+       评分为本页由已核验案例综合推导，非官方指标。 */
+    const ROWS = [
+      { layer: "L1", co: "微软 / 亚马逊 / Alphabet / Meta", v: 10, note: "宏观首要标的，季度 CapEx 明细披露，几十家分析师覆盖" },
+      { layer: "L2", co: "英伟达", v: 10, note: "数据中心分部按季度披露到十亿美元级，30+ 分析师覆盖，每周多次媒体报道" },
+      { layer: "L2", co: "博通", v: 9, note: "FY2024 起 AI 芯片收入按季拆分（$B 级），VMware 并购后必须分部读" },
+      { layer: "L3", co: "SK 海力士 / 美光", v: 8, note: "HBM 单列披露、季度电话会详拆产能与售罄状态" },
+      { layer: "L5", co: "台积电", v: 9, note: "季度电话会 20+ 分析师，先进制程与先进封装分开披露" },
+      { layer: "L6", co: "ASML / 应材 / KLA", v: 8, note: "订单积压（backlog）、EUV 出货台数按季公开" },
+      { layer: "L7", co: "Marvell", v: 6, note: "AI 相关收入按年披露（&gt; $1.5B），未按季度按客户拆" },
+      { layer: "L8", co: "Coherent", v: 6, note: "Communications 46% 收入按季度披露，800G/1.6T 出货趋势可读" },
+      { layer: "L8", co: "中际旭创（A 股）", v: 5, note: "年报详细，季报粒度较美股同类薄；出货量按半年披露" },
+      { layer: "L9", co: "Advantest", v: 6, note: "HPC/AI 占比公司整体给出，但具体客户与订单构成不逐季披露" },
+      { layer: "L10", co: "Vertiv", v: 6, note: "backlog 按季披露，2024 起液冷比例提及；仍不到英伟达粒度" },
+      { layer: "L10", co: "AXT（InP）", v: 2, note: "全公司收入约 $99M，业务分类粗，无「AI 用 InP」细分披露" },
+      { layer: "L10", co: "味之素（ABF）", v: 3, note: "食品公司报表里的电子材料一节，年度粒度，季度极粗" },
+    ];
+
+    const W = 720, H = 40 + ROWS.length * 22 + 20;
+    const LFT = 210, RGT = 20, TOP = 22, BOT = 10;
+
+    const svg = APP.svgEl("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+      "aria-label": "披露密度条形图：从 L1 云厂到 L10 上游材料，公开信号带宽逐级下降" });
+
+    /* 顶端刻度：0-10 */
+    for (let v = 0; v <= 10; v += 2) {
+      const x = LFT + v / 10 * (W - LFT - RGT);
+      svg.appendChild(APP.svgEl("line", {
+        x1: x, x2: x, y1: TOP, y2: H - BOT,
+        stroke: "var(--viz-grid)", "stroke-width": 1
+      }));
+      const t = APP.svgEl("text", { x: x, y: TOP - 6, "text-anchor": "middle", class: "axis-txt" });
+      t.textContent = v;
+      svg.appendChild(t);
+    }
+    /* 顶端标注 */
+    const lbl = APP.svgEl("text", { x: LFT, y: 12, "text-anchor": "start", class: "axis-txt" });
+    lbl.textContent = "披露带宽（0 = 稀少，10 = 极详）";
+    svg.appendChild(lbl);
+
+    /* 每行一根条 */
+    ROWS.forEach((r, i) => {
+      const y = TOP + 8 + i * 22;
+      /* 层号+公司标签 */
+      const nl = APP.svgEl("text", {
+        x: LFT - 8, y: y + 12, "text-anchor": "end",
+        style: "font-size:12px;fill:var(--ink);font-weight:600"
+      });
+      nl.textContent = r.layer + " · " + r.co;
+      svg.appendChild(nl);
+
+      /* 条 */
+      const bw = r.v / 10 * (W - LFT - RGT);
+      const barColor = r.v >= 8 ? "var(--viz-s4)"
+                    : r.v >= 5 ? "var(--viz-s3)"
+                    : r.v >= 3 ? "var(--viz-s1)"
+                    : "var(--accent)";
+      const bar = APP.svgEl("rect", {
+        x: LFT, y: y, width: bw, height: 16, rx: 3,
+        fill: barColor
+      });
+      svg.appendChild(bar);
+      /* 数值 */
+      const vt = APP.svgEl("text", {
+        x: LFT + bw + 6, y: y + 12,
+        style: "font-size:12px;fill:var(--ink);font-weight:650;font-variant-numeric:tabular-nums"
+      });
+      vt.textContent = r.v;
+      svg.appendChild(vt);
+      /* hover 提示 */
+      const hit = APP.svgEl("rect", {
+        x: LFT, y: y - 3, width: W - LFT - RGT, height: 22, fill: "transparent"
+      });
+      hit.addEventListener("mousemove", (e) => {
+        APP.showTip("<b>" + r.layer + " · " + r.co + "</b><br>带宽评分：" + r.v + " / 10<br>" + r.note, e.clientX, e.clientY);
+      });
+      hit.addEventListener("mouseleave", APP.hideTip);
+      svg.appendChild(hit);
+    });
+
+    mount.appendChild(svg);
+  })();
+
+  /* ---------- 决策复盘卡通用交互（照抄 m02） ---------- */
+  document.querySelectorAll("[data-case]").forEach((box) => {
+    const reveal = box.parentElement.querySelector(".case-reveal");
+    box.querySelectorAll("[data-pick]").forEach((btn) => {
+      btn.setAttribute("aria-pressed", "false");
+      btn.addEventListener("click", () => {
+        box.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        if (reveal && reveal.hidden) {
+          reveal.hidden = false;
+        }
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>

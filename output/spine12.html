@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 12 · 价格是滞后读数 · 半导体投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 骨架卡专属版式（承 spine10） ---------- */
+  .spine-section { margin: 40px 0 24px; scroll-margin-top: 60px; }
+  .spine-section > h2 {
+    font-size: var(--fs-22);
+    font-weight: 650;
+    margin: 0 0 4px;
+    letter-spacing: -0.005em;
+  }
+  .spine-section > .kicker {
+    font-size: var(--fs-13);
+    font-weight: 650;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .spine-lead {
+    font-size: var(--fs-17);
+    color: var(--ink);
+    padding: 12px 16px;
+    background: var(--surface);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    margin: 12px 0 20px;
+  }
+  .spine-lead b { color: var(--primary); }
+
+  /* 反差对比 · 现象段用（承 spine10 gap-row） */
+  .gap-row {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: stretch;
+    margin: 14px 0 4px;
+  }
+  .gap-cell {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-m); padding: 14px 16px;
+  }
+  .gap-cell h4 { margin: 0 0 6px; font-size: var(--fs-14); font-weight: 650; color: var(--muted); }
+  .gap-cell .fig { font-size: 20px; font-weight: 700; color: var(--info-ink); font-variant-numeric: tabular-nums; line-height: 1.3; }
+  .gap-cell.right .fig { color: var(--accent-ink); }
+  .gap-cell p { font-size: var(--fs-14); margin: 4px 0 0; color: var(--ink); }
+  .gap-arrow { display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--muted); font-weight: 650; letter-spacing: 0.04em; }
+  @media (max-width: 640px) {
+    .gap-row { grid-template-columns: 1fr; }
+    .gap-arrow { padding: 4px 0; }
+  }
+
+  /* 反射问句样式（承 spine02） */
+  .qa {
+    border-left: 3px solid var(--primary);
+    background: var(--primary-tint);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    padding: 12px 16px 4px;
+    margin: 14px 0;
+  }
+  .qa .q { font-weight: 650; color: var(--primary); margin: 0 0 8px; font-size: var(--fs-16); }
+  .qa .q::before { content: "问："; }
+  .qa ul { margin: 6px 0 10px; padding-left: 1.2em; }
+
+  /* ---------- A 类：先行量 vs 价格 · 时序对照图 ---------- */
+  .lag-controls {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 12px;
+  }
+  .lag-btn {
+    appearance: none; font: inherit; font-size: var(--fs-13); font-weight: 600;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+    border-radius: var(--radius-s); padding: 6px 12px; cursor: pointer;
+    line-height: 1.4; text-align: left;
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .lag-btn:hover { background: var(--surface); }
+  .lag-btn[aria-pressed="true"] {
+    border-color: var(--info-ink);
+    background: var(--info-tint);
+    color: var(--info-ink);
+  }
+  .lag-btn .yr { display: block; font-size: var(--fs-12); color: var(--muted); font-weight: 500; }
+  .lag-btn[aria-pressed="true"] .yr { color: var(--info-ink); }
+
+  #lagChart { display: block; width: 100%; height: auto; }
+  #lagChart .band-lead { fill: var(--info-tint); }
+  #lagChart .band-price { fill: var(--accent-tint); }
+  #lagChart .band-lbl { font-size: 11px; fill: var(--muted); font-weight: 650; letter-spacing: 0.04em; }
+  #lagChart .ax { stroke: var(--viz-grid); stroke-width: 1; }
+  #lagChart .ax-txt { font-size: 11px; fill: var(--muted); }
+  #lagChart .midaxis { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 3; }
+
+  #lagChart .ev-line { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 2; }
+  #lagChart .ev-lead-node { fill: var(--info); stroke: var(--bg); stroke-width: 2; cursor: pointer; }
+  #lagChart .ev-lead-node.active { fill: var(--info-ink); r: 10; }
+  #lagChart .ev-lead-node.inactive { opacity: 0.4; }
+  #lagChart .ev-price-node { fill: var(--accent); stroke: var(--bg); stroke-width: 2; }
+  #lagChart .ev-price-node.active { fill: var(--accent-ink); }
+  #lagChart .ev-price-node.inactive { opacity: 0.4; }
+  #lagChart .ev-lbl {
+    font-size: 12px; fill: var(--ink); font-weight: 600;
+    pointer-events: none;
+  }
+  #lagChart .ev-lbl.muted { fill: var(--muted); font-weight: 500; }
+  #lagChart .ev-date { font-size: 10px; fill: var(--muted); font-weight: 500; }
+  #lagChart .lag-arrow { stroke: var(--primary); stroke-width: 2; fill: none; }
+  #lagChart .lag-arrow-head { fill: var(--primary); }
+  #lagChart .lag-lbl {
+    font-size: 12px; font-weight: 700; fill: var(--primary);
+    text-anchor: middle;
+  }
+  #lagChart .lag-future {
+    stroke: var(--primary); stroke-width: 2; fill: none; stroke-dasharray: 6 4; opacity: 0.6;
+  }
+
+  .lag-readout {
+    font-size: var(--fs-14);
+    background: var(--surface); border-radius: var(--radius-s);
+    padding: 12px 14px; margin-top: 12px; line-height: 1.75;
+  }
+  .lag-readout b { color: var(--primary); }
+  .lag-readout .lead-tag {
+    display: inline-block; margin-right: 6px;
+    color: var(--info-ink); background: var(--info-tint);
+    font-size: var(--fs-12); font-weight: 650;
+    padding: 1px 9px; border-radius: 99px;
+  }
+  .lag-readout .price-tag {
+    display: inline-block; margin-right: 6px;
+    color: var(--accent-ink); background: var(--accent-tint);
+    font-size: var(--fs-12); font-weight: 650;
+    padding: 1px 9px; border-radius: 99px;
+  }
+  .lag-readout .lag-badge {
+    display: inline-block; margin-left: 6px;
+    color: var(--primary); background: var(--primary-tint);
+    font-size: var(--fs-13); font-weight: 700;
+    padding: 2px 10px; border-radius: 99px;
+  }
+  .lag-readout .row { margin: 5px 0; }
+  .lag-readout .row.insight { color: var(--primary); font-weight: 600; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
+
+  /* 硬度阶梯（机制段用） */
+  .hard-list {
+    list-style: none; padding: 0; margin: 12px 0;
+    display: grid; gap: 8px;
+  }
+  .hard-list li {
+    display: grid; grid-template-columns: 130px 1fr auto; gap: 12px;
+    align-items: center;
+    padding: 10px 14px;
+    border: 1px solid var(--line); border-radius: var(--radius-s);
+    background: var(--surface);
+    font-size: var(--fs-14);
+  }
+  .hard-list li .name { font-weight: 650; color: var(--ink); }
+  .hard-list li .desc { color: var(--muted); font-size: var(--fs-13); }
+  .hard-list li .strength {
+    font-size: var(--fs-13); font-weight: 650;
+    padding: 2px 10px; border-radius: 99px;
+    letter-spacing: 0.04em;
+  }
+  .hard-list li.h-1 .strength { background: var(--primary-tint); color: var(--primary); }
+  .hard-list li.h-2 .strength { background: var(--info-tint); color: var(--info-ink); }
+  .hard-list li.h-3 .strength { background: var(--surface-2); color: var(--muted); }
+  .hard-list li.h-4 .strength { background: var(--accent-tint); color: var(--accent-ink); }
+  @media (max-width: 640px) {
+    .hard-list li { grid-template-columns: 1fr; gap: 4px; }
+    .hard-list li .strength { justify-self: start; }
+  }
+</style>
+</head>
+<body data-page="s12">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 12 · 价格是滞后读数</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 12 / 15</p>
+      <h1>卡 12 · 价格是滞后读数</h1>
+      <p class="core-q"><b>一句话：</b>芯片价格看起来是最直接的读数，但对预判周期方向几乎没用——<strong>价格滞后于供需真实变化 3-6 个月</strong>。想提前判断，要看三个先行量：<strong>交期</strong>（订单积压 ÷ 产能，链条张力的实时温度计）、<strong>长约与 take-or-pay</strong>（客户敢锁多久量、多大额）、<strong>预付款</strong>（客户愿意先付多少钱换未来产能）。三个数字都比价格早出现——价格是它们的结果，不是原因。</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">读完这张卡你要能答的三个问题（现在答不上来是正常的）</span>
+      <ol style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>SK 海力士 CEO 2024 年 5 月 2 日就公开说「HBM 2024 已经全部售罄」，为什么价格数字（HBM3E 涨 20%）要等 19 个月后（2025-12-24）才在 TrendForce 报道里落地？</li>
+        <li>看到一家存储厂公告「涨价 20%」的新闻，你的第一反应问什么？（答案不是「利润要涨了」）</li>
+        <li>「多年供货协议」和「多年 take-or-pay 协议」，为什么读起来一模一样，但作为投资信号硬度差一档？</li>
+      </ol>
+    </div>
+
+    <!-- ==================== 1. 现象 ==================== -->
+    <section class="spine-section" id="sec-phenom">
+      <div class="kicker">1 · 现象</div>
+      <h2>合同层信号先亮 19 个月，价格数字才在公开数据里显形</h2>
+
+      <p>两个都是已核验、都关于同一件事——HBM 2024-2026 年的紧缺——但一个是「先行量」，一个是「价格数字」，中间隔了 19 个月：</p>
+
+      <div class="gap-row">
+        <div class="gap-cell">
+          <h4>先行量 · 合同层信号</h4>
+          <div class="fig">2024-05-02</div>
+          <p>SK 海力士 CEO Kwak Noh-jung 在新闻发布会上公开表示：<strong>「HBM 2024 已经全部售罄、2025 也差不多售罄」</strong>。当时同一批公司里美光 CEO Mehrotra 也已在 3 月的电话会里说过类似的话<span class="badge badge-verified">已核验 · Korea Herald 2024-05-02、Tom's Hardware 报道</span>。</p>
+        </div>
+        <div class="gap-arrow" aria-hidden="true">滞后 19 月</div>
+        <div class="gap-cell right">
+          <h4>价格数字 · 公开涨跌口径</h4>
+          <div class="fig">2025-12-24</div>
+          <p>TrendForce 报道<strong>三星与 SK 海力士 HBM3E 2026 年将涨价约 20%</strong>——这是价格数字在公开信息里第一次给出明确 %。同期常规 DRAM 现货 4Q25 才涨 +18-23% QoQ<span class="badge badge-verified">已核验 · TrendForce 2025-12-24、2026-01/02 报告</span>。</p>
+        </div>
+      </div>
+
+      <p>把这 19 个月放到日历上想一想：如果你在 2024 年 5 月读到「HBM 2024 已售罄」这句话就当成信号，你比市场读到 HBM3E 2026 涨 20% 这个数字的人早了差不多两年。反过来，如果你只盯 HBM 现货价、每周更新的 TrendForce 涨跌口径——你什么都读不到，因为 HBM 根本不走现货、走直供长约，公开渠道就没有能天天看的 HBM 现货报价。</p>
+
+      <p>再看一个反向的对照。2022 年 10 月 17 日，彭博援引 Susquehanna 数据报道芯片交期「几年来最大单月缩短」——从常态 10-14 周涨到 27 周之后，第一次单月往回走<span class="badge badge-verified">已核验 · Bloomberg 2022-10-17、卡 1 / m02 已建</span>。当时下游价格还在高位挣扎，季度财报也还热。到 2023 年一季度，三星 DS 部门营业利润才从 14.1 万亿韩元跌到 0.6 万亿（同比缩水 95%）——<strong>交期这个先行量比价格塌方早了大约 3-6 个月</strong>。</p>
+
+      <p class="spine-lead">同一件事，合同层信号先亮 3-19 个月，价格数字才在公开数据里显形——这不是巧合，是三个先行量物理上就比价格更早出现在公开信息里。这张卡讲透的模型是：<b>价格是滞后读数，先行量是交期、长约、预付款</b>。</p>
+    </section>
+
+    <!-- ==================== 2. 机制 ==================== -->
+    <section class="spine-section" id="sec-mech">
+      <div class="kicker">2 · 机制</div>
+      <h2>为什么价格滞后 · 为什么三个先行量领先</h2>
+
+      <h3>2.1 价格为什么是滞后读数</h3>
+
+      <p>价格在公开信息里出现「变化」这件事，本身就发生得慢。四条同源原因：</p>
+
+      <ul>
+        <li><strong>合同价按季/按年调，不是每天更新的。</strong>HBM 长约通常按代际、按年调整（HBM3E 一涨就是全年 +20%）；DDR 服务器条合同价按季度调；变化频率决定了它的「更新速度」最快也就每季一次——比合同层信号慢一档。</li>
+        <li><strong>现货价虽然按周动，但很多小规模品类不走现货。</strong>HBM、CoWoS、部分定制芯片全走直供长约，现货市场几乎不存在——你在 TrendForce 每周报告上根本找不到 HBM 现货价（详见卡 6 的合同结构差异）。<strong>对不走现货的品类，「价格」这个信号本来就稀薄</strong>。</li>
+        <li><strong>平均价失真。</strong>产品结构（mix shift）让「某某产品价格」这个数字变化滞后于真实结构变化——高毛利产品占比抬升会推高 blended ASP，但这已经是几个季度前签合同的结果（详见卡 2 的经营杠杆与 mix shift 归因）。</li>
+        <li><strong>卖方厂商都要维持体面。</strong>涨价通常提前几周或一个季度通知，不会突然公告；跌价更是能拖就拖。合同价的每一次变化都是双方谈判的结果，速度受限于人的节奏，不是市场的节奏。</li>
+      </ul>
+
+      <p>把这四条合起来看，公开信息里「价格」永远是这条时序的最后一站：<strong>客户先意识到自己的需求 → 签长约、押预付款 →（几个季度后）合同价按年度阶梯调 →（更久之后）现货价随涨跌通知落地 →（更久之后）报表兑现</strong>。想提前判断周期方向，得倒着往前找先行量。</p>
+
+      <h3>2.2 交期为什么领先（订单积压 ÷ 产能）</h3>
+
+      <p>交期是个简单的比值：<strong>订单积压 ÷ 当前产能</strong>。产能短期不变（卡 1 讲了扩产 24-36 个月），所以交期直接就是订单积压的实时读数——<strong>链条张力的温度计</strong>。</p>
+
+      <p>它比价格更早也更连续：客户排队的长度每周都在变，价格牌变化的频率远低于此。真实刻度（模块 2 工具一已建）：Susquehanna 每月统计芯片交期，常态 10-14 周；2021 年 8 月突破 20 周、2022 年中约 27 周见顶；2022-10-17 彭博报道 Susquehanna 数据「几年来最大单月缩短」——<strong>拐点在公开信息里第一次显形</strong>，此时下游财报还一片繁荣，价格塌方要 3-6 个月之后才来（存储 2023 深亏）。<span class="badge badge-verified">已核验 · Bloomberg 2022-10-17、DCD 2021-08</span></p>
+
+      <h3>2.3 长约为什么领先（客户比卖家先知道自己要不要）</h3>
+
+      <p>客户敢锁多久量、锁多大额——反映的是<strong>客户对未来需求的信心</strong>。这里有一件容易被漏掉的事：<strong>客户比卖家先知道自己要不要</strong>——终端厂商（Nvidia、AMD、Google TPU 等）自己就是需求侧，他们签下 take-or-pay 那一刻，等于把未来 3-5 年的需求确定性写进了别人的产能里。</p>
+
+      <p>但「客户签长约」这四个字，实际的信号硬度分四档。以下是<strong>硬度阶梯</strong>（模块 3、m07 已建的判断口径）：</p>
+
+      <ul class="hard-list" aria-label="长约信号硬度阶梯">
+        <li class="h-1">
+          <span class="name">take-or-pay</span>
+          <span class="desc">客户不拿货也要付钱、违约有明确对价、写入合同最低收入金额</span>
+          <span class="strength">硬度最高</span>
+        </li>
+        <li class="h-2">
+          <span class="name">allocated（已分配）</span>
+          <span class="desc">产能已分配给客户，但客户仍能议价、下行期可能重谈</span>
+          <span class="strength">中等偏软</span>
+        </li>
+        <li class="h-3">
+          <span class="name">意向 / MOU</span>
+          <span class="desc">意向协议，无违约成本，只是「双方口头承诺」</span>
+          <span class="strength">软</span>
+        </li>
+        <li class="h-4">
+          <span class="name">宣布投资</span>
+          <span class="desc">纯资本开支意向，还没有客户订单，只是产能计划</span>
+          <span class="strength">最软</span>
+        </li>
+      </ul>
+
+      <p>硬度不同、兑现概率不同——不要看到「售罄」两个字就直接翻译成「价格锁死」。真实刻度：美光 FY26 Q3（2026-06 电话会备稿）一个季度签下 <strong>16 份 take-or-pay 战略客户协议、合同最低收入合计 $100B、覆盖 2026-2030 年 HBM 供应</strong><span class="badge badge-verified">已核验 · 美光 FY26 Q3 电话会备稿</span>——这是硬度最高的一档，写在合同里的最低付款义务。美光 FY25 全年营收 374 亿美元<span class="badge badge-verified">已核验 · Micron 10-K FY2025</span>，<strong>一个季度签的合同就锁到公司未来三年的营收</strong>。</p>
+
+      <h3>2.4 预付款为什么领先（客户用真金白银投票）</h3>
+
+      <p>客户愿意先付多少钱换未来产能——是对未来紧缺程度的<strong>定价</strong>，也是客户用真金白银投票。预付款出现在资产负债表附注里的<strong>合同负债 / 客户预付款</strong>科目，环比变化可以按季度追踪。</p>
+
+      <p>与前两个先行量比：交期是产线端的温度、长约是合同端的量与价、预付款是<strong>现金端的承诺</strong>。三个信号从不同渠道说同一件事——同向就是「合同层证据同向」，硬度最高。真实刻度：美光在宣布 HBM 售罄的同时期，客户预付款环比明显抬升（模块 3 已建的观察方法）；到 FY26 Q3 的 $100B take-or-pay 里，按里程碑分批到账的预付款就是产能地板的现金层。</p>
+
+      <h3>2.5 三个先行量的共同性质</h3>
+
+      <p>交期、长约、预付款都比价格早 <strong>3-6 个月</strong>（有时更长）出现在公开信息里。共同点：</p>
+      <ul>
+        <li><strong>直接从合同层出发</strong>——不经过价格发现机制。价格是双方谈出来的，合同结构本身就是这场谈判的结果。</li>
+        <li><strong>每个先行量都对应一个可查的公开数字</strong>——Susquehanna 月度交期数据、财报电话会关键词（sold out / allocated / take-or-pay / LTA / prepayment）、财报附注合同负债科目。三个都是公开、免费、可追溯的（详见 m03、m07 里的读法）。</li>
+        <li><strong>三个先行量可以互相佐证</strong>——交期紧、长约签、预付款涨，三者同向就是「合同层证据同向」，硬度最高。反过来，只有其中一个动而另两个不动，可能是干扰而非趋势（详见边界段）。</li>
+      </ul>
+
+      <p>把这三个先行量与价格的关系画在同一根时间轴上，就是下面这幅时序对照图。</p>
+
+      <h3>2.6 动手感受一下：先行量 vs 价格的时序对照</h3>
+
+      <p>下面这个组件把 2024-2026 这段时间里的先行量事件（上层，蓝色）与价格数字（下层，琥珀色）画在同一根时间轴上。<strong>看什么：</strong>①点击任一先行量事件，看它到「价格数字显形」之间的时滞（曲线连接、标数）；②每次同一时段里，先行量都<strong>先亮</strong>——CEO 说售罄 → 半年到一年半 → 价格数字才在公开报道里给出百分数；③最后一个事件（美光 $100B take-or-pay）指向未来的虚线箭头——这是<strong>还没兑现的未来利润地基</strong>。</p>
+
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-title">时序对照 · 先行量事件（上）vs 价格数字（下）· 2024-01 → 2026-08</span>
+          <span class="viz-sub">数字全为已核验一手来源。时滞的月数由日期计算得出。上层四个可点击。</span>
+        </div>
+
+        <div class="lag-controls" role="group" aria-label="选择要看的先行量事件">
+          <button class="lag-btn" data-lead="e1" aria-pressed="false">
+            <span class="yr">E1 · 2024-03</span>美光 CEO：HBM 售罄
+          </button>
+          <button class="lag-btn" data-lead="e2" aria-pressed="true">
+            <span class="yr">E2 · 2024-05-02</span>SK 海力士 CEO：HBM 售罄
+          </button>
+          <button class="lag-btn" data-lead="e3" aria-pressed="false">
+            <span class="yr">E3 · 2025-10-29</span>SK 海力士 3Q25 财报
+          </button>
+          <button class="lag-btn" data-lead="e4" aria-pressed="false">
+            <span class="yr">E4 · 2026-06</span>美光 $100B take-or-pay
+          </button>
+        </div>
+
+        <div id="lagChartWrap" role="img" aria-label="时序对照图：先行量事件与价格数字的时滞，先行量比价格早出现 3-19 个月">
+          <svg id="lagChart" viewBox="0 0 900 380" aria-hidden="true"></svg>
+        </div>
+
+        <div class="lag-readout" id="lagReadout" aria-live="polite"></div>
+
+        <p style="font-size:var(--fs-13);color:var(--muted);margin:10px 0 0">看清一件事：<strong>你在时序上离先行量事件越近，你就越可能读到市场还没定价的方向；离价格数字越近，越可能读到的是已被定价的过去</strong>。这就是这张卡的核心可用性。</p>
+      </div>
+    </section>
+
+    <!-- ==================== 3. 真实锚点 ==================== -->
+    <section class="spine-section" id="sec-anchor">
+      <div class="kicker">3 · 真实锚点</div>
+      <h2>四个已核验现场，把机制落到具体日期</h2>
+
+      <h3>锚点一 · 合同层信号先亮 19 个月 · 2024-05-02 → 2025-12-24</h3>
+      <p><strong>2024-05-02</strong>，Korea Herald 头条：SK 海力士 CEO Kwak Noh-jung 在新闻发布会上明确表示——「HBM 2024 已经全部售罄、2025 也差不多售罄」<span class="badge badge-verified">已核验 · Korea Herald 2024-05-02</span>。前一个月的 3 月 20 日，美光 CEO Mehrotra 在 FY24 Q2 电话会上也说过近似的话——「HBM 2024 年已售罄、2025 年供应绝大部分已分配完毕」<span class="badge badge-verified">已核验 · Tom's Hardware 报道</span>。</p>
+      <p><strong>2025-12-24</strong>，TrendForce 报道：三星与 SK 海力士 HBM3E 2026 年涨价约 20%<span class="badge badge-verified">已核验 · TrendForce 2025-12-24</span>。这是价格数字在公开信息里第一次给出明确的百分数。</p>
+      <p><strong>先行量领先价格数字 19 个月</strong>。中间的 19 个月里 HBM 无现货价可读——只有合同层信号能告诉你方向。</p>
+
+      <h3>锚点二 · 最硬的先行量形态 · 2026-06 美光 $100B take-or-pay</h3>
+      <p><strong>2026-06</strong>，美光 FY26 Q3 电话会备稿披露：<strong>单一季度签下 16 份 take-or-pay 战略客户协议、合同最低收入合计约 $100B、覆盖 2026-2030 年 HBM 供应</strong><span class="badge badge-verified">已核验 · 美光 FY26 Q3 电话会备稿</span>。美光 FY25 全年营收 374 亿美元<span class="badge badge-verified">已核验 · Micron 10-K FY2025</span>——<strong>一个季度签的合同就锁到公司未来三年的营收</strong>。</p>
+      <p>这个信号的硬度是最高档：take-or-pay 意味着客户不拿货也要付钱，违约有明确对价。它不是「宣传语」，是写在合同里的最低付款义务。<strong>合同签在 2026 年 6 月，兑现要到 2027-2030</strong>——按里程碑分批到账的预付款是产能地板的现金层，未来 3-4 季度的价格与利润都建立在这个合同结构之上。</p>
+
+      <h3>锚点三 · 长约兑现到当期报表 · 2025-10-29 SK 海力士 3Q25</h3>
+      <p><strong>2025-10-29</strong>，SK 海力士 3Q25 财报公告：HBM / DRAM / NAND 2026 产能全部售罄；<strong>季度营业利润率 47%、季度营业利润首次破 10 万亿韩元</strong><span class="badge badge-verified">已核验 · SK 海力士 3Q25 财报</span>。</p>
+      <p>47% 的营业利润率不是这一季的运气——是<strong>几个季度前签在长约里的量和价的兑现</strong>。这个锚点是「合同层信号 → 报表兑现」链条完成的一半：从 2024 年 5 月「售罄」这句话，到 2025 年 10 月 47% 营业利润率落在报表里，跨了 18 个月。</p>
+
+      <h3>锚点四 · 交期这个先行量与价格塌方 · 2022-10 → 2023 Q1</h3>
+      <p><strong>2022-10-17</strong>，彭博援引 Susquehanna 数据报道：芯片交期出现「几年来最大单月缩短」<span class="badge badge-verified">已核验 · Bloomberg 2022-10-17</span>。此前交期从常态 10-14 周涨到 2022 年中约 27 周见顶。此时下游价格还在高位挣扎、季度财报也还热。</p>
+      <p>随后<strong>2023 年一季度</strong>：三星 DS 部门营业利润从 14.1 万亿韩元跌到 0.6 万亿韩元（同比缩水 95%）<span class="badge badge-verified">已核验 · 三星 4Q22/1Q23 财报</span>；行业全线减产、几乎停止产能投资<span class="badge badge-verified">已核验 · 卡 1 / m02 已建</span>。<strong>交期这个先行量比价格塌方早了 3-6 个月</strong>——这一次不是长约先行，是产线端的先行。</p>
+
+      <p><strong>四个锚点合起来读</strong>：不同性质的先行量（合同层信号、take-or-pay、交期）都比价格早出现在公开信息里，时滞 3-19 个月不等。价格是它们的结果，不是它们的原因。</p>
+    </section>
+
+    <!-- ==================== 4. 投资含义 ==================== -->
+    <section class="spine-section" id="sec-invest">
+      <div class="kicker">4 · 投资含义</div>
+      <h2>两个条件反射问句</h2>
+
+      <p>骨架卡的用法是<strong>把两个问句刻进反射弧</strong>——以后看到相关新闻，不是先想「涨还是跌」，而是先自动问以下两个问题，答完再下结论。</p>
+
+      <div class="qa">
+        <p class="q">看到某厂公告「涨价 X%」，我第一反应问什么？</p>
+        <ul>
+          <li><strong>这次涨价走的是长约签订还是现货成交？</strong>——HBM3E 2026 涨 20% 是「新签的长约把合同价重定了」，一签就落到未来几年的报表；DDR5 现货 1Q26 涨 +90% 是「现货报价即时更新」，滞后一到两个季度到财报。两种路径的可持续性完全不同。</li>
+          <li><strong>先行量早前是否已给信号？</strong>——现在的涨价可能是几个月甚至一年多前先行量的兑现。倒着找：「几个月前有没有 CEO 说售罄？」「财报附注合同负债科目环比涨了没？」「交期数据什么时候开始拉长？」如果三个先行量早已给过信号，那这次涨价对市场来说是<strong>兑现</strong>而不是<strong>信息</strong>——已经在价格里。</li>
+          <li><strong>涨价背后的合同硬度是哪一档？</strong>——同样「涨价 20%」四个字，签在 take-or-pay 里 vs 意向价里，硬度差整整两档，兑现概率不同（详见 2.3 硬度阶梯）。</li>
+        </ul>
+      </div>
+
+      <div class="qa">
+        <p class="q">看到管理层电话会说「客户签了长约」，我第一反应问什么？</p>
+        <ul>
+          <li><strong>长约硬度是哪一档？</strong>——take-or-pay（写入财报的最低合同收入金额）&gt; allocated（已分配）&gt; 意向 &gt; 宣布投资。只说「多年供货协议」不带最低金额，通常是软一档。</li>
+          <li><strong>单笔金额与整体产能占比？覆盖时长几年？</strong>——美光 $100B 覆盖 2026-2030 五年、约合公司未来三年营收——数量级越大越硬。同样「多年」两个字，能不能翻译成公司几年的营收，判断天差地别。</li>
+          <li><strong>这个信号 3-4 季后会怎么在报表上兑现？</strong>——先行量的兑现要过三关：良率爬坡（卡 3）、合同里价格是否可重议（部分长约锁量不锁价 quarterly reset）、需求端有没有变化。这三关每关都可能吃掉一部分利润。</li>
+        </ul>
+      </div>
+
+      <p><strong>把两个问句变成动作</strong>：看到「涨价」新闻，先问是长约还是现货、先行量早前有没有说过；看到「客户签长约」，先问硬度和金额。答完了，才决定它是不是买点、能撑多久、按周期股估还是按长期结构性资产估。</p>
+    </section>
+
+    <!-- ==================== 5. 边界 ==================== -->
+    <section class="spine-section" id="sec-limit">
+      <div class="kicker">5 · 边界</div>
+      <h2>这张卡什么时候不适用</h2>
+
+      <ul>
+        <li><strong>长约里可能有价格重议条款，锁量不锁价。</strong>不是所有长约都是价格锁死的：部分长约锁量不锁价，价格按季度或半年重议（quarterly reset）。「多年 take-or-pay」和「多年 supply agreement」在硬度上差一档——判断硬度前要看合同披露的具体条款（详见卡 6 / m07 里的读法）。<strong>「多年」不等于「多年价格锁定」</strong>。</li>
+        <li><strong>「售罄」这句话不一定 = 真硬缺口，也可能是营销话术。</strong>同一句「售罄」，如果对应了具体的 take-or-pay $X 金额（写在电话会备稿或财报里），是硬信号；如果只是 CEO 口头表态没有配对合同数字，要软一档——它的分母是当前产能，产能一扩它就不再售罄。区分靠对照资产负债表附注合同负债科目和电话会备稿里的具体措辞。</li>
+        <li><strong>现货市场很小的品类，「价格」这个信号本来就稀薄。</strong>HBM、CoWoS、部分定制芯片全走直供，几乎没有现货价可读——直接看长约、看客户预付款、看财报附注合同负债科目环比变化。<strong>对这类品类而言，价格甚至不是真正的信号来源</strong>。</li>
+        <li><strong>下行期长约可能被重谈甚至撕毁。</strong>合同约束力与行业景气同向：上行期长约是稳定器，下行期长约会被客户援引各种条款延后、拆单、走仲裁（模块 4 存储战争历史反复上演，m07 已建）。<strong>长约不是不可动的岩石</strong>——上行期看长约，下行期还要看客户订单实际执行率、看长约客户是否在电话会里频繁提「合作调整」这类软措辞。</li>
+        <li><strong>单一先行量不足以下判断——要交叉。</strong>只有交期紧、只有长约签、只有预付款涨，其中任一单独出现都可能是干扰（比如政策扰动、结算时点差异、大客户提前备货）。三个先行量同向才算「合同层证据同向」——这也是本卡与其他卡协作使用的关键。</li>
+        <li><strong>与相邻卡的分工</strong>：卡 5（缺货是牛鞭极值）讲订单虚增造成的信号污染——「售罄」可能包含虚假订单；卡 6（库存结构决定波动结构）讲直供长约 vs 现货商品化两种波形的合同结构差异；卡 11（领先指标来自扩产时序）从<strong>设备端</strong>出发讲设备订单、交期、测试机订单等前瞻指标——<strong>本卡从合同端出发讲客户与厂商之间的合同结构信号</strong>。四张卡拼在一起才是完整的先行量工具箱。</li>
+      </ul>
+    </section>
+
+    <!-- ==================== 6. 练习 ==================== -->
+    <section class="spine-section" id="sec-drill">
+      <div class="kicker">6 · 练习</div>
+      <h2>两道题</h2>
+
+      <div class="scenario">
+        <h4>练习一 · 复述题（3 分钟量级，讲给完全不懂的朋友听）</h4>
+        <p>合上卡片，用自己的话讲清楚：<strong>「为什么现货价格是滞后读数、长约信号更硬？」</strong></p>
+        <p class="scenario-hint">要点检查：<br>①「客户比卖家先知道自己要不要」——三个先行量都从合同层出发；<br>②价格更新的物理速度慢（合同价按季/按年调、现货价小规模、mix shift 让平均价失真、卖方要维持体面）；<br>③长约（尤其是 take-or-pay）是写在合同里的量和价的锁定——违约有明确对价；<br>④交期、长约、预付款三者同向 = 合同层证据同向，是最硬的先行量组合。<br>四条都到位、不出现「先行量」「时滞」这些术语（大白话），这张卡算过了本关。</p>
+      </div>
+
+      <article class="scenario">
+        <h4>练习二 · 推演题（已核验前提，用本卡机制自己推）</h4>
+        <p>已核验的两件真事：</p>
+        <ul>
+          <li>美光 FY26 Q3（2026-06 电话会）披露：单一季度签下 16 份 take-or-pay 战略客户协议、合同最低收入合计 <strong>$100B、覆盖 2026-2030 年 HBM 供应</strong><span class="badge badge-verified">已核验 · 美光 FY26 Q3 电话会备稿</span>；</li>
+          <li>2025-12-24 TrendForce 报道：三星与 SK 海力士 <strong>HBM3E 2026 年涨价约 20%</strong><span class="badge badge-verified">已核验 · TrendForce 2025-12-24</span>。</li>
+        </ul>
+        <p>请你推：<strong>2027 年一线存储厂（三星 DS、SK 海力士、美光）在 HBM 长约业务上的利润路径大概长什么样？</strong>要求同时回答三件事：</p>
+        <ol>
+          <li>HBM 收入的时间兑现节奏——$100B 平均分到 5 年是 $20B/年（合同最低数，实际可能更高），这个数字如何按季度落到报表？</li>
+          <li>HBM3E 涨价 20% 会在多久之后完全传导到 2027 年的利润？（提示：HBM 价格年度阶梯调，卡 2 的经营杠杆告诉你固定成本被前期折旧摊完之后，涨价几乎全变利润）</li>
+          <li>长约信号已经这么硬了，2027 年这条曲线的斜率还能不能再抬？——这需要看下一轮先行量（HBM4 的长约签订窗口）什么时候出现。</li>
+        </ol>
+        <p class="scenario-hint">提示（不给标准答案）：<br>· 先把 $100B 平均分到 5 年 = 每年约 $20B（合同最低数）；再算 HBM3E 20% 涨价在 blended ASP 上的贡献；<br>· HBM4 的长约签订窗口通常在 HBM3E 长约兑现开始后的 6-12 个月——如果 2026 年 HBM3E 已经全部签在长约里，HBM4 的合同签订窗口大概率在 2026 下半年 - 2027 上半年出现；<br>· 到时候看到「HBM4 又售罄」的报道，就是下一轮先行量——先行量早在价格数字之前 6-18 个月给出方向；<br>· 反过来，如果 HBM4 出现「客户重议」「延后」「拆单」这类软措辞，就是长约信号在下行期反向失效的开始（详见边界段第 4 条）。<br>写下你的推理，等 2027 年真实数字出来对照——就是「先行量领先价格」这个模型最直接的自测。<strong>不给标准答案。</strong></p>
+      </article>
+
+      <div class="note">
+        <span class="note-label">这张卡要带走的两个反射弧</span>
+        <ol style="margin:0;padding-left:1.3em">
+          <li>看到<strong>「涨价 X%」</strong>新闻，先分「长约签订 vs 现货成交」两种路径，再倒着找先行量早前是否已给信号——现在的涨价可能是几个月前先行量的兑现，早就在价格里了；</li>
+          <li>看到<strong>「客户签长约」</strong>新闻，先按硬度阶梯（take-or-pay &gt; allocated &gt; 意向 &gt; 宣布投资）分档，再看单笔金额、覆盖年数、能不能翻译成公司几年的营收——数量级和硬度都到位，才是未来 3-4 季度的利润地基。</li>
+        </ol>
+        <p style="margin:8px 0 0">写不出来，回来重看第 2.3 节的硬度阶梯与第 4 节。</p>
+      </div>
+    </section>
+
+    <!-- ==================== 来源 ==================== -->
+    <section class="src">
+      <strong>卡 12 来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.koreaherald.com/article/3382821" rel="noopener noreferrer">Korea Herald 2024-05-02：SK 海力士 CEO Kwak Noh-jung「HBM 2024 已售罄、2025 也差不多售罄」（合同层信号先亮的关键时点）</a></li>
+        <li><a href="https://www.tomshardware.com/pc-components/gpus/micron-says-high-bandwidth-memory-is-sold-out-for-2024-and-most-of-2025-intense-demand-portends-potential-ai-gpu-production-bottleneck" rel="noopener noreferrer">Tom's Hardware：美光 CEO Mehrotra 2024 FY24 Q2 电话会「HBM 2024 售罄、2025 绝大部分已分配」</a></li>
+        <li><a href="https://www.trendforce.com/news/2025/12/24/news-samsung-sk-hynix-reportedly-plan-20-hbm3e-price-hike-for-2026-as-nvidia-h200-asic-demand-rises/" rel="noopener noreferrer">TrendForce 2025-12-24：三星与 SK 海力士 HBM3E 2026 年涨价约 20%（价格数字第一次公开落地的时点）</a></li>
+        <li><a href="https://news.skhynix.com/sk-hynix-announces-3q25-financial-results/" rel="noopener noreferrer">SK 海力士 3Q25 财报公告 2025-10-29：HBM/DRAM/NAND 2026 产能全部售罄、季度营业利润率 47%、季度营业利润首次破 10 万亿韩元（长约兑现到当期报表的完整现场）</a></li>
+        <li><a href="https://investors.micron.com/static-files/631b1a32-5537-46ae-8f40-82e42fc79dfe" rel="noopener noreferrer">美光 FY26 Q3 电话会备稿 2026-06：16 份 take-or-pay 战略客户协议、合同最低收入合计 $100B、覆盖 2026-2030 年 HBM（先行量最硬形态）</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312525000028/mu-20250828.htm" rel="noopener noreferrer">美光 Form 10-K FY2025：全年营收 $37.4B（对比 $100B take-or-pay 规模用）</a></li>
+        <li><a href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing" rel="noopener noreferrer">Bloomberg 2022-10-17：芯片交期几年来最大单月缩短（交期先行价格塌方 3-6 个月的关键时点）</a></li>
+        <li><a href="https://www.datacenterdynamics.com/en/news/chip-lead-times-hit-202-weeks-as-semiconductor-shortage-drags-on/" rel="noopener noreferrer">DCD 2021-08：芯片交期突破 20.2 周（交期沿革参考）</a></li>
+        <li><a href="https://www.trendforce.com/presscenter/news/20260115.html" rel="noopener noreferrer">TrendForce 2026-01：4Q25 常规 DRAM 涨 +18-23% QoQ、1Q26 上修到 +90-95% QoQ（价格数字兑现的时点）</a></li>
+        <li><a href="m03.html">本站 · 模块 3：封装、测试与系统集成 101（工具一：长约、预付与「售罄」的完整判断框架）</a></li>
+        <li><a href="m07.html">本站 · 模块 7：Memory / Storage 深水区（工具二：合同层证据领先报表证据；硬度阶梯与关键词翻译表）</a></li>
+        <li><a href="spine06.html">本站 · 卡 6：库存结构决定波动结构（直供长约 vs 现货商品化两种波形对比）</a></li>
+        <li>预告：卡 5（缺货是牛鞭极值）、卡 11（领先指标来自扩产时序，设备端）——本卡从合同端出发，与卡 11 是一对姊妹卡</li>
+      </ul>
+      <p style="margin-top:14px;font-size:var(--fs-12)">徽章说明：<span class="badge badge-verified">已核验</span> 直接引用一手来源（年报、10-K、8-K、电话会备稿、官方公告）或经权威媒体转述的一手数据 · <span class="badge badge-expert">专家判断</span> 综合行业口径的判断性表达，无单一权威来源 · <span class="badge badge-assume">估算</span> 明确的推算，标注方法与年份。</p>
+    </section>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已学习</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine11.html"><span class="dir">← 上一张</span>卡 11 · 领先指标来自扩产时序</a>
+        <a href="spine13.html" style="text-align:right"><span class="dir">下一张 →</span>卡 13 · 市场定价在标题层</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- A 类：先行量 vs 价格 时序对照图 ---------- */
+  (function () {
+    const svg = document.getElementById("lagChart");
+    if (!svg) return;
+
+    /* --- 坐标系 --- */
+    const W = 900, H = 380;
+    const L = 60, R = 40, T = 60, B = 40;
+    const IW = W - L - R;
+    const IH = H - T - B;
+
+    /* 时间轴：2024-01-01 到 2026-08-01（32 个月） */
+    const START = new Date(2024, 0, 1);
+    const END = new Date(2026, 7, 1);
+    const DAY = 24 * 3600 * 1000;
+    const TOTAL_DAYS = (END - START) / DAY;
+
+    /* 两条轴的 Y：上层先行量 y=T+40，下层价格 y=T+IH-40 */
+    const yLead = T + 60;
+    const yPrice = T + IH - 60;
+    const yMid = (yLead + yPrice) / 2;
+
+    /* 日期到 x 坐标 */
+    function dateX(d) {
+      const days = (d - START) / DAY;
+      return L + (days / TOTAL_DAYS) * IW;
+    }
+
+    /* 月差 */
+    function monthsBetween(a, b) {
+      return (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth());
+    }
+
+    /* --- 事件数据 --- */
+    const LEAD_EVENTS = [
+      {
+        id: "e1",
+        date: new Date(2024, 2, 20),   /* 2024-03-20 */
+        label: "美光 CEO：HBM 2024 售罄",
+        dateLabel: "2024-03-20",
+        priceId: "p2",
+        detail: "美光 CEO Mehrotra 在 FY24 Q2 电话会上明确表示「HBM 2024 已售罄、2025 供应绝大部分已分配」——这是合同层信号在公开数据里第一次亮起。此时 HBM 现货价没有公开报价（HBM 无现货市场）、DDR5 服务器条合同价还在低位。",
+        insight: "合同层信号先亮，价格数字还完全没动——想读到方向的人，此刻只能从这一句话下手。"
+      },
+      {
+        id: "e2",
+        date: new Date(2024, 4, 2),    /* 2024-05-02 */
+        label: "SK 海力士 CEO：HBM 售罄",
+        dateLabel: "2024-05-02",
+        priceId: "p2",
+        detail: "Korea Herald 头条：SK 海力士 CEO Kwak Noh-jung「HBM 2024 已经全部售罄、2025 也差不多售罄」。两家一起把话说明白——合同层信号从「一家提」升级到「两家同向」，硬度又提高一档。",
+        insight: "两家 CEO 同月内说同一件事，就是合同层证据同向——这时候还没有任何价格数字给出百分数，但方向已经明确。"
+      },
+      {
+        id: "e3",
+        date: new Date(2025, 9, 29),   /* 2025-10-29 */
+        label: "SK 海力士 3Q25 · 47% 营业利润率",
+        dateLabel: "2025-10-29",
+        priceId: "p3",
+        detail: "SK 海力士 3Q25 财报：HBM/DRAM/NAND 2026 产能全部售罄、季度营业利润率 47%、季度营业利润首次破 10 万亿韩元。这是「合同层信号 → 报表兑现」链条走完一半——从 2024 年 5 月「售罄」到 47% 利润率落到报表，跨了 18 个月。",
+        insight: "合同层信号已经走到报表里——47% 利润率不是本季运气，是几个季度前签在长约里的量与价的兑现。同期常规 DRAM 现货刚开始涨 +18-23% QoQ。"
+      },
+      {
+        id: "e4",
+        date: new Date(2026, 5, 25),   /* 2026-06-25 */
+        label: "美光 FY26 Q3 · $100B take-or-pay",
+        dateLabel: "2026-06",
+        priceId: null,   /* 兑现在未来 */
+        detail: "美光 FY26 Q3 电话会备稿：单一季度签下 16 份 take-or-pay 战略客户协议、合同最低收入合计 $100B、覆盖 2026-2030 年 HBM。这是硬度最高一档的先行量——写在合同里的最低付款义务、违约有明确对价、覆盖公司未来三年营收。",
+        insight: "这个信号的兑现指向未来 12-18 个月的价格与利润——2027 年报表上会看到什么，答案已经写在这份 2026 年 6 月签的合同里。"
+      }
+    ];
+
+    const PRICE_EVENTS = [
+      {
+        id: "p1",
+        date: new Date(2024, 6, 15),   /* 2024-07 · HBM 长约按年调整无季度公开数据 */
+        label: "HBM 长约按年阶梯调（无公开季度%）",
+        dateLabel: "2024 全年",
+        muted: true
+      },
+      {
+        id: "p2",
+        date: new Date(2025, 11, 24),  /* 2025-12-24 */
+        label: "TrendForce：HBM3E 2026 涨 20%",
+        dateLabel: "2025-12-24"
+      },
+      {
+        id: "p3",
+        date: new Date(2026, 1, 15),   /* 2026-02-15 */
+        label: "TrendForce：1Q26 常规 DRAM +90-95%",
+        dateLabel: "2026-01/02"
+      }
+    ];
+
+    /* --- 绘制底层（时间轴、色带、日期刻度）--- */
+
+    /* 上下两个带 · 表明区域含义 */
+    const bandLead = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    bandLead.setAttribute("x", L);
+    bandLead.setAttribute("y", T + 20);
+    bandLead.setAttribute("width", IW);
+    bandLead.setAttribute("height", 90);
+    bandLead.setAttribute("class", "band-lead");
+    bandLead.setAttribute("rx", 6);
+    bandLead.setAttribute("opacity", 0.5);
+    svg.appendChild(bandLead);
+
+    const bandPrice = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    bandPrice.setAttribute("x", L);
+    bandPrice.setAttribute("y", T + IH - 110);
+    bandPrice.setAttribute("width", IW);
+    bandPrice.setAttribute("height", 90);
+    bandPrice.setAttribute("class", "band-price");
+    bandPrice.setAttribute("rx", 6);
+    bandPrice.setAttribute("opacity", 0.5);
+    svg.appendChild(bandPrice);
+
+    /* 带标签 */
+    const bandLeadLbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    bandLeadLbl.setAttribute("x", L + 10);
+    bandLeadLbl.setAttribute("y", T + 34);
+    bandLeadLbl.setAttribute("class", "band-lbl");
+    bandLeadLbl.textContent = "先行量事件 · 合同层信号（时点早）";
+    svg.appendChild(bandLeadLbl);
+
+    const bandPriceLbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    bandPriceLbl.setAttribute("x", L + 10);
+    bandPriceLbl.setAttribute("y", T + IH - 96);
+    bandPriceLbl.setAttribute("class", "band-lbl");
+    bandPriceLbl.textContent = "价格数字 · TrendForce 涨跌口径（时点晚）";
+    svg.appendChild(bandPriceLbl);
+
+    /* 中线（时间轴分界） */
+    const midLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    midLine.setAttribute("x1", L);
+    midLine.setAttribute("y1", yMid);
+    midLine.setAttribute("x2", L + IW);
+    midLine.setAttribute("y2", yMid);
+    midLine.setAttribute("class", "midaxis");
+    svg.appendChild(midLine);
+
+    /* 月份刻度：每半年一根 */
+    const ticks = [
+      new Date(2024, 0, 1),
+      new Date(2024, 6, 1),
+      new Date(2025, 0, 1),
+      new Date(2025, 6, 1),
+      new Date(2026, 0, 1),
+      new Date(2026, 6, 1),
+    ];
+    ticks.forEach(d => {
+      const x = dateX(d);
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", x);
+      line.setAttribute("y1", yMid - 6);
+      line.setAttribute("x2", x);
+      line.setAttribute("y2", yMid + 6);
+      line.setAttribute("class", "ax");
+      svg.appendChild(line);
+
+      const lbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      lbl.setAttribute("x", x);
+      lbl.setAttribute("y", yMid + 20);
+      lbl.setAttribute("class", "ax-txt");
+      lbl.setAttribute("text-anchor", "middle");
+      lbl.textContent = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+      svg.appendChild(lbl);
+    });
+
+    /* --- 绘制事件点 --- */
+
+    /* 存 handle 供更新用 */
+    const leadNodeMap = {};
+    const priceNodeMap = {};
+    const leadLblMap = {};
+    const priceLblMap = {};
+
+    /* 先行量事件（上层） */
+    LEAD_EVENTS.forEach((ev, i) => {
+      const x = dateX(ev.date);
+
+      /* 竖线连到时间轴 */
+      const guide = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      guide.setAttribute("x1", x);
+      guide.setAttribute("y1", yLead);
+      guide.setAttribute("x2", x);
+      guide.setAttribute("y2", yMid);
+      guide.setAttribute("class", "ev-line");
+      svg.appendChild(guide);
+
+      /* 圆点 */
+      const node = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      node.setAttribute("cx", x);
+      node.setAttribute("cy", yLead);
+      node.setAttribute("r", 7);
+      node.setAttribute("class", "ev-lead-node");
+      node.setAttribute("data-id", ev.id);
+      node.style.cursor = "pointer";
+      node.addEventListener("click", () => selectLead(ev.id));
+      svg.appendChild(node);
+      leadNodeMap[ev.id] = node;
+
+      /* 事件标签 · 交错高度避免重叠 */
+      const labelY = yLead - 20 - (i % 2) * 16;
+      const lbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      lbl.setAttribute("x", x);
+      lbl.setAttribute("y", labelY);
+      lbl.setAttribute("class", "ev-lbl");
+      lbl.setAttribute("text-anchor", (i === LEAD_EVENTS.length - 1) ? "end" : "middle");
+      lbl.textContent = ev.label;
+      svg.appendChild(lbl);
+      leadLblMap[ev.id] = lbl;
+
+      /* 日期小字 */
+      const dateLbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      dateLbl.setAttribute("x", x);
+      dateLbl.setAttribute("y", yLead + 20);
+      dateLbl.setAttribute("class", "ev-date");
+      dateLbl.setAttribute("text-anchor", "middle");
+      dateLbl.textContent = ev.dateLabel;
+      svg.appendChild(dateLbl);
+    });
+
+    /* 价格事件（下层） */
+    PRICE_EVENTS.forEach((ev, i) => {
+      const x = dateX(ev.date);
+
+      const guide = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      guide.setAttribute("x1", x);
+      guide.setAttribute("y1", yMid);
+      guide.setAttribute("x2", x);
+      guide.setAttribute("y2", yPrice);
+      guide.setAttribute("class", "ev-line");
+      svg.appendChild(guide);
+
+      const node = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      node.setAttribute("x", x - 7);
+      node.setAttribute("y", yPrice - 7);
+      node.setAttribute("width", 14);
+      node.setAttribute("height", 14);
+      node.setAttribute("rx", 2);
+      node.setAttribute("class", "ev-price-node");
+      node.setAttribute("data-id", ev.id);
+      svg.appendChild(node);
+      priceNodeMap[ev.id] = node;
+
+      /* 日期小字 */
+      const dateLbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      dateLbl.setAttribute("x", x);
+      dateLbl.setAttribute("y", yPrice - 14);
+      dateLbl.setAttribute("class", "ev-date");
+      dateLbl.setAttribute("text-anchor", "middle");
+      dateLbl.textContent = ev.dateLabel;
+      svg.appendChild(dateLbl);
+
+      /* 事件标签 · 也交错 */
+      const labelY = yPrice + 24 + (i % 2) * 16;
+      const lbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      lbl.setAttribute("x", x);
+      lbl.setAttribute("y", labelY);
+      lbl.setAttribute("class", "ev-lbl" + (ev.muted ? " muted" : ""));
+      lbl.setAttribute("text-anchor", "middle");
+      lbl.textContent = ev.label;
+      svg.appendChild(lbl);
+      priceLblMap[ev.id] = lbl;
+    });
+
+    /* 时滞连接弧 · 会随选中动态更新 */
+    const arcPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    arcPath.setAttribute("class", "lag-arrow");
+    svg.appendChild(arcPath);
+
+    const arcHead = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    arcHead.setAttribute("class", "lag-arrow-head");
+    svg.appendChild(arcHead);
+
+    const arcLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    arcLabel.setAttribute("class", "lag-lbl");
+    svg.appendChild(arcLabel);
+
+    const futureArc = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    futureArc.setAttribute("class", "lag-future");
+    svg.appendChild(futureArc);
+
+    /* --- 选中与更新 --- */
+    const buttons = document.querySelectorAll(".lag-btn");
+    const readout = document.getElementById("lagReadout");
+
+    function selectLead(id) {
+      const ev = LEAD_EVENTS.find(e => e.id === id);
+      if (!ev) return;
+
+      /* 按钮状态 */
+      buttons.forEach(b => {
+        b.setAttribute("aria-pressed", b.dataset.lead === id ? "true" : "false");
+      });
+
+      /* 事件点状态 */
+      LEAD_EVENTS.forEach(e => {
+        const node = leadNodeMap[e.id];
+        if (e.id === id) {
+          node.classList.add("active");
+          node.classList.remove("inactive");
+          node.setAttribute("r", 9);
+        } else {
+          node.classList.remove("active");
+          node.classList.add("inactive");
+          node.setAttribute("r", 6);
+        }
+      });
+
+      PRICE_EVENTS.forEach(p => {
+        const node = priceNodeMap[p.id];
+        if (p.id === ev.priceId) {
+          node.classList.add("active");
+          node.classList.remove("inactive");
+        } else {
+          node.classList.remove("active");
+          node.classList.add("inactive");
+        }
+      });
+
+      /* 时滞弧 */
+      const x1 = dateX(ev.date);
+      const y1 = yLead;
+      let arcHtml = "", monthsLag = null;
+
+      if (ev.priceId) {
+        const pEv = PRICE_EVENTS.find(p => p.id === ev.priceId);
+        const x2 = dateX(pEv.date);
+        const y2 = yPrice;
+        monthsLag = monthsBetween(ev.date, pEv.date);
+
+        /* 贝塞尔弧连接两点：从 (x1, y1) 到 (x2, y2)，中间稍微凸出 */
+        const mx = (x1 + x2) / 2;
+        const my = yMid;
+        arcPath.setAttribute("d", "M " + x1 + " " + y1 + " Q " + mx + " " + my + ", " + x2 + " " + y2);
+        arcPath.style.display = "";
+
+        /* 箭头 · 指向 (x2, y2) */
+        const arrowSize = 6;
+        arcHead.setAttribute("points",
+          x2 + "," + y2 + " " +
+          (x2 - arrowSize) + "," + (y2 - arrowSize * 1.5) + " " +
+          (x2 + arrowSize) + "," + (y2 - arrowSize * 1.5)
+        );
+        arcHead.style.display = "";
+
+        arcLabel.setAttribute("x", mx);
+        arcLabel.setAttribute("y", my + 5);
+        arcLabel.textContent = "滞后 " + monthsLag + " 月";
+        arcLabel.style.display = "";
+
+        futureArc.style.display = "none";
+      } else {
+        /* E4 · 兑现在未来 */
+        arcPath.style.display = "none";
+        arcHead.style.display = "none";
+        const fx = L + IW - 5;
+        const fy = yPrice + 5;
+        futureArc.setAttribute("d",
+          "M " + x1 + " " + y1 +
+          " Q " + ((x1 + fx) / 2) + " " + yMid + ", " + fx + " " + fy
+        );
+        futureArc.style.display = "";
+        arcLabel.setAttribute("x", (x1 + fx) / 2);
+        arcLabel.setAttribute("y", yMid + 5);
+        arcLabel.textContent = "指向未来 12-18 月";
+        arcLabel.style.display = "";
+      }
+
+      /* 读出 */
+      let readoutHtml = "";
+      readoutHtml += '<div class="row"><span class="lead-tag">先行量</span><b>' + ev.label + '</b>（' + ev.dateLabel + '）</div>';
+      readoutHtml += '<div class="row">' + ev.detail + '</div>';
+
+      if (ev.priceId) {
+        const pEv = PRICE_EVENTS.find(p => p.id === ev.priceId);
+        readoutHtml += '<div class="row"><span class="price-tag">价格显形</span>' + pEv.label + '（' + pEv.dateLabel + '）<span class="lag-badge">滞后 ' + monthsLag + ' 月</span></div>';
+      } else {
+        readoutHtml += '<div class="row"><span class="price-tag">价格显形</span>指向未来 12-18 月——2027 年报表上要看到的东西，答案已经写在这份 2026-06 签的合同里。</div>';
+      }
+
+      readoutHtml += '<div class="row insight">此刻的动作：' + ev.insight + '</div>';
+      readout.innerHTML = readoutHtml;
+    }
+
+    buttons.forEach(b => {
+      b.addEventListener("click", () => selectLead(b.dataset.lead));
+    });
+
+    /* 默认选 e2（SK 海力士 2024-05-02 → HBM3E 2025-12-24，时滞 19 月） */
+    selectLead("e2");
+  })();
+
+});
+</script>
+</body>
+</html>

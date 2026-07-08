@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 10 · 需求传导链 · 半导体投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 骨架卡专属版式（承 spine04） ---------- */
+  .spine-section { margin: 40px 0 24px; scroll-margin-top: 60px; }
+  .spine-section > h2 {
+    font-size: var(--fs-22);
+    font-weight: 650;
+    margin: 0 0 4px;
+    letter-spacing: -0.005em;
+  }
+  .spine-section > .kicker {
+    font-size: var(--fs-13);
+    font-weight: 650;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .spine-lead {
+    font-size: var(--fs-17);
+    color: var(--ink);
+    padding: 12px 16px;
+    background: var(--surface);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    margin: 12px 0 20px;
+  }
+  .spine-lead b { color: var(--primary); }
+
+  /* 反差对比 · 现象段用 */
+  .gap-row {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: stretch;
+    margin: 14px 0 4px;
+  }
+  .gap-cell {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-m); padding: 14px 16px;
+  }
+  .gap-cell h4 { margin: 0 0 6px; font-size: var(--fs-14); font-weight: 650; color: var(--muted); }
+  .gap-cell .fig { font-size: 24px; font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; line-height: 1.25; }
+  .gap-cell.right .fig { color: var(--accent-ink); }
+  .gap-cell p { font-size: var(--fs-14); margin: 4px 0 0; color: var(--ink); }
+  .gap-arrow { display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--muted); font-weight: 400; }
+  @media (max-width: 640px) {
+    .gap-row { grid-template-columns: 1fr; }
+    .gap-arrow { transform: rotate(90deg); padding: 4px 0; }
+  }
+
+  /* ---------- A 类组件：两只眼睛信号板 ---------- */
+  .eye-controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 14px; }
+  .eye-btn {
+    appearance: none; font: inherit; font-size: var(--fs-13); font-weight: 600;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+    border-radius: var(--radius-s); padding: 6px 12px; cursor: pointer;
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .eye-btn:hover { background: var(--surface); }
+  .eye-btn[aria-pressed="true"] {
+    border-color: var(--primary-2);
+    background: var(--primary-tint);
+    color: var(--primary);
+  }
+  .eye-btn .yr { display: block; font-size: var(--fs-12); color: var(--muted); font-weight: 500; }
+  .eye-btn[aria-pressed="true"] .yr { color: var(--primary); }
+
+  .eye-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch;
+    margin: 8px 0 12px;
+  }
+  .eye-side {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-m); padding: 14px 16px;
+  }
+  .eye-side h4 {
+    font-size: var(--fs-15); font-weight: 650; margin: 0 0 4px;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap;
+  }
+  .eye-side .eyetag {
+    font-size: var(--fs-12); font-weight: 600; padding: 2px 9px; border-radius: 99px;
+  }
+  .eye-side.left .eyetag { color: var(--info-ink); background: var(--info-tint); }
+  .eye-side.right .eyetag { color: var(--accent-ink); background: var(--accent-tint); }
+  .eye-side .meta {
+    font-size: var(--fs-13); color: var(--muted); margin: 0 0 8px;
+    line-height: 1.55;
+  }
+  .eye-side svg { display: block; width: 100%; height: auto; }
+  @media (max-width: 700px) { .eye-grid { grid-template-columns: 1fr; } }
+
+  .eye-readout {
+    font-size: var(--fs-14);
+    background: var(--surface); border-radius: var(--radius-s);
+    padding: 10px 14px; margin-top: 10px; line-height: 1.7;
+  }
+  .eye-readout b { color: var(--primary); }
+  .eye-readout .lag {
+    display: inline-block; margin-left: 6px;
+    color: var(--accent-ink); background: var(--accent-tint);
+    font-size: var(--fs-13); font-weight: 650;
+    padding: 1px 9px; border-radius: 99px;
+  }
+
+  /* ---------- 硬度阶梯表（机制段用） ---------- */
+  .hard-tbl {
+    display: grid; gap: 0; margin: 14px 0 8px;
+    border: 1px solid var(--line); border-radius: var(--radius-m); overflow: hidden;
+  }
+  .hard-row {
+    display: grid;
+    grid-template-columns: 82px 1fr 130px 96px;
+    gap: 8px 12px; align-items: center;
+    padding: 10px 14px;
+    font-size: var(--fs-14);
+    border-top: 1px solid var(--line);
+  }
+  .hard-row:first-child { border-top: none; background: var(--surface); font-weight: 650; font-size: var(--fs-13); color: var(--muted); }
+  .hard-row .lay { font-weight: 650; color: var(--ink); }
+  .hard-row .co { color: var(--muted); font-size: var(--fs-13); }
+  .hard-row .barwrap {
+    height: 10px; background: var(--surface-2); border-radius: 5px; overflow: hidden; position: relative;
+  }
+  .hard-row .bar { height: 100%; border-radius: 5px; }
+  .hard-row.h-hi .bar { width: 95%; background: var(--info); }
+  .hard-row.h-mi .bar { width: 60%; background: var(--info); opacity: 0.65; }
+  .hard-row.h-lo .bar { width: 22%; background: var(--info); opacity: 0.30; }
+  .hard-row .lag { text-align: right; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .hard-row.h-hi .lag { color: var(--primary); }
+  .hard-row.h-mi .lag { color: var(--ink); }
+  .hard-row.h-lo .lag { color: var(--accent-ink); }
+  @media (max-width: 640px) {
+    .hard-row { grid-template-columns: 72px 1fr 100px; }
+    .hard-row .co { grid-column: 2 / 4; }
+    .hard-row .lag { grid-column: 3 / 4; }
+  }
+
+  /* 反射问句样式（借 spine02 qa） */
+  .qa {
+    border-left: 3px solid var(--primary);
+    background: var(--primary-tint);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    padding: 12px 16px 4px;
+    margin: 14px 0;
+  }
+  .qa .q { font-weight: 650; color: var(--primary); margin: 0 0 8px; font-size: var(--fs-16); }
+  .qa .q::before { content: "问："; }
+  .qa ul { margin: 6px 0 10px; padding-left: 1.2em; }
+</style>
+</head>
+<body data-page="s10">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 10 · 需求传导链</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 10 / 15</p>
+      <h1>卡 10 · 需求传导链</h1>
+      <p class="core-q"><b>一句话：</b>AI 需求从模型公司下单，一层层经过云资本开支、芯片、制造封装、设备、上游材料、最后到电力。<strong>越下游、财报披露越硬、机构定价越充分；越上游、披露越薄、但可能领先下游 6-12 个月</strong>——两只眼睛一起看，才是完整的传导链读法。</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">读完这张卡你要能答的三个问题（现在答不上来是正常的）</span>
+      <ol style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>AXT（InP 衬底商）2024 全公司收入约 9,940 万美元，英伟达 FY26 数据中心分部收入 1,937 亿美元——规模差 1,950 倍。为什么小公司的月度订单变化，对预判大公司报表还有价值？</li>
+        <li>一条 AI 新闻到手，你的第一反应问什么？（提示：先定层，再定信号硬度）</li>
+        <li>看到"上游订单转冷 + 下游财报仍热"这类矛盾信号，你的第一反应查什么？</li>
+      </ol>
+    </div>
+
+    <!-- ==================== 1. 现象 ==================== -->
+    <section class="spine-section" id="sec-phenom">
+      <div class="kicker">1 · 现象</div>
+      <h2>规模差 1,950 倍，但小公司的信号可能领先大公司报表 3-4 个季度</h2>
+
+      <p>先看两个真实数字，都是最近披露、都是 AI 传导链上的公司：</p>
+
+      <div class="gap-row">
+        <div class="gap-cell">
+          <h4>下游 · 英伟达 FY2026 数据中心</h4>
+          <div class="fig">$193.7B</div>
+          <p>2026-02-26 公告 · 全年营收 · 按季度分部披露 · 30+ 家分析师覆盖<span class="badge badge-verified">已核验 · NVIDIA FY26 Q4 8-K</span></p>
+        </div>
+        <div class="gap-arrow" aria-hidden="true">vs.</div>
+        <div class="gap-cell right">
+          <h4>上游 · AXT（InP 衬底）2024 全公司</h4>
+          <div class="fig">$99.4M</div>
+          <p>2025-02 财报 · 全公司收入 · 分部无 AI 用途单列 · 电话会常 1-2 家提问<span class="badge badge-verified">已核验 · AXT 2024 财报</span></p>
+        </div>
+      </div>
+
+      <p>规模差约 <strong>1,950 倍</strong>（193,700 / 99.4）。从"我能读到多少信号"的角度，两家公司差得更狠：英伟达数据中心每季按分部披露到十亿美元级、每周多次媒体报道；AXT 全公司才 9,940 万美元、季度电话会常态 1-2 家提问——公开信息带宽本身差几个数量级。</p>
+
+      <p>这里有一件不该被理所当然的事：<strong>AXT 2023 年下半年到 2024 年上半年的 InP 衬底订单节奏变化，能领先英伟达数据中心业务的爆发式增长报表约 3-4 个季度</strong>。2024 年 4 月 18 日台积电电话会上魏哲家一句话"CoWoS 产能翻倍仍不够"<span class="badge badge-verified">已核验 · TSMC Q1 2024 电话会</span>，那时上游 InP 衬底需求已经在跑；等到 2025 年 2 月英伟达 FY25 数据中心 $115.2B 印证叙事时<span class="badge badge-verified">已核验 · NVIDIA FY25 Q4 8-K</span>，AXT 那批订单已经过站两个季度。</p>
+
+      <p class="spine-lead">规模差 2000 倍、但小公司的信号可能领先大公司报表 3-4 个季度——这不是玄学，是传导链的物理结构决定的。这张卡讲透的模型是：<b>信号硬度 vs 前瞻性权衡——两只眼睛读传导链</b>。</p>
+    </section>
+
+    <!-- ==================== 2. 机制 ==================== -->
+    <section class="spine-section" id="sec-mech">
+      <div class="kicker">2 · 机制</div>
+      <h2>为什么"越下游越硬，越上游越前瞻"——三条同源机制 + 三条物理约束</h2>
+
+      <p>一笔云资本开支要经过十层公司账户才最终落地——十层地图与代表公司、时滞在<strong>模块 6（AI Infra 十层传导链）</strong>已经建过了，本卡不重画。本卡只讲一件事：<strong>同一条链上，不同层的信号有两种截然不同的性质，它们的用法完全不同</strong>。</p>
+
+      <h3>a. 信号硬度：三条同源机制决定的一件事</h3>
+
+      <p>一层信号"硬不硬"，取决于三件事——三件事同源，都由业务规模决定：</p>
+
+      <ol>
+        <li><strong>披露密度</strong>。SEC 只要求"重大"分部单列披露。英伟达数据中心占公司 88% 收入，必然按季度披露到十亿美元级；博通 AI 芯片从 2024 财年起单列（当年 122 亿美元）<span class="badge badge-verified">已核验 · 博通 FY24 财报</span>；美光 HBM 从 2024 起单列。反过来看 AXT：InP 用于 AI 光互连的部分，占 InP 收入若干比例、占公司 9,940 万美元总收入更小一块——不到"重大"分部的门槛，公司自己都不细拆<span class="badge badge-verified">已核验 · AXT 2024 年报</span>。同理味之素（Ajinomoto）做 ABF 载板，全公司是食品+化学电子的联合体，ABF 收入藏在"其他"里，年度粒度<span class="badge badge-verified">已核验 · 味之素公开材料</span>。<strong>披露密度差异是几个数量级的</strong>。</li>
+        <li><strong>机构覆盖</strong>。买方研究部资源有限，只能覆盖能容纳大资金的大公司。英伟达每季电话会 30+ 家投行分析师排队问；台积电 20+；博通、美光、SK 海力士都在 20+ 家覆盖范围内。AXT 电话会常态只有 1-2 家提问，有时无人提问。<strong>公开答疑是最便宜的信息，稀缺就是稀缺</strong>。</li>
+        <li><strong>市场定价</strong>。披露密度高 + 机构覆盖充分 → 市场对已知信息的定价接近充分。所以下游财报里"AI 需求强劲"这句话，读到你手里时早就不再是信息、是价格。反过来，AXT 的季报少人读、少人问，一个数字的变化可能几周甚至几季都没被完全消化。</li>
+      </ol>
+
+      <p>三件事的联合结果就是"信号硬度"：<strong>下游层信号硬（可查、已定价），上游层信号软（难查、可能未定价）</strong>。</p>
+
+      <h3>b. 前瞻性：三条物理约束决定的时序</h3>
+
+      <p>一层信号能领先下游多久，取决于三条产能约束（模块 6 §4 完整拆过）：</p>
+
+      <ul>
+        <li><strong>芯片有库存缓冲</strong>——GPU 从台积电出片到装进服务器有几周成品与渠道库存；所以 GPU 层收入变化几乎与云 CapEx 决策平行（0-1 季）。</li>
+        <li><strong>设备交期以年计</strong>——EUV 一台 2.27 亿欧元、2024 全年全球仅交付 44 台<span class="badge badge-verified">已核验 · ASML 2024 年报</span>；扩产必先订机；所以 WFE 层订单<strong>领先</strong>芯片厂收入 2-3 季。</li>
+        <li><strong>厂房与并网以两年计</strong>——从动工到通电投产 24-36 个月（卡 1 讲过）；所以电力液冷层订单确认滞后 CapEx 3-4 季。</li>
+      </ul>
+
+      <p>三条约束叠出来的时序：<strong>WFE 领先、GPU/HBM 平行、材料前置、封装稍前、电力最后</strong>。上游材料（InP、ABF）一般是 12-18 个月前备料——所以 AXT/味之素的订单节奏，能领先英伟达同代 GPU 兑现约 3-4 个季度。</p>
+
+      <h3>c. 硬度 vs 前瞻的对偶</h3>
+
+      <p><strong>硬度和前瞻性反向相关</strong>：硬度高的层，通常时滞短、已定价；硬度低的层，通常时滞长、未定价。这就是"两只眼睛"的物理来源——不是一个眼睛看得更清楚就够了，是两只眼睛看到不同时间层的东西。</p>
+
+      <div class="hard-tbl" role="table" aria-label="信号硬度 vs 时滞 · 各层对照">
+        <div class="hard-row" role="row">
+          <span class="lay">层 · 类型</span>
+          <span class="co">代表公司 · 披露密度</span>
+          <span class="barwrap" aria-hidden="true"></span>
+          <span class="lag">相对 CapEx 时滞</span>
+        </div>
+        <div class="hard-row h-hi" role="row">
+          <span class="lay">L2 GPU 层<br><span class="co">下游硬</span></span>
+          <span class="co">英伟达 · 季度分部披露到十亿美元级、30+ 家分析师</span>
+          <span class="barwrap"><span class="bar"></span></span>
+          <span class="lag">0-1 季</span>
+        </div>
+        <div class="hard-row h-hi" role="row">
+          <span class="lay">L3 HBM<br><span class="co">下游硬</span></span>
+          <span class="co">SK 海力士/美光/三星 · 长约锁定、售罄口径公开</span>
+          <span class="barwrap"><span class="bar"></span></span>
+          <span class="lag">0-1 季</span>
+        </div>
+        <div class="hard-row h-mi" role="row">
+          <span class="lay">L5 Foundry+CoWoS<br><span class="co">中游中硬</span></span>
+          <span class="co">台积电 · 20+ 家分析师、但产能是管理层口径</span>
+          <span class="barwrap"><span class="bar"></span></span>
+          <span class="lag">1-2 季</span>
+        </div>
+        <div class="hard-row h-mi" role="row">
+          <span class="lay">L6 WFE 设备<br><span class="co">中游前瞻</span></span>
+          <span class="co">ASML/应材/KLA · backlog 按季公开</span>
+          <span class="barwrap"><span class="bar"></span></span>
+          <span class="lag">领先 2-3 季</span>
+        </div>
+        <div class="hard-row h-lo" role="row">
+          <span class="lay">L10 材料<br><span class="co">上游最软</span></span>
+          <span class="co">AXT（InP）/味之素（ABF）· 无 AI 用途单列、覆盖稀薄</span>
+          <span class="barwrap"><span class="bar"></span></span>
+          <span class="lag">领先 3-4 季</span>
+        </div>
+        <div class="hard-row h-lo" role="row">
+          <span class="lay">L10 电力/液冷<br><span class="co">下游滞后</span></span>
+          <span class="co">Vertiv/GE Vernova · backlog 逐季披露、但兑现慢</span>
+          <span class="barwrap"><span class="bar"></span></span>
+          <span class="lag">滞后 3-4 季</span>
+        </div>
+      </div>
+
+      <p style="font-size:var(--fs-13);color:var(--muted);margin:6px 0 14px">条形长度示意信号硬度（越长越硬）；右列是相对云 CapEx 决策的粗算时滞——由本页机制推导，非官方指标。完整十层地图见模块 6。</p>
+
+      <p>两只眼睛的分工：</p>
+      <ul>
+        <li><strong>下游硬信号</strong>回答的是<strong>"AI 需求真的在发生吗"</strong>——它是过去 6-12 个月上游信号在报表上的印证。用来锚定现实、验证叙事、发现叙事和数字的裂缝。</li>
+        <li><strong>上游软信号</strong>回答的是<strong>"未来 6-12 个月的方向"</strong>——它是当下正在酝酿、还没到下游报表的动作。用来预判拐点、发现认知差。</li>
+      </ul>
+
+      <p>只用一只眼睛都会瞎：<strong>只看下游，看到的都是已被市场定价的过去；只看上游，会把噪音当成信号</strong>。</p>
+
+      <h3>d. 动手感受一下：两只眼睛信号板</h3>
+
+      <p>下面这个组件把上下游信号并排显示。<strong>看什么：</strong>①左边"下游眼睛"读到的是已印证的现实（英伟达数据中心 FY23-FY26）；②右边"上游眼睛"读到的是 6-12 月后要发生的方向（CoWoS 月产能规划 + AXT 收入 + 云 CapEx 计划）；③切换 4 个时点按钮，两边同步高亮对应年份的信号——观察"当下游眼睛看到什么时，上游眼睛已经在看什么"。</p>
+
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-title">两只眼睛信号板 · 同一条 AI 传导链的下游硬信号 vs 上游软信号</span>
+          <span class="viz-sub">数字全为已核验一手来源。时点为示范观察窗口，实际信号是每季度都在动。</span>
+        </div>
+
+        <div class="eye-controls" role="group" aria-label="观察时点切换">
+          <button class="eye-btn" data-time="t23" aria-pressed="false"><span class="yr">时点 A · 2023 中</span>上游先动</button>
+          <button class="eye-btn" data-time="t24" aria-pressed="true"><span class="yr">时点 B · 2024 全年</span>上游继续冲、下游初步兑现</button>
+          <button class="eye-btn" data-time="t25" aria-pressed="false"><span class="yr">时点 C · 2025 全年</span>下游印证、上游高位</button>
+          <button class="eye-btn" data-time="t26" aria-pressed="false"><span class="yr">时点 D · 2026 前瞻</span>新一轮上游信号开始写</button>
+        </div>
+
+        <div class="eye-grid">
+          <div class="eye-side left">
+            <h4>
+              <span>下游眼睛 · 硬信号</span>
+              <span class="eyetag">已被定价</span>
+            </h4>
+            <p class="meta">披露密度：高（季度分部披露）· 机构覆盖：30+ 家 · 时滞：滞后 CapEx 0-1 季<br>读它的作用：锚定现实、验证叙事</p>
+            <div id="eyeDown" role="img" aria-label="下游硬信号 · 英伟达数据中心分部年度收入"></div>
+          </div>
+          <div class="eye-side right">
+            <h4>
+              <span>上游眼睛 · 软信号</span>
+              <span class="eyetag">可能未定价</span>
+            </h4>
+            <p class="meta">披露密度：低（管理层口径 / 无分部单列）· 覆盖：1-3 家 · 时滞：领先下游 3-4 季<br>读它的作用：预判方向、发现认知差</p>
+            <div id="eyeUp" role="img" aria-label="上游软信号 · CoWoS 月产能规划 + AXT 年收入"></div>
+          </div>
+        </div>
+
+        <div class="eye-readout" id="eyeReadout" aria-live="polite">点击时点按钮，观察同一时刻两只眼睛各看到什么、时滞多少。</div>
+
+        <p style="font-size:var(--fs-13);color:var(--muted);margin:10px 0 0">看清一件事：<strong>2024 全年（时点 B）你在下游看到 $47.5B 的时候，上游眼睛已经在看 2025 年的 CoWoS 80K/月排产——这就是 6-12 个月的领先</strong>。</p>
+      </div>
+    </section>
+
+    <!-- ==================== 3. 真实锚点 ==================== -->
+    <section class="spine-section" id="sec-anchor">
+      <div class="kicker">3 · 真实锚点</div>
+      <h2>四个已核验现场，一段可观察的时序</h2>
+
+      <h3>锚点一 · 下游最硬 · 英伟达数据中心年收入</h3>
+      <p><strong>FY23 $15.0B → FY24 $47.5B (+217%) → FY25 $115.2B (+142%) → FY26 $193.7B (+68%)</strong><span class="badge badge-verified">已核验 · NVIDIA FY24/FY25/FY26 Q4 8-K</span>。四年 12.9 倍增长。每季度分部披露到十亿美元级、30+ 家分析师覆盖、每周多次媒体报道——信号硬度接近满分。<strong>但代价是市场对这条曲线的每个季度都已模拟到小数点后一位</strong>：等 FY25 财报公告时，"AI 需求真的很强"早不再是信息，是价格。</p>
+
+      <h3>锚点二 · 中游中硬 · SEMI 全球设备订单</h3>
+      <p><strong>2023 全年 $106.3B → 2024 $117.1B (+10%) → 2025 $135B (+15%)</strong><span class="badge badge-verified">已核验 · SEMI 年度统计（模块 2 已建）</span>。这一层比英伟达"软一档"——SEMI 每季有全球统计报告，但没有像英伟达那样每公司都被分析师逐条追问；专业机构会读，媒体覆盖比下游少一个量级。<strong>这一层信号在芯片厂扩产收入之前 2-3 个季度就能读到</strong>——2023 年设备订单开始转正的时候，2025 年下游 Nvidia FY25 $115.2B 就已经在路上了。</p>
+
+      <h3>锚点三 · 上游最软 · CoWoS 月产能 + AXT / InP</h3>
+      <ul>
+        <li>台积电 CoWoS 月产能：<strong>2023 年 ~20K/月 → 2024 年 35-40K/月 → 2025 年目标 75-80K/月 → 2026 年目标 140-150K/月</strong><span class="badge badge-verified">已核验 · TSMC Q1 2024 电话会（魏哲家「翻倍仍不够」）+ TrendForce 2024-10、2025-01</span>。</li>
+        <li>AXT 全公司年收入：<strong>2022 $135M → 2023 $75.5M（-44%，行业下行）→ 2024 $99.4M（+31%，恢复）</strong><span class="badge badge-verified">已核验 · AXT 2024 全年财报（BusinessWire 2025-02）</span>；InP 用于 AI 光互连的具体比例公司未按季度单列。</li>
+      </ul>
+      <p>CoWoS 排产不是季度分部收入、是管理层口径——<strong>口径可以改口，需要跨源交叉验证</strong>。但它领先芯片厂出货 2-3 个季度、领先英伟达同代 GPU 兑现 3-4 个季度。2024 年 4 月魏哲家在电话会说"翻倍仍不够"的时候，2025 年 Nvidia FY25 数据中心 $115.2B 就在这条曲线的另一端等着<span class="badge badge-verified">已核验</span>。</p>
+
+      <h3>锚点四 · 上游最前 · 云 CapEx 计划口径</h3>
+      <p>四家美国头部云厂商（Meta、Alphabet、Amazon、Microsoft）AI 资本开支：<strong>2025 合计约 $410B，2026 计划合计约 $725B (+77%)</strong><span class="badge badge-verified">已核验 · 各公司业绩公告汇总（模块 6 已建）</span>。这一层信号"最前"的意义在于——它是未来 2-3 年下游订单的起点。公告一次上调 20%，未来 6/12/18 个月每一层的订单都会跟着动，只是各层动的时点不同（练习二会推）。</p>
+
+      <h3>锚点五 · 反例 · 上游信号有噪音</h3>
+      <p><strong>AXT 2025 Q4 收入因中国出口许可延迟受挫</strong><span class="badge badge-verified">已核验 · Semiconductor Today 2026-03 报道</span>——这就是上游信号的另一面：披露薄、覆盖少、且对政策非常敏感，单一时点的下滑可能不是 AI 需求转向，是<strong>非需求侧扰动</strong>。这条锚点的作用是提醒你：上游软信号必须交叉多个上游层，任何单点都不算证据（详见边界段）。</p>
+
+      <p><strong>时序对照 · 同一条 AI 传导链，各层信号错落 6-18 个月出现</strong>：</p>
+      <ul>
+        <li>2023 上半年：上游 CoWoS 排产口径开始翻倍规划（软信号）</li>
+        <li>2023 全年：SEMI 设备订单开始转正（中等信号）</li>
+        <li>2024 全年：Nvidia FY24 数据中心 $47.5B（下游硬信号第一次印证）</li>
+        <li>2025 全年：Nvidia FY25 $115.2B（下游硬信号大规模印证）</li>
+        <li>2025 Q4：AXT 出货因中国出口许可延迟出现负面软信号（可能是噪音）</li>
+        <li>2026 全年：Nvidia FY26 $193.7B（继续印证），且下一轮上游信号已经在写——云 CapEx 2026 计划 $725B</li>
+      </ul>
+      <p>看不到时滞的人只会觉得"英伟达增长是奇迹"；用两只眼睛的人早在 2023-2024 年就从上游看到了 2025 兑现的方向。</p>
+    </section>
+
+    <!-- ==================== 4. 投资含义 ==================== -->
+    <section class="spine-section" id="sec-invest">
+      <div class="kicker">4 · 投资含义</div>
+      <h2>两个条件反射问句</h2>
+
+      <p>骨架卡的用法是<strong>把两个问句刻进反射弧</strong>——以后看到相关新闻，不是先想"涨还是跌"，而是先自动问以下两个问题，答完再下结论。</p>
+
+      <div class="qa">
+        <p class="q">拿到一条 AI 新闻，我第一反应问什么？</p>
+        <ul>
+          <li><strong>这条新闻属于传导链十层里的哪一层？</strong>（先定层——模块 6 十层地图）</li>
+          <li><strong>是下游硬信号（已披露、已被定价）还是上游软信号（前瞻、可能未定价）？</strong>（再定硬度）</li>
+          <li>如果是硬信号——<strong>它验证了什么已有叙事？数字有没有跟叙事不符的地方？</strong>（用它锚定现实）</li>
+          <li>如果是软信号——<strong>它领先下游多少个季度？有没有其他上游信号交叉验证？</strong>（用它预判方向，且必须交叉）</li>
+        </ul>
+      </div>
+
+      <div class="qa">
+        <p class="q">看到两个矛盾信号（上游冷 + 下游热，或反之），我第一反应查什么？</p>
+        <ul>
+          <li><strong>时间常数：两个信号从来不属于同一个时间点</strong>——下游是滞后读数，反映的是 6-12 个月前上游种下的果；上游是前瞻信号，反映的是 6-12 个月后下游会变成什么。静态比较是错误的。</li>
+          <li>如果上游冷 + 下游热：现在的热是过去的果，未来 6-12 个月内下游可能出现下行拐点；</li>
+          <li>如果上游热 + 下游冷：现在的冷是过去砍产的结果，未来 6-12 个月内下游可能出现回升拐点。</li>
+          <li><strong>动作：找第三条独立信号确认哪只眼睛更接近拐点</strong>——上游两个不同层同向（比如 InP + CoWoS 一起转向），比单层单方向更有说服力。</li>
+        </ul>
+      </div>
+
+      <p>两条反射合起来，就是这张卡的最核心一句：<strong>下游硬信号验证已发生的事实，上游软信号预判未来的方向，两只眼睛不能只用一只</strong>。</p>
+    </section>
+
+    <!-- ==================== 5. 边界 ==================== -->
+    <section class="spine-section" id="sec-limit">
+      <div class="kicker">5 · 边界</div>
+      <h2>这张卡什么时候不适用</h2>
+
+      <ul>
+        <li><strong>单一上游数据点不构成信号</strong>。AXT 一个季度出货变化可能是订单节奏、可能是客户库存调整、可能是政策扰动（2025 Q4 中国出口许可延迟就是活例）——不能把单一上游点数当趋势。要交叉多个上游层：InP + ABF + CoWoS + WFE 至少两条独立信号同向，才算上游转向。<strong>上游的信噪比本来就低</strong>。</li>
+        <li><strong>"上游"这个词内部还有分层——不能拿一个时滞数字套所有场景</strong>。WFE 设备订单领先 2-3 季（模块 2 已算）；HBM 长约锁定 12-24 个月；InP/ABF 材料订单领先 6-12 个月；CoWoS 排产随季度动态变化；电力液冷合同兑现反而是全链最后（滞后 CapEx 3-4 季，见模块 6 §4）。<strong>时滞不是恒定的</strong>：新建 fab 时滞长（24-36 月）、扩产时滞短（6-12 月），场景不同，数字不同。</li>
+        <li><strong>认知差机会存在 ≠ 容易赚</strong>。上游披露薄的另一面就是<strong>验证难、假信号多、周期敏感度高</strong>；规模天花板决定了即使赌对，回报量级也有上限（AXT 涨 10 倍也是 $1B 市值级别）。上游卡点炒作里，映射类假信号出现频率比真信号还高。见模块 6 工具三失效①、②。</li>
+        <li>下游硬信号也会失真——<strong>缺货时订单里混着大量重复下单</strong>（卡 5 展开的牛鞭效应），表观需求会短期高估真实需求。也就是说，"硬"不等于"真"——只是可查、已被定价。</li>
+        <li><strong>与相邻卡的分工</strong>：卡 5（缺货是牛鞭极值）讲的是硬信号里的一种失真；卡 11（领先指标都来自扩产时序）具体展开设备订单、交期、测试订单等前瞻指标怎么读；卡 12（价格是滞后读数）讲的是价格属于最硬也最晚的信号。<strong>三张卡合起来才是完整的"两只眼睛"工具箱</strong>。手册层面的十层全景（含代表公司、五件套工具、决策复盘）在<strong>模块 6</strong>。</li>
+      </ul>
+    </section>
+
+    <!-- ==================== 6. 练习 ==================== -->
+    <section class="spine-section" id="sec-drill">
+      <div class="kicker">6 · 练习</div>
+      <h2>两道题</h2>
+
+      <div class="scenario">
+        <h4>练习一 · 复述题（3 分钟量级，讲给完全不懂的朋友听）</h4>
+        <p>合上卡片，用自己的话讲清楚：<strong>"为什么一家全年收入才 9,940 万美元、几乎没人知道名字的 InP 衬底厂 AXT，它的月度订单变化对预判 1,937 亿美元规模的英伟达数据中心业务有价值？"</strong></p>
+        <p class="scenario-hint">要点检查：<br>①"披露密度、机构覆盖、市场定价"三条同源机制讲清楚了没；<br>②"时间常数"讲清楚了没——AXT 的信号对应的下游收入还要几个季度才能兑现；<br>③点出"下游硬 vs 上游软"的对偶关系，两只眼睛都要用；<br>④不用出现"信号硬度""前瞻性"这些术语，大白话就够。<br>四条都到位，这张卡算过了本关。</p>
+      </div>
+
+      <article class="scenario">
+        <h4>练习二 · 推演题（已核验前提，用本卡机制自己推）</h4>
+        <p>已核验的两件真事：</p>
+        <ul>
+          <li>四家美国头部云厂商（Meta、Alphabet、Amazon、Microsoft）2026 年 AI CapEx 计划合计约 <strong>$725B（+77% 同比 2025 的 ~$410B）</strong><span class="badge badge-verified">已核验 · 模块 6 已建</span>；</li>
+          <li>假设某美国头部云厂商 2026 年 3 月发布财报，将 2026 年个体 AI 资本开支指引<strong>再上调 20%</strong>（例如从 $180B 提升到 $216B）。</li>
+        </ul>
+        <p>请用本卡的十层传导链，按 <strong>6 / 12 / 18 个月</strong>三个时间窗口，推理每层预期看到什么信号。要求：</p>
+        <ul>
+          <li>每层至少给一个<strong>可跟踪的具体指标</strong>（不是"变好"这种模糊表达，而是"季报 X 分部收入""backlog 增速""管理层措辞"这种可读的口径）；</li>
+          <li>至少给一条你会先看到的<strong>上游软信号</strong>（时滞 6 个月内）；</li>
+          <li>至少给一条你能锚定的<strong>下游硬信号</strong>（时滞 12 个月以上）；</li>
+          <li>如果这条上调后来被证伪（比如同一云厂商下季度又回撤），<strong>你会先看哪一层信号确认？为什么是这一层？</strong></li>
+        </ul>
+        <p class="scenario-hint">
+          提示（不给标准答案）：<br>
+          · 第 0-3 个月：GPU 与 HBM 长约谈判活跃度；博通 ASIC 客户扩产口径；上游 CoWoS 排产是否再次上调；<br>
+          · 第 3-6 个月：SEMI 设备订单季度环比、ASML/AMAT/KLA 季报 backlog 变化、WFE 分区收入；<br>
+          · 第 6-12 个月：Vertiv/GE Vernova backlog 增长；InP/ABF 材料扩产公告；Advantest/Teradyne 测试机订单；<br>
+          · 第 12-18 个月：数据中心并网、发电容量投入、Nvidia 后续代际 GPU 数据中心分部收入。<br>
+          写下你的推理和每层的具体跟踪指标；一年后拿这份推理跟真实公告对照——就是"两只眼睛读传导链"能力最直接的自测。<strong>不给标准答案</strong>。
+        </p>
+      </article>
+
+      <div class="note">
+        <span class="note-label">这张卡要带走的两个反射弧</span>
+        <ol style="margin:0;padding-left:1.3em">
+          <li>看到一条 AI 新闻，先<strong>定层</strong>（十层里哪层）再<strong>定硬度</strong>（硬 or 软）——决定用它锚定现实还是预判方向；</li>
+          <li>看到上下游两个矛盾信号，先想<strong>它们不属于同一时点</strong>——上游是未来的种子，下游是过去的果；然后去找<strong>第三条独立信号</strong>决定谁更接近拐点。</li>
+        </ol>
+        <p style="margin:8px 0 0">写不出来，回来重看第 2 节 c 与第 4 节。</p>
+      </div>
+    </section>
+
+    <!-- ==================== 来源 ==================== -->
+    <section class="src">
+      <strong>卡 10 来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026">NVIDIA FY2026 Q4 业绩公告（数据中心分部全年 $193.7B）</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581025000021/q4fy25pr.htm">NVIDIA FY2025 Q4 8-K（数据中心 FY25 $115.2B、+142%）</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581024000028/q4fy24pr.htm">NVIDIA FY2024 Q4 8-K（数据中心 FY24 $47.5B）</a></li>
+        <li><a href="https://www.businesswire.com/news/home/20250220199958/en/AXT-Inc.-Announces-Fourth-Quarter-and-Fiscal-Year-2024-Financial-Results">AXT 2024 全年财报 2025-02（全公司收入 $99.4M、+31%）</a></li>
+        <li><a href="https://www.semiconductor-today.com/news_items/2026/mar/axt-090326.shtml">Semiconductor Today 2026-03：AXT Q4 2025 因中国出口许可延迟受挫</a></li>
+        <li><a href="https://www.fool.com/earnings/call-transcripts/2024/04/18/taiwan-semiconductor-manufacturing-tsm-q1-2024-ear/">TSMC Q1 2024 电话会转录（魏哲家「CoWoS 产能翻倍仍不足」，2024-04-18）</a></li>
+        <li><a href="https://www.trendforce.com/news/2024/10/21/news-cowos-capacity-doubles-for-two-years-still-insufficient-positive-outlook-for-suppliers/">TrendForce 2024-10-21：TSMC CoWoS 连续两年翻倍仍不够（月产能 40K→80K→150K 目标）</a></li>
+        <li><a href="https://www.trendforce.com/news/2025/01/02/news-tsmc-set-to-expand-cowos-capacity-to-record-75000-wafers-in-2025-doubling-2024-output/">TrendForce 2025-01-02：TSMC 2025 CoWoS 月产能规划至约 80K 片</a></li>
+        <li><a href="https://www.semi.org/en/products-services/market-data">SEMI Equipment Market Statistics（2023 $106.3B / 2024 $117.1B / 2025 $135B，模块 2 已建）</a></li>
+        <li><a href="https://valueaddvc.com/blog/big-tech-ai-capex-in-2025-microsoft-google-meta-amazon-and-the-spending-race">四家美国云厂商 AI CapEx 2025 ~$410B、2026 计划 ~$725B（+77%，公司披露汇总）</a></li>
+        <li><a href="https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-fourth-quarter-and-fiscal-year-2024">博通 FY2024 财报（AI 芯片 122 亿美元 +220%，2024 起分部单列）</a></li>
+        <li><a href="https://semiconductorinsight.com/blog/ajinomoto-ramps-up-abf-substrate-production-amid-surging-semiconductor-demand-market-poised-to-double-by-2032/">味之素 ABF：CPU/GPU 基板占比 &gt;95%、藏于其他板块，年度粒度披露</a></li>
+        <li><a href="m06.html">本站 · 模块 6：AI Infra 十层传导链（十层地图、时滞对照、披露密度带、五件套工具）</a></li>
+        <li><a href="m02.html">本站 · 模块 2：芯片前端制造 101（EUV 交付、SEMI 设备订单、爬坡）</a></li>
+        <li>预告：卡 5（缺货是牛鞭极值）、卡 11（领先指标：设备订单/交期/长约）、卡 12（价格是滞后读数）——三张卡是"两只眼睛"工具箱的完整版</li>
+      </ul>
+      <p style="margin-top:14px;font-size:var(--fs-12)">徽章说明：<span class="badge badge-verified">已核验</span> 直接引用一手来源（年报、10-K、8-K、官方公告）或经权威媒体转述的一手数据 · <span class="badge badge-expert">专家判断</span> 综合行业口径的判断性表达，无单一权威来源 · <span class="badge badge-assume">估算</span> 明确的推算，标注方法与年份。</p>
+    </section>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已学习</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine09.html"><span class="dir">← 上一张</span>卡 9 · 生态分工与耦合</a>
+        <a href="spine11.html" style="text-align:right"><span class="dir">下一张 →</span>卡 11 · 领先指标来自扩产时序</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- A 类：两只眼睛信号板 ---------- */
+  (function () {
+    /* 四个时点的两只眼睛读数。数字全部一手来源（见页脚），
+       CoWoS 月产能为 TrendForce 转述的 TSMC 官方口径；AXT 与 Nvidia DC 为年报口径。 */
+    const YEARS_DOWN = [
+      { yr: "FY23", val: 15.0, cap25: 150 },   /* Nvidia DC $B, 云 CapEx 四家合计 $B（粗估） */
+      { yr: "FY24", val: 47.5, cap25: 250 },
+      { yr: "FY25", val: 115.2, cap25: 410 },
+      { yr: "FY26", val: 193.7, cap25: 725 },
+    ];
+    const YEARS_UP = [
+      { yr: "2023", cowos: 20, axt: 75.5 },   /* CoWoS K/月; AXT 年收入 $M */
+      { yr: "2024", cowos: 38, axt: 99.4 },
+      { yr: "2025", cowos: 78, axt: null },
+      { yr: "2026", cowos: 145, axt: null },
+    ];
+
+    const TIMES = {
+      t23: {
+        idx: 0,
+        title: "时点 A · 2023 中",
+        down: "下游眼睛只能看到 <b>Nvidia FY23 数据中心 $15.0B</b>（此时市场刚从 ChatGPT 冲击中反应过来，AI 需求叙事初起）。这一层已经是最硬的信号——但它反映的是过去 12 个月的事实。",
+        up: "上游眼睛看到：<b>CoWoS 排产口径开始从 20K/月往 2024 年 35-40K/月翻倍规划</b>（TSMC 电话会措辞变紧）；SEMI 设备订单开始转正；AXT 2023 全年正在深谷（-44%）——上游最软的层还没转，中游前瞻层已经动了。",
+        lag: "上游领先约 4-6 季",
+        insight: "此刻的动作：忽略下游 $15B 是「起点」这种叙事——真正的信号在 <b>CoWoS 排产口径的翻倍规划</b>和<b>SEMI 设备订单转正</b>。上游眼睛看到的方向，就是下游 12-18 个月后会兑现的东西。"
+      },
+      t24: {
+        idx: 1,
+        title: "时点 B · 2024 全年",
+        down: "下游眼睛看到：<b>Nvidia FY24 数据中心 $47.5B（+217%）</b>——下游第一次大规模印证 AI 需求。云 CapEx 四家 2024 合计约 $250B（同比 +67%）。<b>市场此时已把 GPU 层充分定价</b>，英伟达股价已在高位。",
+        up: "上游眼睛看到：<b>CoWoS 月产能从 20K 冲到 35-40K</b>，管理层 2024-04-18 电话会明说「翻倍仍不够」、2025 目标翻到 80K/月；<b>AXT 2024 全年恢复到 $99.4M（+31%）</b>——上游材料需求跟上；SEMI 2024 设备订单 $117.1B。",
+        lag: "上游领先约 3-4 季",
+        insight: "此刻的动作：不要追已在价格里的 GPU 层——按上游眼睛在看的 CoWoS 80K/月排产反推，<b>HBM、光模块、ABF、InP 这些相邻层的 2025 兑现是必然</b>（十层传导，模块 6）。这时候读上游软信号的人，能提前把注意力从 GPU 转到相邻层。"
+      },
+      t25: {
+        idx: 2,
+        title: "时点 C · 2025 全年",
+        down: "下游眼睛看到：<b>Nvidia FY25 数据中心 $115.2B（+142%）</b>——下游硬信号大规模印证。云 CapEx 四家 2025 合计约 $410B。这条曲线的每个季度已被机构模拟到小数点后一位——<b>信号硬度到顶，但也彻底被定价</b>。",
+        up: "上游眼睛看到：<b>CoWoS 月产能 2025 目标 75-80K/月落地</b>，进入正常兑现节奏；<b>光互联层追上（1.6T 光模块起量）成为新闸门候选</b>；上游 AXT 2025 Q4 因中国出口许可延迟出现负面软信号——<b>此刻上游有噪音，需要至少两条独立上游信号交叉才能判断转向</b>。",
+        lag: "上游领先约 3-4 季",
+        insight: "此刻的动作：只看 Nvidia $115B 印证叙事，是「看到过去的果」；要预判 2026 走向，要看 <b>CoWoS 2026 目标 150K/月是否真正落地</b>、<b>SEMI 2025 设备订单能不能突破 $135B</b>——这些上游信号决定下游 12 个月后能不能继续。AXT 单点回落不算证据，要交叉 InP + ABF 两条以上。"
+      },
+      t26: {
+        idx: 3,
+        title: "时点 D · 2026 前瞻",
+        down: "下游眼睛看到：<b>Nvidia FY26 数据中心 $193.7B（+68%）</b>——继续印证，但增速开始放缓。这条曲线已经完全在价格里、每个季度都被机构精算——<b>下游眼睛此刻能给你的信息，几乎全是已被定价的过去</b>。",
+        up: "上游眼睛此刻看到：<b>云 CapEx 四家 2026 计划合计约 $725B（+77% 同比 2025 的 $410B）</b>——这是「最前」的软信号，是未来 2-3 年下游订单的起点；<b>CoWoS 目标 140-150K/月</b>；WFE 设备订单是否继续冲高、上游材料扩产公告——都还在写。",
+        lag: "上游领先约 4-6 季",
+        insight: "此刻的动作：下游眼睛给不了新信息了。<b>把注意力全放到上游软信号</b>——云 CapEx 计划、CoWoS 排产、SEMI 设备订单、上游材料扩产。云 CapEx 计划一次上调或回撤 20%，就是这条链未来 6-18 个月的方向盘（练习二在推这个）。"
+      }
+    };
+
+    /* ------- SVG 下游眼睛：Nvidia 数据中心年收入柱 + 云 CapEx 折线 ------- */
+    (function drawDown() {
+      const mount = document.getElementById("eyeDown");
+      if (!mount) return;
+      const W = 340, H = 200, L = 34, R = 12, T = 18, B = 36;
+      const IW = W - L - R, IH = H - T - B;
+      const svg = APP.svgEl("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+        "aria-label": "英伟达数据中心年度收入柱状图与云 CapEx 折线，反映下游硬信号的曲线形态" });
+      /* Y 轴 · Nvidia DC ($B) */
+      const yMax = 250;
+      const yV = (v) => T + (1 - v / yMax) * IH;
+      for (let v = 0; v <= yMax; v += 50) {
+        const y = yV(v);
+        svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: y, y2: y,
+          stroke: "var(--viz-grid)", "stroke-width": 1 }));
+        const t = APP.svgEl("text", { x: L - 5, y: y + 4, "text-anchor": "end", class: "axis-txt" });
+        t.textContent = v;
+        svg.appendChild(t);
+      }
+      /* 顶端小标 */
+      const cap = APP.svgEl("text", { x: L, y: 12, class: "axis-txt" });
+      cap.textContent = "英伟达 DC 收入 $B（柱）· 云 CapEx 四家合计 $B（折线）";
+      svg.appendChild(cap);
+
+      /* 柱子 */
+      const slot = IW / YEARS_DOWN.length;
+      const barW = Math.min(38, slot * 0.55);
+      const bars = [];
+      YEARS_DOWN.forEach((d, i) => {
+        const cx = L + slot * i + slot / 2;
+        const x0 = cx - barW / 2;
+        const yT = yV(d.val);
+        const yB = H - B;
+        const rect = APP.svgEl("rect", {
+          x: x0, y: yT, width: barW, height: yB - yT, rx: 3,
+          fill: "var(--viz-s2)", opacity: 0.55
+        });
+        svg.appendChild(rect);
+        /* 标签 */
+        const lbl = APP.svgEl("text", {
+          x: cx, y: yT - 4, "text-anchor": "middle", class: "bar-lbl"
+        });
+        lbl.textContent = "$" + d.val + "B";
+        svg.appendChild(lbl);
+        /* X 轴年份 */
+        const yr = APP.svgEl("text", {
+          x: cx, y: H - B + 16, "text-anchor": "middle", class: "axis-txt"
+        });
+        yr.textContent = d.yr;
+        svg.appendChild(yr);
+        bars.push({ rect, lbl, cx });
+      });
+
+      /* 云 CapEx 折线（用同一 Y 轴） */
+      const linePts = YEARS_DOWN.map((d, i) => {
+        const cx = L + slot * i + slot / 2;
+        return cx + "," + yV(d.cap25);
+      });
+      const path = APP.svgEl("polyline", {
+        points: linePts.join(" "),
+        fill: "none", stroke: "var(--info-ink)", "stroke-width": 2,
+        "stroke-dasharray": "4 3"
+      });
+      svg.appendChild(path);
+      YEARS_DOWN.forEach((d, i) => {
+        const cx = L + slot * i + slot / 2;
+        const cy = yV(d.cap25);
+        svg.appendChild(APP.svgEl("circle", {
+          cx: cx, cy: cy, r: 3.5, fill: "var(--info-ink)"
+        }));
+        const t = APP.svgEl("text", {
+          x: cx + 6, y: cy - 4, class: "axis-txt", fill: "var(--info-ink)"
+        });
+        t.textContent = d.cap25 >= 1000 ? "$" + (d.cap25 / 1000).toFixed(1) + "T" : "$" + d.cap25 + "B";
+        svg.appendChild(t);
+      });
+
+      mount.appendChild(svg);
+
+      window.__eyeDownHighlight = function (idx) {
+        bars.forEach((b, i) => {
+          b.rect.setAttribute("fill", i === idx ? "var(--info)" : "var(--viz-s2)");
+          b.rect.setAttribute("opacity", i === idx ? "1" : "0.35");
+        });
+      };
+    })();
+
+    /* ------- SVG 上游眼睛：CoWoS 月产能柱 + AXT 年收入折线 ------- */
+    (function drawUp() {
+      const mount = document.getElementById("eyeUp");
+      if (!mount) return;
+      const W = 340, H = 200, L = 34, R = 34, T = 18, B = 36;
+      const IW = W - L - R, IH = H - T - B;
+      const svg = APP.svgEl("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+        "aria-label": "台积电 CoWoS 月产能与 AXT 年收入柱线组合图，反映上游软信号的曲线形态" });
+
+      /* 左 Y 轴 · CoWoS K/月 · max 160 */
+      const yMax = 160;
+      const yV = (v) => T + (1 - v / yMax) * IH;
+      for (let v = 0; v <= yMax; v += 40) {
+        const y = yV(v);
+        svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: y, y2: y,
+          stroke: "var(--viz-grid)", "stroke-width": 1 }));
+        const t = APP.svgEl("text", { x: L - 5, y: y + 4, "text-anchor": "end", class: "axis-txt" });
+        t.textContent = v;
+        svg.appendChild(t);
+      }
+      /* 顶端小标 */
+      const cap = APP.svgEl("text", { x: L, y: 12, class: "axis-txt" });
+      cap.textContent = "CoWoS K 片/月（柱）· AXT 年收入 $M（折线）";
+      svg.appendChild(cap);
+
+      /* 右 Y 轴 · AXT $M · max 160 */
+      const axtMax = 160;
+      const yA = (v) => T + (1 - v / axtMax) * IH;
+      for (let v = 0; v <= axtMax; v += 40) {
+        const y = yA(v);
+        const t = APP.svgEl("text", { x: W - R + 5, y: y + 4, "text-anchor": "start", class: "axis-txt",
+          fill: "var(--accent-ink)" });
+        t.textContent = v;
+        svg.appendChild(t);
+      }
+
+      /* CoWoS 柱 */
+      const slot = IW / YEARS_UP.length;
+      const barW = Math.min(38, slot * 0.55);
+      const bars = [];
+      YEARS_UP.forEach((d, i) => {
+        const cx = L + slot * i + slot / 2;
+        const x0 = cx - barW / 2;
+        const yT = yV(d.cowos);
+        const yB = H - B;
+        const rect = APP.svgEl("rect", {
+          x: x0, y: yT, width: barW, height: yB - yT, rx: 3,
+          fill: "var(--viz-s2)", opacity: 0.55
+        });
+        svg.appendChild(rect);
+        const lbl = APP.svgEl("text", {
+          x: cx, y: yT - 4, "text-anchor": "middle", class: "bar-lbl"
+        });
+        lbl.textContent = d.cowos + "K";
+        svg.appendChild(lbl);
+        const yr = APP.svgEl("text", {
+          x: cx, y: H - B + 16, "text-anchor": "middle", class: "axis-txt"
+        });
+        yr.textContent = d.yr;
+        svg.appendChild(yr);
+        bars.push({ rect });
+      });
+
+      /* AXT 折线（只有 2023、2024 有数） */
+      const axtPts = [];
+      YEARS_UP.forEach((d, i) => {
+        if (d.axt != null) {
+          const cx = L + slot * i + slot / 2;
+          axtPts.push({ cx, cy: yA(d.axt), v: d.axt });
+        }
+      });
+      if (axtPts.length > 1) {
+        const pts = axtPts.map(p => p.cx + "," + p.cy).join(" ");
+        svg.appendChild(APP.svgEl("polyline", {
+          points: pts,
+          fill: "none", stroke: "var(--accent-ink)", "stroke-width": 2,
+          "stroke-dasharray": "4 3"
+        }));
+      }
+      axtPts.forEach(p => {
+        svg.appendChild(APP.svgEl("circle", {
+          cx: p.cx, cy: p.cy, r: 3.5, fill: "var(--accent-ink)"
+        }));
+        const t = APP.svgEl("text", {
+          x: p.cx + 6, y: p.cy + 4, class: "axis-txt", fill: "var(--accent-ink)"
+        });
+        t.textContent = "$" + p.v + "M";
+        svg.appendChild(t);
+      });
+      /* 2025-2026 AXT 未披露标注 */
+      const lastAvail = axtPts.length > 0 ? axtPts[axtPts.length - 1] : null;
+      YEARS_UP.forEach((d, i) => {
+        if (d.axt == null && lastAvail) {
+          const cx = L + slot * i + slot / 2;
+          const t = APP.svgEl("text", {
+            x: cx, y: H - B - 6, "text-anchor": "middle", class: "axis-txt",
+            fill: "var(--muted)", style: "font-style:italic"
+          });
+          t.textContent = "AXT 未披露";
+          svg.appendChild(t);
+        }
+      });
+
+      mount.appendChild(svg);
+
+      window.__eyeUpHighlight = function (idx) {
+        bars.forEach((b, i) => {
+          b.rect.setAttribute("fill", i === idx ? "var(--accent)" : "var(--viz-s2)");
+          b.rect.setAttribute("opacity", i === idx ? "1" : "0.35");
+        });
+      };
+    })();
+
+    /* ------- 时点按钮 ------- */
+    const readout = document.getElementById("eyeReadout");
+    const buttons = document.querySelectorAll("[data-time]");
+
+    function selectTime(key) {
+      const T = TIMES[key];
+      if (!T) return;
+      buttons.forEach((b) => {
+        b.setAttribute("aria-pressed", b.dataset.time === key ? "true" : "false");
+      });
+      if (window.__eyeDownHighlight) window.__eyeDownHighlight(T.idx);
+      if (window.__eyeUpHighlight) window.__eyeUpHighlight(T.idx);
+      readout.innerHTML =
+        '<div style="margin-bottom:6px"><b>' + T.title + '</b><span class="lag">' + T.lag + '</span></div>' +
+        '<div style="margin-bottom:4px"><b>下游眼睛：</b>' + T.down + '</div>' +
+        '<div style="margin-bottom:4px"><b>上游眼睛：</b>' + T.up + '</div>' +
+        '<div style="color:var(--primary);font-weight:600">此刻的动作：' + T.insight + '</div>';
+    }
+
+    buttons.forEach((b) => {
+      b.addEventListener("click", () => selectTime(b.dataset.time));
+    });
+
+    /* 默认时点 B */
+    selectTime("t24");
+  })();
+
+});
+</script>
+</body>
+</html>

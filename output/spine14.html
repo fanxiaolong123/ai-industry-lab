@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 14 · 产业周期与股价错位 · 半导体投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 骨架卡专属版式（承 spine10） ---------- */
+  .spine-section { margin: 40px 0 24px; scroll-margin-top: 60px; }
+  .spine-section > h2 {
+    font-size: var(--fs-22);
+    font-weight: 650;
+    margin: 0 0 4px;
+    letter-spacing: -0.005em;
+  }
+  .spine-section > .kicker {
+    font-size: var(--fs-13);
+    font-weight: 650;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .spine-lead {
+    font-size: var(--fs-17);
+    color: var(--ink);
+    padding: 12px 16px;
+    background: var(--surface);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    margin: 12px 0 20px;
+  }
+  .spine-lead b { color: var(--primary); }
+
+  /* 双案例对比（现象段）· 一好一坏并排 */
+  .caseflip {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0;
+  }
+  .caseflip > div {
+    border: 1px solid var(--line); border-radius: var(--radius-m);
+    padding: 14px 16px; background: var(--surface);
+  }
+  .caseflip .cap {
+    font-size: var(--fs-13); font-weight: 650; color: var(--muted); margin-bottom: 6px;
+    display: flex; justify-content: space-between; gap: 8px;
+  }
+  .caseflip .quad {
+    display: inline-block; font-size: var(--fs-12); font-weight: 700;
+    padding: 2px 9px; border-radius: 99px;
+  }
+  .caseflip.good .quad { background: var(--primary-tint); color: var(--primary); }
+  .caseflip.bad .quad { background: var(--accent-tint); color: var(--accent-ink); }
+  .caseflip .row { font-size: var(--fs-14); color: var(--ink); margin-top: 6px; }
+  .caseflip .row + .row { border-top: 1px dashed var(--line); padding-top: 6px; }
+  .caseflip .row b { font-weight: 650; }
+  .caseflip .pos b { color: var(--primary); }
+  .caseflip .neg b { color: var(--accent-ink); }
+  @media (max-width: 640px) { .caseflip { grid-template-columns: 1fr; } }
+
+  /* 两条曲线的对偶（机制段） */
+  .twolines {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 14px 0;
+    border: 1px solid var(--line); border-radius: var(--radius-m); overflow: hidden;
+  }
+  .twolines > div { padding: 14px 18px; }
+  .twolines > div + div { border-left: 1px solid var(--line); background: var(--surface); }
+  .twolines h4 { font-size: var(--fs-15); font-weight: 650; margin: 0 0 8px; }
+  .twolines .a h4 { color: var(--primary); }
+  .twolines .b h4 { color: var(--accent-ink); }
+  .twolines ul { margin: 0; padding-left: 1.2em; font-size: var(--fs-14); }
+  .twolines li { margin-bottom: 6px; }
+  @media (max-width: 640px) {
+    .twolines { grid-template-columns: 1fr; }
+    .twolines > div + div { border-left: none; border-top: 1px solid var(--line); }
+  }
+
+  .qa {
+    border-left: 3px solid var(--primary);
+    background: var(--primary-tint);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    padding: 12px 16px 4px;
+    margin: 14px 0;
+  }
+  .qa .q { font-weight: 650; color: var(--primary); margin: 0 0 8px; font-size: var(--fs-16); }
+  .qa .q::before { content: "问："; }
+  .qa ul { margin: 6px 0 10px; padding-left: 1.2em; }
+
+  /* ---------- A 类组件：四象限对照器 ---------- */
+  .quad-controls {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px;
+  }
+  .quad-btn {
+    appearance: none; font: inherit; font-size: var(--fs-13); font-weight: 600;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+    border-radius: var(--radius-s); padding: 7px 13px; cursor: pointer;
+    text-align: left; line-height: 1.4;
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .quad-btn:hover { background: var(--surface); }
+  .quad-btn[aria-pressed="true"] {
+    border-color: var(--primary-2);
+    background: var(--primary-tint);
+    color: var(--primary);
+  }
+  .quad-btn .sub { display: block; font-size: var(--fs-12); color: var(--muted); font-weight: 500; }
+  .quad-btn[aria-pressed="true"] .sub { color: var(--primary); }
+
+  .quad-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 8px 0 12px;
+  }
+  .quad-viz {
+    background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-m);
+    padding: 8px; min-height: 320px;
+  }
+  .quad-viz svg { display: block; width: 100%; height: auto; }
+  .quad-info {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m);
+    padding: 14px 16px; font-size: var(--fs-14); line-height: 1.7;
+  }
+  .quad-info h4 {
+    font-size: var(--fs-15); font-weight: 650; margin: 0 0 6px;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap;
+  }
+  .quad-info h4 .tag {
+    font-size: var(--fs-12); font-weight: 650; padding: 2px 9px; border-radius: 99px;
+    background: var(--info-tint); color: var(--info-ink);
+  }
+  .quad-info h4 .tag.g { background: var(--primary-tint); color: var(--primary); }
+  .quad-info h4 .tag.r { background: var(--accent-tint); color: var(--accent-ink); }
+  .quad-info .kv { display: grid; grid-template-columns: 5em 1fr; gap: 2px 10px; margin: 4px 0 8px; }
+  .quad-info .kv dt { font-weight: 650; color: var(--muted); font-size: var(--fs-13); }
+  .quad-info .kv dd { margin: 0; }
+  .quad-info .outcome {
+    background: var(--bg); border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius-s) var(--radius-s) 0;
+    padding: 8px 12px; margin: 8px 0 4px;
+    font-size: var(--fs-14);
+  }
+  .quad-info .outcome b { color: var(--primary); }
+  @media (max-width: 700px) { .quad-grid { grid-template-columns: 1fr; } }
+
+  /* 数据表格数字色 */
+  .tbl-anchor .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .tbl-anchor .neg { color: var(--danger-ink); }
+  .tbl-anchor .pos { color: var(--primary); }
+</style>
+</head>
+<body data-page="s14">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 14 · 产业周期与股价错位</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 14 / 15</p>
+      <h1>卡 14 · 产业周期与股价错位</h1>
+      <p class="core-q"><b>一句话：</b>判断"这是不是好买点"要同时读两条独立曲线。<strong>产业曲线</strong>看渗透率、出货、产能、毛利率——四段都能画出时间序列；<strong>股价曲线</strong>看股价、估值倍数、机构头寸、市场情绪——四段也都能画出时间序列。二者错位是常态：产业刚开始+股价便宜是最好也最罕见的窗口；产业刚开始+股价已经在山顶是多数"AI 概念"叙事的现状。分不清这两条曲线，「产业刚开始」这句话可以让你在山顶接盘。</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">读完这张卡你要能答的三个问题（现在答不上来是正常的）</span>
+      <ol style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>2023-01 英伟达数据中心 FY23 才 $15.0B、股价还没起飞；2021-10 Meta 改名当天扎克伯格宣布押注元宇宙、股价接近 $384 历史高点。两条新闻当天读起来都是"新台阶起点"——为什么一个成了 10 倍机会、另一个是 -76% 山顶？</li>
+        <li>听到"AI 产业刚开始"这句话，你的第一反应问什么？（答案不是"买还是不买"）</li>
+        <li>你看到某标的估值 PE 突破历史新高分位，第一反应问什么？</li>
+      </ol>
+    </div>
+
+    <!-- ==================== 1. 现象 ==================== -->
+    <section class="spine-section" id="sec-phenom">
+      <div class="kicker">1 · 现象</div>
+      <h2>两个"产业刚开始"的故事，一个是 10 倍、一个是 -76%</h2>
+
+      <p>先看两个真实、带日期、都是"产业刚开始"叙事的现场——为什么结果截然相反？</p>
+
+      <div class="caseflip good">
+        <div class="a">
+          <div class="cap">
+            <span>案例 A · 英伟达 · 2023-01</span>
+            <span class="quad">产业早 + 股价便宜</span>
+          </div>
+          <div class="row pos"><b>产业曲线：</b>ChatGPT 2022-11-30 上线仅 2 个月；数据中心 FY23（截 2023-01-29）$15.0B——AI 需求刚开始进入公司报表<span class="badge badge-verified">已核验</span></div>
+          <div class="row pos"><b>股价曲线：</b>2023-01-31 收盘 $19.52（拆股后）；市值约 $480B；上一年 2022 全年跌约 -50%（加密寒冬叠加）<span class="badge badge-verified">已核验</span></div>
+          <div class="row pos"><b>此后：</b>12 个月后（2024-01-31）股价 $61.50（+215%）；21 个月后（2024-10）触及 $143.71 历史高点（<b>约 7.4 倍</b>）；数据中心 FY25 $115.2B</div>
+        </div>
+        <div class="a">
+          <div class="cap">
+            <span>叙事对 · 择时对</span>
+            <span class="quad">象限 A · 罕见</span>
+          </div>
+          <div class="row">"产业刚开始"这句话此时是真的：产业曲线还在起点、股价从熊市低位起步——两条曲线的错位刚开始形成，市场还没充分定价。</div>
+          <div class="row">这个窗口稀缺：多数"产业刚开始"的时刻，股价早已 price in。此案例的窗口宽度约 6-9 个月（2022-10 到 2023-05），此后估值倍数快速抬升。</div>
+        </div>
+      </div>
+
+      <div class="caseflip bad">
+        <div class="a">
+          <div class="cap">
+            <span>案例 B · Meta 元宇宙 · 2021-10</span>
+            <span class="quad">产业早 + 股价极贵</span>
+          </div>
+          <div class="row neg"><b>产业曲线：</b>2021-10-28 Facebook Connect 大会宣布改名 Meta、押注元宇宙；Reality Labs 全年收入 $2.27B、亏损 $10.2B——新平台确实"刚开始"<span class="badge badge-verified">已核验</span></div>
+          <div class="row neg"><b>股价曲线：</b>2021-09 触及历史高点 $384.33（改名前一个月）；改名当天股价上涨约 3.6% 至历史高位附近；forward PE 约 25 倍<span class="badge badge-verified">已核验</span></div>
+          <div class="row neg"><b>此后：</b>2022-11 触及低点约 $88，<b>跌 -76%</b>；Reality Labs 累计亏损 2020-2025 约 $83.6B，2025 收入仍只有 $2.21B<span class="badge badge-verified">已核验</span></div>
+        </div>
+        <div class="a">
+          <div class="cap">
+            <span>叙事对 · 择时错</span>
+            <span class="quad">象限 B · 山顶接盘</span>
+          </div>
+          <div class="row">"产业刚开始"这句话此时也是真的：新平台确实在起点。但股价当天已在历史高位——市场把未来 5-10 年的假设增长都提前 price in 了。</div>
+          <div class="row">6 年过去了，元宇宙这条"产业曲线"仍在深度投入、Reality Labs 每年亏 $150-190 亿美元、市场再也没有为"元宇宙"叙事重新抬价。产业曲线走得远比市场预期慢。</div>
+        </div>
+      </div>
+
+      <p class="spine-lead">两个案例都是"产业刚开始"、都是真实、都是同一句叙事——但一个是黄金机会、一个是山顶接盘。差别不在产业，差别在<strong>股价把这条产业曲线的多少年预期打入了</strong>。这就是本卡要讲透的模型：<b>两条独立曲线的错位判断——分不开就用一句叙事在山顶接盘</b>。</p>
+    </section>
+
+    <!-- ==================== 2. 机制 ==================== -->
+    <section class="spine-section" id="sec-mech">
+      <div class="kicker">2 · 机制</div>
+      <h2>两条独立曲线、四象限矩阵、股价领先时长不稳定</h2>
+
+      <h3>a. 产业曲线的四段：都能从公开数据画出时间序列</h3>
+
+      <p>"产业曲线在什么位置"不是玄学，是可查的时间序列。四段观察，每段都能找到公开数据代理：</p>
+
+      <div class="twolines">
+        <div class="a">
+          <h4>产业曲线 · 四段代理</h4>
+          <ul>
+            <li><strong>客户端渗透率</strong>：终端用户/客户占潜在市场的比例（AI GPU 在全球服务器出货占比、智能手机在人口占比）——&lt;10% 早期、10-30% 加速、30-60% 主流、&gt;60% 成熟</li>
+            <li><strong>产品端出货</strong>：单位数量的时间序列（GPU 单季出货、CoWoS 月产能、汽车芯片装机量）——增速拐点定位段</li>
+            <li><strong>供给端产能</strong>：全行业扩产宣布数、设备订单、在建产能——扩产 24-36 月（卡 1），领先真实供给释放</li>
+            <li><strong>财务端毛利率</strong>：单位盈利能力——从亏到平到暴利的时间序列（卡 2 讲的经营杠杆放大读数）</li>
+          </ul>
+        </div>
+        <div class="b">
+          <h4>股价曲线 · 四段代理</h4>
+          <ul>
+            <li><strong>股价 vs 历史</strong>：52 周分位、5 年分位、10 年分位——最简单的读数</li>
+            <li><strong>估值倍数</strong>：PE / PB / EV·EBITDA / P·S 相对历史区间的分位；成长股用 forward PE，周期股用 PB</li>
+            <li><strong>机构头寸</strong>：13F 大幅流入、Cathie Wood 类基金重仓、期权 gamma 拥挤、卖空比例</li>
+            <li><strong>市场情绪</strong>：封面故事（Barron's、经济学人、Time）、Google 搜索热度、Reddit / 微博讨论量、卖方研报数量</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>b. 二者关系：股价领先产业曲线，但领先时长不稳定</h3>
+
+      <p>两条曲线不同步，是<strong>市场提前定价</strong>的物理结果。市场每天都在赌未来，不等财报公布才反应。三条规律：</p>
+
+      <ol>
+        <li><strong>常态：股价领先产业曲线拐点 6-12 个月</strong>。买方分析师覆盖头部公司，模型已经建到未来 4-6 个季度；管理层电话会前瞻性口径先透出、股价先动、财报后印证。</li>
+        <li><strong>极端情绪下：领先时长会失控</strong>。牛市中股价可以领先 18-24 月甚至更长——市场把 5 年后的假设增长都提前打入（Meta 元宇宙 2021 就是这样，市场给了 5-10 年的假设增长）；熊市中股价可以领先 24-36 个月——市场把 3 年后的悲观假设一次性打入（美光 2022-10 到 2023-06 就是这样）。</li>
+        <li><strong>关键：股价领先 ≠ 股价便宜</strong>。领先 6 个月 vs 领先 24 个月，是完全不同的仓位状态——前者是买点、后者是山顶。分不清就在山顶接盘。</li>
+      </ol>
+
+      <h3>c. 四象限矩阵：两条曲线独立读数后的组合</h3>
+
+      <p>把两条曲线各拆四段读数、再组合起来，就是本卡的核心工具——四象限矩阵。每个案例都能落到一个象限里，动作完全不同：</p>
+
+      <ul>
+        <li><strong>象限 A · 产业早 + 股价便宜 → 黄金窗口</strong>。罕见，通常只在市场情绪极度悲观时短暂出现（宏观熊市 / 行业深亏 / 灰犀牛事件后 3-6 个月内）。<strong>动作</strong>：小仓位试水，等第一次产业曲线上行确认（一份季报印证）后加仓。</li>
+        <li><strong>象限 B · 产业早 + 股价已贵 → 山顶接盘</strong>。多数"AI 概念"叙事炒作是这一档——叙事对但择时错。<strong>动作</strong>：不进；等待估值回落到合理带（通常需要一次深度回撤或产业曲线跟不上时的估值杀）。</li>
+        <li><strong>象限 C · 产业成熟/衰退 + 股价便宜 → 周期回归的准备期</strong>。存储、成熟制程、汽车芯片周期股常在此。<strong>动作</strong>：耐心，等一个证明产业曲线回正的季报（毛利率转正 / 库存去化 / 交期止跌）。</li>
+        <li><strong>象限 D · 产业成熟 + 股价历史新高 → 最差象限</strong>。产业增速已在放缓、估值倍数却在扩张——这种双顶通常预示大回撤。<strong>动作</strong>：主动降仓 / 找证伪信号 / 观察产业曲线拐点。</li>
+      </ul>
+
+      <h3>d. 亲手感受一下：四象限对照器</h3>
+
+      <p>下面这个组件把三个已核验的历史案例（英伟达 2023 / Meta 元宇宙 2021 / 美光 2023 / 英伟达 2026）落到四象限里定位。<strong>看什么：</strong>①切换案例按钮，观察同样是"产业刚开始"的两个案例，为什么定位落在不同象限；②每个案例右侧给出"叙事+择时"两个维度的评估，以及事后 12-24 个月的真实结果；③英伟达 2023 与 2026 是同一家公司，只是产业曲线位置和股价曲线位置都变了——观察它从象限 A 走向象限 D 边缘的过程。</p>
+
+      <div class="viz wide">
+        <div class="viz-head">
+          <span class="viz-title">四象限对照器 · 产业曲线位置 × 股价曲线位置</span>
+          <span class="viz-sub">五个已核验的历史案例。横轴 = 产业曲线位置，纵轴 = 股价曲线位置（越靠上越贵）。教学示意 · 落点为综合判断，不是数学精确值</span>
+        </div>
+
+        <div class="quad-controls" role="group" aria-label="案例切换">
+          <button class="quad-btn" data-case="nvda23" aria-pressed="true"><span class="sub">案例 1 · 2023-01</span>英伟达（AI 起点）</button>
+          <button class="quad-btn" data-case="meta21" aria-pressed="false"><span class="sub">案例 2 · 2021-10</span>Meta 元宇宙</button>
+          <button class="quad-btn" data-case="mu23" aria-pressed="false"><span class="sub">案例 3 · 2023-06</span>美光（存储深亏）</button>
+          <button class="quad-btn" data-case="nvda24" aria-pressed="false"><span class="sub">案例 4 · 2024-10</span>英伟达（价格齐飞）</button>
+          <button class="quad-btn" data-case="nvda26" aria-pressed="false"><span class="sub">案例 5 · 2026-07</span>英伟达（当下）</button>
+        </div>
+
+        <div class="quad-grid">
+          <div class="quad-viz" id="quadViz" role="img" aria-label="四象限对照图：产业曲线位置为横轴、股价曲线位置为纵轴，历史案例定位在对应象限"></div>
+          <div class="quad-info" id="quadInfo"></div>
+        </div>
+
+        <p style="font-size:var(--fs-13);color:var(--muted);margin:8px 0 0">读完这条：<strong>同一家公司（英伟达 2023 / 2024 / 2026）在三年里走完了从象限 A → 象限 B/D 的完整轨迹</strong>——同样一句"AI 需求强劲"，在这三个时点的含义完全不同。</p>
+      </div>
+    </section>
+
+    <!-- ==================== 3. 真实锚点 ==================== -->
+    <section class="spine-section" id="sec-anchor">
+      <div class="kicker">3 · 真实锚点</div>
+      <h2>三个已核验现场，一段可观察的错位</h2>
+
+      <h3>锚点一 · 英伟达 · 产业与股价同步跳升（2022-11 → 2024-10）</h3>
+
+      <table class="tbl tbl-anchor">
+        <caption>英伟达数据中心收入曲线 与 股价曲线，并排读<span class="badge badge-verified">已核验 · NVIDIA FY23-FY26 8-K + 拆股后市价</span></caption>
+        <thead>
+          <tr><th>时点</th><th>产业曲线（数据中心分部收入）</th><th>股价曲线（拆股后）</th><th>市值</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>FY23 · 截 2023-01</td><td class="num">$15.0B</td><td class="num">2023-01-31 收盘 $19.52</td><td class="num">~$480B</td></tr>
+          <tr><td>FY24 · 截 2024-01</td><td class="num pos">$47.5B（+217%）</td><td class="num pos">2024-01-31 收盘 $61.50（+215%）</td><td class="num">~$1.5T</td></tr>
+          <tr><td>2024-10 高点</td><td>—</td><td class="num pos">$143.71 历史新高</td><td class="num">~$3.5T</td></tr>
+          <tr><td>FY25 · 截 2025-01</td><td class="num pos">$115.2B（+142%）</td><td>—</td><td>—</td></tr>
+          <tr><td>FY26 · 截 2026-01</td><td class="num pos">$193.7B（+68%）</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <p>产业曲线三年从 $15B 到 $193.7B（12.9 倍），股价拆股后从 $19.5 到 $143.7（7.4 倍）——两条曲线同步跳升、股价领先产业约 6-12 个月。在这段时间里，早在 2022-10 熊市低点介入的人拿到了完整的 10 倍收益；2023-05 之后才介入的人拿到了 3-5 倍；2024-10 才介入的人开始进入象限 D 边缘——同一条曲线，进场时点决定收益倍数。</p>
+
+      <h3>锚点二 · Meta 元宇宙 · 产业曲线跟不上股价预期的教科书案例</h3>
+
+      <p>2021-10-28 Facebook Connect 大会那天，扎克伯格宣布公司改名 Meta，all-in 元宇宙。当天股价上涨约 3.6%，逼近 2021-09 触及的历史高点 $384.33<span class="badge badge-verified">已核验 · Wikipedia Meta Platforms + Nasdaq 报道</span>。这是一个典型的"新平台叙事+股价历史高位"的组合——象限 B。</p>
+
+      <table class="tbl tbl-anchor">
+        <caption>Reality Labs（Meta 元宇宙业务）· 六年产业曲线 vs 股价<span class="badge badge-verified">已核验 · Meta 年报、CNBC 2023-2026 逐年报道</span></caption>
+        <thead>
+          <tr><th>年份</th><th>Reality Labs 收入</th><th>Reality Labs 运营亏损</th><th>META 股价</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2020</td><td class="num">$1.14B</td><td class="num neg">-$6.6B</td><td class="num">年末 $273</td></tr>
+          <tr><td>2021</td><td class="num">$2.27B</td><td class="num neg">-$10.2B</td><td class="num pos">9 月峰值 $384、10 月改名</td></tr>
+          <tr><td>2022</td><td class="num">$2.16B</td><td class="num neg">-$13.7B</td><td class="num neg">11 月低点 $88（跌 -76%）</td></tr>
+          <tr><td>2023</td><td class="num">~$1.9B</td><td class="num neg">-$16.1B</td><td class="num">扎克伯格"效率年"</td></tr>
+          <tr><td>2024</td><td class="num">~$2.0B</td><td class="num neg">-$17.7B</td><td class="num">全年高点 $600+（靠 AI 而非元宇宙）</td></tr>
+          <tr><td>2025</td><td class="num">$2.21B</td><td class="num neg">-$19.2B</td><td class="num">主线全面转向 AI</td></tr>
+        </tbody>
+      </table>
+
+      <p>看清一件事：<strong>Reality Labs 累计亏损 2020-2025 约 $83.6B，2025 全年收入仍只有 $2.21B——比 2021 年的 $2.27B 还低</strong>。产业曲线在 6 年里几乎没动、每年在同一水平线上转。市场再也没有把"元宇宙"这条产业曲线当作可估值的叙事——Meta 2024 年之后的股价反弹全部靠 AI（另一条产业曲线），与元宇宙无关。<strong>这就是"产业刚开始"这句话在山顶时的教训：叙事对不代表择时对，产业曲线走得比市场预期慢得多得多</strong>。</p>
+
+      <h3>锚点三 · 美光 · 产业底部到复苏的完整走势（2023 → 2026）</h3>
+
+      <table class="tbl tbl-anchor">
+        <caption>美光（MU）· 三个财年产业曲线 vs 股价<span class="badge badge-verified">已核验 · Micron FY23/FY24/FY25 财报 + Nasdaq 股价数据</span></caption>
+        <thead>
+          <tr><th>时点</th><th>产业曲线（毛利率/收入）</th><th>股价</th><th>四象限位置</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>FY23 · 截 2023-08</td><td class="num neg">-9.1% 毛利率 · $15.54B 收入</td><td class="num">深度低位</td><td>产业衰退 + 股价便宜 · <b>象限 C</b></td></tr>
+          <tr><td>FY24 · 截 2024-08</td><td class="num pos">+22% 毛利率 · $25.11B（+62%）</td><td class="num">开始回升</td><td>产业复苏 + 股价合理 · <b>象限 C → A</b></td></tr>
+          <tr><td>FY25 · 截 2025-08</td><td class="num pos">+40% 毛利率 · $37.40B（+49%）</td><td class="num pos">2025-08 低点 $103.38</td><td>产业加速 + 股价上行</td></tr>
+          <tr><td>2026-06-25 · 收盘新高</td><td>—</td><td class="num pos">$1,213.37（12 倍）</td><td>产业成熟 + 股价历史新高 · <b>象限 D 边缘</b></td></tr>
+        </tbody>
+      </table>
+
+      <p>这一段的完整教学价值在于——同一家公司在三年里从<strong>象限 C（产业底 + 股价便宜）</strong>走到<strong>象限 D 边缘（产业成熟 + 股价历史新高）</strong>。<strong>关键观察：股价领先产业曲线拐点</strong>。2023 年产业曲线在深谷（-9.1% 毛利率）时，股价已经开始爬——市场提前 6-9 个月定价产业复苏。等到 2025 年产业曲线爬到 +40% 毛利率时，股价已经上涨 10 倍——如果你等财报确认再进场，多数收益已经被 price in。这就是<strong>"股价领先"的双刃剑</strong>：等确认是安全，代价是收益消失。</p>
+
+      <p>三个锚点合起来读：一个"产业早+股价便宜"的黄金窗口（英伟达 2023）；一个"产业早+股价极贵"的山顶接盘（Meta 元宇宙 2021）；一个"产业底部+股价便宜"到"产业成熟+股价新高"的完整周期（美光 2023-2026）。四象限矩阵在真实市场里是活的、每个时点都会移动。</p>
+    </section>
+
+    <!-- ==================== 4. 投资含义 ==================== -->
+    <section class="spine-section" id="sec-invest">
+      <div class="kicker">4 · 投资含义</div>
+      <h2>两个"第一反应问句"</h2>
+
+      <p>骨架卡的用法是<strong>把两个问句刻进反射弧</strong>——以后看到相关新闻，不是先想"产业刚开始，买不买"，而是先自动问下面两个问题，答完再下结论。</p>
+
+      <div class="qa">
+        <p class="q">听到"AI 产业刚开始"时，我第一反应问什么？</p>
+        <ul>
+          <li><strong>先把两条曲线分开读，不要合成一句</strong>——"产业刚开始"讲的是产业曲线的位置，与股价曲线位置无关。</li>
+          <li><strong>这条产业曲线位置在起飞 / 加速 / 成熟 / 衰退哪一段？</strong>用可查的代理指标：客户端渗透率（&lt;10% 早期）、供给端产能（宣布扩产但设备未到）、财务端毛利率（是否刚回正）——三条独立信号定位。</li>
+          <li><strong>股价已经把这条曲线的多少年预期打入了？</strong>用估值分位（forward PE 相对 5 年区间）、机构头寸（13F 大幅流入 / 拥挤指标）、市场情绪（封面故事、Google 搜索热度）——三条独立信号定位。</li>
+          <li><strong>综合放入四象限</strong>：如果落在象限 B（产业早+股价贵），"产业刚开始"这句话是山顶接盘的邀请函，不是买入信号。</li>
+        </ul>
+      </div>
+
+      <div class="qa">
+        <p class="q">看到某标的估值创新高，我第一反应问什么？</p>
+        <ul>
+          <li><strong>产业曲线还在什么位置？</strong>——如果还在起飞初期（渗透率 &lt; 10%、产能远未跟上），估值创新高可能是"估值先行"的合理表现——市场提前定价 12-18 个月后的产业释放，值得等下一次可回撤窗口进场；</li>
+          <li><strong>如果产业已经成熟</strong>（渗透率 &gt; 50%、供给全面扩产、竞争白热化），估值创新高意味着<strong>估值扩张 + 产业增速放缓</strong>的双顶——象限 D，主动降仓；</li>
+          <li><strong>验证方法：找一个产业曲线的可证伪指标</strong>——如果这个指标一旦转向，估值扩张必然停止；持续观察这个指标，比盯股价更早发现拐点。例：AI 时代的"云 CapEx 增速拐点"、存储时代的"库存周转天数拐点"。</li>
+          <li><strong>动作：估值创新高时，主要靠产业曲线位置判断进退</strong>，而不是"高就该抛、低就该买"。曲线位置比绝对估值更能预测未来 12-24 个月的走势。</li>
+        </ul>
+      </div>
+
+      <p>两条反射合起来就是这张卡的最核心一句：<strong>产业刚开始不代表股价便宜；股价创新高不代表要抛——四象限的位置决定动作</strong>。</p>
+    </section>
+
+    <!-- ==================== 5. 边界 ==================== -->
+    <section class="spine-section" id="sec-limit">
+      <div class="kicker">5 · 边界</div>
+      <h2>这张卡什么时候不适用</h2>
+
+      <ul>
+        <li><strong>判断产业曲线位置本身就难</strong>——常见误区是把"技术起飞"当"市场起飞"。Meta 元宇宙 2021 的 VR 头显技术已经能用，但市场从未真正起飞（Reality Labs 收入 6 年停滞在 $2B）——技术起飞和市场起飞是两回事。<strong>卡 7（需求分两种）</strong>讲的假拐点识别是本卡的前置——分不清真台阶假台阶，四象限就落错。</li>
+        <li><strong>股价领先时长不稳定</strong>——常态 6-12 月，但极端情绪下 18-36 月都有过（Meta 2021 是股价领先假想产业 5-10 年）。<strong>不能用一个恒定的领先数字套所有场景</strong>。牛市高点时市场往往定价 3 年以后的假设增长；熊市低点时市场往往一次性打入 3 年后的悲观假设。判断当前市场情绪属于哪一段，是四象限判断的隐含前提。</li>
+        <li><strong>短期噪音会让两条曲线读起来失真</strong>——单季度的产业曲线数字（一次财报）可能被库存 / 汇率 / 一次性事件干扰；单周股价可能被算法 / 期权 gamma / 拥挤仓位挤出。用<strong>季度均值 / 年度趋势</strong>更好，避免被单点带偏。<strong>卡 5（缺货是牛鞭极值）</strong>讲的是产业曲线数字本身的可信度打折——两张卡是互补的：卡 5 讲产业数据要打几折，卡 14 讲打折后的产业数据 vs 股价还要读两条。</li>
+        <li><strong>估值倍数的解读依赖行业</strong>——同样 40x PE，成长股（英伟达 FY26 forward PE 40x）可能仍便宜、周期股（美光高点 PE 40x）几乎肯定是山顶。<strong>卡 2（固定成本主导）</strong>讲过存储/代工的估值应该用 PB 均值回归、无厂设计公司才用 PE 倍数——估值方式不匹配，四象限的纵轴就落错。<strong>手册 m11（财务估值）</strong>展开各类估值方式的差异（尚未建）。</li>
+        <li><strong>与卡 7 的分工要清楚</strong>——卡 7 讲"如何识别台阶起点"（真台阶 vs 假台阶）；本卡假设你已经识别到了台阶起点，讲"接下来股价是否已经把这个台阶 price in 完了"。识别对了台阶但择时错了，就是 Meta 2021；识别对了台阶且择时对了，就是英伟达 2023-01。<strong>两张卡合起来才是完整的"新台阶投资"工具箱</strong>。</li>
+      </ul>
+    </section>
+
+    <!-- ==================== 6. 练习 ==================== -->
+    <section class="spine-section" id="sec-drill">
+      <div class="kicker">6 · 练习</div>
+      <h2>两道题</h2>
+
+      <div class="scenario">
+        <h4>练习一 · 复述题（3 分钟，讲给完全不懂的朋友听）</h4>
+        <p>合上卡片，用自己的话讲清楚：<strong>"为什么听到'AI 刚开始'时不能马上买入？"</strong></p>
+        <p class="scenario-hint">
+          要点检查：<br>
+          ① 讲出"两条曲线独立、错位是常态"这个核心——用比喻可以：一条曲线是"产品/需求/产能的真实变化"、另一条曲线是"股价把未来多少年预期已经打进去了"；<br>
+          ② 用 Meta 元宇宙 2021 举反例——那一天叙事完全成立（产业刚开始），但股价已经把 5-10 年的假设增长 price in 了，6 年过去了产业曲线仍在原地打转；<br>
+          ③ 用英伟达 2023-01 举正例——同样是"产业刚开始"，但股价从熊市低位起步、估值还没抬升，两条曲线的错位刚开始形成；<br>
+          ④ 不需要出现"四象限""象限 A/B/C/D"这些术语——大白话讲清楚"产业刚开始 ≠ 股价便宜"就够。<br>
+          四条都到位，这张卡算过了本关。
+        </p>
+      </div>
+
+      <article class="scenario">
+        <h4>练习二 · 推演题（用已核验前提，自己推四象限位置和下一步动作）</h4>
+        <p>已核验的三件真事（作为你判断的输入）：</p>
+        <ul>
+          <li>英伟达 FY26（截 2026-01）数据中心分部收入 <strong>$193.7B（+68% YoY）</strong>——过去三年从 $15B 到 $193.7B，12.9 倍<span class="badge badge-verified">已核验 · NVIDIA FY26 Q4 8-K</span>；</li>
+          <li>四家美国云厂商（Meta/Alphabet/Amazon/Microsoft）2026 年 AI CapEx 计划合计 <strong>$725B（+77% 同比 2025 的 ~$410B）</strong>——上游资金曲线仍在冲高<span class="badge badge-verified">已核验 · 各公司业绩公告汇总</span>；</li>
+          <li>假设当前（2026-07）英伟达股价约 <strong>$235</strong>（历史新高附近，2026-05-14 收盘 $235.47），市值约 $5.8T，forward PE 约 45x——过去 5 年 forward PE 均值约 30-35x<span class="badge badge-assume">估算 · 综合公开财报与市值推算</span>。</li>
+        </ul>
+        <p>请用本卡机制回答：</p>
+        <ol>
+          <li><strong>产业曲线位置</strong>：处在起飞 / 加速 / 成熟 / 衰退哪一段？依据什么可查代理指标（列 2-3 条）？增速从 +217% → +142% → +68% 意味着什么？</li>
+          <li><strong>股价曲线位置</strong>：forward PE 45x 相对过去 5 年均值 30-35x 在什么分位？拥挤度、市场情绪各在什么位置（列 2-3 条可查代理）？</li>
+          <li><strong>综合放入四象限</strong>：落在象限 A / B / C / D 哪一档？还是在两个象限的边界？为什么？</li>
+          <li><strong>下一步动作</strong>：观察什么可证伪信号？在什么条件下应该加仓 / 减仓 / 等待？（提示：至少一个产业曲线上的可证伪指标 + 一个股价曲线上的触发条件）</li>
+        </ol>
+        <p class="scenario-hint">
+          提示（不给标准答案）：<br>
+          · 产业曲线读法：增速放缓（217% → 142% → 68%）本身是"从起飞进入加速中后段"的信号；但绝对基数还在扩大，需要区分"增速放缓"和"绝对增长停止"；<br>
+          · 股价曲线读法：PE 45x 相对 5 年均值 30-35x 大约在 80-90 分位——不便宜，但成长股在渗透率&lt;30%时高分位不算"极贵"；<br>
+          · 四象限判断：产业曲线接近象限"加速中后期"、股价曲线接近象限"贵但未到极贵"——可能落在象限 D 边缘或象限 B 之间；<br>
+          · 可证伪信号候选：云 CapEx 增速从 +77% 回落到 +30%（第一个拐点）、CoWoS 排产扩张停止（供给端拐点）、单季数据中心收入首次同比负增长；<br>
+          · <strong>写下你的推理和每条可证伪信号，一年后拿这份推理跟真实公告对照——就是"两条曲线错位判断"能力最直接的自测</strong>。<strong>不给标准答案</strong>——你的推理链正确比结论正确更重要。
+        </p>
+      </article>
+
+      <div class="note">
+        <span class="note-label">这张卡要带走的两个反射弧</span>
+        <ol style="margin:0;padding-left:1.3em">
+          <li>听到<strong>"产业刚开始"</strong>时，先把两条曲线分开读——产业曲线（渗透率/产能/毛利率）+ 股价曲线（估值分位/拥挤度/情绪）；综合放入四象限，落在 B 就是山顶接盘，落在 A 才是买入窗口；</li>
+          <li>看到<strong>"估值创新高"</strong>时，先问产业曲线位置——早期渗透率&lt;10% 时估值先行可能合理；成熟期渗透率&gt;50% 时估值新高多是双顶。<strong>曲线位置比绝对估值更能预测未来 12-24 个月的走势</strong>。</li>
+        </ol>
+        <p style="margin:8px 0 0">写不出来，回来重看第 2 节 c 与第 4 节。</p>
+      </div>
+    </section>
+
+    <!-- ==================== 来源 ==================== -->
+    <section class="src">
+      <strong>卡 14 来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.sec.gov/Archives/edgar/data/1045810/000104581023000014/q4fy23pr.htm">NVIDIA Q4 FY23 8-K（2023-02-22）：数据中心 FY23 $15.01B</a></li>
+        <li><a href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2024">NVIDIA FY24 Q4 财报公告：数据中心 FY24 $47.5B（+217%）</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581025000021/q4fy25pr.htm">NVIDIA FY25 Q4 8-K（2025-02-26）：数据中心 FY25 $115.2B（+142%）、总收入 $130.5B</a></li>
+        <li><a href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2026">NVIDIA FY26 Q4 业绩公告：数据中心 FY26 $193.7B（+68%）</a></li>
+        <li><a href="https://companiesmarketcap.com/nvidia/stock-splits/">NVIDIA 拆股历史（2024-06-10 · 10:1 拆股）</a></li>
+        <li><a href="https://www.statmuse.com/money/ask/nvda-stock-price-january-2023-to-jan-2024">StatMuse Money：NVDA 2023-01-01 到 2024-01-31 涨 +314.5%（拆股后 2024-01-31 收盘 $61.50）</a></li>
+        <li><a href="https://gamerant.com/nvidia-stock-price-new-high-october-2024/">Nvidia 股价 2024-10 触及 $143.71 拆股后历史新高</a></li>
+        <li><a href="https://en.wikipedia.org/wiki/Meta_Platforms">Wikipedia · Meta Platforms：2021-10-28 Facebook Connect 大会公布改名 Meta</a></li>
+        <li><a href="https://www.nasdaq.com/articles/why-facebook-stock-popped-this-afternoon-2021-10-28">Nasdaq 2021-10-28：改名当天 Facebook 股价上涨约 3.6%</a></li>
+        <li><a href="https://www.forbes.com/sites/dereksaul/2024/01/19/meta-stock-sets-record-high-how-it-emerged-from-77-plunge-and-metaverse-fiasco/">Forbes 2024-01-19：Meta 从 2021-09 高点 $384.33 跌 76% 至 2022-10 低点 $88 附近</a></li>
+        <li><a href="https://www.cnbc.com/2023/02/01/meta-lost-13point7-billion-on-reality-labs-in-2022-after-metaverse-pivot.html">CNBC 2023-02-01：Reality Labs 2022 全年亏损 $13.7B（收入 $2.16B）</a></li>
+        <li><a href="https://medium.com/write-a-catalyst/meta-lost-83-6-billion-on-the-metaverse-now-it-is-spending-up-to-135-billion-on-ai-3bea7a44e2c2">Meta Reality Labs 2020-2025 累计运营亏损约 $83.6B（2020 $6.6B / 2021 $10.2B / 2022 $13.7B / 2023 $16.1B / 2024 $17.7B / 2025 $19.2B）</a></li>
+        <li><a href="https://www.techbuzz.ai/articles/meta-s-reality-labs-bleeds-6b-in-q4-totals-80b-losses">Reality Labs 2025 Q4 亏 $6.02B、2025 全年收入 $2.21B / 亏损 $19.19B</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312523000051/a2023q4ex991-pressrelease.htm">Micron FY23 Q4 8-K（2023-09）：全年营收 $15.54B、GAAP 毛利率 -9.1%、净亏损 $5.83B</a></li>
+        <li><a href="https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-fourth-quarter-and-full-8">Micron FY25 Q4 及全年业绩公告：全年营收 $37.4B（+49%）、毛利率 40%</a></li>
+        <li>2026 年 MU 52 周区间 $103.38-$1,255.00（52 周低点 2025-08-01）· 2026-06-25 收盘历史新高 $1,213.37（Nasdaq 历史数据）</li>
+        <li>相关骨架卡：卡 7（需求分两种）· 卡 5（缺货是牛鞭极值）· 卡 2（固定成本主导下经营杠杆）；相关手册：m11（财务估值，尚未建）</li>
+      </ul>
+      <p style="margin-top:14px;font-size:var(--fs-12)">徽章说明：<span class="badge badge-verified">已核验</span> 直接引用一手来源（年报、10-K、8-K、官方公告）或经权威媒体转述的一手数据 · <span class="badge badge-expert">专家判断</span> 综合行业口径的判断性表达，无单一权威来源 · <span class="badge badge-assume">估算</span> 明确的推算，标注方法与年份。</p>
+    </section>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已学习</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine13.html"><span class="dir">← 上一张</span>卡 13 · 标题层与流程层</a>
+        <a href="spine15.html" style="text-align:right"><span class="dir">下一张 →</span>卡 15 · 规则五件套齐全</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- A 类：四象限对照器 ---------- */
+  (function () {
+    /* 五个已核验历史案例的四象限定位。
+       ix = 产业曲线位置（0=起飞早期 → 3=成熟/衰退）
+       py = 股价曲线位置（0=便宜 → 3=极贵/历史新高） */
+    const CASES = {
+      nvda23: {
+        title: "英伟达 · 2023-01",
+        subtitle: "AI 产业刚开始",
+        ix: 0.3, py: 0.4,
+        quad: "A", quadLabel: "产业早 + 股价便宜",
+        quadClass: "g",
+        industry: "起飞初期 · ChatGPT 2022-11-30 上线 2 个月；数据中心 FY23 $15.0B（AI 收入刚进报表）",
+        price: "便宜 · 2023-01-31 收盘 $19.52（拆股后）· 市值 ~$480B · 2022 全年跌 -50%（熊市低位）",
+        crowded: "机构头寸稀薄 · 卖方多数目标价&lt;$25 · 无封面故事 · 加密寒冬情绪压制",
+        pe: "forward PE 约 30-35x（相对 5 年均值 40-50x 显得便宜，因预期未上调）",
+        outcome: "12 个月后（2024-01-31）股价 $61.50（+215%）；21 个月后（2024-10）触及 $143.71（约 7.4 倍）；数据中心 FY25 $115.2B",
+        insight: "象限 A · 黄金窗口。这个窗口宽度约 6-9 个月（2022-10 到 2023-05），此后估值倍数快速抬升。<b>能在这个窗口进场的人，不是能预测 AI，是能识别'产业刚起步+股价熊市低位'的四象限位置</b>。"
+      },
+      meta21: {
+        title: "Meta · 2021-10",
+        subtitle: "改名 Meta · 押注元宇宙",
+        ix: 0.15, py: 3.0,
+        quad: "B", quadLabel: "产业早 + 股价极贵",
+        quadClass: "r",
+        industry: "起飞早期 · 2021-10-28 Facebook Connect 大会宣布改名；Reality Labs 收入 $2.27B / 亏损 $10.2B（业务真的刚起步）",
+        price: "极贵 · 2021-09 触及历史高点 $384.33；改名当天股价上涨 3.6% 至历史高位附近；市值 ~$1T",
+        crowded: "华尔街普遍看好元宇宙叙事 · Meta 改名成为封面新闻 · Cathie Wood、多家买方把元宇宙当作下一个大主线（无人质疑）",
+        pe: "forward PE 约 25x（相对彼时科技股 20x 均值不算贵，但市场把 5-10 年后的元宇宙增长都提前 price in）",
+        outcome: "13 个月后（2022-11）股价 $88（跌 -76%）；Reality Labs 累计亏损 2020-2025 约 $83.6B、2025 收入仍 $2.21B（6 年在原地）",
+        insight: "象限 B · 山顶接盘。<b>叙事对、择时错的教科书案例</b>——新平台确实『刚开始』，但股价当天已把未来 5-10 年的假设增长打入。产业曲线走得比市场预期慢得多——市场再也没为『元宇宙』重新抬价。"
+      },
+      mu23: {
+        title: "美光 · 2023-06",
+        subtitle: "存储行业最深亏损",
+        ix: 3.2, py: 0.4,
+        quad: "C", quadLabel: "产业衰退 + 股价便宜",
+        quadClass: "g",
+        industry: "深谷 · FY23（截 2023-08）毛利率 -9.1%、净亏损 $5.83B；三星、SK 海力士、美光集体减产、几乎停投资",
+        price: "便宜 · PB 接近历史底部（&lt;1.5x）· 存储周期股在深亏时的典型定价",
+        crowded: "机构撤退 · 卖方降级、目标价下调 · 情绪面认定『存储 = 周期股 = 熊』",
+        pe: "PE 不适用（亏损）；用 PB 均值回归判断——1.5x 接近历史 20% 分位",
+        outcome: "23 个月后（2025-05 前后）产业曲线爬回；30 个月后（2026-06）股价历史新高 $1,213（12 倍）",
+        insight: "象限 C · 周期回归的准备期。<b>市场在产业曲线最难看的时候先动，用 PB 均值回归定价复苏预期</b>。等到 2025 年毛利率 +40% 的财报出来时，股价已经涨了 8-10 倍——耐心和早决心的组合，比等确认更值钱。"
+      },
+      nvda24: {
+        title: "英伟达 · 2024-10",
+        subtitle: "AI 产业加速中期",
+        ix: 1.8, py: 2.8,
+        quad: "B/D", quadLabel: "产业加速 + 股价贵",
+        quadClass: "r",
+        industry: "加速中后段 · 数据中心 FY25 走向 $115.2B（+142%）· 云 CapEx 四家 2024 合计 $250B · CoWoS 月产能翻倍规划",
+        price: "贵 · 2024-10 触及 $143.71 拆股后历史新高 · 市值 $3.5T · 已成美股 top 3",
+        crowded: "极度拥挤 · Cathie Wood 加仓、多家 mega-cap 基金重仓 · 封面故事频繁 · Google 搜索『NVDA』热度历史新高",
+        pe: "forward PE 约 45-50x（相对 5 年均值 30-35x 处在 80-90 分位）",
+        outcome: "20 个月后（2026-05）股价 $235.47（+64%）· 数据中心 FY26 $193.7B（+68%）· 增速已放缓",
+        insight: "象限 B/D 边界 · 从『产业加速 + 股价合理跳升』过渡到『产业加速 + 股价追不上增长的第二段』。<b>此时进场不再是黄金窗口</b>，但产业曲线尚未见顶——回报仍有，只是从 10 倍降到 1.5-2 倍。<b>能否识别自己不在象限 A 是这个时点的核心判断</b>。"
+      },
+      nvda26: {
+        title: "英伟达 · 2026-07",
+        subtitle: "AI 产业成熟前段",
+        ix: 2.6, py: 3.2,
+        quad: "D 边缘", quadLabel: "产业成熟 + 股价历史新高",
+        quadClass: "r",
+        industry: "成熟前段 · 数据中心增速 +217%→+142%→+68%（放缓）· 云 CapEx 四家 2026 计划 $725B（仍冲）· 但绝对基数已 $193.7B、边际增量放缓",
+        price: "历史新高 · 2026-05-14 收盘 $235.47（新高）· 市值 $5.8T · 全球市值 top 1",
+        crowded: "极致拥挤 · 长期机构头寸接近上限 · 期权 gamma 挤压严重 · 卖方 100% buy 覆盖",
+        pe: "forward PE 约 45x（相对 5 年均值 30-35x 处在 90+ 分位；相对 2024-10 高点时的 50x 略回落）",
+        outcome: "未知 · 依赖云 CapEx 增速是否见顶、下一代 GPU 需求兑现节奏",
+        insight: "象限 D 边缘 · <b>产业曲线绝对基数仍在扩大但增速已放缓、股价历史新高</b>——最需要谨慎的位置。可证伪信号候选：①云 CapEx 2027 计划从 +77% 大幅回落；②CoWoS 月产能扩张停止；③单季数据中心收入首次同比 &lt; +30%。<b>看到任何一条，象限 D 转为『确认』</b>。"
+      }
+    };
+
+    const mount = document.getElementById("quadViz");
+    const info = document.getElementById("quadInfo");
+    const buttons = document.querySelectorAll("[data-case]");
+    if (!mount || !info) return;
+
+    const W = 380, H = 340, PL = 60, PR = 20, PT = 20, PB = 48;
+    const IW = W - PL - PR, IH = H - PT - PB;
+
+    const svg = APP.svgEl("svg", {
+      viewBox: "0 0 " + W + " " + H,
+      role: "img",
+      "aria-label": "四象限对照图 · 产业曲线位置为横轴、股价曲线位置为纵轴"
+    });
+
+    /* 坐标映射：ix 0-3（起飞→成熟），py 0-3（便宜→极贵） */
+    const xX = (ix) => PL + (ix / 3) * IW;
+    const yY = (py) => PT + (1 - py / 3) * IH;
+
+    /* 四象限背景 · 用颜色区分 */
+    const midX = xX(1.5), midY = yY(1.5);
+    /* 左下 = 产业早 + 股价便宜 = 象限 A（绿色） */
+    svg.appendChild(APP.svgEl("rect", {
+      x: PL, y: midY, width: midX - PL, height: (PT + IH) - midY,
+      fill: "var(--primary-tint)", opacity: 0.55
+    }));
+    /* 左上 = 产业早 + 股价贵 = 象限 B（琥珀色） */
+    svg.appendChild(APP.svgEl("rect", {
+      x: PL, y: PT, width: midX - PL, height: midY - PT,
+      fill: "var(--accent-tint)", opacity: 0.55
+    }));
+    /* 右下 = 产业成熟 + 股价便宜 = 象限 C（信息蓝） */
+    svg.appendChild(APP.svgEl("rect", {
+      x: midX, y: midY, width: (PL + IW) - midX, height: (PT + IH) - midY,
+      fill: "var(--info-tint)", opacity: 0.55
+    }));
+    /* 右上 = 产业成熟 + 股价新高 = 象限 D（红琥珀，最差） */
+    svg.appendChild(APP.svgEl("rect", {
+      x: midX, y: PT, width: (PL + IW) - midX, height: midY - PT,
+      fill: "var(--danger-tint)", opacity: 0.55
+    }));
+
+    /* 中央十字线 */
+    svg.appendChild(APP.svgEl("line", {
+      x1: midX, y1: PT, x2: midX, y2: PT + IH,
+      stroke: "var(--muted)", "stroke-width": 1, "stroke-dasharray": "4 3"
+    }));
+    svg.appendChild(APP.svgEl("line", {
+      x1: PL, y1: midY, x2: PL + IW, y2: midY,
+      stroke: "var(--muted)", "stroke-width": 1, "stroke-dasharray": "4 3"
+    }));
+
+    /* 外框 */
+    svg.appendChild(APP.svgEl("rect", {
+      x: PL, y: PT, width: IW, height: IH,
+      fill: "none", stroke: "var(--line)", "stroke-width": 1
+    }));
+
+    /* 象限标签 */
+    const labels = [
+      { x: (PL + midX) / 2, y: (midY + PT + IH) / 2, text: "A · 黄金窗口", fill: "var(--primary)" },
+      { x: (PL + midX) / 2, y: (PT + midY) / 2, text: "B · 山顶接盘", fill: "var(--accent-ink)" },
+      { x: (midX + PL + IW) / 2, y: (midY + PT + IH) / 2, text: "C · 周期回归", fill: "var(--info-ink)" },
+      { x: (midX + PL + IW) / 2, y: (PT + midY) / 2, text: "D · 最差象限", fill: "var(--danger-ink)" },
+    ];
+    labels.forEach((L) => {
+      const t = APP.svgEl("text", {
+        x: L.x, y: L.y, "text-anchor": "middle",
+        "font-size": "13", "font-weight": "650", fill: L.fill,
+        opacity: "0.6"
+      });
+      t.textContent = L.text;
+      svg.appendChild(t);
+    });
+
+    /* 轴标题 */
+    const axX = APP.svgEl("text", {
+      x: PL + IW / 2, y: PT + IH + 32, "text-anchor": "middle",
+      "font-size": "12", "font-weight": "600", fill: "var(--muted)"
+    });
+    axX.textContent = "产业曲线位置 →";
+    svg.appendChild(axX);
+
+    const axXTicks = ["起飞早期", "加速", "成熟", "衰退"];
+    axXTicks.forEach((t, i) => {
+      const x = xX(i);
+      const el = APP.svgEl("text", {
+        x: x, y: PT + IH + 16, "text-anchor": "middle",
+        "font-size": "11", fill: "var(--muted)"
+      });
+      el.textContent = t;
+      svg.appendChild(el);
+    });
+
+    const axY = APP.svgEl("text", {
+      x: 16, y: PT + IH / 2, "text-anchor": "middle",
+      "font-size": "12", "font-weight": "600", fill: "var(--muted)",
+      transform: "rotate(-90 16 " + (PT + IH / 2) + ")"
+    });
+    axY.textContent = "股价曲线位置 →";
+    svg.appendChild(axY);
+
+    const axYTicks = ["便宜", "合理", "贵", "极贵/新高"];
+    axYTicks.forEach((t, i) => {
+      const y = yY(i);
+      const el = APP.svgEl("text", {
+        x: PL - 6, y: y + 4, "text-anchor": "end",
+        "font-size": "11", fill: "var(--muted)"
+      });
+      el.textContent = t;
+      svg.appendChild(el);
+    });
+
+    /* 所有案例的定位点（灰色小点） */
+    const allPoints = {};
+    Object.keys(CASES).forEach((k) => {
+      const c = CASES[k];
+      const g = APP.svgEl("g", {});
+      const dot = APP.svgEl("circle", {
+        cx: xX(c.ix), cy: yY(c.py), r: 6,
+        fill: "var(--muted)", opacity: "0.35",
+        stroke: "var(--bg)", "stroke-width": 2
+      });
+      g.appendChild(dot);
+      svg.appendChild(g);
+      allPoints[k] = { g, dot, ix: c.ix, py: c.py };
+    });
+
+    /* 当前高亮点 */
+    const activeDot = APP.svgEl("circle", {
+      cx: xX(0.3), cy: yY(0.4), r: 10,
+      fill: "var(--primary)", stroke: "var(--bg)", "stroke-width": 3
+    });
+    svg.appendChild(activeDot);
+
+    const activeRing = APP.svgEl("circle", {
+      cx: xX(0.3), cy: yY(0.4), r: 16,
+      fill: "none", stroke: "var(--primary)", "stroke-width": 2, opacity: "0.35"
+    });
+    svg.appendChild(activeRing);
+
+    const activeLabel = APP.svgEl("text", {
+      x: xX(0.3), y: yY(0.4) - 20, "text-anchor": "middle",
+      "font-size": "12", "font-weight": "650", fill: "var(--primary)"
+    });
+    activeLabel.textContent = "英伟达 2023-01";
+    svg.appendChild(activeLabel);
+
+    mount.appendChild(svg);
+
+    function selectCase(key) {
+      const c = CASES[key];
+      if (!c) return;
+
+      buttons.forEach((b) => {
+        b.setAttribute("aria-pressed", b.dataset.case === key ? "true" : "false");
+      });
+
+      /* 更新点位 */
+      const cx = xX(c.ix), cy = yY(c.py);
+      activeDot.setAttribute("cx", cx);
+      activeDot.setAttribute("cy", cy);
+      activeRing.setAttribute("cx", cx);
+      activeRing.setAttribute("cy", cy);
+      /* 智能选择标签方向 */
+      const labelY = c.py > 2 ? cy + 28 : cy - 20;
+      activeLabel.setAttribute("x", cx);
+      activeLabel.setAttribute("y", labelY);
+      activeLabel.textContent = c.title;
+
+      /* 更新说明 */
+      info.innerHTML =
+        '<h4><span>' + c.title + '</span><span class="tag ' + c.quadClass + '">象限 ' + c.quad + '</span></h4>' +
+        '<div style="font-size:var(--fs-13);color:var(--muted);margin-bottom:6px">' + c.subtitle + ' · ' + c.quadLabel + '</div>' +
+        '<dl class="kv">' +
+          '<dt>产业曲线</dt><dd>' + c.industry + '</dd>' +
+          '<dt>股价曲线</dt><dd>' + c.price + '</dd>' +
+          '<dt>估值</dt><dd>' + c.pe + '</dd>' +
+          '<dt>拥挤度</dt><dd>' + c.crowded + '</dd>' +
+        '</dl>' +
+        '<div class="outcome"><b>事后走势：</b>' + c.outcome + '</div>' +
+        '<div style="margin-top:6px"><b style="color:var(--primary)">教学要点：</b>' + c.insight + '</div>';
+    }
+
+    buttons.forEach((b) => {
+      b.addEventListener("click", () => selectCase(b.dataset.case));
+    });
+
+    /* 默认案例 · 英伟达 2023-01（象限 A） */
+    selectCase("nvda23");
+  })();
+
+});
+</script>
+</body>
+</html>

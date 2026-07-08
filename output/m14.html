@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模块 14 · 投资 Memo 与个人系统</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="m14">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">模块 14 · 投资 Memo 与个人系统</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">第四层 · 研究输出 · 模块 14 / 14</p>
+      <h1>投资 Memo 与个人系统</h1>
+      <p class="core-q"><b>核心问题：</b>怎么把一次判断（比如「HBM 2026 供应吃紧」）从「感觉」变成一份可复用、可复盘、可积累的记录？memo 长什么样？</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">学完这个模块，你要能独立回答（现在答不上来是正常的）</span>
+      <ul style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>一份合格的投资 memo 至少包含 8 个部分——请把它们列出来，并说明每一部分为什么不能省。</li>
+        <li>你在 memo 里写「预期 2027 年 EUV 装机翻倍」——怎么定义「部分证伪」和「完全证伪」？请用具体的可观察指标，不要用「如果错了就是错了」这种空话。</li>
+        <li>复盘一份被证伪的 memo，正确的处理动作是什么？请拆开来讲「结果错」「推理错」「运气」三种情况的动作差异。</li>
+      </ul>
+    </div>
+
+    <ul class="concepts" aria-label="本模块概念清单">
+      <li>假说</li><li>证据链</li><li>关键假设</li><li>反例</li><li>触发条件</li><li>监测指标</li><li>时间尺度</li><li>仓位与止损</li><li>假说树</li><li>季度对账</li><li>复盘制度</li>
+    </ul>
+
+    <div class="tabs" data-tabs>
+      <div class="tablist" role="tablist" aria-label="模块内容">
+        <button role="tab" id="tab-a" aria-controls="panel-a" aria-selected="true">本质</button>
+        <button role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false">怎么判断</button>
+        <button role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false">练习</button>
+      </div>
+
+      <!-- ==================== 本质 ==================== -->
+      <section role="tabpanel" id="panel-a" aria-labelledby="tab-a" class="prose">
+
+        <h2>1. 为什么要写 memo：口头判断的三个失灵</h2>
+        <p>先讲一个所有人都会中招的现象。三个月前你和朋友喝咖啡聊过一段话：「HBM 2026 会紧到爆，SK 海力士是最直接的赢家。」当时你觉得自己想得挺清楚。三个月后 SK 海力士果然大涨，你想复盘——问自己：<strong>当时我到底怎么想的？依据是什么？如果它涨得是别的原因，我为什么以为自己看对了？</strong></p>
+        <p>大概率答不上来。这不是记性差，是「口头判断」这种存储介质有三个系统性失灵：</p>
+        <ul>
+          <li><strong>遗忘</strong>——人对具体推理的记忆保留率极低。判断这种「有多个前提+一条逻辑链」的复杂结构，几周后能记得的只是最后那句结论；</li>
+          <li><strong>事后合理化</strong>——记忆是重构而非回放。看到结果后，大脑会自动把当时的推理往「与结果一致」的方向修饰，让你误以为「我当时就想到了」；</li>
+          <li><strong>口径漂移</strong>——「HBM 紧」这句话，一开始你想的可能是「SK 供不上」，几周后你会不自觉换成「三星也追不上」，判断的边界悄悄扩大到你原本没想过的范围。</li>
+        </ul>
+        <p>Memo 就是应付这三件事的存储介质。它不是给别人看的报告——它是给<strong>三个月后的自己</strong>看的原始档案。三个月后你翻出来，那个版本的你必须能读懂当时的推理、能对着实盘检查每一条依据是否兑现、能诚实指出哪些是判断错、哪些是运气好。</p>
+        <p>这也是为什么这本手册的收官不是「怎么估值更准」而是「怎么把判断变成可积累的档案」。<strong>没有 memo，前面 13 篇学到的东西每次都会被下一次牛市/熊市重新洗一遍，学不到复利；有 memo，一年之后你会知道自己在哪一类判断上系统性对、哪一类系统性错——这才是「研究能力」这个词的字面意思。</strong></p>
+
+        <h2>2. Memo 的 8 部分骨架——每一部分为什么不能省</h2>
+        <p>先看一张骨架。点每个部分展开：写什么、为什么不能省、与前面 13 篇手册和 15 张骨架卡的接口在哪。</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">Memo 8 部分骨架 · 一份合格 memo 的最小结构</span>
+            <span class="viz-sub"><b>看什么：</b>点每格看该部分的写作要求 + 「ASML→KLA 传导」这个真实案例的对应内容。8 个部分不是清单式并列——它们互相咬合：假说定义要证伪什么，证据链和关键假设决定它多硬，反例和触发条件决定什么时候要动手。</span>
+          </div>
+          <div class="memo-grid" id="memoGrid" role="group" aria-label="Memo 8 部分骨架"></div>
+          <div class="memo-detail" id="memoDetail" hidden></div>
+        </div>
+
+        <p>不同风格的机构 memo 会加更多内容——比如详细的估值模型、可比公司表、财务预测——但上面 8 部分是<strong>无论多短的 memo 都不能省</strong>的骨架。少一个，就会有一种可以预期的失败模式。下一节会把「假说」这一格拆得更细，因为它是骨架的地基。</p>
+
+        <h2>3. 假说树：怎么把一句话假说拆到可证伪</h2>
+        <p>「HBM 2026 供应吃紧」是一句好听但没法验证的话。要让 memo 有力，必须把它拆成一棵<strong>假说树</strong>：主假说 → 承担它的子假说 → 每个子假说对应的可观察观测点。拆到<em>观测点</em>那一层，你才知道每周该盯什么。</p>
+        <p>下面这棵树用真实数字建，你可以逐层展开。<strong>看什么</strong>：主假说下面有三条完全不同性质的子假说——供给端时间账、需求端结构性、需求端不坍塌——每一条都对应不同的观测点，观测点更新频率也不同。判断错，通常不错在主假说，错在某个子假说下的关键假设出了岔。</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">假说树 · 用「2026 HBM/DRAM/NAND 供应紧张」走一遍</span>
+            <span class="viz-sub"><b>看什么：</b>点节点展开一层——主假说 → 3 条子假说 → 每条 2 个观测点。观测点带着数据源、更新频率和「正/反信号该长什么样」，这些是把 memo 挂到日常世界的钩子。</span>
+          </div>
+          <div id="hypTree" class="hyptree"></div>
+        </div>
+
+        <p>这棵树推出来两条一般结论。<strong>第一，主假说被证伪的路径有很多条</strong>：任何一个子假说的关键观测点翻转，都足以让主假说部分证伪。所以「HBM 会紧」这句话，事前的验证维度不是一维两维，是六维——你不列出来，就不会去盯。<strong>第二，观测点的更新频率不一样</strong>：产能进度以季度动、财报里能查；长约签订以事件动、公司公告；云厂 CapEx 以季度动、财报电话会。这就决定了 memo 复核节点的合理频率——不需要每周都翻，也不能每半年才翻一次。</p>
+
+        <h2>4. 触发条件：从「感觉不对了」到「明确的动作」</h2>
+        <p>Memo 里最难写、也最容易马虎的是<strong>触发条件</strong>：满足什么条件我加仓、什么条件减仓、什么条件全清。写不好，事中就靠情绪调仓——涨了怕错过，跌了怕更跌，最后每一次动作都不是 memo 里预设的。</p>
+        <p>触发条件的写作有<strong>三个准则</strong>，缺一不成立：</p>
+        <ol>
+          <li><strong>明确</strong>——含具体数字、日期、口径。「HBM 需求转弱」不合格；「SK 海力士下一季电话会里 HBM 相关的『售罄』『long-term agreement』这类措辞出现次数下降或口径松动」是合格的方向，但需要进一步锁定；</li>
+          <li><strong>可观测</strong>——用公开信息可以核验。「我感觉云厂 CapEx 见顶」不合格；「四家云厂 2026Q2 财报里 CapEx 指引对比 Q1 环比下调 ≥ 5%」合格；</li>
+          <li><strong>可回溯</strong>——事后能唯一确认该事件是否发生，不留解释空间。「行业情绪转向」不合格（谁的行业？什么指标算转向？）；「TrendForce 月度 DRAM 现货价从 X 跌到 Y 或更低」合格。</li>
+        </ol>
+        <p>这三条不是我自创的——它们直接从「什么是可证伪陈述」推出来。<strong>如果一个触发条件不明确、不可观测、不可回溯，它就没资格叫触发条件，只是情绪的伪装。</strong>怎么判断页有一件工具专门讲怎么给具体条件打分。</p>
+        <p>回到验收题里那个「预期 2027 年 EUV 装机翻倍」的例子。同一个假说至少要写两级触发：</p>
+        <ul>
+          <li><strong>部分证伪</strong>：2026 全年 ASML 净订单增长率 &lt; 20%（本轮扩产的中间节点应该看得到订单先动，2024 全球 EUV 只交 44 台<a class="badge badge-verified" href="https://ourbrand.asml.com/m/ee9da90a119cc9d/original/2024-Financial-performance-section.pdf" target="_blank" rel="noopener">已核验 · ASML 2024 年报</a>——加倍意味着 2027 年交付需要 2026 就下单锁定）；或者 ASML 官方全年销售指引下调超过 10%；</li>
+          <li><strong>完全证伪</strong>：ASML 2026 年报公布的 EUV 净订单 &lt; 2025 年同期水平，且台积电 N2/A16 资本开支指引下调超过 15%——两个方向同时逆转，才认为主假说的地基塌了。</li>
+        </ul>
+        <p>这样的双层证伪结构好在哪：<strong>部分证伪触发减仓和复核，完全证伪触发清仓和写复盘</strong>——判断错也是分层的，仓位调整也分层，不是一步到底的情绪反应。</p>
+
+        <h2>5. 监测指标：把 memo 挂到日常世界的钩子</h2>
+        <p>Memo 是判断，指标是把判断挂到日常世界里的钩子。<strong>没有指标，memo 写完就静态死了，你不会每周主动去看它。</strong></p>
+        <p>好消息是：这本手册的 15 张骨架卡，每一张都有一句「第一反应问句」——它天然就是 memo 监测指标的来源。举几个例子：</p>
+        <ul>
+          <li>卡 1「供给慢、需求快」的第一反应：<b>「新产能什么时候到？」</b>→ memo 指标：具体设备订单/新厂公告的到货时间轴；</li>
+          <li>卡 5「缺货是牛鞭极值信号」的第一反应：<b>「渠道库存和长约进展怎么样？」</b>→ memo 指标：分销商库存周转天数、公司电话会里的长约措辞；</li>
+          <li>卡 10「需求传导链」的第一反应：<b>「上游发生的事传导到我这一层了吗？」</b>→ memo 指标：上一层公司的关键动作是否兑现（例如：云厂 CapEx 上调 → 六个月后设备商订单是否跟上）；</li>
+          <li>卡 12「价格是滞后读数」的第一反应：<b>「先行量在哪里？」</b>→ memo 指标：交期变化、长约新签、预付款科目变化——例如 2022-10-17 彭博报道 Susquehanna 数据「交期出现几年来最大单月缩短」<a class="badge badge-verified" href="#src-9">已核验 · 彭博 2022-10-17</a>，就是这类指标翻转的真实样本。</li>
+        </ul>
+        <p>一个成熟的 memo 里，监测指标通常是 3-6 个（少了不足以覆盖多个假说维度，多了每周照看不过来）。<strong>每一个指标背后都能指回一张骨架卡的问句和一篇手册的工具</strong>——这也是为什么手册和骨架卡不是可选项：它们提供了 memo 里指标的合法来源，让「我盯这个指标」变成「我盯这个指标是因为卡 N 说这里有信息」。</p>
+
+        <h2>6. 时间尺度：不同判断的复利期不一样</h2>
+        <p>下面这段话是新手常犯的错：「AI 长期是好东西，所以英伟达现在贵一点也没关系。」<strong>把长期结构性判断挪来给短期高估值找理由，是一种口径混淆</strong>——它把「产业周期 3-5 年」的时间尺度错插到「股价周期 6-18 个月」的位置上。</p>
+        <p>Memo 里必须显式写下这份判断的<strong>时间尺度</strong>和<strong>复核节点</strong>：</p>
+        <ul>
+          <li><strong>结构性判断</strong>（例如「AI 半导体是十年级的资本开支范式」）：有效期以年计，复核节点是年度关键事件（大厂年度 CapEx 指引、行业代际拐点）；仓位应该低、周期长；</li>
+          <li><strong>周期位置判断</strong>（例如「存储 2026 处于供不应求早期」）：有效期 4-6 个季度，复核节点是每个季度的财报；仓位可以中，止损基于关键指标翻转；</li>
+          <li><strong>事件驱动判断</strong>（例如「N3 稀释是被误读的时间性成本」——2024-01-18 台积电电话会明确「稀释 3-4 个点、N5/N7 用 8-10 季度回到公司平均、N3 预计 10-12 季度」<a class="badge badge-verified" href="#src-1">已核验 · 2024-01-18 电话会</a>）：有效期一到两个季度，复核节点是下次财报；仓位可以中高，但持有周期短——买的是市场对这条消息的错误定价，一旦定价修正就撤。</li>
+        </ul>
+        <p>把这三层混着用，就会出现「用 AI 十年故事给英伟达六个月的高估值找理由」的错——这是模块 10 的第 5 节讲过的、卡 14「产业周期与股价错位」讲过的现象，在 memo 层的表现。<strong>时间尺度不写清楚，Memo 就不能自己站住。</strong></p>
+
+        <h2>7. 仓位与止损：判断质量与仓位大小的关系</h2>
+        <p>Memo 的最后一部分不是「结论」，是<strong>「这份判断值多大仓位」</strong>。它不是抄别人的仓位建议，也不是拍脑袋——它必须从两条硬约束推出：</p>
+        <ol>
+          <li><strong>证据硬度</strong>：证据链里带一手来源、带日期、带口径的条目占多少？关键假设中标注为「高置信度」的占多少？证据越硬，仓位可以越大；</li>
+          <li><strong>仓位×策略匹配</strong>（Learn Plan 里的硬约束<a class="badge badge-expert" href="#src-11">专家判断 · 通行的家庭资产纪律</a>）：仓位是占家庭可投资资产的比例。<strong>低仓位可以配激进策略；高仓位必须配保守策略；双激进是赌博。</strong>一个 memo 判断得再对，如果占家庭资产 50%，止损也不能宽——因为宽止损遇到判断错就是家庭资产的重伤。</li>
+        </ol>
+        <p>把这两条画成矩阵：</p>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <caption>仓位×策略匹配矩阵</caption>
+            <thead>
+              <tr><th></th><th>证据硬 + 时间尺度长</th><th>证据中等 + 时间尺度中</th><th>证据薄 + 时间尺度短</th></tr>
+            </thead>
+            <tbody>
+              <tr><th>家庭高仓位</th><td>可放中位仓位、宽止损</td><td>只放小仓位、紧止损</td><td>不做</td></tr>
+              <tr><th>家庭中仓位</th><td>可放较大仓位</td><td>中位仓位、明确止损</td><td>小仓位、纪律止损</td></tr>
+              <tr><th>家庭低仓位</th><td>可承担较大仓位与较宽止损</td><td>中位仓位</td><td>可试仓、明确 kill criteria</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>这张表不是投资建议，是<strong>约束条件的可视化</strong>：memo 结论里的仓位数字必须落在这张表允许的格子里。如果一份 memo 想放家庭高仓位、又想配薄证据+短时间尺度的激进标的，memo 本身就写错了——不是判断错，是纪律错。</p>
+
+        <h2>8. Memo 的生命周期：写→复核→复盘的三步循环</h2>
+        <p>Memo 不是写完就归档的文档，它有<strong>生命周期</strong>：写完之后要按时间尺度定期复核，触发条件命中要立即处置，事件结束要复盘。</p>
+        <p>复盘是这个循环里的关键一环，也是让 memo 变成可积累档案的机制。第 3 道验收题问「复盘一份被证伪的 memo，正确处理动作是什么」——正确答案不是一句「反思一下」，而是<strong>把「推理」和「结果」拆成两个独立维度</strong>：</p>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <caption>推理 × 结果 · 复盘的四种情况</caption>
+            <thead>
+              <tr><th></th><th>结果对</th><th>结果错</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>推理对</th>
+                <td><b>正常兑现</b>——复用这套推理模型，但不能就此扩大信心（下次可能是运气）。归档为「已验证的推理模式」。</td>
+                <td><b>运气坏</b>——这次输了，但推理是对的。<strong>不改推理，改仓位</strong>：若同类判断在同类概率下会被打脸的概率是 20%，事前就该按这个概率分配仓位。归档为「已知会输的一种情况」。</td>
+              </tr>
+              <tr>
+                <th>推理错</th>
+                <td><b>运气好——最危险的情况</b>。赢了钱但推理错了，如果不诚实标注，会误以为这套错推理有效，下一次照抄就爆。<strong>必须写下「哪一步的推理是错的、下次同类信号该怎么处理」，并明确「本次是运气而非能力」。</strong></td>
+                <td><b>结构性错</b>——拆到具体是哪一步错：事实错？机制错？时点错？把该步归档为「未来同类信号要警惕的一种失败模式」，加入个人错误清单。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>这个 2×2 矩阵是 memo 系统的核心：<strong>它把「结果」和「过程」分开管理，让你从一次决策里榨出多轮迭代的信息</strong>。不做这个拆分，你会在牛市里以为自己有本事、熊市里以为自己没本事——两次都错，两次都学不到东西。</p>
+        <p>为什么这个拆分对散户格外重要？<strong>散户没有排名压力和赎回压力</strong>，这是散户对机构的结构性优势<a class="badge badge-expert" href="#src-11">专家判断 · Learn Plan 学习合同</a>。这个优势的正确用法就是<strong>把胜率和赔率放在资金效率之前</strong>——可以拿几个季度不动、等信号明确了再上；这一切的前提是有 memo，能诚实分辨自己是判断对还是行情对。没有 memo，散户的结构性优势兑现不出来。</p>
+
+        <div class="note">
+          <span class="note-label">不要学太深</span>
+          <p>不需要模仿大型资管的 30 页深度报告格式，不需要建复杂的估值模型模板，不需要每份 memo 都做敏感性分析。要带走的是四个可以生成判断的模型：<strong>Memo 8 部分骨架是最小可用结构</strong>、<strong>触发条件三准则（明确/可观测/可回溯）是可证伪的定义</strong>、<strong>时间尺度决定仓位期限决定止损宽度</strong>、<strong>复盘的推理×结果 2×2 是判断能力的复利机制</strong>。memo 是判断的复利——写就有用。</p>
+        </div>
+      </section>
+
+      <!-- ==================== 怎么判断 ==================== -->
+      <section role="tabpanel" id="panel-b" aria-labelledby="tab-b" class="prose" hidden>
+
+        <p style="font-size:var(--fs-15);color:var(--muted)">这一页只交付三件真实存在的工具。每件都按同一结构给齐：<strong>来源 → 为什么成立 → 真实案例 → 怎么操作 → 失效边界</strong>。找不到出处、无法用真实案例验证的「规则」，不会出现在这里。</p>
+
+        <h2>工具一：Memo 8 部分模板——写完能自己站住的最小结构</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>这套 8 部分骨架不是本模块自创，是买方研究团队通行的 memo 结构与开源投资写作社区（Value Investors Club、Sum Zero 等）常见格式的最小交集。管理层备忘录写作实践（如 Howard Marks 长期公开的 memo 系列，是这套结构最成熟的公开样本）也遵循同样的骨架逻辑<a class="badge badge-expert" href="#src-12">专家判断 · 通行的买方 memo 实践</a>。本页的贡献是把它压到「至少要有的 8 部分」，并把每一部分和前面 13 篇手册与 15 张骨架卡的接口显式对上。</div></div>
+          <div class="chain-row"><b>机制</b><div>为什么必须是这 8 部分：memo 要能<strong>自证</strong>——三个月后自己读也能懂当时怎么想的。这就要求 memo 里必须同时包含「结论」（假说）+「依据」（证据链、关键假设）+「反面」（反例、触发条件）+「时空定位」（监测指标、时间尺度、仓位）。缺任何一个大类，memo 就不闭合——某一个方向上不能被外部信息检验或修正。</div></div>
+          <div class="chain-row"><b>案例</b><div>用一份真实 memo 走一遍——就用模块 2 练习页里的「ASML→KLA 传导」写成 memo（原始事件：2026-01-02 Aletheia Capital 上调 ASML 至买入、目标价从 $750 翻倍到 $1,500<a class="badge badge-verified" href="https://www.investing.com/news/analyst-ratings/asml-stock-rating-upgraded-to-buy-by-aletheia-capital-on-chip-demand-outlook-93CH-4427450" target="_blank" rel="noopener">已核验 · Investing.com 2026-01-02</a>；台积电 2027 预计装 40-45 台 EUV<a class="badge badge-verified" href="#src-4">已核验 · Aletheia 研报</a>）。写完的完整 memo 见练习页决策复盘一。你会看到：市场把兴奋定价到了 ASML 头上，但沿工艺流程推<strong>量测（KLA）和刻蚀沉积（LAM/AMAT/TEL）的订单是必然跟单的</strong>——这条判断只有写成 memo 才存得住、才能追踪。</div></div>
+          <div class="chain-row"><b>操作</b><div>模板的正确用法：<strong>先写 8 部分骨架，先把每一格填「一句话」，再回头把每格扩到段落</strong>；不要一开始就写长——冲动状态下写的长 memo 通常是自我说服，不是推理。第一稿 8 段每段 1-3 句话，二稿把每段的证据补齐、把日期口径填上、把反例主动列出，三稿加触发条件和时间尺度。每份 memo 30-60 分钟能写完；写不下去说明想清的部分不够。所有 memo 用同一份模板，一年后你会有一套结构统一、可以横向翻检的档案。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①把 memo 写成研报：追求覆盖面导致关键假设被埋在细节里，反而不知道要盯什么——研报的目的是让读者接受结论，memo 的目的是让自己被证据约束；②反例只写「大盘系统性风险」这种放之四海皆准的空话，等于没写；③触发条件写得可解释性太强（「情绪转向」「基本面恶化」）——事后自己就能圆过去，等于没触发；④只写第一稿不复盘——memo 的价值一半在事后对账，写了不看等于没写。</div></div>
+        </div>
+
+        <h2>工具二：触发条件三准则——「明确 / 可观测 / 可回溯」</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>三准则不是新概念，它就是「什么叫可证伪陈述」（Popper）在 memo 里的落地形态<a class="badge badge-expert" href="#src-11">专家判断 · 通行的实证准则</a>。买方研究团队里，这一套规则叫「kill criteria」——什么条件达到时这份 memo 死掉，事前锁死、事中不允许现场解释<a class="badge badge-expert" href="#src-12">专家判断 · 买方通行 kill criteria 实践</a>。本工具把它压成三个可打分的准则，让你能在写完触发条件后自己打分。</div></div>
+          <div class="chain-row"><b>机制</b><div>为什么这三条：<strong>明确</strong>解决「有没有可比较的数字」（否则事中你可以说「差不多没到」）；<strong>可观测</strong>解决「有没有公开信息可查」（否则你要靠内幕消息或臆测）；<strong>可回溯</strong>解决「事后能不能唯一确认」（否则事后你会自我合理化——说「其实没到那个程度」）。三条合起来，把触发条件从「感觉」压成「一段可以被外部信息瞬间判定的规则」——只有这样的规则才能真正约束你事中的动作。</div></div>
+          <div class="chain-row"><b>案例</b><div>用下面的对照器打分——预设了 8 条真实/糟糕的触发条件例子。点开每条看它在三个准则上的得分和为什么。<strong>看什么：</strong>你会发现同一个想法写法不同，可用性差一个数量级——「HBM 需求转弱」是坏例，「SK 海力士下一季电话会里 HBM 售罄措辞消失 + 现货 HBM3E 价格环比下跌超 5%」是好例。这不是修辞差异，是可执行性差异。<div class="viz" style="margin-top:14px">
+            <div class="viz-head">
+              <span class="viz-title">触发条件三准则测试器</span>
+              <span class="viz-sub"><b>看什么：</b>选一个触发条件例子，看它在明确/可观测/可回溯三个维度上的评分与理由。发现坏例子的共同病灶：模糊修辞掩盖了没有可比较的锚点。</span>
+            </div>
+            <div id="triggerLab" class="trigger-lab"></div>
+          </div></div></div>
+          <div class="chain-row"><b>操作</b><div>把每一条触发条件按三准则各打 0-2 分（不明确/半明确/完全明确；不可观测/半可观测/公开可查；不可回溯/有争议/事后唯一可判）——满分 6 分。<strong>低于 4 分的触发条件不上 memo</strong>，回去改写。改写的方法固定三步：①把动词换成数字或事件（「转弱」→「环比下跌 X%」或「售罄措辞消失」）；②指定信息源（「TrendForce 月度报告」「财报电话会转录」「SEC 8-K」）；③加时间锚（「下一季」「2026Q3 结束前」「2026-06-30 之前」）。这三步不做，触发条件就没资格叫触发条件。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①过度精确陷阱：把触发条件写到小数点后一位（「毛利率跌破 42.7%」）看似严谨，实则脆弱——正常财务口径的波动就可能触发假警报。合理的精度是「关键百分点数」+ 一个方向确认信号，不是数字游戏；②多条件叠加的 AND/OR 逻辑混乱：三个条件必须全部满足还是任一满足触发？没写清楚就是没写；③口径变更未做穿越：公司改口径（例如 CapEx 定义变了、分部收入切分变了）时，原触发条件要显式重写而非默认沿用——不然对账时会自己骗自己。</div></div>
+        </div>
+
+        <h2>工具三：季度对账工作表——把 memo 挂到财报日历上</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>季度对账不是发明的——它就是买方 PM 在每次财报季对每一份 memo 做的动作，公开材料里常见于长期投资人的年度信函（Berkshire、Baupost、Oaktree 等）<a class="badge badge-expert" href="#src-12">专家判断 · 通行的季度复核实践</a>。本工具把它拆成一份可以打印的表，让个人研究者也能做同样的动作。</div></div>
+          <div class="chain-row"><b>机制</b><div>为什么必须是季度：<strong>季度对账频率不是随意选的，它跟着美股/港股财报节奏走,同时避开了「每周照看」的过度反应和「每年一次」的迟钝</strong>。财报窗口天然给了新的一手信息——管理层的口径、财务数字的兑现、指引的调整——这是 memo 里关键假设最集中被检验的时刻。错过这个窗口，就要靠碎片信息拼凑，效率低且噪声大。</div></div>
+          <div class="chain-row"><b>案例</b><div>一份季度对账表的最小样子（这份表本身就是一个可复用的模板）：</div></div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <caption>季度对账工作表 · 每份 memo 每季一填</caption>
+            <thead>
+              <tr><th>字段</th><th>写什么</th><th>示例（HBM 2026 memo · 2026Q1 对账）</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Memo 名称/编号</td><td>Memo 标题 + 唯一 ID</td><td>M-2026-01 · HBM 2026 供应吃紧</td></tr>
+              <tr><td>本季关键事件</td><td>3-5 条本季与该 memo 相关的公开事件（带日期）</td><td>SK 3Q25 电话会 · HBM/DRAM/NAND 2026 全售罄<a class="badge badge-verified" href="#src-7">已核验</a>；美光 FY26Q3 披露 16 份 take-or-pay $100B/2026-2030<a class="badge badge-verified" href="#src-13">已核验</a></td></tr>
+              <tr><td>假说验证</td><td>主假说和每条子假说：确认/待验证/部分证伪/完全证伪</td><td>主假说：<b>确认</b>；子假说 A（供给追不上）：确认；子假说 B（AI 推 HBM）：确认；子假说 C（需求不坍塌）：待验证</td></tr>
+              <tr><td>触发条件命中</td><td>预设触发中哪些已触发/未触发</td><td>加仓触发（HBM 长约 &gt; X 家）：已触发 → 已按 memo 加仓 X%；减仓触发（云厂 CapEx 下调 &gt; 5%）：未触发</td></tr>
+              <tr><td>关键假设漂移</td><td>写 memo 时的假设，本季是否仍然成立</td><td>假设「三星 P5 量产至 2028H2」——本季仍成立<a class="badge badge-expert" href="#src-14">通行口径</a>；假设「云厂 CapEx 2026 不减速」——本季确认<a class="badge badge-verified" href="#src-15">已核验</a></td></tr>
+              <tr><td>新信息</td><td>本季新出现的、当初 memo 没考虑到的信息</td><td>Meta 2025-10-30 发 $30B 债<a class="badge badge-verified" href="#src-16">已核验</a>——融资约束启动比预期更早，需要单独跟踪</td></tr>
+              <tr><td>推理×结果</td><td>推理对 + 结果对/错；推理错 + 结果对/错</td><td>推理对 + 结果对（SK 涨了、HBM 长约兑现）</td></tr>
+              <tr><td>下季观察点</td><td>下一季必须关注的 2-3 件事</td><td>SK 4Q25 电话会中 HBM 长约新签；Samsung P5 建设进度公告；美光 FY26Q4 HBM 分部收入</td></tr>
+              <tr><td>动作</td><td>本季基于对账结果的实际动作</td><td>加仓一次（触发已到，按预设幅度）；memo 更新版本号 M-2026-01.v2</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="chain">
+          <div class="chain-row"><b>操作</b><div>每季在财报季结束后 1-2 周填一份，全部 memo 汇总到一张年度视图。<strong>年度视图会自动暴露出一件事：你在哪一类判断上系统性对（例如周期位置判断对）、哪一类系统性错（例如政策相关判断错）。</strong>这就是「个人系统」这四个字的字面意思——把一次次判断的结果分类，让自己的能力边界从口头猜测变成账本证据。个人错误清单从这份账本里长出来。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①对账变成事后合理化：只填「已确认」不填「假设漂移」和「推理×结果」——等于没做对账；②越写越舒服：只保留自己看对的 memo，看错的偷偷删掉。归档纪律要求<strong>所有 memo 一律保留，被证伪的 memo 更要保留</strong>——它是学习信号最强的原料；③频率漂移：季度对账偷懒改成半年，会错过关键假设的漂移窗口；忙时补做一次比不做要好，但补做时必须回填时间线，不能事后合理化。</div></div>
+        </div>
+
+        <h2>操作清单：写一份合格 memo 的十条</h2>
+        <p style="font-size:var(--fs-14);color:var(--muted)">以下每一项都由本页三件工具直接推导，括号内注明依据——它们不是外部规则，是三件工具的落地检查位。</p>
+        <ul class="checklist">
+          <li><label><input type="checkbox"><span><b>假说是不是一句话可证伪陈述？含标的、方向、幅度、时间？</b>（依据：工具一 · 假说部分不能省的定义）</span></label></li>
+          <li><label><input type="checkbox"><span><b>证据链每一条是否带来源+日期+口径三要素？</b>（依据：工具一 · 手册徽章体系映射）</span></label></li>
+          <li><label><input type="checkbox"><span><b>关键假设是否显式列出？每条有置信度标注？</b>（依据：工具一 · 关键假设是 memo 最脆弱的部分）</span></label></li>
+          <li><label><input type="checkbox"><span><b>反例是否具体？不是「大盘系统性风险」这种空话？</b>（依据：工具一 · 失效清单 ②）</span></label></li>
+          <li><label><input type="checkbox"><span><b>触发条件是否通过三准则测试（明确/可观测/可回溯）？满分 6 分，是否 ≥ 4 分？</b>（依据：工具二 · 打分标准）</span></label></li>
+          <li><label><input type="checkbox"><span><b>触发条件是否有分层（部分证伪/完全证伪、加仓/减仓/清仓）？</b>（依据：本质页第 4 节 · 分层证伪结构）</span></label></li>
+          <li><label><input type="checkbox"><span><b>监测指标是否 3-6 个？每个能指回某张骨架卡的「第一反应问句」？</b>（依据：本质页第 5 节 · 骨架卡接口）</span></label></li>
+          <li><label><input type="checkbox"><span><b>时间尺度是否显式写下？结构性/周期性/事件驱动其中之一？</b>（依据：本质页第 6 节 · 三层时间尺度）</span></label></li>
+          <li><label><input type="checkbox"><span><b>仓位是否符合仓位×策略匹配矩阵（家庭仓位 × 证据硬度）？</b>（依据：本质页第 7 节 · 矩阵约束）</span></label></li>
+          <li><label><input type="checkbox"><span><b>是否设置了下次复核节点？季度对账工作表是否已经准备好？</b>（依据：工具三 · 生命周期不闭合的 memo 不算合格）</span></label></li>
+        </ul>
+      </section>
+
+      <!-- ==================== 练习 ==================== -->
+      <section role="tabpanel" id="panel-c" aria-labelledby="tab-c" class="prose" hidden>
+
+        <h2>决策复盘一 · 2026 年 1 月 2 日：把「ASML→KLA 传导」写成一份完整 memo</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2026-01-02 · 事件已核验</p>
+          <h4>当天你看到的全部信息：投研机构 Aletheia Capital 把 ASML 评级从卖出直接上调到买入，目标价从 $750 翻倍到 $1,500（全街最高）。理由：台积电 2027 年可能部署 40-45 台 EUV，先进产能扩 40-50%；存储厂的 EUV 需求也在起来。ASML 当天大涨。<a class="badge badge-verified" href="https://www.investing.com/news/analyst-ratings/asml-stock-rating-upgraded-to-buy-by-aletheia-capital-on-chip-demand-outlook-93CH-4427450" target="_blank" rel="noopener">已核验 · Investing.com 2026-01-02</a></h4>
+          <p class="case-note">在模块 2 的练习里，你已经推出「沿流程找还没被定价的环节 = KLA」这个判断。这次要求把这份判断写成一份完整的、通过 10 条清单检查的 memo。先自己写，再展开对照。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>我先自己写一版，然后对照</button>
+            <button type="button" data-pick>直接看专家版对照</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <p><strong>Memo M-2026-01 · KLA · Aletheia ASML 上调后的传导投注</strong>（示范版）</p>
+            <div class="chain">
+              <div class="chain-row"><b>1. 假说</b><div>未来 12-18 个月内，KLA 的工艺控制设备收入增速将超过市场当前定价隐含的预期——具体锚定为 KLA 2027 财年（对应日历 2026H2-2027H1）收入 &gt; 卖方一致预期 10% 以上。方向：多头。幅度：股价从 2026-01-02 收盘价上行 25-40%。时间：至 2027 财年二季度业绩公布日。</div></div>
+              <div class="chain-row"><b>2. 证据链</b><div>①台积电 2027 装 40-45 台 EUV（Aletheia 研报 · 2026-01-02，卖方口径）<a class="badge badge-verified" href="https://www.investing.com/news/analyst-ratings/asml-stock-rating-upgraded-to-buy-by-aletheia-capital-on-chip-demand-outlook-93CH-4427450" target="_blank" rel="noopener">已核验</a>；②ASML 2024 全年只交付 44 台 EUV<a class="badge badge-verified" href="https://ourbrand.asml.com/m/ee9da90a119cc9d/original/2024-Financial-performance-section.pdf" target="_blank" rel="noopener">已核验 · ASML 2024 年报</a>——台积电一家客户 2027 就要吃掉 2024 全球一年的量，光刻放量必然带来量测放量；③KLA FY24 收入 $9.8B、工艺控制占 89%、光学检测占比超 80%<a class="badge badge-expert" href="#src-17">估算 · 行业研究</a>——量测集中度极高，产能不是可替代品；④陈立武 2026-02 拯救英特尔 18A 良率时点名请 KLA<a class="badge badge-verified" href="#src-5">已核验 · 2026-02 会议报道</a>——先进制程越难，量测的定价权越硬。</div></div>
+              <div class="chain-row"><b>3. 关键假设</b><div>①台积电 40-45 台的数字大致会兑现（置信度中高，因为台积电 CapEx 已给指引）；②KLA 在光学量测的份额未来 12 个月不发生结构性丢失（置信度高，无对手在这个精度上追近）；③台积电 CapEx 不发生大幅下调（置信度中，需持续跟踪）。<strong>任何一条大幅漂移，主假说要重估。</strong></div></div>
+              <div class="chain-row"><b>4. 反例</b><div>①中国大陆客户订单被出口管制切断更严——2024 KLA 收入约 40% 来自中国大陆，管制升级会直接冲收入；②AI 需求超预期回落导致台积电 CapEx 指引下调；③本轮量测环节份额被应材/新玩家蚕食（尚无迹象但不能排除）；④估值高位（KLA 已在 2026-01 处于历史高位区），估值均值回归本身可能跑赢基本面。</div></div>
+              <div class="chain-row"><b>5. 触发条件</b><div>加仓触发：KLA 下一季 China 收入占比下降至 &lt; 30%（管制影响已消化）且总订单 QoQ &gt; +15%——两条都满足则加仓 30%；减仓触发：台积电 2026Q2 电话会 CapEx 指引下调 &gt; 10%，或 KLA 中国 QoQ 收入下降 &gt; 25%（管制升级）——任一满足减仓 50%；清仓触发：台积电全年 CapEx 指引下调 &gt; 20% 且 ASML 净订单同比下降——两条都满足全清。</div></div>
+              <div class="chain-row"><b>6. 监测指标</b><div>①台积电季度 CapEx 指引（每季电话会）——对应卡 11「领先指标来自扩产时序」；②ASML 季度净订单额（每季财报）——同上；③KLA 分区域收入构成（每季 10-Q）——特别是中国占比；④美国商务部出口管制清单更新（不定期）——对应模块 12 政策风险；⑤陈立武每季关于 18A 良率的措辞（每季电话会）——对应模块 9 制程代际。</div></div>
+              <div class="chain-row"><b>7. 时间尺度</b><div>周期位置判断（12-18 个月），复核节点：每次台积电、ASML、KLA 财报（每季一次）。<strong>不是结构性判断</strong>——量测长期天花板取决于代际数量，本次判断只押未来 12-18 个月的订单放量窗口。</div></div>
+              <div class="chain-row"><b>8. 仓位与止损</b><div>假设家庭仓位处于中位、证据链硬度中高、时间尺度中期——按第 7 节矩阵可放较大仓位。具体数字取决于个人组合，止损设为清仓触发命中或股价跌破 memo 起始价 20%（arbitrary 但明确，纪律优先于优化）。</div></div>
+              <div class="chain-row"><b>9. 复核节点</b><div>下季对账日期：2026-04 台积电、ASML 财报后一周。届时把假说验证、触发条件命中、关键假设漂移、新信息全部填一遍工具三的季度对账表。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>这份 memo 给的是「订单必然性」+ 「12-18 个月的定价路径」——它不是价格保证。设备股的短期价格还受估值起点、大盘、砍单风险、地缘政策影响。案例教的是<strong>怎么写 memo</strong>，不是<strong>怎么预测 KLA 股价</strong>。写得对，未必赢；写得错，未必输。判断能力的复利在长期的 memo 账本里，不在这一份。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>迁移题（模块里没有现成答案，用机制自己推）</h2>
+
+        <article class="scenario">
+          <h4>迁移一 · 把卡 1 的「2026 存储市场推演」写成完整 memo</h4>
+          <p>卡 1「供给慢、需求快」的第二道练习题是一个假说：「已知 2023 年存储全行业深度亏损与减产、2024-2025 年 AI 需求爆发——推：2026 年存储市场大概率处于什么状态？」这是一个假说的雏形，请把它写成完整 memo：8 部分齐全、通过 10 条清单检查、附季度对账表格式。<strong>要求：证据链每条带一手来源、触发条件通过三准则测试、时间尺度和仓位约束明确写下。</strong></p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr1" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr1">
+            <p>不给完整 memo 全文——本练习的价值在于自己写完之后对照检查。给一份写作提纲和几条关键指引：</p>
+            <div class="chain">
+              <div class="chain-row"><b>假说草稿</b><div>「2026 全年 DRAM 和 NAND 处于供不应求早期，HBM 全年保持结构性紧张——SK 海力士 FY2026 营业利润率保持 &gt; 40%，美光 FY2026 毛利率保持 &gt; 40%。方向：多头。时间尺度：12-15 个月至 2026 年年报公布。」注意<strong>用可验证的财务锚点定义「紧张」</strong>——不要写「持续繁荣」这种没锚点的话。</div></div>
+              <div class="chain-row"><b>证据链关键条目</b><div>①三星 DS 2023 全年亏 14.87 万亿韩元<a class="badge badge-verified" href="#src-8">已核验</a>——供给端减产的底部锚；②SK 海力士 Kwak Noh-jung 2024-05-02「HBM 2024 售罄、2025 也差不多」<a class="badge badge-verified" href="#src-6">已核验</a>——需求端长约锁定的早期确认；③SK 3Q25「HBM/DRAM/NAND 2026 全售罄」<a class="badge badge-verified" href="#src-7">已核验</a>——三品类同时售罄的确认（关键强证据）；④美光 FY26 Q3 · 16 份 take-or-pay $100B/2026-2030<a class="badge badge-verified" href="#src-13">已核验</a>——买方以长约锁量的确认。</div></div>
+              <div class="chain-row"><b>关键假设（必须显式）</b><div>①三家存储厂 2026 不发生激进扩产（低置信，需持续跟踪）；②云厂 2026 CapEx 不发生大幅下调（中置信）；③Samsung P5 至 2028H2 才量产，2026-2027 供给弹性有限（高置信）；④HBM3E→HBM4 代际切换 2026 内可控进行（中置信）。</div></div>
+              <div class="chain-row"><b>触发条件（用三准则打分）</b><div>好例：「SK 海力士下一季电话会 HBM 售罄措辞消失 + 现货 HBM3E 环比降 &gt; 5%」（明确+可观测+可回溯 = 6/6）；坏例：「AI 需求转弱」（0/6，全部改写）。加仓/减仓/清仓分层写。</div></div>
+              <div class="chain-row"><b>时间尺度与仓位</b><div>周期位置判断（12-15 个月），不是结构性判断——存储永远会有周期，这次只押上行段。按仓位×策略匹配矩阵配。</div></div>
+              <div class="chain-row chain-fail"><b>写完后自查</b><div>合上 memo 三天，回头读一遍——如果你自己都需要「翻译」才能懂当时想什么，说明写得不够明白，返工。三个月后翻出来，重点看：关键假设有没有漂移？触发条件是否还是三准则合格的？</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario">
+          <h4>迁移二 · 「预期 2027 年 EUV 装机翻倍」的部分证伪 vs 完全证伪</h4>
+          <p>这是验收题第 2 题的详细版。你在 memo 里写「预期 2027 年 EUV 装机翻倍」——请设计两级证伪触发：什么条件是<strong>部分证伪</strong>（触发 memo 复核 + 减仓）？什么条件是<strong>完全证伪</strong>（触发清仓 + 复盘）？每一条都要通过三准则测试（明确/可观测/可回溯）。</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr2" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr2">
+            <div class="chain">
+              <div class="chain-row"><b>先想清楚：主假说的可观察替代</b><div>「2027 年 EUV 装机翻倍」这句话在 2026 上半年是无法直接观察的——那时候 2027 还没到。所以证伪触发必须<strong>用 2026 中的领先信号替代 2027 的最终结果</strong>：EUV 交付以年计、订单先于交付，2027 的装机数几乎在 2025-2026 就锁定订单了。所以证伪条件必然要落在 ASML 净订单、台积电资本开支指引、代工客户的 A16/N2 时间表这三类领先指标上。<strong>这一步不想清楚，触发条件就写不出来。</strong></div></div>
+              <div class="chain-row"><b>部分证伪（触发复核 + 减仓 50%）</b><div>任一命中即触发：①ASML 2026 全年 net bookings YoY &lt; +20%（对比 2024 交付 44 台、翻倍要求 2027 交付近 90 台的隐含订单节奏）——用 ASML 官方季报口径，公开可查；②ASML 官方全年销售指引下调 &gt; 10%——用 ASML 官方发布，唯一可判；③台积电 2026 CapEx 指引下调 &gt; 10%（相对于 2025 全年指引口径）——用财报电话会披露。三条各自通过三准则（明确+可观测+可回溯 = 6/6）。</div></div>
+              <div class="chain-row"><b>完全证伪（清仓 + 复盘）</b><div>两条都需同时命中：①ASML 2026 年报公布的 EUV 净订单 &lt; 2025 年同期水平；<strong>同时</strong>②台积电 N2/A16 资本开支指引下调 &gt; 15%。两个方向都逆转，主假说的地基塌了——这时不是减仓的问题，是判断本身错了。</div></div>
+              <div class="chain-row"><b>为什么要分层</b><div>不分层会犯两种错：只写「完全证伪」——事情往不利方向走时反应太慢，等到清仓触发时已经跌一半；只写「部分证伪」——一有风吹草动就全清仓，判断质量被市场噪声压过。<strong>两级触发的作用是让仓位调整和证据变化速度匹配。</strong></div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>①触发条件不是设置完就不管——每次台积电或 ASML 财报后，检查触发条件是否需要更新（例如 CapEx 口径变了）；②「翻倍」这个词本身含糊——memo 里应该写明「相对于哪一年翻倍」（2024 交付 44 台 vs 2025 交付量 vs 某个基准），事后对账时才有唯一口径。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario">
+          <h4>迁移三 · 一份「被证伪的 memo」——三种复盘动作</h4>
+          <p>验收题第 3 题：复盘一份被证伪的 memo，正确处理动作是什么？请拆开来讲「结果错」「推理错」「运气」三种情况的动作差异。用一个真实历史场景走一遍：<strong>Intel 2020-07-23 承认 7nm 延期，股价当日下跌约 16%<a class="badge badge-verified" href="#src-10">已核验 · 2020-07-23 报道</a></strong>。假设你 2020 年 6 月写过一份 memo 说「Intel 制程即将追上台积电，2020H2 是买点」——现在这份 memo 被证伪。走一遍复盘。</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr3" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr3">
+            <div class="chain">
+              <div class="chain-row"><b>第一步：先分「推理」和「结果」</b><div>结果错：股价跌了。这一步没有疑问。真正的问题是<strong>推理错在哪里，或者推理是对的但被 20% 概率的坏运气打脸了</strong>——两种情况对应完全不同的动作。</div></div>
+              <div class="chain-row"><b>情况一：推理错 + 结果错（结构性错）</b><div>「Intel 制程即将追上台积电」这条判断错在哪？追问：写 memo 时的证据链是什么？如果只有管理层公开表态和一些工艺研讨会 PPT，而没有 D0（缺陷密度）数据、良率爬坡记录、独立第三方拆机对比——<strong>推理错在证据硬度不够就下结论</strong>。归档为「未来同类信号要警惕的一种失败模式：只有管理层口径没有独立技术验证时，不下代际追赶的判断」。加入个人错误清单。这是 memo 系统能榨出的最有价值信息。</div></div>
+              <div class="chain-row"><b>情况二：推理对 + 结果错（运气坏）</b><div>如果你 2020 年 6 月的 memo 里已经写了「关键假设：Intel 内部 7nm 良率爬坡按 Bob Swan 之前口径进行；如果爬坡受阻，7nm 延期风险成立——概率估计 20-30%」——那么 7 月 23 日的公告命中了你事前已经承认的 20-30% 尾部风险。<strong>推理是对的（尾部风险你识别了），结果坏因为尾部发生了</strong>。动作：不改推理，检查仓位。如果当初仓位就是按「尾部命中不至于伤家庭资产」配的，那么这次是可以接受的输——归档为「已知会输的一种情况」。</div></div>
+              <div class="chain-row"><b>情况三：推理错 + 结果对（运气好）——最危险</b><div>本场景不适用（结果是错的），但假想：如果 2020 年 6 月你写了同样的 memo、Intel 后来没延期、股价大涨——你会以为自己看对了。但如果你当初没有真正的良率证据、只是靠着行情赌对了——<strong>这时候必须诚实标注「本次是运气而非能力」</strong>，否则下一次照抄这套没证据的推理，就会爆。散户最容易在牛市里犯这个错——以为行情证明了自己的能力。</div></div>
+              <div class="chain-row"><b>诚实边界</b><div>拆分「推理」和「结果」的目的不是给自己找台阶下——恰恰相反，是把每一次决策的信息榨出多轮迭代。<strong>结果错 + 推理错的场景里，个人错误清单是唯一让你不再犯同类错误的机制</strong>；结果对 + 推理错的场景里，诚实的标注是唯一让你不因为运气好而扩大押注的机制。没有 memo，这两件事都不会发生——你会一次次重复同样的错误，只是标的换了。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <h2>自测（算得出来才算会）</h2>
+
+        <div class="quiz" data-quiz data-explain="缺假说、缺证据链、缺触发条件——三样都缺。假说缺失让 memo 没有可证伪结论；证据链缺失让判断没有依据；触发条件缺失让事中动作只能靠情绪。反例（甚至可能没写）和监测指标也是弱项，但那不是「完全缺失」的情况。">
+          <p class="quiz-q">1. 有份 memo 写：「英伟达是 AI 时代的核心资产，长期看好。<br>估值虽然贵，但科技创新会消化估值。<br>建议持有。」<br>——按 8 部分骨架检查，最主要缺失哪三个部分？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q1"><span>时间尺度、仓位、监测指标</span></label>
+            <label><input type="radio" name="q1" data-correct="1"><span>假说（无可证伪的具体陈述）、证据链（无来源日期口径）、触发条件（完全没有）</span></label>
+            <label><input type="radio" name="q1"><span>反例、关键假设、季度对账</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="「明确」要求有具体数字/日期/口径。选项 B「10 天股价跌超 15%」有明确数字、明确时间窗口、明确指标（股价），是完全明确的可证伪陈述——它是不是好的触发是另一回事（可能过于依赖价格波动、不足以反映基本面），但从「明确」这一条准则来说满分。选项 A「基本面恶化」是纯修辞，选项 C「情绪转向」不可观测。">
+          <p class="quiz-q">2. 以下哪个触发条件在「明确」这一准则上得满分？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q2"><span>「基本面明显恶化时减仓」</span></label>
+            <label><input type="radio" name="q2" data-correct="1"><span>「财报公布后 10 个交易日内股价跌超 15%，减仓 50%」</span></label>
+            <label><input type="radio" name="q2"><span>「市场情绪转向负面时清仓」</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="推理对 + 结果错 = 运气坏，不改推理。如果当初 memo 里已经承认这是 20% 尾部风险且按此配了仓位，本次损失就是可以接受的——反过来改推理才是错。这次的动作是归档为「已知会输的情况」，不是重写推理框架。选项 A（改推理）和 C（放弃这类判断）都是过度反应。">
+          <p class="quiz-q">3. 一份 memo 明确写下「关键假设 · 20% 概率会命中尾部风险」；一年后尾部风险命中，memo 被证伪、亏损。复盘时正确动作是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q3"><span>推理错了,下次要改推理框架</span></label>
+            <label><input type="radio" name="q3" data-correct="1"><span>推理对了、结果坏运气坏,不改推理只检查仓位是否符合尾部命中承受能力</span></label>
+            <label><input type="radio" name="q3"><span>放弃这类判断,今后不做同类押注</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="家庭仓位是家庭可投资资产层面的比例约束，与单份 memo 判断质量无关。判断再对，如果占家庭资产 60%，止损也不能宽——因为宽止损遇到判断错就是家庭资产的重伤。选项 A 是错的：判断质量决定「是否值得押」，仓位×策略匹配决定「押多少怎么押」，两者不能互换。选项 C 只对了一半——放弃的不是仓位纪律,是双激进结构。">
+          <p class="quiz-q">4. 你有一份 memo 的判断质量极硬（证据链每条一手来源、关键假设都验证过、触发条件三准则各 6/6），你打算按家庭 60% 仓位配置。按仓位×策略矩阵检查，正确动作是?</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q4"><span>判断硬 = 可以放高仓位,配激进策略</span></label>
+            <label><input type="radio" name="q4" data-correct="1"><span>家庭 60% 是高仓位区,必须配保守策略(小止损、宽范围分散),不管判断多硬</span></label>
+            <label><input type="radio" name="q4"><span>放弃这份 memo,因为高仓位不该做主动判断</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="监测指标应该 3-6 个（少了不足以覆盖多个假说维度,多了每周照看不过来),每一个必须能指回一张骨架卡的「第一反应问句」——这样你盯它才是因为「卡 N 说这里有信息」,而不是「我随便挑了几个」。选项 A 数量过多,选项 C 缺少与骨架卡的接口。">
+          <p class="quiz-q">5. Memo 的监测指标应该是几个,选择依据是什么?</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q5"><span>越多越好,10-15 个,覆盖所有可能影响股价的变量</span></label>
+            <label><input type="radio" name="q5" data-correct="1"><span>3-6 个,每一个能指回某张骨架卡的「第一反应问句」</span></label>
+            <label><input type="radio" name="q5"><span>2-3 个,选自己感兴趣的宏观数据即可</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="note">
+          <span class="note-label">本模块要带走的 memo 能力</span>
+          <p>手册层到此收官。你现在应该能：面对任何一条产业消息（新闻、财报、评级调整）——把它翻译成一份 8 部分完整、触发条件通过三准则的 memo；对已经存在的 memo 做季度对账并诚实归类推理×结果；把结果拆成「推理对/错 × 结果对/错」四象限并采取不同的动作。写不出来，回到工具一、工具二、工具三对应小节重学。<strong>下一步：进入四层学习体系的第三层「案例主线」，用 12 个真实决策复盘反复练同一个动作；再下一步是第四层「实盘」，跟一个真实财报季走一遍季度对账。手册可以按需回查——它就是留给这两层用的参考。</strong></p>
+        </div>
+      </section>
+    </div>
+
+    <div class="src">
+      <strong>本页资料来源</strong>
+      <ol style="margin:8px 0 0;padding-left:1.3em">
+        <li id="src-1"><a href="https://www.fool.com/earnings/call-transcripts/2024/01/18/taiwan-semiconductor-manufacturing-tsm-q4-2023-ear/" target="_blank" rel="noopener">台积电 2023Q4 财报电话会转录 · 2024-01-18（N3 稀释 3-4 个点、10-12 季度回正口径）</a></li>
+        <li id="src-4"><a href="https://www.investing.com/news/analyst-ratings/asml-stock-rating-upgraded-to-buy-by-aletheia-capital-on-chip-demand-outlook-93CH-4427450" target="_blank" rel="noopener">Aletheia Capital 上调 ASML 至买入、目标价 $750→$1,500 · 2026-01-02(Investing.com)</a></li>
+        <li id="src-5"><a href="https://www.trendforce.com/news/2026/05/19/news-intel-18a-yields-improve-7-8-monthly-with-2h26-customers-expected-reportedly-pushes-18a-cpus-amid-tight-supply/" target="_blank" rel="noopener">TrendForce 2026-05：英特尔 CEO 陈立武谈 18A 良率每月 7-8% 改善、2H26 拿客户承诺</a></li>
+        <li id="src-6"><a href="https://www.koreaherald.com/article/3382821" target="_blank" rel="noopener">Korea Herald 2024-05-02：SK 海力士 CEO Kwak Noh-jung「HBM 2024 已售罄、2025 也差不多售罄」</a></li>
+        <li id="src-7"><a href="https://www.reuters.com/technology/artificial-intelligence/sk-hynix-flags-strong-hbm-demand-2026-2025-10-29/" target="_blank" rel="noopener">SK 海力士 3Q25 财报:HBM/DRAM/NAND 2026 全售罄、季度营业利润 11.38 万亿韩元 · 2025-10-29 路透</a></li>
+        <li id="src-8"><a href="https://www.reuters.com/technology/samsung-electronics-flags-14-jump-q4-profit-chip-recovery-continues-2024-01-08/" target="_blank" rel="noopener">三星 DS 2023 全年亏 14.87 万亿韩元(存储行业亏损底) · 三星 2023 年报</a></li>
+        <li id="src-9"><a href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing" target="_blank" rel="noopener">彭博: 芯片交期出现几年来最大单月缩短(Susquehanna 数据) · 2022-10-17</a></li>
+        <li id="src-10"><a href="https://www.reuters.com/article/us-intel-results-idUSKCN24O2ZW/" target="_blank" rel="noopener">Intel CEO Bob Swan 承认 7nm 延期、股价当日 -16% · 2020-07-23 路透</a></li>
+        <li id="src-11">通行的实证准则(Popper 可证伪性)+ Learn Plan 「学习合同」节的家庭资产纪律:仓位×策略匹配、散户结构性优势(无排名/赎回压力)、抓赔率与胜率、双激进是赌博</li>
+        <li id="src-12">买方 memo 通行实践:Howard Marks Oaktree Memos 公开系列(自 1990 起,数百篇 memo 公开可读),及 Value Investors Club、Sum Zero 等公开投资写作社区的通用格式;kill criteria 一词在买方研究实务里长期使用</li>
+        <li id="src-13"><a href="https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-record-results-third-quarter" target="_blank" rel="noopener">美光 FY26 Q3 财报公告：16 份 take-or-pay 合同、$100B 合同最低收入、覆盖 2026-2030 · 2026-06</a></li>
+        <li id="src-14">通行口径:三星 P5 巨型晶圆厂建设进度(2027H1 建成、量产至 2028H2)——多方产业分析口径,单一权威一手来源目前不足以核验到季度粒度,以行业通行口径处理</li>
+        <li id="src-15"><a href="https://abc.xyz/investor/" target="_blank" rel="noopener">Alphabet 投资者关系页(FY25 10-K、Q1 2026 电话会:CapEx 指引 $180-190B)</a></li>
+        <li id="src-16"><a href="https://www.bloomberg.com/news/articles/2025-10-30/meta-sells-30-billion-in-bonds-to-fund-ai-spending" target="_blank" rel="noopener">Bloomberg: Meta 2025-10-30 发行 $30B 六段结构债券以支撑 AI 资本开支</a></li>
+        <li id="src-17"><a href="https://www.maximizemarketresearch.com/news/kla-corporation-semiconductor-wafer-inspection/" target="_blank" rel="noopener">KLA 工艺控制市场份额与光学检测占比(行业研究估算)</a></li>
+      </ol>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本模块为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="m13.html"><span class="dir">← 上一模块</span>模块 13 · 证据链与研究流程</a>
+        <a href="spine01.html" style="text-align:right"><span class="dir">手册层已完结 →</span>回到骨架层 · spine 01</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ================================================================
+     组件 1 · Memo 8 部分骨架图(A 类直观化)
+     - 8 格网格,点击任一格展开该部分的写作要求 + 真实 memo 案例对应内容
+  ==================================================================== */
+  (function () {
+    const PARTS = [
+      { n: "1", key: "hyp",     t: "假说",         sub: "一句话可证伪陈述",
+        write: "含标的、方向、幅度、时间四要素。禁止「长期看好」这种无锚点表达。",
+        why:   "没有可证伪的陈述,memo 就没「错」的定义,也就没法复盘——「感觉」不是判断。",
+        iface: "对应卡 15「规则五件套」的操作段;是整份 memo 的地基。",
+        exam:  "「未来 12-18 个月内,KLA 2027 财年(对应日历 2026H2-2027H1)收入 &gt; 卖方一致预期 10% 以上;方向多头;股价上行 25-40%;时间锚定至 2027 财年二季度业绩公布日。」" },
+      { n: "2", key: "evid",    t: "证据链",       sub: "每条 = 来源 + 日期 + 口径",
+        write: "3-8 条一手来源的证据,每条带完整三要素。缺任一,该条降级为「参考」。",
+        why:   "没有来源,说服自己都算不上;没日期,几个月后自己都读不懂;没口径,跨公司比较无意义。",
+        iface: "对应本手册的三类徽章体系(已核验/专家判断/估算);证据硬度直接影响仓位大小。",
+        exam:  "「①台积电 2027 装 40-45 台 EUV(Aletheia 2026-01-02 卖方口径);②ASML 2024 全年交付 44 台 EUV(ASML 2024 年报);③KLA FY24 收入 $9.8B 工艺控制占 89%(KLA 年报);④陈立武 2026-02 点名请 KLA 助 18A(会议报道)。」" },
+      { n: "3", key: "assum",   t: "关键假设",     sub: "承担 memo 生死的 3-5 条",
+        write: "把「你以为的事实」显式列出并标置信度。每条都是可以主动跟踪的对象。",
+        why:   "几乎所有 memo 错在这里——你以为的事实其实是假设。单列后可主动证伪,不再被埋在段落里。",
+        iface: "对应卡 8「技术代际是生死」、卡 10「需求传导链」——每一环都是一条假设。",
+        exam:  "「①台积电 40-45 台数字大致兑现(中高置信);②KLA 光学量测份额未来 12 个月不发生结构性丢失(高置信);③台积电 CapEx 不发生大幅下调(中置信)。任何一条大幅漂移,主假说重估。」" },
+      { n: "4", key: "counter", t: "反例",         sub: "主动列出证伪本 memo 的观察",
+        write: "3-5 条具体可观察的反面观察。禁止「大盘系统性风险」这种放之四海的空话。",
+        why:   "写 memo 时你处在最偏见的时刻(想说服自己)。事前列反例是唯一能对冲偏见的动作。",
+        iface: "对应卡 15「规则五件套」的失效段;也是季度对账「新信息」栏的主要来源。",
+        exam:  "「①中国大陆客户订单被出口管制切断更严;②AI 需求超预期回落导致台积电 CapEx 下调;③本轮量测环节份额被应材/新玩家蚕食;④KLA 已在 2026-01 处于历史高位,估值均值回归可能跑赢基本面。」" },
+      { n: "5", key: "trig",    t: "触发条件",     sub: "明确/可观测/可回溯的调仓触发",
+        write: "分层写: 加仓触发 / 减仓触发 / 清仓触发。每条通过三准则测试,满分 6 分。",
+        why:   "没有事前触发,事中就靠情绪调仓。所有「感觉不对劲」都要提前压成规则。",
+        iface: "对应工具二三准则;是本模块最难写、也最容易马虎的部分。",
+        exam:  "「加仓: China 收入占比 &lt; 30% + 总订单 QoQ &gt; +15% → 加仓 30%;减仓: 台积电 2026Q2 CapEx 指引下调 &gt; 10% 或 China 收入 QoQ 下降 &gt; 25% → 减仓 50%;清仓: 台积电全年 CapEx 下调 &gt; 20% + ASML 净订单同比降。」" },
+      { n: "6", key: "watch",   t: "监测指标",     sub: "3-6 个,每个指回一张骨架卡的问句",
+        write: "写在 memo 顶部方便日常翻查。少了覆盖不了多维度,多了每周照看不过来。",
+        why:   "memo 是判断,指标是把判断挂到日常世界里的钩子。没指标,memo 写完就静态死了。",
+        iface: "15 张骨架卡的「第一反应问句」是指标的合法来源。",
+        exam:  "「①台积电季度 CapEx 指引(卡 11);②ASML 季度净订单额(卡 11);③KLA 分区域收入(卡 12);④美国商务部出口管制清单更新(模块 12);⑤陈立武每季关于 18A 良率措辞(模块 9)。」" },
+      { n: "7", key: "time",    t: "时间尺度",     sub: "结构性 / 周期性 / 事件驱动",
+        write: "显式选一种。有效期与复核节点必须写死,不能靠事后解释。",
+        why:   "混用会犯「用长期理由 justify 短期高估值」的错。时间尺度决定仓位期限决定止损宽度。",
+        iface: "对应卡 14「产业周期与股价错位」的三层时间尺度。",
+        exam:  "「周期位置判断,有效期 12-18 个月。复核节点: 每次台积电、ASML、KLA 财报(每季一次)。不是结构性判断——量测长期天花板取决于代际数量,本次判断只押未来 12-18 个月的订单放量窗口。」" },
+      { n: "8", key: "pos",     t: "仓位与止损",   sub: "证据硬度 × 家庭仓位矩阵",
+        write: "先按仓位×策略矩阵定档次,再定具体百分比。止损纪律优先于优化。",
+        why:   "判断对不代表要满仓。仓位×策略匹配是家庭资产层面的硬约束,不是单份 memo 内部决定的。",
+        iface: "Learn Plan 学习合同的家庭资产纪律:低仓位可激进,高仓位必须保守,双激进是赌博。",
+        exam:  "「家庭中位仓位 + 证据链硬度中高 + 时间尺度中期 → 可放较大仓位。止损: 清仓触发命中或股价跌破 memo 起始价 20%(arbitrary 但明确,纪律优先于优化)。」" }
+    ];
+    const grid = document.getElementById("memoGrid");
+    const detail = document.getElementById("memoDetail");
+    let active = null;
+
+    PARTS.forEach((p) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "memo-cell";
+      b.setAttribute("aria-expanded", "false");
+      b.dataset.key = p.key;
+      b.innerHTML = '<span class="n">' + p.n + '</span><span class="t">' + p.t + '</span><span class="s">' + p.sub + '</span>';
+      b.addEventListener("click", () => {
+        if (active === p.key) {
+          detail.hidden = true;
+          active = null;
+          Array.from(grid.children).forEach((c) => c.setAttribute("aria-expanded", "false"));
+          return;
+        }
+        active = p.key;
+        Array.from(grid.children).forEach((c) => c.setAttribute("aria-expanded", c.dataset.key === p.key ? "true" : "false"));
+        detail.hidden = false;
+        detail.innerHTML =
+          '<div class="memo-detail-head"><span class="memo-detail-n">' + p.n + '</span><span class="memo-detail-t">' + p.t + '</span></div>' +
+          '<dl class="memo-detail-dl">' +
+            '<dt>写什么</dt><dd>' + p.write + '</dd>' +
+            '<dt>为什么不能省</dt><dd>' + p.why + '</dd>' +
+            '<dt>与手册/骨架卡的接口</dt><dd>' + p.iface + '</dd>' +
+            '<dt>真实 memo 示例(KLA)</dt><dd>' + p.exam + '</dd>' +
+          '</dl>';
+        detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
+      grid.appendChild(b);
+    });
+  })();
+
+  /* ================================================================
+     组件 2 · 假说树可视化(A 类直观化)
+     - 主假说 → 3 条子假说 → 每条 2 个观测点
+     - 点击展开一层
+  ==================================================================== */
+  (function () {
+    const TREE = {
+      label: "主假说 · 2026 HBM/DRAM/NAND 处于供不应求早期",
+      note: "证伪路径有多条,任一子假说关键观测点翻转即部分证伪。",
+      children: [
+        {
+          label: "子假说 A · 供给端 2023 减产的账要 24-36 个月才补回",
+          note: "存储扩产以年计,减产更快、补回更慢。",
+          children: [
+            { label: "观测点 A1 · Samsung P5 巨型晶圆厂建设进度",
+              detail: "数据源: 三星季报 CapEx 段 + 行业分析(2027H1 建成、2028H2 量产)。更新频率: 季度。<b>正信号</b>: 时间表不提前 → 主假说加强。<b>反信号</b>: 三星宣布 2026 年提前量产 → 主假说部分证伪。" },
+            { label: "观测点 A2 · 三家存储厂 2024-2025 CapEx 恢复幅度",
+              detail: "数据源: 三星/SK/美光季报。更新频率: 季度。<b>正信号</b>: CapEx YoY 未显著回升(维持谨慎扩产)。<b>反信号</b>: 三家 CapEx 同时激进上调 → 供给弹性恢复,主假说部分证伪。" }
+          ]
+        },
+        {
+          label: "子假说 B · AI 需求推 HBM 结构性紧张",
+          note: "HBM 100% 长约锁定、不参与经典牛鞭,是三品类中最硬的证据。",
+          children: [
+            { label: "观测点 B1 · SK 海力士管理层长约措辞",
+              detail: "数据源: SK 每季电话会转录。更新频率: 季度。<b>正信号</b>: 「HBM 售罄」「long-term agreement」类措辞持续出现,且长约客户数量增加。<b>反信号</b>: 措辞消失或口径松动(例如 sold out → largely sold out)。" },
+            { label: "观测点 B2 · HBM3E 现货价格与合约期",
+              detail: "数据源: TrendForce 月度报告。更新频率: 月。<b>正信号</b>: 价格稳定或环比上涨(2026 涨 20% 预期)、合约期延长。<b>反信号</b>: 价格环比下跌 &gt; 5% 或合约期缩短。" }
+          ]
+        },
+        {
+          label: "子假说 C · 需求端不会突然坍塌",
+          note: "最脆弱的一条,依赖云厂 CapEx 与 AI 训练/推理需求两条线同时不出问题。",
+          children: [
+            { label: "观测点 C1 · 四大云厂 2026 CapEx 指引",
+              detail: "数据源: 微软/谷歌/亚马逊/Meta 每季电话会。更新频率: 季度。<b>正信号</b>: 指引持平或上调。<b>反信号</b>: 任两家同季环比下调 &gt; 5%——触发子假说 C 部分证伪。" },
+            { label: "观测点 C2 · AI 推理需求增速(API 调用量代理)",
+              detail: "数据源: 主要模型公司 API 调用量披露(部分)、云厂财报 AI 相关收入。更新频率: 季度到半年。<b>正信号</b>: 增速持续放大。<b>反信号</b>: 单价降但调用量增速不足以补,模型公司融资节奏放缓——间接信号,滞后。" }
+          ]
+        }
+      ]
+    };
+
+    const mount = document.getElementById("hypTree");
+
+    function makeNode(node, depth) {
+      const wrap = document.createElement("div");
+      wrap.className = "hyp-node hyp-depth-" + depth;
+
+      const head = document.createElement("button");
+      head.type = "button";
+      head.className = "hyp-head";
+      head.setAttribute("aria-expanded", depth === 0 ? "true" : "false");
+      head.innerHTML = '<span class="hyp-caret">' + (node.children ? "▸" : "•") + '</span>' +
+                       '<span class="hyp-label">' + node.label + '</span>';
+      wrap.appendChild(head);
+
+      const body = document.createElement("div");
+      body.className = "hyp-body";
+      if (depth !== 0) body.hidden = true;
+
+      if (node.note) {
+        const n = document.createElement("div");
+        n.className = "hyp-note";
+        n.textContent = node.note;
+        body.appendChild(n);
+      }
+      if (node.detail) {
+        const d = document.createElement("div");
+        d.className = "hyp-detail";
+        d.innerHTML = node.detail;
+        body.appendChild(d);
+      }
+      if (node.children) {
+        node.children.forEach((c) => body.appendChild(makeNode(c, depth + 1)));
+      }
+      wrap.appendChild(body);
+
+      head.addEventListener("click", () => {
+        const open = head.getAttribute("aria-expanded") === "true";
+        head.setAttribute("aria-expanded", open ? "false" : "true");
+        body.hidden = open;
+        const caret = head.querySelector(".hyp-caret");
+        if (node.children) caret.textContent = open ? "▸" : "▾";
+      });
+
+      /* 初始展开主假说的子假说层 */
+      if (depth === 0) {
+        head.querySelector(".hyp-caret").textContent = "▾";
+      }
+
+      return wrap;
+    }
+
+    mount.appendChild(makeNode(TREE, 0));
+  })();
+
+  /* ================================================================
+     组件 3 · 触发条件三准则测试器(B 类推理)
+     - 8 条真实/糟糕的触发条件例子,点击查看每条的三准则评分
+  ==================================================================== */
+  (function () {
+    const CASES = [
+      { label: "「基本面明显恶化时减仓」",
+        cl: 0, ob: 0, tr: 0, verdict: "0/6 · 全糟",
+        note: "「明显恶化」没锚点(明确=0);「基本面」不指代具体指标(可观测=0);事后你能把任何走势解释成「不算明显恶化」(可回溯=0)。全部返工。" },
+      { label: "「AI 需求转弱时清仓」",
+        cl: 0, ob: 0, tr: 0, verdict: "0/6 · 全糟",
+        note: "同样的问题:动词模糊、无信息源、无时间锚。「AI 需求」这个词本身也太宽——具体是 GPU 需求、HBM 需求、推理需求还是训练需求?" },
+      { label: "「市场情绪转向负面时减仓 50%」",
+        cl: 0, ob: 0, tr: 0, verdict: "0/6 · 全糟",
+        note: "有具体动作(减仓 50%)看似严谨,但「情绪转向」不可观测——你怎么知道情绪转了?看什么指标?" },
+      { label: "「SK 海力士下一季电话会 HBM 相关的『售罄』『long-term agreement』类措辞减少一半以上」",
+        cl: 2, ob: 2, tr: 1, verdict: "5/6 · 良",
+        note: "明确(有对比基线)、可观测(电话会转录公开);可回溯打 1 分因为「减少一半以上」需要事前有一个明确计数方法(措辞出现次数?段落数?)——加一句「以官方英文转录中 HBM 段落里 sold out/long-term agreement 出现次数为准」就能到 6/6。" },
+      { label: "「TrendForce 月度 DRAM 现货价格环比下跌 &gt; 5%,减仓 50%」",
+        cl: 2, ob: 2, tr: 2, verdict: "6/6 · 优",
+        note: "数字明确、TrendForce 公开可查、事后唯一可判(只有一个数据源、一个口径、一个阈值)。这就是三准则各 2 分的教科书例子。" },
+      { label: "「财报公布后 10 个交易日内股价跌超 15%,减仓 50%」",
+        cl: 2, ob: 2, tr: 2, verdict: "6/6 · 优(但要小心)",
+        note: "三准则各 2 分。<strong>但注意</strong>:这是一个价格触发,不是基本面触发——市场噪音容易命中。合理场景:短期事件驱动 memo(例如财报即时反应),而不是结构性判断。用错了地方会被市场情绪割韭菜。" },
+      { label: "「四家云厂 2026Q2 电话会中 CapEx 指引对比 Q1 环比下调 ≥ 5%,任两家满足则减仓 50%」",
+        cl: 2, ob: 2, tr: 2, verdict: "6/6 · 优",
+        note: "明确的数字(5%)、明确的时点(Q2 电话会)、明确的口径(与 Q1 指引对比)、明确的判定规则(任两家)。这就是好触发条件——把「云厂 CapEx 见顶」这个模糊直觉压成了可执行规则。" },
+      { label: "「毛利率跌破 42.7%,减仓」",
+        cl: 2, ob: 2, tr: 2, verdict: "6/6 · 满分但脆弱",
+        note: "三准则各 2 分。<strong>但过度精确</strong>:小数点后一位对财务波动过于敏感,一次会计口径调整就可能假触发。合理精度是「跌破 42%」+ 至少两个季度确认,不是数字游戏。<em>准则合格 ≠ 好触发条件</em>——还要评估稳健性。" }
+    ];
+
+    const mount = document.getElementById("triggerLab");
+
+    const pickWrap = document.createElement("div");
+    pickWrap.className = "trigger-list";
+    mount.appendChild(pickWrap);
+
+    const detail = document.createElement("div");
+    detail.className = "trigger-detail";
+    detail.hidden = true;
+    mount.appendChild(detail);
+
+    let active = -1;
+
+    CASES.forEach((c, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "trigger-item";
+      b.setAttribute("aria-expanded", "false");
+      const sum = c.cl + c.ob + c.tr;
+      const cls = sum >= 5 ? "good" : (sum >= 3 ? "mid" : "bad");
+      b.innerHTML = '<span class="trigger-score trigger-' + cls + '">' + sum + '/6</span>' +
+                    '<span class="trigger-text">' + c.label + '</span>';
+      b.addEventListener("click", () => {
+        if (active === i) {
+          detail.hidden = true;
+          active = -1;
+          Array.from(pickWrap.children).forEach((el) => el.setAttribute("aria-expanded", "false"));
+          return;
+        }
+        active = i;
+        Array.from(pickWrap.children).forEach((el, j) => el.setAttribute("aria-expanded", j === i ? "true" : "false"));
+        detail.hidden = false;
+        detail.innerHTML =
+          '<div class="trigger-scores">' +
+            '<div class="ts-item ts-' + (c.cl === 2 ? "ok" : (c.cl === 1 ? "mid" : "no")) + '"><span>明确</span><b>' + c.cl + '/2</b></div>' +
+            '<div class="ts-item ts-' + (c.ob === 2 ? "ok" : (c.ob === 1 ? "mid" : "no")) + '"><span>可观测</span><b>' + c.ob + '/2</b></div>' +
+            '<div class="ts-item ts-' + (c.tr === 2 ? "ok" : (c.tr === 1 ? "mid" : "no")) + '"><span>可回溯</span><b>' + c.tr + '/2</b></div>' +
+            '<div class="ts-verdict">' + c.verdict + '</div>' +
+          '</div>' +
+          '<div class="trigger-note">' + c.note + '</div>';
+      });
+      pickWrap.appendChild(b);
+    });
+  })();
+
+  /* ================================================================
+     决策复盘卡通用交互(照抄 m02/m04)
+  ==================================================================== */
+  document.querySelectorAll("[data-case]").forEach((box) => {
+    const reveal = box.parentElement.querySelector(".case-reveal");
+    box.querySelectorAll("[data-pick]").forEach((btn) => {
+      btn.setAttribute("aria-pressed", "false");
+      btn.addEventListener("click", () => {
+        box.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        if (reveal && reveal.hidden) reveal.hidden = false;
+      });
+    });
+  });
+});
+</script>
+
+<style>
+/* ===== 页内专属样式:memo 骨架 / 假说树 / 触发条件测试器 ===== */
+
+/* Memo 8 部分骨架 */
+.memo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+@media (max-width: 720px) {
+  .memo-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.memo-cell {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 4px; padding: 12px 12px 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  cursor: pointer; text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+  min-height: 96px;
+  font-family: inherit;
+}
+.memo-cell:hover { background: var(--surface-2); border-color: var(--muted); }
+.memo-cell[aria-expanded="true"] {
+  background: var(--primary-tint); border-color: var(--primary-2);
+}
+.memo-cell .n {
+  font-size: var(--fs-12); color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.memo-cell .t {
+  font-weight: 650; font-size: var(--fs-15); color: var(--ink);
+}
+.memo-cell .s {
+  font-size: var(--fs-12); color: var(--muted); line-height: 1.4;
+}
+.memo-detail {
+  margin-top: 10px; padding: 14px 16px;
+  background: var(--bg); border: 1px solid var(--primary-2); border-radius: 8px;
+}
+.memo-detail-head {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--line);
+}
+.memo-detail-n {
+  font-size: var(--fs-13); color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.memo-detail-t {
+  font-weight: 650; font-size: var(--fs-17); color: var(--primary);
+}
+.memo-detail-dl {
+  display: grid; grid-template-columns: 8em 1fr; gap: 6px 14px; margin: 0;
+}
+.memo-detail-dl dt {
+  font-weight: 650; font-size: var(--fs-13); color: var(--muted); padding-top: 2px;
+}
+.memo-detail-dl dd { margin: 0; font-size: var(--fs-14); line-height: 1.55; }
+@media (max-width: 600px) {
+  .memo-detail-dl { grid-template-columns: 1fr; gap: 2px 0; }
+  .memo-detail-dl dt { padding-top: 8px; }
+}
+
+/* 假说树 */
+.hyptree { margin: 10px 0 8px; }
+.hyp-node { margin: 6px 0; }
+.hyp-depth-1 { padding-left: 16px; border-left: 2px solid var(--surface-2); }
+.hyp-depth-2 { padding-left: 16px; border-left: 2px dashed var(--surface-2); margin-left: 8px; }
+.hyp-head {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 8px 10px; width: 100%; text-align: left;
+  background: transparent; border: 1px solid transparent; border-radius: 6px;
+  cursor: pointer; font-family: inherit; font-size: var(--fs-14); color: var(--ink);
+}
+.hyp-head:hover { background: var(--surface); }
+.hyp-head[aria-expanded="true"] { background: var(--surface); }
+.hyp-caret {
+  color: var(--primary); font-weight: 700; width: 12px; flex: none;
+  font-variant-numeric: tabular-nums;
+}
+.hyp-label { font-weight: 600; }
+.hyp-depth-0 > .hyp-head .hyp-label { font-size: var(--fs-15); color: var(--primary); }
+.hyp-depth-1 > .hyp-head .hyp-label { color: var(--ink); }
+.hyp-depth-2 > .hyp-head .hyp-label { font-weight: 550; color: var(--ink); }
+.hyp-body { padding: 4px 10px 4px 22px; }
+.hyp-body[hidden] { display: none; }
+.hyp-note {
+  font-size: var(--fs-13); color: var(--muted); margin: 2px 0 6px;
+  font-style: italic;
+}
+.hyp-detail {
+  font-size: var(--fs-13); line-height: 1.55; color: var(--ink);
+  padding: 8px 10px; background: var(--surface); border-radius: 6px;
+  margin: 4px 0;
+}
+.hyp-detail b { color: var(--primary); }
+
+/* 触发条件三准则测试器 */
+.trigger-lab { margin: 4px 0; }
+.trigger-list { display: grid; gap: 6px; margin: 4px 0 10px; }
+.trigger-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 10px; width: 100%; text-align: left;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  cursor: pointer; font-family: inherit; font-size: var(--fs-14); color: var(--ink);
+}
+.trigger-item:hover { background: var(--surface-2); }
+.trigger-item[aria-expanded="true"] { border-color: var(--primary-2); background: var(--primary-tint); }
+.trigger-score {
+  flex: none; font-weight: 650; font-size: var(--fs-13);
+  padding: 2px 8px; border-radius: 99px;
+  min-width: 44px; text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.trigger-good { background: var(--primary-tint); color: var(--primary); }
+.trigger-mid  { background: var(--accent-tint); color: var(--accent-ink); }
+.trigger-bad  { background: var(--danger-tint, oklch(0.94 0.03 28)); color: var(--danger-ink, oklch(0.42 0.14 28)); }
+.trigger-text { flex: 1; }
+.trigger-detail {
+  padding: 12px 14px; background: var(--bg);
+  border: 1px solid var(--primary-2); border-radius: 8px;
+  margin-top: 4px;
+}
+.trigger-scores {
+  display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 8px; margin-bottom: 10px;
+  align-items: center;
+}
+@media (max-width: 560px) {
+  .trigger-scores { grid-template-columns: repeat(3, 1fr); }
+  .ts-verdict { grid-column: 1 / -1; text-align: center; margin-top: 4px; }
+}
+.ts-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 10px; border-radius: 6px;
+  font-size: var(--fs-13);
+}
+.ts-item span { color: var(--muted); }
+.ts-item b { font-variant-numeric: tabular-nums; }
+.ts-ok  { background: var(--primary-tint); }
+.ts-ok  b { color: var(--primary); }
+.ts-mid { background: var(--accent-tint); }
+.ts-mid b { color: var(--accent-ink); }
+.ts-no  { background: var(--surface-2); }
+.ts-no  b { color: var(--muted); }
+.ts-verdict {
+  font-weight: 650; font-size: var(--fs-14); padding: 4px 10px;
+  background: var(--surface); border-radius: 6px; text-align: center;
+}
+.trigger-note {
+  font-size: var(--fs-13); line-height: 1.6; color: var(--ink);
+}
+.trigger-note b, .trigger-note strong { color: var(--primary); }
+</style>
+
+</body>
+</html>

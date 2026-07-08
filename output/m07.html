@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模块 7 · Memory / Storage 深水区</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="m07">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">模块 7 · Memory / Storage 深水区</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">第二层 · 产业结构 · 模块 7 / 14</p>
+      <h1>Memory / Storage 深水区</h1>
+      <p class="core-q"><b>核心问题：</b>为什么听到「存储缺货」就不能一锅端？HBM、DRAM、NAND、企业级 SSD、HDD 是五种生意，弄错一层，标的就找错。</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">学完这个模块，你要能独立回答（现在答不上来是正常的）</span>
+      <ul style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>看到一条「memory shortage」新闻——用三个问题把它拆成 HBM、DRAM、NAND、eSSD、HDD 中具体的哪一个（每一层给出对应的公司清单）。</li>
+        <li>SK 海力士 2024 年 5 月说「HBM 2025 差不多也卖完了」——说出这句话为什么会顺带把普通 DDR5 价格推上去；用一句话解释这是「HBM 结构性溢价」还是「DRAM 全线周期上行」。</li>
+        <li>希捷说「近线盘卖到 2027 年末」和美光签了 $100B 的 take-or-pay 战略客户协议——两者哪个是更硬的证据？为什么？</li>
+      </ul>
+    </div>
+
+    <ul class="concepts" aria-label="本模块概念清单">
+      <li>DRAM</li><li>HBM</li><li>NAND</li><li>eSSD</li><li>HDD</li><li>近线盘</li><li>checkpoint</li><li>KV cache</li><li>带宽 vs 容量</li><li>直供长约</li><li>产能挤压</li><li>mix shift</li>
+    </ul>
+
+    <div class="tabs" data-tabs>
+      <div class="tablist" role="tablist" aria-label="模块内容">
+        <button role="tab" id="tab-a" aria-controls="panel-a" aria-selected="true">本质</button>
+        <button role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false">怎么判断</button>
+        <button role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false">练习</button>
+      </div>
+
+      <!-- ==================== 本质 ==================== -->
+      <section role="tabpanel" id="panel-a" aria-labelledby="tab-a" class="prose">
+
+        <h2>1. 一片「存储」里其实有五种生意</h2>
+        <p>「存储缺货」听起来是一件事。它至少是五件事：CPU/GPU 旁边最快最贵的<strong>HBM</strong>、内存条上的<strong>普通 DRAM</strong>（服务器 DDR5、PC DRAM、手机内存都是它的分身）、固态硬盘用的<strong>NAND 闪存</strong>、其中卖给数据中心的高容量款叫<strong>企业级 SSD（eSSD）</strong>、机械硬盘 <strong>HDD</strong>。它们的物理形态、售价数量级、玩家名单全不一样——先亲眼看这四个数量级差距：</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">存储金字塔 · 越近越快越贵，越远越大越便宜</span>
+            <span class="viz-sub">看什么：从上往下容量涨百倍、单价跌百倍、带宽跌百倍——这三条腿说的是同一件事：<b>不同存储卖的不是同一样东西</b>。数值为量级，非精确报价。</span>
+          </div>
+          <div id="pyramid"></div>
+          <div class="viz-readout" id="pyramidReadout" aria-live="polite">点任一层查看典型产品、玩家、AI 场景里的位置。</div>
+        </div>
+
+        <p>四条腿撑起同一件事：<strong>存储不是按「存」卖，是按「距离 CPU/GPU 多远、多快能取到」卖</strong>。HBM 就在 GPU 旁边（几毫米，2024 年一块 HBM 模组约 $60-100/GB 数量级，DDR5 约 $5-10<span class="badge badge-verified">已核验 · Tom's Hardware 2026-06 关于「HBM 是 DDR5 三倍晶圆」的报道</span>），DDR 隔着主板电路，SSD 挂在 PCIe 通道上（每 GB 大概几十分到 $1），HDD 是转动的机械盘（每 GB 一两分钱）。</p>
+
+        <p>三段带宽的量级差最好用一个具体例子记住：一块 H100 上的 HBM 提供约 3.35 TB/s 的带宽；隔着 PCIe 到 CPU 的 DRAM 大概 63 GB/s；再到 NVMe SSD 只剩 7 GB/s——<strong>下一层比上一层慢十倍到一百倍</strong><span class="badge badge-verified">已核验 · Spheron 2026 关于 KV cache 分层的技术资料</span>。<strong>下一节的产业格局、后面练习页的每一个真实决策，都建在这张金字塔上</strong>——错把 HBM 的紧缺当 HDD 的紧缺、或反过来，直接就买错标的。</p>
+
+        <h2>2. 三家 DRAM、五家 NAND、两家 HDD——玩家名单直接决定行为</h2>
+        <p>存储的格局是先记住的：<strong>越靠近 CPU/GPU，玩家越少、绑定越紧；越远离，商品化越彻底、周期越凶</strong>。</p>
+
+        <ul>
+          <li><strong>DRAM（含 HBM）：三家寡头。</strong>2025 年第四季 TrendForce 口径下，三星 36% + SK 海力士 32.1% + 美光 22.4% ≈ 90.5%<span class="badge badge-verified">已核验 · TrendForce 4Q25 报告</span>。这三家同时也是全部三家能量产 HBM 的厂商——所以「HBM 排挤普通 DRAM 产能」的物理前提就摆在同一批晶圆厂里（第 3 节讲机制）。</li>
+          <li><strong>NAND：五家寡头。</strong>4Q25 三星 28.0% + SK 集团（含 Solidigm）22.1% + Kioxia 铠侠 + Micron 美光 + SanDisk 闪迪；三星与 SK 合计 50.1%<span class="badge badge-verified">已核验 · TrendForce 4Q25 报告</span>。<strong>SK 集团 + 美光 + 三星 = DRAM 和 NAND 全通吃</strong>——所以「memory shortage」在这三家嘴里必然是复杂多层含义。Kioxia 与 SanDisk 是 NAND 的纯玩家，且它们共用日本四日市与北上工厂产能（长期合作关系），叙事和纯 NAND 定价挂钩最紧。</li>
+          <li><strong>HDD：两家半。</strong>2025 年单位份额 Tom Coughlin 口径：西数（WDC）42.3% + 希捷（STX）40.8% + 东芝 17%<span class="badge badge-assume">估算 · Tom Coughlin/Forbes 2026-02</span>——按容量出货算，西数 47%、希捷 42%、东芝 11%。<strong>近线盘（面向数据中心的高容量盘）占 2025 年 HDD 单位出货约 67%（2024 年只有约 57%）</strong>——这层结构变化是 HDD 从 PC 时代周期股变成 AI 冷存储卡位股的关键（第 5 节讲）。</li>
+        </ul>
+
+        <p>为什么必须先记住这三张名单？因为「memory shortage」新闻的第一句话都不告诉你是哪种：<strong>看到 SK 海力士的名字，先想 HBM；看到 SanDisk、Kioxia，先想 NAND 商品化周期；看到 WDC、STX，别再往 DRAM 上套</strong>。</p>
+
+        <h2>3. HBM 的秘密不在技术，是「离场了商品市场」</h2>
+        <p>HBM 用的还是 DRAM 芯片，只不过堆起来打孔（TSV）加中介层（模块 3 讲过）。它和普通 DRAM 的<strong>根本差异不是技术，是销售路径</strong>：</p>
+
+        <ul>
+          <li><strong>直供长约：</strong>HBM 是「多年 take-or-pay 战略客户协议」制。买家（Nvidia、AMD、Google TPU 等）在<strong>产能建成前几年</strong>就锁定量和价——美光 2026 年 6 月披露单一季度签下 16 份战略客户协议、合计 $100B 最低合同收入<span class="badge badge-verified">已核验 · 美光 FY26 Q3 财报电话会备稿</span>。普通 DDR5 服务器条基本还是现货 + 三到六个月合同价，价格每季随 TrendForce 涨跌。</li>
+          <li><strong>认证周期决定寿命：</strong>每代 HBM 只服务一个 GPU 代际，商业寿命 12 个月上下（对应 Nvidia/AMD 12-18 个月的 GPU 迭代节奏）<span class="badge badge-expert">专家判断 · Silicon Analysts 关于 HBM 认证竞赛的分析</span>。<strong>没通过某代认证，那一整代就报销</strong>——2024-2025 年三星 HBM3E 在 Nvidia 面前反复受挫、直到 12-Hi HBM3E 才拿下认证；同期美光和 SK 海力士的 HBM4 已在给 Nvidia 交样<span class="badge badge-verified">已核验 · TrendForce 与 Silicon Analysts 2025-2026 报道</span>。这是「掉队瞒不住」的一个现场版本（模块 4 视角）。</li>
+          <li><strong>产能挤压：</strong>HBM 和普通 DRAM 用<strong>同一批 12 吋 DRAM 晶圆</strong>。而 HBM 每 GB 消耗晶圆产能约是 DDR5 的 3 倍<span class="badge badge-verified">已核验 · Tom's Hardware 2026-06 报道</span>——三家 DRAM 厂优先出 HBM 的直接后果，就是普通 DDR5 供给收紧。2025 年第四季 TrendForce 把常规 DRAM 涨幅从原本预期的 8-13% 上修到 18-23% QoQ；2026 年一季 PC DRAM 甚至预期环比翻倍以上<span class="badge badge-verified">已核验 · TrendForce 2026-01/02 价格展望</span>。</li>
+        </ul>
+
+        <p>三条合起来的结论：<strong>HBM 的紧缺不只是 HBM 自己的故事，它同时是普通 DRAM 全线涨价的物理原因</strong>。这也是为什么美光在 2024 年宣布 HBM 售罄时，管理层同期开始给出「全线定价权回归」的口径——那不是营销话术，是数学后果（练习页决策复盘一深挖）。</p>
+
+        <h2>4. AI 为什么会同时拉动这五种存储：三种压力落在不同层</h2>
+        <p>要看清 AI 对存储的拉动，必须区分三种物理上不一样的压力——它们分别命中金字塔的不同层：</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">AI 工作负载 → 落到金字塔哪一层</span>
+            <span class="viz-sub">看什么：三种压力不是同一件事、也落不到同一层——弄清哪种压力主导，才能猜对下一步谁涨。点每一格看机制和典型量级。</span>
+          </div>
+          <div id="workload"></div>
+          <div class="viz-readout" id="workloadReadout" aria-live="polite">点任一压力查看落在哪层、典型量级、拉动谁。</div>
+        </div>
+
+        <ul>
+          <li><strong>模型权重要在 HBM 里。</strong>推理时每个查询都要读模型参数——1750 亿参数的 GPT-3 用 BF16 存要 350 GB<span class="badge badge-verified">已核验 · 每参数 2 字节，公开推导</span>。要么塞进多张卡的 HBM 里（几十张卡拼），要么就是慢十倍的推理。所以模型越大 → HBM 需求越大 → HBM 产能越紧。</li>
+          <li><strong>KV cache 挤 HBM，溢出到 SSD。</strong>Transformer 推理时每个 token 的注意力中间结果要缓存下来，长上下文场景里这个 cache 巨大——Llama 3 70B 一个用户开 128K 上下文，KV cache 就要 40 GB，占掉 H100 一半 HBM<span class="badge badge-verified">已核验 · Spheron 2026 技术资料</span>。工业界正在把冷 KV 块下沉到 NVMe SSD，7 GB/s 的读取比重算便宜——所以推理规模的爆发直接拉动 <strong>eSSD</strong>（服务器 SSD）的需求，不只是 HBM。</li>
+          <li><strong>Checkpoint 拉 eSSD 和大容量 HDD。</strong>训练大模型每隔几小时要把当前的全部参数和优化器状态写到盘上——每参数约 10 字节，1750 亿参数的 checkpoint 约 2.3 TB<span class="badge badge-verified">已核验 · VAST Data 关于 checkpoint 优化的技术文章</span>。一次训练要写几百次 checkpoint；行业里靠 4-8 块 NVMe SSD 并行写 50-200 GB/s。老 checkpoint、训练完的数据集、日志——这些从热盘迁到近线盘（企业级大容量 HDD），就是希捷、西数近两年「AI 冷存储」故事的物理基础（第 5 节）。</li>
+        </ul>
+
+        <p>把这三种压力对号入座就能回答本页第一道验收题：<strong>不同压力主导时，涨得最狠的存储不是同一种</strong>——训练规模主导时看 HBM + checkpoint 用的 eSSD；推理规模主导时看 eSSD + KV cache 下沉；数据集与模型副本膨胀时看近线 HDD。模块 6 的十层传导链把这套压力放到更大的 AI infra 地图上。</p>
+
+        <h2>5. NAND / HDD：企业闪存与冷存储的分工，AI 时代重新定义</h2>
+        <p>NAND 和 HDD 的分工靠<strong>「热与冷」</strong>——访问越频繁的数据用 SSD（快、每 GB 贵），越少访问的用 HDD（慢、每 GB 便宜）。AI 时代对两边的拉动方式完全不同。</p>
+
+        <p><strong>NAND 端：企业级 SSD（eSSD）是 mix shift 的故事。</strong>普通 NAND 依然是消费品：手机、U 盘、消费级 SSD，价格随周期涨跌。eSSD 是同样的 NAND 芯片、更高的接口速度、更严格的耐久性和 QLC 高密度封装。数据中心 SSD 需求爆发把整个 NAND 行业的产品结构往贵的那头推：</p>
+        <ul>
+          <li>Solidigm（SK 集团旗下）的 D5-P5336 122 TB QLC 单盘在 2025 上半年出货<span class="badge badge-verified">已核验 · Solidigm 官方 2024-11 公告与 ServeTheHome 报道</span>——单盘容量相当于早年一整个中小型企业机柜；三星宣布对标的 128 TB 型号<span class="badge badge-verified">已核验</span>。</li>
+          <li>SanDisk（2025 年 2 月 21 日刚从西数分拆独立上市 SNDK）在 FY26 Q3（对应 2026 年上半年）数据中心业务季度环比 +233%，企业 SSD 收入同比 7 倍，占总收入 25%<span class="badge badge-verified">已核验 · SanDisk FY26 Q3 财报电话会</span>——从消费类闪存公司到 AI 数据中心供应商的身份转变，只用了一年多。</li>
+          <li>TrendForce 口径：3Q25 前五大品牌 eSSD 合并收入 $6.54 B、环比 +28%<span class="badge badge-verified">已核验 · TrendForce 3Q25 eSSD 报告</span>——同期普通 NAND 涨幅温和很多，这就是 <strong>mix shift 的利润弹性</strong>：出货结构变贵，比涨价更持续。</li>
+        </ul>
+
+        <p><strong>HDD 端：不是被 SSD 淘汰，而是被 AI 挪到了「近线冷存储」的位置。</strong>AI 训练数据、模型副本、老 checkpoint、视频语音等原始素材、监管留存数据——每 TB $0.02 数量级的 HDD 是唯一能兜住这些体量的东西。行业结构：</p>
+        <ul>
+          <li>近线盘（nearline，14 TB 以上、面向数据中心的高容量款）占 2025 年 HDD 单位出货 67%（2024 年 57%）<span class="badge badge-assume">估算 · Tom Coughlin/Forbes 2026-02</span>；</li>
+          <li>希捷 2026 年 4 月 Q3 财报（Q3 FY26）：数据中心收入 $2.5 B、同比 +55%；CEO Mosley 表态「近线 HDD 产能已卖到 2027 年末」<span class="badge badge-verified">已核验 · Seagate FY26 Q3 财报与后续报道</span>；HAMR 技术的 Mozaic 4 平台 2026 年 3 月开始出货；</li>
+          <li>西数（HDD 主业已从 SanDisk 剥离）Q2 FY26 CEO Irving Tan 表示 2026 全年产能对前七大客户售罄，长期协议延伸到 2028 年<span class="badge badge-verified">已核验 · Western Digital FY26 Q2 财报</span>；HDD 收入中 89% 来自超大规模云厂商 AI 应用<span class="badge badge-verified">已核验</span>。</li>
+        </ul>
+
+        <p><strong>NAND 和 HDD 之间不是替代关系</strong>：eSSD 抢的是原来「温热」中间态数据的份额，HDD 拿的是最深处的冷备份。二者同时受益于 AI，但机制不同——<strong>NAND 是 mix shift + 涨价，HDD 是 sold-out + 长约</strong>（练习页迁移题二会做区分）。</p>
+
+        <h2>6. 2023 减产到 2026 紧缺：完整周期作为本页的时序底</h2>
+        <p>这个行业的教科书级周期还没走完。把已核验的时间线摆一遍：</p>
+
+        <ul>
+          <li><strong>2023 年一季：全行业深度亏损。</strong>三星单季营业利润从上年同期 14.12 万亿韩元跳崖到 6,400 亿韩元（-96%），半导体分部亏损 4.58 万亿韩元；4 月 7 日三星官方宣布「meaningful level」减产，正式加入 SK 海力士、美光的减产阵营<span class="badge badge-verified">已核验 · 三星官方公告 2023-04-07 与 CNBC 报道</span>。这是模块 4 讲「过剩时厂商拖到深度亏损才砍产量」的最新一次现场。</li>
+          <li><strong>2024 上半年：合同层信号先亮。</strong>美光 CEO Mehrotra 电话会：「HBM 2024 已售罄、2025 供应绝大部分已分配」<span class="badge badge-verified">已核验 · Tom's Hardware 2024 报道，来源见模块 3</span>；5 月 SK 海力士 CEO Kwak Noh-jung：「HBM 2024 已售罄、2025 也差不多售罄」<span class="badge badge-verified">已核验 · Korea Herald 2024-05-02</span>。</li>
+          <li><strong>2024-2025 年：AI 需求穿越了整个存储金字塔。</strong>DRAM、NAND 库存周期先由 HBM 拉动，再由 eSSD 和近线 HDD 接棒；2025 年 2 月 21 日 SanDisk 从西数正式分拆，代码 SNDK 独立上市——这本身就是市场结构的信号（练习页决策复盘二）。</li>
+          <li><strong>2025 下半年至今：价格全线上行、多年产能被锁死。</strong>TrendForce 4Q25 常规 DRAM 涨幅上修到 +18-23% QoQ；1Q26 常规 DRAM 上修到 +90-95% QoQ、PC DRAM 单季 +100%<span class="badge badge-verified">已核验 · TrendForce 2026-01/02 报告</span>。SK 海力士 3Q25 财报显示 HBM/DRAM/NAND 2026 产能全部售罄、季度营业利润率 47%<span class="badge badge-verified">已核验 · SK 海力士 3Q25 财报</span>；美光 FY26 Q3 签下总额 $100B 的 16 份多年 take-or-pay 战略客户协议、CEO 表示 medium term 只能满足客户需求的 50-2/3<span class="badge badge-verified">已核验 · 美光 FY26 Q3 财报</span>。</li>
+        </ul>
+
+        <p>2023 深度亏损时被砍掉的产能没在需求回来时立刻长回来（卡 1 的物理底座：产能刹车也慢）；这一次的产能刹车叠加 AI 三种压力同时压过来——<strong>紧缺不是一个季度的现象，是三年 sold-out 合同层证据支撑的一段时间</strong>。这是模块 10 讲「周期位置」的下一站。</p>
+
+        <div class="note">
+          <span class="note-label">不要学太深</span>
+          <p>不需要学存储芯片的电路、不需要背 3D NAND 层数排列、不需要记每家的产品代号。要带走的是五个能生成判断的模型：<strong>存储不是一种东西，先分五层</strong>、<strong>越近 CPU/GPU 玩家越少、越远越商品化</strong>、<strong>HBM 直供长约是格局本身，不是产品差异</strong>、<strong>AI 三种压力（模型权重、KV cache、checkpoint）分别命中不同层</strong>、<strong>NAND 玩 mix shift、HDD 卖多年 sold-out</strong>。</p>
+        </div>
+      </section>
+
+      <!-- ==================== 怎么判断 ==================== -->
+      <section role="tabpanel" id="panel-b" aria-labelledby="tab-b" class="prose" hidden>
+
+        <p style="font-size:var(--fs-15);color:var(--muted)">这一页只交付三件真实存在的工具。每件都按同一结构给齐：<strong>来源 → 机制 → 案例 → 操作 → 失效</strong>。找不到出处、无法用真实案例验证的「规则」，不会出现在这里。</p>
+
+        <h2>工具一：听到「memory shortage」，先分层</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>财报电话会和一线记者的措辞传统：管理层区分 HBM、standard DRAM、NAND、enterprise SSD、nearline HDD 是过去十年就存在的行业口径；把这套口径变成「必须先分层再判断」的读者纪律，是买方研究员长期做法<span class="badge badge-expert">专家判断 · 通行的买方研究纪律</span>。本页金字塔（本质页第 1 节）与三张玩家名单（第 2 节）就是分层依据。</div></div>
+          <div class="chain-row"><b>机制</b><div>五种存储的<strong>玩家、销售路径、价格结构、周期节奏</strong>都不同（本质页第 3、5 节推过）。把不同层的紧缺当同一件事，等于把 SK 海力士和西数放到同一张估值表里——这是把物理不一样的资产强行等价。</div></div>
+          <div class="chain-row"><b>案例</b><div>2024 年 5 月 SK 海力士 CEO 说「HBM 2025 差不多也卖完了」，同一天媒体以「memory shortage」为题的转述里，混着两类完全不同的机会：一类是 HBM 直接受益（SK 海力士本身、美光的 HBM 收入线）；另一类是被 HBM 产能挤出去的普通 DRAM 全线涨价——受益者相似但机制不同（练习页复盘一完整拆解）。同一年秋天媒体又把「memory shortage」标题贴到希捷、西数的近线 HDD 报道上，但这层的机制是训练数据/checkpoint 体量爆炸，玩家、合同结构、周期长短都不一样。<strong>标题一样，标的完全不同</strong>。</div></div>
+          <div class="chain-row"><b>操作</b><div>下面是<strong>由本页机制推导</strong>的分层器：见到「memory shortage / storage shortage」新闻时，按此顺序拆。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①三家 DRAM 大厂（三星/SK/美光）同时也是 NAND 大厂，其电话会里的「memory」通常是复合口径，必须看分部数据拆开；②「shortage」是流量词，媒体常混用——真正的合同层信号是「sold out until 20XX」「XX 年产能已分配」「多年 take-or-pay 协议」这种具体措辞（工具二）；③本工具是分层不是估值——分对了层，还要过模块 10 的周期位置和模块 11 的估值筛。</div></div>
+        </div>
+
+        <div class="ctl-panel" style="margin-top:12px">
+          <div class="ctl" style="grid-template-columns:11em 1fr">
+            <label>选一条新闻里的关键词</label>
+            <div class="viz-foot" style="margin:0;flex-wrap:wrap">
+              <button class="btn btn-ghost" type="button" data-shortage="hbm">HBM / GPU 内存</button>
+              <button class="btn btn-ghost" type="button" data-shortage="dram">DDR / 服务器内存条 / PC 内存涨价</button>
+              <button class="btn btn-ghost" type="button" data-shortage="nand">SSD / NAND 涨价</button>
+              <button class="btn btn-ghost" type="button" data-shortage="essd">数据中心 SSD / eSSD / QLC</button>
+              <button class="btn btn-ghost" type="button" data-shortage="hdd">硬盘 / 近线盘 / nearline / 冷存储</button>
+            </div>
+          </div>
+          <div class="viz-readout" id="shortageOut" aria-live="polite">点上面任一关键词，看它指向金字塔哪一层、涉及哪些公司、下一步该问什么。</div>
+        </div>
+
+        <h2>工具二：合同层证据（sold out / take-or-pay）领先报表证据</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>厂商在财报电话会与业绩材料里披露长期协议、预付款、产能分配状态——这是<strong>合同层</strong>的公开可查信息，比同期的收入/利润/库存报表<strong>提前两到八个季度</strong>反映需求。范例句式（都是原话或近原话）：SK 海力士 CEO Kwak Noh-jung 2024-05-02：「HBM 2024 已售罄、2025 也差不多售罄」<span class="badge badge-verified">已核验 · Korea Herald</span>；美光 FY26 Q3（2026-06 发布）：16 份 take-or-pay 战略客户协议、合同最低收入约 $1000 亿<span class="badge badge-verified">已核验 · 电话会备稿</span>；希捷 CEO Mosley 2026 年上半年：「近线 HDD 产能销售到 2027 年末」<span class="badge badge-verified">已核验</span>；西数 CEO Irving Tan：2026 全年 HDD 产能已被前七大客户全部拿下、长约延至 2028<span class="badge badge-verified">已核验</span>。</div></div>
+          <div class="chain-row"><b>机制</b><div>存储扩产同样受卡 1「供给慢」的物理约束（DRAM 12 吋晶圆 24-36 个月）。缺口出现时，客户会主动向供应商付出「预付款 + 多年 take-or-pay 承诺」来锁定份额——所以合同层信号是订单端的、比收入更早，且比「宣布投资」硬，因为它写在正式合同里、违约有代价。这套逻辑和模块 2 讲的「设备订单领先芯片收入」是同一个物理机制的不同表现层。</div></div>
+          <div class="chain-row"><b>案例</b><div>美光 2024 年首次说「HBM 售罄」时收入还几乎从零起步；FY25 Q2（2025 年上半年）HBM 单季首破 10 亿美元，Q4 约 20 亿、年化近 80 亿；HBM 加高容量内存条组合全年收入 100 亿美元、五倍于上年<span class="badge badge-verified">已核验 · 美光 FY25 Q2/Q4 电话会</span>。这就是「合同预告 → 收入坐实」的完整时间线，来源已在模块 3 里给过。同一逻辑在 HDD 上的现场：希捷 2026 年上半年的电话会宣布产能卖到 2027 年末时，季度数据中心收入还在 55% 同比增长通道里——先卖完盘、再兑现毛利率上行（HAMR Mozaic 4 单位成本更低）；西数已把 89% 收入押在 hyperscaler 一个客户群上，杠杆两面性都被这条合同结构放大。</div></div>
+          <div class="chain-row"><b>操作</b><div>合同层信号免费公开：财报电话会转录（公司 IR 页或 Seeking Alpha 等转录站）；关键词 sold out、fully allocated、multi-year take-or-pay、purchase commitment、long-term agreement (LTA)。<strong>由机制推导的翻译表</strong>（读到左边这句 → 翻译成右边这层含义）：<br>「XX 年产能已售罄」= 合同侧确认，收入端要看爬坡；<br>「take-or-pay 协议」= 客户必须为承诺量付钱，砍单成本比普通订单高一档；<br>「预付款」= 客户已经把钱压在你产能上；<br>「产能已分配 (allocated)」= 中间偏软的措辞——分配 ≠ 售罄，未来客户还有议价空间。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①「售罄」的口径含糊：可能是「所有意向订单加起来 = 产能」，也可能是「合同下已锁量 = 产能」，两者硬度差一档，必须对照资产负债表上的合同负债/客户预付款项目验证；②多年长约在<strong>下行期</strong>会被重谈，客户可以行使各种条款延后、拆单、走仲裁——不要把长约当成不可动的岩石（模块 4 里存储战争的历史反复上演）；③「sold out」有时是叙事需要的营销措辞——真硬的证据是合同层数字被后续两三个季度的收入曲线一格一格坐实（美光 FY25 那条曲线就是范本）。</div></div>
+        </div>
+
+        <h2>工具三：产品结构 mix 才是利润的日历</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>存储厂财报里的分产品线收入拆解：HBM 占 DRAM 收入的比例、eSSD 占 NAND 收入的比例、近线盘占 HDD 单位/容量出货的比例——这些拆分数据都在公司业绩公告和 TrendForce 季度报告里公开。管理层电话会也会主动说这些比例，因为它们是买方投资者最爱问的数字<span class="badge badge-expert">专家判断 · 通行的买方跟踪法</span>。</div></div>
+          <div class="chain-row"><b>机制</b><div>存储是<strong>固定成本主导</strong>的生意（卡 2、模块 2 讲的经营杠杆同一回事）。同样一片 12 吋 DRAM 晶圆，做 HBM 卖 $60-100/GB、做 DDR5 卖 $5-10/GB——涨价周期里两者都涨，但 mix 往贵的那头挪一挪，毛利率涨得比出货量还快。这就是为什么第 5 节说「mix shift + 涨价 = 存储厂利润弹性的两个引擎」。</div></div>
+          <div class="chain-row"><b>案例</b><div>美光 FY25：HBM 加高容量内存条组合全年 $100 亿、五倍于上年<span class="badge badge-verified">已核验 · 模块 3 已用来源</span>——同期 DRAM 出货位数并没有五倍。TrendForce 3Q25 eSSD 数据：前五大品牌合并收入 $6.54 B、环比 +28%<span class="badge badge-verified">已核验 · TrendForce 2025-12 报告</span>——同期整体 NAND 涨幅温和很多，弹性来自 eSSD 占比抬升。SanDisk 从西数分拆时收入约 $70 亿量级；一年后 FY26 Q3 单季收入 $59.5 亿、企业级 SSD 收入同比 7 倍<span class="badge badge-verified">已核验 · SanDisk 财报</span>——分拆本身就在等这个 mix shift 的兑现窗口（练习页复盘二）。</div></div>
+          <div class="chain-row"><b>操作</b><div>把每个存储标的的收入拆成两栏：<strong>结构性 mix（HBM/eSSD/近线）</strong> 与 <strong>商品化 mix（PC DRAM/消费 NAND/桌面 HDD）</strong>。前者往上走 → 毛利率往上走；前者停滞 → 就算涨价也很难持续溢价。三张对照：<br>DRAM 厂看 HBM 占 DRAM 收入比（美光 2025 已到 20-30% 量级<span class="badge badge-assume">估算</span>、SK 海力士 HBM 全球市占约 56%<span class="badge badge-verified">已核验 · 2026 报道</span>）；<br>NAND 厂看 eSSD/数据中心业务占比（SanDisk 25%<span class="badge badge-verified">已核验</span>）；<br>HDD 厂看近线容量占比（近线容量份额已超 68%<span class="badge badge-assume">估算 · Coughlin 口径</span>）。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①mix shift 的极限：结构性产品占比接近饱和后，弹性衰减，得靠涨价单腿走路；②商品化那头是<strong>负担</strong>而不是纯多余——它对应巨大的资本开支和折旧，不能忽略；③管理层报的 mix 数字口径可能季度调整（「数据中心 SSD」定义是否含消费级 QLC 等），跨季度比较前先确认口径没变。</div></div>
+        </div>
+
+        <h2>操作清单：判断一个存储标的</h2>
+        <p style="font-size:var(--fs-14);color:var(--muted)">以下每一项都由本页机制直接推导，括号内注明依据——它们不是独立的外部工具，是三件工具的落地检查位。</p>
+        <ul class="checklist">
+          <li><label><input type="checkbox"><span><b>它在金字塔哪一层——HBM / 普通 DRAM / NAND / eSSD / HDD？</b>（依据：工具一——层错了，一切都错）</span></label></li>
+          <li><label><input type="checkbox"><span><b>它靠什么模式卖：直供长约 / 现货合同 / 商品市场？</b>（依据：本质页第 3 节——HBM 与 DDR5 卖的路径不同，周期节奏就不同）</span></label></li>
+          <li><label><input type="checkbox"><span><b>合同层证据摆在哪：sold-out 到哪年 / take-or-pay 金额 / 长约客户数？</b>（依据：工具二——合同硬度先于收入兑现）</span></label></li>
+          <li><label><input type="checkbox"><span><b>结构性 mix 比例是多少、还在往上走吗？</b>（依据:工具三——mix shift 是毛利率的第二条腿）</span></label></li>
+          <li><label><input type="checkbox"><span><b>它对应哪一类 AI 压力：模型权重 / KV cache / checkpoint / 冷存储？</b>（依据：本质页第 4 节——不同压力涨得不同）</span></label></li>
+          <li><label><input type="checkbox"><span><b>下行来临时最先松动的合同结构在哪里？</b>（依据：工具二失效①、卡 1 的减产也慢——问最坏情况，才知道最好情况有多值钱）</span></label></li>
+        </ul>
+      </section>
+
+      <!-- ==================== 练习 ==================== -->
+      <section role="tabpanel" id="panel-c" aria-labelledby="tab-c" class="prose" hidden>
+
+        <h2>决策复盘一 · 2024 年 5 月 2 日：SK 海力士 CEO 说 HBM 2025 也差不多卖完了</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2024-05-02 · 事件已核验</p>
+          <h4>当天你看到的信息：韩国先驱报头条——SK 海力士 CEO Kwak Noh-jung 在新闻发布会上表示，「HBM 2024 已经全部售罄，2025 供应也差不多售罄」。SK 海力士当日股价与 AI 存储板块整体上涨。<span class="badge badge-verified">已核验 · Korea Herald 2024-05-02</span></h4>
+          <p class="case-note">这一天你会怎么动？先选，再看拆解。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>买 SK 海力士</button>
+            <button type="button" data-pick>等回调再考虑</button>
+            <button type="button" data-pick>沿本页机制找更早未被定价的环节</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>第一层</b><div>SK 海力士本身直接受益（HBM 卡位）——但发布当天股价已跳，短期定价效率高，超额认知空间被压缩到「爬坡兑现 / mix shift 兑现」这一层（模块 2 工具三 + 本页工具三）。</div></div>
+              <div class="chain-row"><b>第二层：产能挤压推理</b><div>HBM 和 DDR5 用同一批 12 吋 DRAM 晶圆，HBM 每 GB 消耗产能是 DDR5 的约 3 倍<span class="badge badge-verified">已核验</span>。三家 DRAM 厂优先出 HBM → 普通 DDR5 供给收紧 → 全线定价权回归。这一层在当天新闻标题里没写；后续 TrendForce 4Q25/1Q26 数据把 conventional DRAM 涨幅从原本预期 8-13% 上修到 18-23%，1Q26 甚至 +90-95% QoQ<span class="badge badge-verified">已核验 · TrendForce 2026-01/02</span>——机制的物理后果被市场用一年多消化。</div></div>
+              <div class="chain-row"><b>第三层：合同层证据延伸</b><div>2026 年 6 月美光 FY26 Q3 披露一个季度签下 16 份 take-or-pay 战略客户协议、总额 $100B、CEO 说 medium term 只能满足客户需求的 50-2/3<span class="badge badge-verified">已核验</span>——不是「HBM 售罄一件事」，是「整个 DRAM/HBM 产能被多年锁死」。周期位置从「上行早段」滑到「合同已锁定、后面看兑现」的阶段（模块 10 视角）。</div></div>
+              <div class="chain-row"><b>第四层：结构性 mix 加速</b><div>SK 海力士 3Q25 财报显示 HBM 单一产品线支撑了公司季度营业利润率 47%、季度营业利润史上首次破 10 万亿韩元<span class="badge badge-verified">已核验</span>——mix shift 兑现在毛利率里，不是虚话。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>这个推理给出的是「机制会兑现」的路径，不是「哪只股一年翻倍」的许诺。SK 海力士当日就跳，之后的走势和 mix shift 兑现节奏、Nvidia GB200/GB300 需求实际到位速度、美光/三星的追赶都相关——判断对了机制，还要靠模块 10-11 的周期位置和估值功课决定买不买、买多少。这也是本页第一道验收题的完整推理路径。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>决策复盘二 · 2025 年 2 月 21 日：SanDisk 从西数分拆独立上市</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2025-02-21 · 事件已核验</p>
+          <h4>当天你看到的信息：Western Digital 完成 SanDisk 分拆的分配 (2025-02-21)，SanDisk 3 天后以代码 SNDK 在纳斯达克独立上市；WDC 保留 19.9% 股份，不再合并 SNDK 报表。分拆前 WDC 是「HDD + NAND」双业务；分拆后 WDC 只做 HDD、SanDisk 只做 NAND / eSSD。<span class="badge badge-verified">已核验 · SEC 8-K 与 Western Digital 官方公告</span></h4>
+          <p class="case-note">两只新股都在你面前，你会怎么选？先选一个动作，再看拆解。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>都不动，先观察一个财报季</button>
+            <button type="button" data-pick>倾向 WDC（HDD 稀缺资产）</button>
+            <button type="button" data-pick>倾向 SNDK（NAND / eSSD 上行早段）</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>层位判断</b><div>WDC = HDD 双寡头之一，AI 冷存储卡位；SNDK = NAND 五强之一，AI 数据中心 SSD 卡位。两者都在 AI 受益路径上，但机制不同——WDC 走本页工具二（合同层：多年 sold out），SNDK 走本页工具三（mix shift：数据中心占比抬升）。层位不同，估值方式和验证信号完全不同。</div></div>
+              <div class="chain-row"><b>为什么此时分拆</b><div>存储厂管理层押注：市场对「HDD + NAND」混合估值给的折价大于两个纯业务合并的估值——只要 AI 拉动两条线各自上行，分拆后估值都能重估。这个押注只有在两条线机制不同、且都在上行时才成立。管理层的动作本身就是本页工具三「mix shift」的极端形式：把公司的产品结构一次性重构。</div></div>
+              <div class="chain-row"><b>后来的事实（用来对照，不用来后验交易）</b><div>SNDK 一年后（FY26 Q3，对应 2026 年上半年）：单季收入 $59.5B<span class="badge badge-assume">数字量级见财报，具体口径以公司公告为准</span>、数据中心业务季度环比 +233%、企业级 SSD 收入同比 7 倍、占比 25%<span class="badge badge-verified">已核验 · SanDisk 财报</span>。WDC FY26 Q2 电话会：2026 全年 HDD 产能对前七大客户售罄、长约延伸到 2028；89% 收入来自 hyperscaler AI 应用<span class="badge badge-verified">已核验</span>。两条线的 AI 卡位都兑现，但兑现的机制刚好和本页工具二/工具三对应。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>「后来兑现」是事后回看——判断当天你无法知道兑现节奏、也无法知道哪个先跳。这个案例真正训练的能力，是<strong>把一个「资产重组」新闻拆成两个不同层位的独立标的</strong>，而不是继续用「合并 WDC」的旧框架看。至于选 WDC 还是 SNDK 还是都不选，属于模块 10-11 的仓位与估值功课；本模块只保证你分得清它们卖的不是同一样东西。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>迁移题（模块里没有现成答案，用机制自己推）</h2>
+
+        <article class="scenario">
+          <h4>迁移一 · 一条新闻只说「memory shortage」，你怎么用三个问题分层</h4>
+          <p>你看到一条科技媒体新闻，标题是「Memory shortage worsens, prices surge across the board」。全文提到三星、SK 海力士、美光、TrendForce 价格数据。列出你会问的三个问题、每问对应到金字塔哪一层、以及每层可以从哪个公开源找答案。</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr1" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr1">
+            <div class="chain">
+              <div class="chain-row"><b>问一</b><div><strong>「涨的是哪种 DRAM——HBM、服务器 DDR5、PC DRAM、手机 LPDDR？」</strong>——四者机制完全不同：HBM 是直供长约、DDR5 服务器是产能挤压、PC 是被 HBM 抢产能的边角料、手机是消费周期。查 TrendForce 产品线价格分部（免费的月/季度报告标题就写 conventional DRAM、mobile DRAM、DDR4/DDR5）。</div></div>
+              <div class="chain-row"><b>问二</b><div><strong>「合同层证据说什么——sold out 到哪年、take-or-pay 有多少？」</strong>——纯涨价可能只是季度现象，合同层信号才是多年 sold-out 的锚。查三家电话会转录中 sold out、fully allocated、long-term agreement 关键词及资产负债表合同负债项目。</div></div>
+              <div class="chain-row"><b>问三</b><div><strong>「NAND 那半边动了没？」</strong>——如果只有 DRAM 动、NAND 不动，那是 HBM 挤压故事；如果 NAND 也在涨，还要问 eSSD 和消费 NAND 谁涨得凶（eSSD 是 mix shift、消费 NAND 是纯周期）。查 TrendForce NAND 价格与 3Q25/4Q25 前五大 eSSD 品牌收入。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>三个问题里最容易蒙混过关的是问二——「产能已分配」（allocated）在很多口径里不等于「已售罄」（sold out），有些新闻和管理层措辞会用软一档的表达；不要把 allocated 直接翻译成 sold-out 硬信号。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario">
+          <h4>迁移二 · 希捷说「近线盘卖到 2027 年末」和美光签下 $100B take-or-pay——哪个是更硬的证据？</h4>
+          <p>两件事都在 2026 年上半年发生，都属于本页工具二里的合同层证据。用本页机制推理：哪一个更硬？为什么？两件事所处金字塔层位不同，还额外意味着什么？</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr2" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr2">
+            <div class="chain">
+              <div class="chain-row"><b>硬度对比</b><div>美光 $100B 是<strong>写在合同里的 take-or-pay 最低金额</strong>，违约有明确对价——这是合同层硬信号的最强形态；希捷「卖到 2027 年末」通常是订单积压（backlog）意义上的说法，需要查希捷电话会里的原始措辞及 IR 提供的 backlog 具体数字口径才能判断硬度。所以起手上看，<strong>美光的信号硬度更高</strong>。</div></div>
+              <div class="chain-row"><b>层位差别</b><div>美光是 HBM/DRAM 层，希捷是 HDD 冷存储层。两者对应的 AI 压力不同——美光对应「模型权重 + KV cache 挤 HBM」，希捷对应「训练数据 + 老 checkpoint + 模型副本挤近线盘」。两条线在 AI 需求爆发时是并列受益、不是相互替代（本质页第 4 节）。</div></div>
+              <div class="chain-row"><b>推论</b><div>看到两条一起出现，说明 AI 的<strong>三种存储压力已经同时穿透了金字塔</strong>——不再只是 HBM 一层的事。这是模块 10 讲「周期位置」时的关键区分：一层紧缺可能是子周期、五层同时紧缺是结构性阶梯。到这一步，问题就从「哪家便宜」变成「多年紧缺定价了多少 %」——这是模块 11 的功课。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>合同金额大 ≠ 净利润必然大：$100B 是 minimum revenue，不是利润；不同产品的毛利率和爬坡节奏差别巨大。硬度只是「兑现概率」这一维，弹性和估值还要另算。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <h2>自测（算得出来才算会）</h2>
+
+        <div class="quiz" data-quiz data-explain="每参数约 10 字节（BF16 模型 2 字节 + 优化器状态 8 字节）。1750 亿参数 × 10 字节 = 1.75 万亿字节 ≈ 1.75 TB；含少量额外元数据后约 2.3 TB。这就是 checkpoint 拉动 eSSD 与近线 HDD 的物理根源。">
+          <p class="quiz-q">1. 训练一个 1750 亿参数的大模型，一次 checkpoint 大约要多少存储？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q1"><span>约 350 MB（每参数 2 字节）</span></label>
+            <label><input type="radio" name="q1"><span>约 350 GB（每参数 2 字节）</span></label>
+            <label><input type="radio" name="q1" data-correct="1"><span>约 2.3 TB（每参数约 10 字节，含优化器状态）</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="HBM 和普通 DRAM 用同一批 12 吋 DRAM 晶圆，HBM 每 GB 消耗晶圆产能约是 DDR5 的 3 倍（Tom's Hardware 2026-06）。三家 DRAM 大厂优先出 HBM，普通 DDR5 就被挤出去——这是 2025-2026 年常规 DRAM 全线涨价的物理原因，不是市场恐慌。">
+          <p class="quiz-q">2. SK 海力士说 HBM 2025 卖光了，为什么普通 DDR5 也跟着涨价？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q2"><span>因为 HBM 和 DDR5 是同一种产品，只是名字不同</span></label>
+            <label><input type="radio" name="q2" data-correct="1"><span>因为它们用同一批 DRAM 晶圆，HBM 优先意味着 DDR5 供给被挤压</span></label>
+            <label><input type="radio" name="q2"><span>因为 SK 海力士抬价，其他公司跟随</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="Take-or-pay 是「不拿货也要付钱」的合同，客户违约成本明确，是合同层证据里硬度最高的一档；「售罄到某年」通常是订单积压（backlog）意义上的说法，硬度取决于是否也是 take-or-pay。「产能已分配」（allocated）中间偏软，客户还有议价空间；「宣布投资 XX 亿」只是资本开支意向，最软。">
+          <p class="quiz-q">3. 下列哪种措辞是合同层证据里最硬的一档？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q3"><span>「产能已分配 (allocated) 完毕」</span></label>
+            <label><input type="radio" name="q3"><span>「宣布投资 100 亿美元扩产」</span></label>
+            <label><input type="radio" name="q3" data-correct="1"><span>「已签订 take-or-pay 多年战略客户协议」</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="HBM 由 GPU 厂客户和三家 DRAM 大厂直供长约签订，2024-2025 年就已多年 sold out——现货市场几乎不存在。DDR5 服务器条、eSSD、近线 HDD 都还有可交易的现货市场或短期合同价。所以想「买点 HBM 现货」的正常渠道不存在——这也是 HBM 的定价权来源之一。">
+          <p class="quiz-q">4. 哪一层的存储几乎不存在真正的现货市场？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q4"><span>PC 桌面 DDR5</span></label>
+            <label><input type="radio" name="q4" data-correct="1"><span>HBM</span></label>
+            <label><input type="radio" name="q4"><span>近线 HDD</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="note">
+          <span class="note-label">本模块要带走的 memo 能力</span>
+          <p>对任何一个存储标的，你现在应该能：把它精确放到金字塔哪一层（HBM / 普通 DRAM / NAND / eSSD / HDD）、说出它的销售路径（直供长约 / 现货 / 商品），列出它对应的 AI 压力（模型权重 / KV cache / checkpoint / 冷存储）、给出它最强的合同层证据类型、以及 mix shift 上到什么位置。写不出来其中任何一项，回到对应小节重学。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="src">
+      <strong>本页资料来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.trendforce.com/presscenter/news/20260226-12937.html">TrendForce：4Q25 DRAM 收入 QoQ +29.4%、三星 36% / SK 海力士 32.1% / 美光 22.4%（2026-02-26）</a> · <a href="https://www.trendforce.com/presscenter/news/20260303-12943.html">TrendForce：4Q25 前五大 NAND 收入 QoQ +23.8%、三星 28% / SK 海力士 22.1%（2026-03-03）</a></li>
+        <li><a href="https://www.trendforce.com/presscenter/news/20251203-12813.html">TrendForce：3Q25 NAND 份额、Kioxia QoQ +33.1%（2025-12-03）</a> · <a href="https://www.trendforce.com/presscenter/news/20251205-12819.html">TrendForce：3Q25 eSSD 前五大合并收入 $6.54B、QoQ +28%（2025-12-05）</a></li>
+        <li><a href="https://www.trendforce.com/presscenter/news/20260202-12911.html">TrendForce：1Q26 常规 DRAM 涨幅上修至 +90-95% QoQ（2026-02-02）</a> · <a href="https://www.trendforce.com/presscenter/news/20250924-12733.html">TrendForce：4Q25 常规 DRAM 涨幅从 8-13% 上修到 18-23%（2025-09-24）</a></li>
+        <li><a href="https://www.koreaherald.com/article/3382821">Korea Herald：SK 海力士 CEO Kwak Noh-jung「HBM 2024 售罄、2025 差不多售罄」（2024-05-02）</a> · <a href="https://news.skhynix.com/sk-hynix-announces-3q25-financial-results/">SK 海力士 3Q25 财报公告（HBM/DRAM/NAND 2026 产能已售罄）</a></li>
+        <li>美光 HBM 售罄声明与 FY25 逐季 HBM 收入曲线：见模块 3「怎么判断」页脚来源（Tom's Hardware 及美光 FY25 Q2/Q4 电话会备稿），本页不重复。</li>
+        <li><a href="https://investors.micron.com/static-files/631b1a32-5537-46ae-8f40-82e42fc79dfe">美光 FY26 Q3 电话会备稿（16 份 take-or-pay 战略客户协议、$100B 最低合同收入）</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/106040/000119312525033383/d847507d8k.htm">Western Digital 8-K：完成 SanDisk 分拆的 SEC 备案（2025-02-21）</a> · <a href="https://www.sec.gov/Archives/edgar/data/0002023554/000119312525019298/d919795dex991.htm">SanDisk 8-K（独立上市，代码 SNDK）</a></li>
+        <li><a href="https://blocksandfiles.com/2025/11/07/sandisk-revenues-boom-as-data-center-glory-beckons/">SanDisk 数据中心业务与 eSSD 收入结构（Blocks & Files 2025-11-07 汇总）</a> · <a href="https://finance.yahoo.com/markets/stocks/articles/sandisk-stock-nearly-500-2026-203328092.html">SanDisk FY26 Q3 财报要点</a></li>
+        <li><a href="https://blocksandfiles.com/2025/07/31/western-digital-q4-2025/">Blocks & Files：Western Digital Q4 FY25 与近线盘策略（2025-07-31）</a> · <a href="https://finance.biggo.com/news/202602162022_Western-Digital-HDDs-Sold-Out-2026-AI-Demand">Western Digital FY26 Q2 CEO Irving Tan：2026 全年 HDD 产能售罄，长约延至 2028</a></li>
+        <li><a href="https://finance.biggo.com/news/kN7Z1p0B6tLPsnrZfta9">Seagate FY26 Q3：近线 HDD 产能已售到 2027 年末、增长目标提到 20%+</a></li>
+        <li><a href="https://www.forbes.com/sites/tomcoughlin/2026/02/02/c4q-2025-and-2025-hard-disk-drive-industry-update/">Tom Coughlin / Forbes：2025 HDD 单位与容量份额（西数 42% / 希捷 41% / 东芝 17%），近线盘占比</a></li>
+        <li><a href="https://www.tomshardware.com/pc-components/ram/hbm-is-eating-your-ram">Tom's Hardware：HBM 每 GB 消耗 DDR5 三倍晶圆产能（2026-06）</a></li>
+        <li><a href="https://www.spheron.network/blog/nvme-kv-cache-offloading-llm-inference/">Spheron：KV cache 与三层存储带宽量级（GPU HBM 3.35 TB/s、CPU DRAM 63 GB/s、NVMe 7 GB/s）</a></li>
+        <li><a href="https://www.vastdata.com/blog/optimizing-checkpoint-bandwidth-for-llm-training">VAST Data：GPT-3 175B checkpoint 约 2.3 TB、异步写入 50-200 GB/s 量级</a></li>
+        <li><a href="https://www.cnbc.com/2023/04/27/samsung-earnings-q1-2023.html">CNBC：三星 Q1 2023 营业利润 6,400 亿韩元、上年同期 14.12 万亿（-96%）</a> · <a href="https://techcrunch.com/2023/04/06/samsung-cuts-memory-chip-production-as-it-hits-worst-quarterly-profit-since-2009/">TechCrunch：三星 2023-04-07 官方宣布 meaningful level 减产</a></li>
+        <li><a href="https://siliconanalysts.com/analysis/hbm-qualification-race-2022-2026">Silicon Analysts：HBM 认证竞赛与 12 个月商业寿命（2022-2026）</a></li>
+        <li><a href="https://www.servethehome.com/solidigm-d5-p5336-122-88tb-nvme-ssd-launched-shipping-in-q1-2025/">ServeTheHome：Solidigm D5-P5336 122 TB QLC SSD Q1/Q2 2025 出货</a></li>
+      </ul>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本模块为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="m06.html"><span class="dir">← 上一模块</span>模块 6 · AI Infra 十层传导链</a>
+        <a href="m08.html" style="text-align:right"><span class="dir">下一模块 →</span>模块 8 · 光、电力、液冷与上游材料</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- A 类组件一：存储金字塔 ---------- */
+  (function () {
+    const PW = 720, PH = 340, PX = 40, PT = 24;
+    const root = document.getElementById("pyramid");
+    if (!root) return;
+    const svg = APP.svgEl("svg", { viewBox: "0 0 " + PW + " " + PH, role: "img",
+      "aria-label": "存储金字塔：从上到下依次为 HBM、DDR5 服务器 DRAM、企业级 SSD/NAND、近线 HDD，越往下容量越大、单价越低、带宽越低" });
+    root.appendChild(svg);
+
+    const LAYERS = [
+      { id: "hbm", label: "HBM", sub: "GPU 旁边最快最贵",
+        players: "SK 海力士 / 三星 / 美光（三家 DRAM）",
+        cost: "$60-100/GB", band: "≈3.35 TB/s（H100 卡内）",
+        cap: "单卡 80-192 GB 数量级", ai: "模型权重、活跃 KV cache",
+        col: "oklch(0.60 0.135 58)" },
+      { id: "dram", label: "服务器 DDR5 DRAM", sub: "主板上的内存条",
+        players: "三家 DRAM 全部；被 HBM 挤压产能",
+        cost: "$5-10/GB", band: "≈63 GB/s（CPU 到 DRAM，PCIe 5.0 侧）",
+        cap: "单机 512 GB - 4 TB", ai: "CPU 侧算子与冷 KV 溢出中转",
+        col: "oklch(0.66 0.14 200)" },
+      { id: "essd", label: "企业级 SSD（eSSD / NAND）", sub: "PCIe 上挂的固态盘",
+        players: "五家 NAND：三星、SK/Solidigm、Kioxia、Micron、SanDisk",
+        cost: "$0.1-0.3/GB", band: "≈7 GB/s（NVMe PCIe 4/5 单盘）",
+        cap: "单盘最高 122 TB QLC（Solidigm 2025）", ai: "checkpoint、KV 下沉、数据集缓存",
+        col: "oklch(0.58 0.11 145)" },
+      { id: "hdd", label: "近线 HDD（数据中心大容量盘）", sub: "机械硬盘，AI 的冷存储",
+        players: "西数（WDC）、希捷（STX）、东芝",
+        cost: "$0.02/GB 数量级", band: "≈0.2 GB/s（单盘顺序读）",
+        cap: "单盘 20-30+ TB（HAMR）", ai: "训练数据、模型副本、老 checkpoint、监管留存",
+        col: "oklch(0.48 0.06 145)" }
+    ];
+
+    const rowH = 68, gap = 8;
+    const readout = document.getElementById("pyramidReadout");
+
+    function draw(activeId) {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      LAYERS.forEach((L, i) => {
+        const y = PT + i * (rowH + gap);
+        const w = PW - 2 * PX;
+        const shrink = i * 22;
+        const rx = PX + shrink, rw = w - shrink * 2;
+        const g = APP.svgEl("g", { style: "cursor:pointer" });
+        g.setAttribute("data-id", L.id);
+        const isOn = activeId === L.id;
+        g.appendChild(APP.svgEl("rect", {
+          x: rx, y: y, width: rw, height: rowH, rx: 8,
+          fill: isOn ? L.col : "var(--surface)",
+          stroke: isOn ? L.col : "var(--line)",
+          "stroke-width": isOn ? 2 : 1
+        }));
+        const t = APP.svgEl("text", { x: rx + 16, y: y + 26, class: "bar-lbl" });
+        t.setAttribute("fill", isOn ? "#fff" : "var(--ink)");
+        t.textContent = L.label;
+        svg.appendChild(g);
+        g.appendChild(t);
+        const s = APP.svgEl("text", { x: rx + 16, y: y + 46, class: "axis-txt" });
+        s.setAttribute("fill", isOn ? "oklch(0.94 0.02 60)" : "var(--muted)");
+        s.textContent = L.sub;
+        g.appendChild(s);
+        const price = APP.svgEl("text", { x: rx + rw - 16, y: y + 26, "text-anchor": "end", class: "end-lbl" });
+        price.setAttribute("fill", isOn ? "#fff" : "var(--ink)");
+        price.textContent = L.cost;
+        g.appendChild(price);
+        const bw = APP.svgEl("text", { x: rx + rw - 16, y: y + 46, "text-anchor": "end", class: "axis-txt" });
+        bw.setAttribute("fill", isOn ? "oklch(0.94 0.02 60)" : "var(--muted)");
+        bw.textContent = L.band;
+        g.appendChild(bw);
+        g.addEventListener("click", () => setActive(L.id));
+        g.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActive(L.id); } });
+        g.setAttribute("tabindex", "0");
+        g.setAttribute("role", "button");
+        g.setAttribute("aria-label", L.label + "：" + L.sub);
+      });
+      const axL = APP.svgEl("text", { x: PX + 4, y: PH - 4, class: "axis-txt" });
+      axL.textContent = "越近 GPU / CPU · 越贵 · 越快 · 玩家越少";
+      svg.appendChild(axL);
+      const axR = APP.svgEl("text", { x: PW - PX - 4, y: PH - 4, "text-anchor": "end", class: "axis-txt" });
+      axR.textContent = "越远 · 每 GB 越便宜 · 越慢 · 玩家越多";
+      svg.appendChild(axR);
+    }
+
+    function setActive(id) {
+      const L = LAYERS.find((x) => x.id === id);
+      draw(id);
+      readout.innerHTML =
+        "<b>" + L.label + "</b>：" + L.sub + "。" +
+        "玩家：" + L.players + "。" +
+        "典型量级——单价 <b>" + L.cost + "</b> · 带宽 <b>" + L.band + "</b> · 容量 <b>" + L.cap + "</b>。" +
+        "AI 场景：" + L.ai + "。";
+    }
+    draw(null);
+  })();
+
+  /* ---------- A 类组件二：AI 工作负载对存储的拉动 ---------- */
+  (function () {
+    const root = document.getElementById("workload");
+    if (!root) return;
+    const readout = document.getElementById("workloadReadout");
+    const CARDS = [
+      { id: "weights", t: "模型权重", sub: "推理与训练共享",
+        layer: "主要落在 HBM，超大模型跨多卡拼",
+        scale: "GPT-3 175B × BF16 ≈ 350 GB；GPT-4 级更大",
+        drives: "HBM 需求（SK 海力士 / 三星 / 美光的直接受益线）",
+        col: "oklch(0.60 0.135 58)" },
+      { id: "kv", t: "KV cache", sub: "推理时每个 token 的中间结果",
+        layer: "先塞 HBM，长上下文时溢出到 CPU DRAM → NVMe eSSD",
+        scale: "Llama 3 70B 单用户 128K 上下文 = 40 GB（占 H100 一半 HBM）",
+        drives: "HBM 需求 + eSSD 需求（数据中心 SSD 增长的物理源头之一）",
+        col: "oklch(0.55 0.13 200)" },
+      { id: "ckpt", t: "训练 Checkpoint", sub: "训练过程每几小时全量存盘",
+        layer: "落在 eSSD（热）+ 近线 HDD（冷）",
+        scale: "175B 参数 × 10 字节 ≈ 2.3 TB / 次；训练一轮几百次",
+        drives: "eSSD + 近线 HDD 需求（希捷、西数近线盘售罄的物理源头之一）",
+        col: "oklch(0.55 0.11 145)" },
+      { id: "data", t: "训练数据集 + 模型副本", sub: "冷存储主力",
+        layer: "近线 HDD 为主，QLC eSSD 做温层缓存",
+        scale: "PB 到 EB 级；一个前沿模型的完整训练素材可达 PB 级",
+        drives: "近线 HDD（希捷 / 西数长约延伸的物理源头）",
+        col: "oklch(0.45 0.08 145)" }
+    ];
+
+    const grid = document.createElement("div");
+    grid.style.display = "grid";
+    grid.style.gridTemplateColumns = "repeat(auto-fit,minmax(160px,1fr))";
+    grid.style.gap = "8px";
+    grid.style.margin = "12px 0 6px";
+    CARDS.forEach((c) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("data-w", c.id);
+      b.setAttribute("aria-expanded", "false");
+      b.className = "flow-step";
+      b.style.borderLeft = "4px solid " + c.col;
+      b.innerHTML = '<span class="t">' + c.t + '</span><span class="en">' + c.sub + '</span>';
+      grid.appendChild(b);
+    });
+    root.appendChild(grid);
+
+    function setActive(id) {
+      const c = CARDS.find((x) => x.id === id);
+      root.querySelectorAll("[data-w]").forEach((b) => b.setAttribute("aria-expanded", String(b.dataset.w === id)));
+      readout.innerHTML =
+        "<b>" + c.t + "</b>：" + c.sub + "。" +
+        "<br>落在哪层：" + c.layer + "。" +
+        "<br>典型量级：" + c.scale + "。" +
+        "<br>直接拉动谁：" + c.drives + "。";
+    }
+    root.querySelectorAll("[data-w]").forEach((b) => {
+      b.addEventListener("click", () => setActive(b.dataset.w));
+    });
+  })();
+
+  /* ---------- 怎么判断页 · 工具一交互：shortage 分类器 ---------- */
+  (function () {
+    const out = document.getElementById("shortageOut");
+    if (!out) return;
+    const MAP = {
+      hbm: {
+        layer: "金字塔最顶层 · HBM",
+        players: "SK 海力士（HBM 全球市占约 56%，2026 数据）、三星、美光；下游客户是 Nvidia / AMD / Google TPU",
+        route: "直供长约、多年 take-or-pay 协议",
+        cycle: "跟 GPU 代际，寿命 12 个月；下一步问：Nvidia GB200/GB300 需求节奏、下代 HBM 认证是否通过",
+        risk: "认证掉队即出局；HBM 消耗 3 倍晶圆 → 反向挤压普通 DDR5"
+      },
+      dram: {
+        layer: "金字塔第二层 · 服务器 DDR5 / PC DRAM / 手机 LPDDR",
+        players: "三家 DRAM 大厂全部；被 HBM 挤压产能",
+        route: "现货 + 三到六个月合同价；1Q26 TrendForce 上修至 +90-95% QoQ",
+        cycle: "跟 HBM 反向：HBM 越挤压、DDR 越涨；同时受 PC / 手机需求叠加",
+        risk: "HBM 需求一旦停滞、DDR5 产能就会回来 → 反向下行同样凶"
+      },
+      nand: {
+        layer: "金字塔第三层 · 通用 NAND / 消费级 SSD",
+        players: "五家 NAND：三星、SK/Solidigm、Kioxia、SanDisk、Micron",
+        route: "商品化程度较高、周期节奏比 DRAM 稍慢",
+        cycle: "看整体供需 + 消费端（PC / 手机）需求；单独看不出 AI 拉动",
+        risk: "别单独看总 NAND：真正的 AI 弹性藏在 eSSD 那一块（下一层）"
+      },
+      essd: {
+        layer: "金字塔第三层的贵头 · 企业级 SSD / QLC / 高容量数据中心 SSD",
+        players: "Samsung（32.3% 3Q25 eSSD 份额）、SK/Solidigm、Kioxia、SanDisk（数据中心业务 2026 环比 +233%）",
+        route: "多年供应协议增多；SanDisk 走 take-or-pay 型合同",
+        cycle: "AI 推理规模化 → KV 下沉 + checkpoint 是主拉动；3Q25 前五大品牌合并收入 $6.54B、+28% QoQ",
+        risk: "eSSD 与消费 NAND 口径经常混着报，必须拆分部数据"
+      },
+      hdd: {
+        layer: "金字塔最底层 · 近线 HDD / 冷存储",
+        players: "西数（WDC）、希捷（STX）、东芝——两家半的格局",
+        route: "多年长约（希捷卖到 2027 年末、西数长约延伸到 2028）",
+        cycle: "AI 训练数据、模型副本、老 checkpoint 挪到近线盘；HAMR/Mozaic 抬升单盘容量",
+        risk: "东芝份额虽小但真实存在；一旦超大规模云厂商暂缓 CapEx（模块 10 视角），HDD 长约同样会被重谈"
+      }
+    };
+    document.querySelectorAll("[data-shortage]").forEach((b) => {
+      b.addEventListener("click", () => {
+        document.querySelectorAll("[data-shortage]").forEach((x) => x.setAttribute("aria-pressed", "false"));
+        b.setAttribute("aria-pressed", "true");
+        const m = MAP[b.dataset.shortage];
+        out.innerHTML =
+          "<b>指向：</b>" + m.layer + "<br>" +
+          "<b>涉及公司：</b>" + m.players + "<br>" +
+          "<b>销售路径：</b>" + m.route + "<br>" +
+          "<b>下一步问：</b>" + m.cycle + "<br>" +
+          "<b>失效边界：</b>" + m.risk;
+      });
+    });
+  })();
+
+  /* ---------- 决策复盘卡通用交互（照 m02） ---------- */
+  document.querySelectorAll("[data-case]").forEach((box) => {
+    const reveal = box.parentElement.querySelector(".case-reveal");
+    box.querySelectorAll("[data-pick]").forEach((btn) => {
+      btn.setAttribute("aria-pressed", "false");
+      btn.addEventListener("click", () => {
+        box.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        if (reveal && reveal.hidden) reveal.hidden = false;
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>

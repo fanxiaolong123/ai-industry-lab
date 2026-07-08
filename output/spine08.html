@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 8 · 技术代际是生死 · 半导体投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 卡 8 专属样式 ---------- */
+
+  /* 对照条：两句话左右并排，看时间轴的两端一眼看清 */
+  .contrast {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 14px 0 8px;
+  }
+  .contrast > div {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 14px 16px;
+    background: var(--surface);
+  }
+  .contrast .cap {
+    font-size: var(--fs-13);
+    color: var(--muted);
+    font-weight: 650;
+    margin-bottom: 6px;
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: space-between;
+  }
+  .contrast .big {
+    font-size: 17px;
+    font-weight: 650;
+    line-height: 1.55;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .contrast .tag {
+    display: inline-block;
+    font-size: var(--fs-12);
+    font-weight: 650;
+    padding: 1px 9px;
+    border-radius: 99px;
+    letter-spacing: .04em;
+  }
+  .contrast .tag-story {
+    background: var(--accent-tint); color: var(--accent-ink);
+  }
+  .contrast .tag-bet {
+    background: var(--primary-tint); color: var(--primary);
+  }
+  .contrast .row {
+    font-size: var(--fs-14); color: var(--muted); margin-top: 4px;
+  }
+  @media (max-width: 640px) { .contrast { grid-template-columns: 1fr; } }
+
+  /* 反射问句：与 spine02 一致的样式，直接沿用 */
+  .qa {
+    border-left: 3px solid var(--primary);
+    background: var(--primary-tint);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    padding: 12px 16px 4px;
+    margin: 14px 0;
+  }
+  .qa .q { font-weight: 650; color: var(--primary); margin: 0 0 8px; font-size: var(--fs-16); }
+  .qa .q::before { content: "问："; }
+  .qa ul { margin: 6px 0 10px; padding-left: 1.2em; }
+
+  /* 押注类型识别器 · 案例卡片选择 */
+  .id-cases {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 10px 0 14px;
+  }
+  .id-case {
+    appearance: none;
+    font: inherit;
+    font-size: var(--fs-14);
+    text-align: left;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+    padding: 10px 12px;
+    cursor: pointer;
+    color: var(--ink);
+    line-height: 1.5;
+    display: grid; gap: 2px;
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .id-case:hover { background: var(--surface-2); }
+  .id-case[aria-pressed="true"] {
+    border-color: var(--primary-2);
+    background: var(--primary-tint);
+  }
+  .id-case .idx { font-size: var(--fs-12); font-weight: 650; color: var(--muted); letter-spacing: .04em; }
+  .id-case[aria-pressed="true"] .idx { color: var(--primary); }
+  .id-case .who { font-weight: 650; }
+  @media (max-width: 640px) { .id-cases { grid-template-columns: 1fr; } }
+
+  /* 引文条 */
+  .id-quote {
+    border-left: 3px solid var(--muted);
+    background: var(--surface);
+    padding: 12px 16px;
+    margin: 8px 0 14px;
+    font-size: var(--fs-15);
+    line-height: 1.7;
+    color: var(--ink);
+    border-radius: 0 var(--radius-s) var(--radius-s) 0;
+  }
+  .id-quote .qcap {
+    display: block;
+    font-size: var(--fs-12); font-weight: 650; color: var(--muted); margin-bottom: 6px;
+  }
+  .id-quote .qt { margin: 0; }
+
+  /* 三个打分维度 · 每个是一行 label + 三个按钮 */
+  .id-dims { display: grid; gap: 10px; margin: 10px 0 12px; }
+  .id-dim {
+    display: grid;
+    grid-template-columns: 12em 1fr;
+    gap: 12px;
+    align-items: center;
+  }
+  .id-dim > label {
+    font-size: var(--fs-14);
+    font-weight: 650;
+    color: var(--ink);
+  }
+  .id-dim .id-dim-help {
+    font-size: var(--fs-12);
+    color: var(--muted);
+    font-weight: 500;
+    display: block;
+    margin-top: 2px;
+  }
+  .id-dim-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+  .id-dim-buttons button {
+    appearance: none;
+    font: inherit;
+    font-size: var(--fs-13);
+    font-weight: 600;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+    padding: 6px 10px;
+    cursor: pointer;
+    color: var(--ink);
+    line-height: 1.4;
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .id-dim-buttons button:hover { background: var(--surface); }
+  .id-dim-buttons button[aria-pressed="true"] {
+    border-color: var(--primary-2);
+    background: var(--primary-tint);
+    color: var(--primary);
+  }
+  @media (max-width: 640px) {
+    .id-dim { grid-template-columns: 1fr; gap: 4px; }
+  }
+
+  /* 总分与判断 */
+  .id-verdict {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    border-radius: var(--radius-s);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    margin: 10px 0;
+  }
+  .id-verdict .score {
+    font-size: 22px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    min-width: 3.2em;
+  }
+  .id-verdict .score.pending { color: var(--muted); font-weight: 600; font-size: var(--fs-14); }
+  .id-verdict .tag-verdict {
+    display: inline-block;
+    font-size: var(--fs-13);
+    font-weight: 650;
+    padding: 3px 12px;
+    border-radius: 99px;
+  }
+  .id-verdict .tag-verdict.bet    { background: var(--primary-tint); color: var(--primary); }
+  .id-verdict .tag-verdict.grey   { background: var(--info-tint); color: var(--info-ink); }
+  .id-verdict .tag-verdict.story  { background: var(--accent-tint); color: var(--accent-ink); }
+  .id-verdict .desc { font-size: var(--fs-14); color: var(--muted); }
+
+  /* 事后事实展开 */
+  .id-reveal {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+    padding: 14px 16px;
+    background: var(--bg);
+    margin-top: 10px;
+    font-size: var(--fs-14);
+  }
+  .id-reveal[hidden] { display: none; }
+  .id-reveal h4 {
+    font-size: var(--fs-14); font-weight: 650; margin: 0 0 6px; color: var(--primary);
+  }
+  .id-reveal .rlabel {
+    font-size: var(--fs-12); font-weight: 650; color: var(--muted);
+    text-transform: none; margin: 8px 0 2px; display: block;
+  }
+  .id-reveal ul { margin: 4px 0 8px; padding-left: 1.2em; }
+</style>
+</head>
+<body data-page="s08">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 8 · 技术代际是生死</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 8 / 15</p>
+      <h1>卡 8 · 技术代际是生死</h1>
+      <p class="core-q"><b>一句话：</b>半导体的代际更迭是硬性的——上不了下一代工艺，产品同功耗性能就落后一档（20-40%），客户不会等你。追一代要 3-5 年 + 数十亿美元研发投入，市场也不会等你。所以关键押注发生在「下一代还没成熟」的时候——CUDA、Zen、HBM、EUV 都是这样押下去的。<strong>掌门人在低谷期的公开押注，五到十年后就是公司命运。掉队瞒不住、押错追不回，这是半导体行业最反常识的一条规律</strong>。</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">读完这张卡你要能答的三个问题（现在答不上来是正常的）</span>
+      <ol style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>为什么这个行业不能靠「营销、客户关系、季度业绩」维持技术地位？——用一句话讲清背后的物理机制。</li>
+        <li>看到一家公司发布新品或换 CEO，你怎么判断这是「核心业务的下一代生死押注」还是「拿卖点讲故事」？给出三个可核验的维度。</li>
+        <li>陈立武 2026-02 说「18A 良率每月改善 7-8%、2H26 拿到客户承诺」——2026 下半年哪三个可观察信号会告诉你这次押注初见成效？</li>
+      </ol>
+    </div>
+
+    <section class="prose">
+
+      <h2>1 · 现象：十年间同一家公司，两种官方语言</h2>
+
+      <p>先看英特尔（Intel）在同一件事上前后隔十年的两种说法。同一家公司、同一层意思（承认制程有问题），语言不一样，5 年后的结局也不一样：</p>
+
+      <div class="contrast">
+        <div>
+          <div class="cap"><span>Intel · 2015-07</span><span class="tag tag-story">讲故事</span></div>
+          <p class="big">「10nm 制程 Cannon Lake 首批产品从 2016 推迟至 2017，我们按计划推进。」<span class="badge badge-verified">已核验 · Intel 2015-07 季报电话会</span></p>
+          <div class="row">5 年后（2020-07）：CEO Bob Swan 承认 7nm 良率晚 12 个月、股价单日 −16%<span class="badge badge-verified">已核验 · Fortune 2020-07-24</span></div>
+        </div>
+        <div>
+          <div class="cap"><span>Intel · 2026-02</span><span class="tag tag-bet">生死押注</span></div>
+          <p class="big">「18A 良率接手时相当差，请了 PDF Solutions 和 KLA 的老朋友来爬良率。行业最佳实践是每月 7-8% 改善，现在我看到了。2H26 会拿到多家代工客户的正式承诺。」<span class="badge badge-verified">已核验 · 2026-02 会议报道（模块 4 / 模块 2 已引）</span></p>
+          <div class="row">5 年后（2031）：待观察——本卡教你 2026 下半年该看哪三个信号</div>
+        </div>
+      </div>
+
+      <p>这两段话看起来都在「谈制程问题」。但它们的味道完全不同——第一段是「按计划推进」（不承认有问题、不给具体数字、CEO 不出面）；第二段是「相当差 + 每月 7-8% + 2H26 承诺 + 请了外部帮手」（承认现状、给量化目标、CEO 亲自站台、砍旧押新的资源再分配）。<strong>第一种叫「讲故事」——用 PR 语言掩盖代际掉队；第二种叫「生死押注」——CEO 亲自赌下一代能追上，赌错了就是公司命运的转折点</strong>。</p>
+
+      <p>这张卡讲一件事：<strong>读到一家半导体公司的新闻时，你要能立刻识别出这两种味道</strong>。因为它们背后的 5 年结局是两个不同的世界——第一种在 3-5 年内会转成财务恶化、市占率流失、被并购或分拆；第二种要么成为公司翻身的起点（AMD Zen、Nvidia CUDA），要么在事后被证明押错（但至少还有一次翻身的机会）。<strong>能提前 5 年识别公司走向的能力，就长在这张卡上</strong>。</p>
+
+      <h2>2 · 机制：为什么半导体的代际是硬的</h2>
+
+      <h3>2.1 代际差距是量化的，不是文人叙事</h3>
+
+      <p>「差一代工艺」到底差多少？TSMC 在历届技术论坛上公开的官方口径可以拿来当量尺：<strong>N5 vs N7 是「同功耗性能 +15% 或同性能功耗 -30%」；N3E vs N5 是「+10-15% 性能或 -25-30% 功耗」；N2 vs N3 是「+10-15% 性能或 -25-30% 功耗」</strong>。<span class="badge badge-expert">专家判断 · TSMC 各代节点在技术论坛的通行披露口径</span></p>
+
+      <p>两代累加（比如 N7 vs N3）就是同功耗下性能差 25-35%，或同性能下功耗差 45-55%。用大白话：<strong>同一颗设计、差两代工艺，把它塞进服务器机架里，一台机器功耗差一倍</strong>。数据中心运营商不会买这种芯片——电费和散热已经把你的价格优势吃光。<span class="badge badge-expert">专家判断</span></p>
+
+      <p>更直观的例子：H100（TSMC 4N 定制版，5nm 家族）的训练性能是 A100（TSMC N7）的约 3-6 倍（视具体工作负载）<span class="badge badge-verified">已核验 · Nvidia Hopper 白皮书</span>。里面架构升级、HBM3 换代都有功劳，但纯工艺项估算贡献大约 30-40%<span class="badge badge-expert">专家判断 · 综合行业口径拆解</span>。也就是说：<strong>如果你还在用 N7 造 AI 加速卡，即使架构一模一样，光工艺一项就差 30-40%——没客户会买</strong>。</p>
+
+      <h3>2.2 差 1 代 = 市场可能等你半年也不给你；差 2 代 = 你退出这个市场</h3>
+
+      <p>客户的选择逻辑很硬：<strong>同价位下，谁的性能高就买谁；差 20% 的芯片，客户宁愿等半年也不用</strong>。因为终端产品（手机、服务器、AI 加速卡）的整机差距会被半导体差距放大——你的芯片差 20%，客户的整机产品可能就完全没竞争力，宁可不出货。</p>
+
+      <p>一个真实现场：<strong>Intel Cannon Lake（2018-04）</strong>——为了绕开 10nm 良率问题，把整颗芯片的集成显卡砍掉才勉强出货<span class="badge badge-verified">已核验 · WikiChip / TechInsight（模块 4 决策档案已引）</span>。市场反应是「几乎没人买」——因为它比对手的产品差一代还多，只装了一台联想 Ideapad 330、1.5 年就被替换。同期 AMD 已经用台积电 7nm 造出 Ryzen 2000 系列，能耗比全面领先。<strong>「差一代」在这里的具体含义是「整条产品线被替代」</strong>。</p>
+
+      <p>相反，如果你恰好比对手领先一代，你可以定价高、可以选客户。TSMC N5 在 2020 年推出时，几乎所有先进设计公司都在排队——Apple、AMD、Nvidia、Qualcomm——因为差一代就是「我的产品差一档」。<strong>这就是台积电能在先进制程占到 90%+ 市占的物理原因</strong>——不是营销、不是客户关系，是代际差距会自动淘汰追不上的对手。<span class="badge badge-expert">专家判断</span></p>
+
+      <h3>2.3 关键押注发生在「下一代还没成熟」的时候</h3>
+
+      <p>事后被证明押对的所有决策，都发生在「看起来没必要」的时候。四个已核验的例子：</p>
+
+      <ul>
+        <li><strong>CUDA 押注（2006-2007）</strong>：Nvidia 发布 GeForce 8800 GTX 采用 G80 架构（业内首个统一着色器架构）+ CUDA SDK 正式版 2007<span class="badge badge-verified">已核验 · 模块 4 决策档案</span>。当时 GPU 主要用来玩游戏、深度学习还是学术玩具。<strong>这次押注为的是「让 GPU 变成通用并行计算平台」——一个当时没有明显市场的方向</strong>。事后 16 年，AI 训练直接建在这套硬件+软件之上。</li>
+        <li><strong>Zen 押注（2012-2014）</strong>：AMD 在苏姿丰上任前就开始重构 CPU 微架构；2014-10-08 苏姿丰上任、2015-05 分析师日提「高性能计算」路线、2017-03 Ryzen 首发<span class="badge badge-verified">已核验 · 模块 4 决策档案</span>。中间跨了 5 年、AMD 股价长期在 3-4 美元区间趴着，市场普遍认为 AMD 会破产。</li>
+        <li><strong>HBM 押注（约 2013）</strong>：SK 海力士与合作方在 2013 年前后推出首代 HBM，配合 JEDEC 2013 年发布 HBM 标准。当时市场都在用 GDDR5，HBM 每颗成本贵好几倍、看起来没市场；直到 2020 年后 AI 训练要 HBM 才被证明押对。<span class="badge badge-expert">专家判断 · 半导体行业通行史观</span> 事后 12 年。</li>
+        <li><strong>EUV 押注（2000s）</strong>：ASML 从 2000 年代初开始投入 EUV 光刻机研发，2010 年做出第一台原型机，2018 年第一批出货给三星和台积电。<span class="badge badge-expert">专家判断 · 半导体设备史通行口径</span> 如果不押 2000s 那次几十亿美元的研发承诺，2020s 的先进制程就没有 EUV，行业停在 7nm。</li>
+      </ul>
+
+      <p>四个案例的共同画像：<strong>在别人看来没必要、成本很高、成功不确定、要等 5-10 年才知道结果</strong>。这是「生死押注」的正面样子——你在识别一家公司的新闻时，如果没看到这四个特征中的至少两个，多半不是押注。</p>
+
+      <h3>2.4 押错要 3-5 年 + 数十亿美元才可能追</h3>
+
+      <p>一旦某代工艺押错，代价是硬的：</p>
+      <ul>
+        <li>英特尔 10nm 从 2015-07 首次官宣延期到 2019 下半年 Ice Lake 勉强量产：<strong>4 年</strong>，期间烧掉数十亿美元研发<span class="badge badge-verified">已核验 · 模块 4 决策档案</span>。</li>
+        <li>英特尔 7nm 从 2020-07-23 官宣再延期 6 个月、良率晚 12 个月、承认要用外部代工，到 Intel 4 节点 2023 年才量产：<strong>3 年</strong><span class="badge badge-verified">已核验 · 模块 4 决策档案</span>。</li>
+        <li>3dfx 从 1998 收购板卡厂 STB 走错商业模式，到 2000-12-15 核心资产被 Nvidia 以 $70M 现金 + $1M 股票收购：<strong>2 年</strong>，期间市场份额从 3D 图形芯片开创者掉到近乎归零<span class="badge badge-verified">已核验 · 模块 4 决策档案</span>。</li>
+      </ul>
+
+      <p>市场不会等你追。等你追上，客户已经跑到对手那边、供应链关系已经建立、生态已经形成，你要重新竞争。<strong>这就是「掉队瞒不住」的物理机制</strong>——不是营销能救的问题，是代际差距会自动淘汰你，且淘汰是「跳变」而不是「渐变」。<span class="badge badge-expert">专家判断</span></p>
+
+      <div class="note note-warn" style="margin-top:18px">
+        <span class="note-label">这一节要带走的两个数字</span>
+        <ul style="margin:0;padding-left:1.3em">
+          <li><strong>差一代 ≈ 同功耗性能差 20-40%</strong>——这是「掉队瞒不住」的物理量。</li>
+          <li><strong>追一代 ≈ 3-5 年 + 数十亿美元</strong>——这是「押错就没有第二次机会」的时间成本。</li>
+        </ul>
+      </div>
+
+      <h2>3 · 真实锚点：三个已核验的押注现场 + 两个反面案例</h2>
+
+      <h3>锚点一 · 陈立武的 18A 押注（2026-02，进行中）</h3>
+
+      <p>已核验的现场（<span class="badge badge-verified">已核验 · 模块 2 复盘二 / 模块 4 决策档案</span>）：</p>
+      <ul>
+        <li>陈立武 2026-02 公开承认接手时 18A 良率「相当差」；</li>
+        <li>请了 PDF Solutions、KLA 帮忙爬良率；</li>
+        <li>「行业最佳实践是每月 7-8% 的良率改善，现在我看到了」；</li>
+        <li>2H26 拿到多家代工客户承诺。</li>
+      </ul>
+
+      <p><strong>押的是什么</strong>：18A 能追上台积电 N2，把英特尔重新拉回代工牌桌。</p>
+      <p><strong>为什么算生死押注</strong>：三个维度都到位——① CEO 亲自站台，承认现状（「相当差」是硬语言，不是 PR 语言）；② 给出具体的量化目标（月 7-8% 改善、2H26 客户承诺）；③ 请了行业最佳外部帮手（KLA、PDF Solutions），资源分配上砍旧押新。</p>
+      <p><strong>能不能成功</strong>：待观察。<strong>「是不是押注」和「押注会不会成功」是两个问题——本卡先解决第一个</strong>。第二个问题的可观察信号见本节末尾的推演题。</p>
+
+      <h3>锚点二 · 苏姿丰的 Zen 押注（2014→2017 完整回看）</h3>
+
+      <p>已核验的时间轴（<span class="badge badge-verified">已核验 · 模块 4 决策档案</span>）：</p>
+      <ul>
+        <li>2014-10-08：苏姿丰上任，接手时公司负债约 20 亿美元、现金紧张；</li>
+        <li>2015-05：分析师日提出「高性能计算」路线；</li>
+        <li>2016-08：Zen 架构对外披露；</li>
+        <li>2017-03-02：Ryzen 首发，Zen 微架构 + 14nm FinFET；</li>
+        <li>2017-2024：桌面 + 笔电 CPU 市占率从约 7% 到 30%+。</li>
+      </ul>
+
+      <p><strong>押的是什么</strong>：换一代微架构（Zen）+ 押 FinFET 工艺（14nm 起步、7nm 追）+ 聚焦高性能计算，砍掉分散资源的其他产品线。</p>
+      <p><strong>教训</strong>：<strong>换 CEO 到产品验证隔了 2.5 年</strong>——这是掌门人押注的正常时间窗，不是新闻一出就见效。<strong>所以押注的判断要在低谷期做——等财报数字亮眼再进就晚了</strong>。判断质量不等于结果质量：即使你 2014-10-08 就判断对了「这是生死押注」，仍要等 2016-08 Zen 披露、2017-03 Ryzen 上市这两个验证点，才能确认「押注在兑现」。</p>
+
+      <h3>锚点三 · 黄仁勋关 Icera（2015-05-05 · 砍旧押新的现场）</h3>
+
+      <p>已核验的时间轴（<span class="badge badge-verified">已核验 · 模块 4 决策档案 / The Register 2015-05-05</span>）：</p>
+      <ul>
+        <li>2011-05：Nvidia 以 3.67 亿美元买 Icera，试图切入手机基带；</li>
+        <li>2015-05-05：宣布关停 Icera，正式退出手机基带；官方声明「聚焦游戏、汽车和云端计算（含深度学习）」；</li>
+        <li>2016 起：GTC 讲「AI 是新的电力」（专家判断）；</li>
+        <li>2020-2022：A100、H100 陆续量产；</li>
+        <li>2024：数据中心业务 $47.5B<span class="badge badge-verified">已核验 · Nvidia FY24 8-K</span>。</li>
+      </ul>
+
+      <p><strong>押的是什么</strong>：不是加码，是砍——砍已经花了 3.67 亿美元、不属于核心方向的业务，把资源推向深度学习/游戏/汽车。</p>
+      <p><strong>教训</strong>：<strong>「砍」比「加」更能说明押注</strong>——愿意承认沉没成本、把资源砍掉推向新方向，是掌门人押注的最硬信号之一。反面读法（「一次并购归零」）容易，但会错过大机会。<strong>识别公告时，看「砍了什么」比看「加了什么」更快</strong>。</p>
+
+      <h3>反面锚点 · Cyrix 与 3dfx（技术在场，但代际节奏或商业模式选错）</h3>
+
+      <ul>
+        <li><strong>Cyrix</strong>（1997-11 被 National Semiconductor 收购、1999-06 又转卖给 VIA 1.67 亿美元<span class="badge badge-verified">已核验 · 模块 4 决策档案</span>）：技术不差，跟不上 Intel/AMD 的资本节奏和工艺节点，一代跟不上就出局。<strong>教训</strong>：不押下一代 = 慢死。</li>
+        <li><strong>3dfx</strong>（2000-12-15 被 Nvidia 以 7000 万美元现金 + 100 万美元股票收购<span class="badge badge-verified">已核验 · 模块 4 决策档案</span>）：3D 图形芯片的开创者，因为 1998 收购板卡厂 STB 从「芯片厂」变成「板卡厂」、和所有客户变对手，两年内破产。<strong>教训</strong>：技术在场不够，商业模式选错、跟不上代际节奏，一样出局。</li>
+      </ul>
+
+      <p>三个正面 + 两个反面锚点合起来读：<strong>「生死押注」发生在低谷期，且必须同时满足「有明确方向 + 有具体动作 + 有 CEO 站台」；缺任何一个，都可能是掉队但没押注（Cyrix）或者押错方向（3dfx）——事后都是同样的结局</strong>。</p>
+
+      <h3>3.5 亲手拉一下：押注类型识别器</h3>
+
+      <p>把上面的判断变成可练的动作。下面这台工具给你四段真实的官方表态原文，你按三个维度打分（0-2），系统给出总分和判断，再展开真实历史结局，看看你和真实历史的距离。</p>
+
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-title">押注类型识别器 · 生死押注还是讲故事</span>
+          <span class="viz-sub">看什么：①同样是「谈技术问题」的公告，三维度打分之后总分差 4-5 分；②总分 ≥ 5 是「生死押注」，≤ 2 是「讲故事」，中间是「模糊」；③展开事后事实——看你识别的方向和真实结局是否一致。</span>
+        </div>
+
+        <div class="id-cases" role="group" aria-label="选择要打分的官方表态">
+          <button type="button" class="id-case" data-case="c1" aria-pressed="true">
+            <span class="idx">案例 1 / 4</span>
+            <span class="who">Intel 陈立武 · 2026-02</span>
+            <span class="row">谈 18A 良率的公开表态</span>
+          </button>
+          <button type="button" class="id-case" data-case="c2" aria-pressed="false">
+            <span class="idx">案例 2 / 4</span>
+            <span class="who">Nvidia · 2015-05-05</span>
+            <span class="row">关停 Icera 移动基带的官方声明</span>
+          </button>
+          <button type="button" class="id-case" data-case="c3" aria-pressed="false">
+            <span class="idx">案例 3 / 4</span>
+            <span class="who">Intel · 2015-07</span>
+            <span class="row">10nm 首次官宣延期</span>
+          </button>
+          <button type="button" class="id-case" data-case="c4" aria-pressed="false">
+            <span class="idx">案例 4 / 4</span>
+            <span class="who">Intel Bob Swan · 2020-07-23</span>
+            <span class="row">承认 7nm 再延期 6 个月</span>
+          </button>
+        </div>
+
+        <div class="id-quote" id="idQuote">
+          <span class="qcap">当前案例引文</span>
+          <p class="qt"></p>
+        </div>
+
+        <div class="id-dims">
+          <div class="id-dim">
+            <label>
+              代际差距量化
+              <span class="id-dim-help">是不是有具体数字（月度良率、日程、市占目标）？</span>
+            </label>
+            <div class="id-dim-buttons" data-dim="A">
+              <button type="button" data-score="0" aria-pressed="false">0 · 没提</button>
+              <button type="button" data-score="1" aria-pressed="false">1 · 只有定性</button>
+              <button type="button" data-score="2" aria-pressed="false">2 · 有具体数字</button>
+            </div>
+          </div>
+          <div class="id-dim">
+            <label>
+              研发投入方向
+              <span class="id-dim-help">是不是有明确的砍旧业务或加码承诺？</span>
+            </label>
+            <div class="id-dim-buttons" data-dim="B">
+              <button type="button" data-score="0" aria-pressed="false">0 · 没提</button>
+              <button type="button" data-score="1" aria-pressed="false">1 · 提但不具体</button>
+              <button type="button" data-score="2" aria-pressed="false">2 · 砍旧或加码</button>
+            </div>
+          </div>
+          <div class="id-dim">
+            <label>
+              CEO 站台强度
+              <span class="id-dim-help">CEO 亲自出面 + 承认现状，还是只有 PR？</span>
+            </label>
+            <div class="id-dim-buttons" data-dim="C">
+              <button type="button" data-score="0" aria-pressed="false">0 · 只有 PR</button>
+              <button type="button" data-score="1" aria-pressed="false">1 · 事业部</button>
+              <button type="button" data-score="2" aria-pressed="false">2 · CEO 亲自+承认</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="id-verdict" id="idVerdict">
+          <span class="score pending" id="idScore">未打分</span>
+          <span class="tag-verdict grey" id="idTag">先选择上面三个维度</span>
+          <span class="desc" id="idDesc">总分 ≥ 5 = 生死押注 · 3-4 = 模糊 · ≤ 2 = 讲故事</span>
+        </div>
+
+        <div class="viz-foot" style="margin-top:8px">
+          <button type="button" class="btn btn-ghost" id="idResetBtn">重新打分</button>
+          <button type="button" class="btn" id="idRevealBtn">看参考评分与事后事实</button>
+        </div>
+
+        <div class="id-reveal" id="idReveal" hidden></div>
+      </div>
+
+      <p style="font-size:var(--fs-13);color:var(--muted);margin:8px 0 0">这台工具只回答「是不是在做押注」——不回答「押注会不会成功」。案例 1（陈立武 18A）现在还在观察中；案例 3（Intel 2015-07）事后被证明是掉队信号；案例 2 与 4 各有教训。<strong>本卡教你判断新闻的味道，判断结局需要 3-5 年时间验证</strong>。</p>
+
+      <h2>4 · 投资含义：两个「第一反应问句」</h2>
+
+      <p>骨架卡的用法是<strong>把两个问句刻进反射弧</strong>——以后看到相关新闻，不是先想「涨还是跌」，而是先自动问以下这两个问题，答完再下结论。</p>
+
+      <div class="qa">
+        <p class="q">看到某厂新品发布，我第一反应问什么？</p>
+        <ul>
+          <li><strong>这是核心业务的下一代生死押注，还是外围业务的功能升级？</strong>——先分清「主战场」和「边线业务」。同一家公司，主战场的下一代发布是命运赌局；边线业务的新品发布只是产品迭代。</li>
+          <li><strong>三个维度上打分</strong>：① 代际差距量化（新品性能功耗对比对手同代产品是接近还是差 20% 以上？有没有官方 PPA 数据或独立评测？）；② 研发投入占比与投向（这条产品线消耗的研发是不是核心业务的下一代，不是老业务的升级迭代？看年报 R&D 分部披露）；③ CEO 站台强度（CEO 亲自站台 vs 事业部总经理 vs 只发 PR；亲自 + 承认过去问题 + 给具体日程 = 押注）。</li>
+          <li><strong>三个维度合成一个判断</strong>：≥ 5 分 = 生死押注（该跟踪）；3-4 分 = 模糊（要看后续动作）；≤ 2 分 = 讲故事（该警惕）。</li>
+        </ul>
+      </div>
+
+      <div class="qa">
+        <p class="q">看到某厂 CEO 更换或核心技术领导离职，我第一反应问什么？</p>
+        <ul>
+          <li><strong>新任对下一代路线的公开表态是什么？</strong>——是「按计划推进、保持连续性」（治标）还是「我要改路线」（治本）。不换路线的换 CEO 不算押注。</li>
+          <li><strong>是否砍旧押新</strong>——是不是有明确关闭某老业务、砍某项目的动作？<strong>「砍」比「加」硬</strong>：Nvidia 关 Icera 是砍、AMD 苏姿丰砍分散业务是砍。看到只加码不砍的，是模糊信号；看到砍到自己旧业务的，才是真押注。</li>
+          <li><strong>时间线是否具体</strong>——「2-3 年内改善」是话术；「2H26 客户承诺、每月 7-8% 良率改善」是账目。时间线越具体，押注越硬。</li>
+        </ul>
+      </div>
+
+      <p>把两个问句变成动作：<strong>看到新品发布，先分「主战场 vs 边线」再三维度打分；看到 CEO 更换，先看「换路线 vs 保连续」再看砍旧动作与时间线</strong>。答完了，才决定这是买点、卖点，还是等一等再看。</p>
+
+      <h2>5 · 边界：这张卡什么时候不适用</h2>
+
+      <ul>
+        <li><strong>三种「代际」含义不同。</strong>无厂设计公司（如 Nvidia、AMD、AVGO）的「代际」是节点跳跃——上下一代工艺主要看能不能拿到台积电或三星的排队；代工厂（如 TSMC、Intel Foundry、Samsung）的「代际」是自身工艺开发——要自己发明下一代；设备厂（如 ASML、KLA、AMAT）的「代际」是造下一代设备的能力。三种「代际」的判断标准不同——设计公司押节点跳跃比较容易观察（客户名单、TSMC 财报披露），代工厂押工艺研发要看内部良率数据，设备厂押新一代设备要看研发投入占比与工程样机进度。<strong>模块 5（产业链总地图）</strong>展开这三种角色的分工。</li>
+        <li><strong>押注不一定成功。</strong>3dfx 也押过 Voodoo 新架构、Intel 也押过多代 10nm、Samsung 也押过 3nm GAA（<strong>模块 4</strong>已核验的历史）。押对与押错的区别只有事后 3-5 年才知道。<strong>本卡是判断「是不是在做生死押注」，不是判断「押注会不会成功」</strong>——押注是识别公司命运走向的必要条件，不是充分条件。</li>
+        <li><strong>拒绝押注也能存活一段时间。</strong>靠成熟制程、靠客户绑定、靠专利护城河、靠区域市场——这些都能让公司多活 3-5 年。但这些都是「存活」，不是「领先」。<strong>本卡讲的是「生死」——如果你要做领先者，代际押注就是生死；如果你判断的是「熬时间」的公司，本卡的框架不适用</strong>，用<strong>卡 14（产业周期与股价错位）</strong>更合适。</li>
+        <li><strong>相关卡片：卡 3（良率 = 成本曲线）</strong>展开代际押注的具体路径——「新节点良率能不能爬上来」就是押注能不能兑现；<strong>卡 9（生态分工与耦合度）</strong>展开生态分工可能降低押注门槛；<strong>卡 14（产业周期与股价错位）</strong>展开为什么押注要在低谷期做——低谷期股价往往先跌到底，等财报兑现才买就晚了 2 年。</li>
+      </ul>
+
+      <h2>6 · 练习两道</h2>
+
+      <div class="scenario">
+        <h4>练习一 · 复述题（合上卡片，3 分钟讲给完全不懂的人听）</h4>
+        <p>题目：为什么半导体公司「掉队瞒不住」——是什么物理机制决定了没法靠营销挽救？</p>
+        <p class="scenario-hint">提示：从两个数字入手——「差一代 ≈ 同功耗性能差 20-40%」+「追一代 ≈ 3-5 年 + 数十亿美元」。把这两个数字组合，你就能推出为什么营销救不了掉队：<strong>因为客户不会用差 20% 的芯片（整机没竞争力）、又追不上来（时间成本硬）——两头夹击，只能出局</strong>。举一个已核验的现场（Intel Cannon Lake 关核显）比抽象讲更快。</p>
+      </div>
+
+      <div class="scenario">
+        <h4>练习二 · 推演题（用已核验事实做前提，用本卡机制推）</h4>
+        <p>已核验的两件真事：</p>
+        <ul>
+          <li>陈立武 2026-02 公开表态：18A 良率每月 7-8% 改善（行业最佳实践）<span class="badge badge-verified">已核验</span>；</li>
+          <li>陈立武 2026-02 公开表态：2H26（2026 年下半年）拿到多家代工客户的正式承诺<span class="badge badge-verified">已核验</span>。</li>
+        </ul>
+        <p>今天是 2026-07-08，也就是 2H26 刚开始不久。请你推：<strong>2026 年下半年，你会看哪三个可观察、可核验的公开信号，来判断陈立武这次押注是不是「初见成效」？</strong>如果这三个信号都没出现，意味着什么？</p>
+        <p class="scenario-hint">提示：三类信号分别对应三个维度——① 代际差距量化（有没有具体的月度良率数字在电话会主动披露？还是仍然含糊说「进展良好」？）；② 研发投入方向（有没有 fabless 客户公开确认签用 18A？至少一家有量级的第三方站台？）；③ CEO 站台强度（陈立武每季度电话会还提不提 18A、请的外部帮手 PDF Solutions/KLA 是否公开表态？）。<strong>三个信号都没出现 = 押注可能在悄悄失败</strong>——因为如果押注在进展中，管理层会主动披露证据（说明业绩），如果失败就会开始「重新讲故事」（回到「按计划推进」这种 PR 语言）。<strong>不给标准答案</strong>——你的推理链能不能自洽比结论对不对重要。</p>
+      </div>
+
+      <div class="note">
+        <span class="note-label">这张卡要带走的两个反射弧</span>
+        <ol style="margin:0;padding-left:1.3em">
+          <li>看到<strong>新品发布</strong>新闻，先分「主战场 vs 边线」，再按三维度打分（代际差距量化 / 研发投入方向 / CEO 站台强度）；总分 ≥ 5 = 生死押注该跟踪，≤ 2 = 讲故事该警惕；</li>
+          <li>看到<strong>CEO 更换或技术领导离职</strong>，先看「换路线 vs 保连续」；再看是否砍旧押新、时间线是否具体——「砍」比「加」硬、「具体数字」比「大方向」硬。</li>
+        </ol>
+        <p style="margin:8px 0 0">写不出来，回来重看第 4 节。</p>
+      </div>
+
+    </section>
+
+    <section class="src">
+      <strong>卡 8 来源</strong>（本卡锚点大量与模块 4 决策档案共用，来源链接以模块 4 页脚为准，此处只列本卡新增引用与关键 anchor）
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="m04.html">模块 4 · 半导体行业前史</a>——本卡引用的 Intel 10nm 延期时间线（2015-07 首次官宣、2018-04 Cannon Lake 关核显、2019H2 Ice Lake、2020-07-23 Bob Swan 承认 7nm 良率晚 12 个月、2021-02 Gelsinger 上任）、AMD 苏姿丰 2014-10-08 上任与 2017-03-02 Ryzen 首发、Nvidia 2011-05 收购 Icera 与 2015-05-05 关停、Cyrix 与 3dfx 出局时间线，均已核验，来源链接见该页页脚。</li>
+        <li><a href="m02.html">模块 2 · 芯片前端制造 101</a>——本卡引用的陈立武 2026-02 18A 良率表态（「相当差」、请了 PDF Solutions/KLA、「行业最佳实践每月 7-8% 良率改善」、2H26 客户承诺），已在模块 2 复盘二核验。</li>
+        <li><a href="https://www.nvidia.com/en-us/data-center/h100/">Nvidia H100 官方产品页 / Hopper Whitepaper</a>——H100 vs A100 性能对比（视工作负载 3-6 倍训练性能提升）。</li>
+        <li><a href="https://www.theregister.com/2015/05/05/nvidia_to_shutter_icera_modem_business/">The Register 2015-05-05：Nvidia 官方声明「聚焦游戏、汽车、云端计算（含深度学习）」</a>——识别器案例 2 的引文原文。</li>
+        <li><a href="https://www.tomshardware.com/news/intel-announces-delay-to-7nm-processors-now-one-year-behind-expectations">Tom's Hardware：Intel 2020-07-23 电话会 CEO Bob Swan 宣布 7nm 再延期 6 个月、良率晚 12 个月、考虑外部代工</a>——识别器案例 4 的引文原文。</li>
+        <li>TSMC 各代节点 PPA 数据（N5 vs N7 +15% 性能或 −30% 功耗；N3E vs N5 +10-15%/−25-30%；N2 vs N3 同量级）——TSMC 在每年 Technology Symposium 与投资者材料中的通行披露口径；本卡以「专家判断」徽章标注，因不同工作负载下的实际增益幅度会有差异。</li>
+        <li>HBM（2013 前后 SK 海力士首代 + JEDEC 2013 HBM 标准）与 EUV（ASML 2000s 起研发、2010 原型机、2018 首批出货）——半导体行业史通行口径，本卡以「专家判断」徽章标注。</li>
+      </ul>
+      <p style="margin-top:14px;font-size:var(--fs-12)">徽章说明：<span class="badge badge-verified">已核验</span> 直接引用一手来源（年报、10-K、8-K、官方公告）或本项目其他页面已核验的资料 · <span class="badge badge-expert">专家判断</span> 综合行业通行口径的判断性表达，无单一权威来源 · <span class="badge badge-assume">估算</span> 明确的推算，标注方法与年份。</p>
+    </section>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine07.html"><span class="dir">← 上一张</span>卡 7 · 需求分两种：换机式与范式革命</a>
+        <a href="spine09.html" style="text-align:right"><span class="dir">下一张 →</span>卡 9 · 生态分工与工艺-设计耦合度</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- 押注类型识别器 ---------- */
+  (function () {
+    /* 四个案例：引文、参考打分、事后事实 */
+    const CASES = {
+      c1: {
+        who: "Intel 陈立武 · 2026-02",
+        source: "会议报道；模块 2 复盘二已核验",
+        quote: "「18A 制程接手时良率相当差；我把 PDF Solutions 和 KLA 的老朋友请来了。行业最佳实践是每月 7-8% 的良率改善，现在我看到了。2H26 会拿到多家代工客户的正式承诺。」",
+        ref: { A: 2, B: 2, C: 2 },
+        refWhy: {
+          A: "有具体的月度良率数字（7-8%）和时点（2H26 客户承诺）——量化到位。",
+          B: "把 18A 变成公司核心押注，请外部专业机构（PDF Solutions/KLA）帮忙——资源再分配明确。",
+          C: "CEO 亲自站台，主动承认「相当差」——不是 PR 语言。"
+        },
+        verdict: "bet",
+        factHead: "事后事实（进行中，2026-07 视角）",
+        factItems: [
+          "**状态**：待观察。这是本卡编写时（2026-07）刚开始 2H26 的进行中案例。",
+          "**已知判断依据**：模块 2 复盘二对 18A 押注做了完整拆解——判断这是「押注」的置信度较高（三维度都到位）。",
+          "**关键待验证信号（练习二里让读者推的）**：① 18A 客户名单公开、② 良率数字每季度电话会主动披露、③ PDF Solutions/KLA 是否公开表态。"
+        ]
+      },
+      c2: {
+        who: "Nvidia · 2015-05-05",
+        source: "The Register 2015-05-05 报道 Nvidia 官方声明",
+        quote: "「Nvidia 关停 2011 年以 3.67 亿美元收购的 Icera 移动基带业务，正式退出手机基带市场。公司未来将聚焦游戏、汽车和云端计算（含深度学习）。」",
+        ref: { A: 1, B: 2, C: 1 },
+        refWhy: {
+          A: "只有方向性说明（「聚焦游戏、汽车、云端」），没有具体的性能功耗数字或市占目标——只有定性。",
+          B: "砍掉 3.67 亿美元已经花出去的业务，把资源推向新方向——这是「砍」，砍旧硬信号。",
+          C: "公司声明，黄仁勋后续在 GTC 承接（不是同一天）——属于事业部级别的公开声明，但方向由 CEO 定调。"
+        },
+        verdict: "bet",
+        factHead: "事后事实（2015 到 2024）",
+        factItems: [
+          "2015-05-05 当天：市场普遍读为「一次巨额并购归零」，Nvidia 股价波动不大。",
+          "2016 起：GTC 讲「AI 是新的电力」，Nvidia 把资源全面推向深度学习。",
+          "2020-2022：A100、H100 陆续量产。",
+          "2024 财年数据中心业务 $47.5B（已核验 · Nvidia FY24 8-K）——这次「砍」为「AI 台阶起飞」腾出了空间。",
+          "**教训**：即使总分只有 4 分（模糊到押注区间），「砍」的动作本身就是硬信号。看到公告不要立刻上车，但要打绿标进跟踪清单，等下一年的资源再分配验证。"
+        ]
+      },
+      c3: {
+        who: "Intel · 2015-07",
+        source: "Intel 2015-07 季报电话会 · 模块 4 决策档案已核验",
+        quote: "「10nm 制程 Cannon Lake 首批产品从 2016 年推迟至 2017 年。我们按计划推进。」",
+        ref: { A: 1, B: 0, C: 0 },
+        refWhy: {
+          A: "承认延期是「信号」，但没有量化良率、没有具体的下一步日程——只有定性延期。",
+          B: "没有资源再分配、没有砍任何业务、没有请外部帮手——研发投入方向没变。",
+          C: "PR 语言「按计划推进」——CEO 没有出面承认现状。"
+        },
+        verdict: "story",
+        factHead: "事后事实（2015 到 2020）",
+        factItems: [
+          "2016：又延一年，仍无量产。",
+          "2018-04：Cannon Lake 首颗产品 Core i3-8121U 上市——为了绕开良率把核显砍掉才勉强出货（已核验 · WikiChip）。市场评价「几乎没人买」。",
+          "2019H2：Ice Lake 才算真正意义上量产，距原定 2016 已延迟约 3 年。",
+          "2020-07-23：CEO Bob Swan 承认 7nm 再延期 6 个月、良率晚 12 个月、考虑外部代工——股价单日 -16%（已核验 · Fortune）。",
+          "**教训**：从 2015-07 这条「按计划推进」到 2020-07 的股价单日 -16%，隔了整整 5 年。**5 年时间足够识别掉队——如果 2015-07 就读懂这句话是「讲故事」，你不必等到 2020-07 才做减仓判断**。"
+        ]
+      },
+      c4: {
+        who: "Intel Bob Swan · 2020-07-23",
+        source: "Tom's Hardware 2020-07-23 报道电话会原文 · 模块 4 已核验",
+        quote: "「7nm 制程再延期 6 个月，良率进度比目标晚了 12 个月；我们正在考虑外部代工。」",
+        ref: { A: 2, B: 1, C: 1 },
+        refWhy: {
+          A: "12 个月延期是具体数字——量化到位。",
+          B: "「考虑外部代工」是方向信号但不是完成的动作——没有正式砍旧、没有公开签约，属于「提但不具体」。",
+          C: "CEO 亲自承认过错，但整体仍是 PR 语言「考虑」——半承认、半留余地。"
+        },
+        verdict: "grey",
+        factHead: "事后事实（2020 到 2026）",
+        factItems: [
+          "2020-07-23 当天：Intel 股价单日 -16%（已核验 · Fortune）——市场读懂了「承认掉队」这层意思。",
+          "2021-02-15：Pat Gelsinger 上任 Intel CEO，启动 IDM 2.0 战略——**真正的押注开始于此**，2020-07 的表态只是「承认现状」的过渡阶段。",
+          "2026-02：陈立武上任后接手 18A，这次才是「完整押注」（案例 1）。",
+          "**教训**：**「承认掉队」不等于「完成押注」——两者中间需要「换 CEO + 明确路线 + 砍旧业务」的组合动作**。这个案例是「模糊」（总分 4）的教科书例子：承认了、但没完成动作。做投资判断时，「模糊」信号应当降低仓位、加大跟踪频率，而不是立刻上车或减仓。"
+        ]
+      }
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const userScores = { A: null, B: null, C: null };
+    let currentId = "c1";
+
+    const caseBtns = document.querySelectorAll("[data-case]");
+    const dimGroups = document.querySelectorAll(".id-dim-buttons");
+    const idQuoteEl = $("idQuote");
+    const idScoreEl = $("idScore");
+    const idTagEl = $("idTag");
+    const idDescEl = $("idDesc");
+    const idRevealEl = $("idReveal");
+    const idResetBtn = $("idResetBtn");
+    const idRevealBtn = $("idRevealBtn");
+
+    function renderQuote() {
+      const c = CASES[currentId];
+      idQuoteEl.innerHTML =
+        '<span class="qcap">' + c.who + " · " + c.source + '</span>' +
+        '<p class="qt">' + c.quote + '</p>';
+    }
+
+    function resetScores() {
+      userScores.A = userScores.B = userScores.C = null;
+      dimGroups.forEach((g) => {
+        g.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", "false"));
+      });
+      idScoreEl.textContent = "未打分";
+      idScoreEl.classList.add("pending");
+      idTagEl.textContent = "先选择上面三个维度";
+      idTagEl.className = "tag-verdict grey";
+      idDescEl.textContent = "总分 ≥ 5 = 生死押注 · 3-4 = 模糊 · ≤ 2 = 讲故事";
+      idRevealEl.hidden = true;
+      idRevealBtn.textContent = "看参考评分与事后事实";
+    }
+
+    function computeVerdict() {
+      const filled = userScores.A !== null && userScores.B !== null && userScores.C !== null;
+      if (!filled) {
+        idScoreEl.textContent = "未打分";
+        idScoreEl.classList.add("pending");
+        idTagEl.textContent = "还差 " + [userScores.A, userScores.B, userScores.C].filter((v) => v === null).length + " 个维度";
+        idTagEl.className = "tag-verdict grey";
+        idDescEl.textContent = "总分 ≥ 5 = 生死押注 · 3-4 = 模糊 · ≤ 2 = 讲故事";
+        return;
+      }
+      const total = userScores.A + userScores.B + userScores.C;
+      idScoreEl.textContent = total + " / 6";
+      idScoreEl.classList.remove("pending");
+      let verdict = "grey", label = "模糊";
+      if (total >= 5) { verdict = "bet"; label = "生死押注"; }
+      else if (total <= 2) { verdict = "story"; label = "讲故事"; }
+      idTagEl.textContent = "你的判断：" + label;
+      idTagEl.className = "tag-verdict " + verdict;
+      idDescEl.textContent = "点「看参考评分与事后事实」比对";
+    }
+
+    function revealFact() {
+      const c = CASES[currentId];
+      const ref = c.ref;
+      const refTotal = ref.A + ref.B + ref.C;
+      let refLabel = "模糊", refClass = "grey";
+      if (c.verdict === "bet") { refLabel = "生死押注"; refClass = "bet"; }
+      else if (c.verdict === "story") { refLabel = "讲故事"; refClass = "story"; }
+
+      let userLine = "";
+      if (userScores.A !== null && userScores.B !== null && userScores.C !== null) {
+        const utotal = userScores.A + userScores.B + userScores.C;
+        userLine = "你的打分：A=" + userScores.A + " · B=" + userScores.B + " · C=" + userScores.C +
+                   " · <b>总分 " + utotal + " / 6</b>";
+      } else {
+        userLine = "（你还没完成打分——可以先关闭这个面板、把三个维度都点一下再打开）";
+      }
+
+      let html = "<h4>参考评分（我的判断）</h4>";
+      html += "<div>A · 代际差距量化：<b>" + ref.A + " / 2</b> —— " + c.refWhy.A + "</div>";
+      html += "<div>B · 研发投入方向：<b>" + ref.B + " / 2</b> —— " + c.refWhy.B + "</div>";
+      html += "<div>C · CEO 站台强度：<b>" + ref.C + " / 2</b> —— " + c.refWhy.C + "</div>";
+      html += "<div style='margin-top:8px'><b>参考总分 " + refTotal + " / 6</b> · <span class='tag-verdict " + refClass + "' style='padding:1px 8px;border-radius:99px;font-size:var(--fs-12);font-weight:650'>" + refLabel + "</span></div>";
+      html += "<div style='margin-top:8px;font-size:var(--fs-13);color:var(--muted)'>" + userLine + "</div>";
+      html += "<span class='rlabel'>" + c.factHead + "</span><ul>";
+      c.factItems.forEach((it) => {
+        /* 将 **加粗** 转成 <strong> */
+        const html2 = it.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        html += "<li>" + html2 + "</li>";
+      });
+      html += "</ul>";
+      idRevealEl.innerHTML = html;
+      idRevealEl.hidden = false;
+      idRevealBtn.textContent = "收起事后事实";
+    }
+
+    /* 事件绑定 */
+    caseBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        caseBtns.forEach((b) => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        currentId = btn.dataset.case;
+        resetScores();
+        renderQuote();
+      });
+    });
+
+    dimGroups.forEach((g) => {
+      const dim = g.dataset.dim;
+      g.querySelectorAll("button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          g.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", "false"));
+          btn.setAttribute("aria-pressed", "true");
+          userScores[dim] = parseInt(btn.dataset.score, 10);
+          computeVerdict();
+        });
+      });
+    });
+
+    idResetBtn.addEventListener("click", resetScores);
+
+    idRevealBtn.addEventListener("click", () => {
+      if (idRevealEl.hidden) {
+        revealFact();
+      } else {
+        idRevealEl.hidden = true;
+        idRevealBtn.textContent = "看参考评分与事后事实";
+      }
+    });
+
+    /* 初始化 */
+    renderQuote();
+    resetScores();
+  })();
+
+});
+</script>
+</body>
+</html>

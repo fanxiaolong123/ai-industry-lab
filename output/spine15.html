@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 15 · 规则五件套齐全 · 半导体投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 骨架卡专属版式（承 spine10） ---------- */
+  .spine-section { margin: 40px 0 24px; scroll-margin-top: 60px; }
+  .spine-section > h2 {
+    font-size: var(--fs-22);
+    font-weight: 650;
+    margin: 0 0 4px;
+    letter-spacing: -0.005em;
+  }
+  .spine-section > .kicker {
+    font-size: var(--fs-13);
+    font-weight: 650;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .spine-lead {
+    font-size: var(--fs-17);
+    color: var(--ink);
+    padding: 12px 16px;
+    background: var(--surface);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    margin: 12px 0 20px;
+  }
+  .spine-lead b { color: var(--primary); }
+
+  /* 反差对比 · 现象段用 */
+  .gap-row {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: stretch;
+    margin: 14px 0 4px;
+  }
+  .gap-cell {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-m); padding: 14px 16px;
+  }
+  .gap-cell h4 { margin: 0 0 6px; font-size: var(--fs-14); font-weight: 650; color: var(--muted); }
+  .gap-cell .fig { font-size: 20px; font-weight: 700; color: var(--danger-ink); font-variant-numeric: tabular-nums; line-height: 1.25; }
+  .gap-cell.right .fig { color: var(--accent-ink); }
+  .gap-cell p { font-size: var(--fs-14); margin: 4px 0 0; color: var(--ink); }
+  .gap-arrow { display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--muted); font-weight: 400; }
+  @media (max-width: 640px) {
+    .gap-row { grid-template-columns: 1fr; }
+    .gap-arrow { transform: rotate(90deg); padding: 4px 0; }
+  }
+
+  /* 反射问句样式（借自 spine02 qa） */
+  .qa {
+    border-left: 3px solid var(--primary);
+    background: var(--primary-tint);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    padding: 12px 16px 4px;
+    margin: 14px 0;
+  }
+  .qa .q { font-weight: 650; color: var(--primary); margin: 0 0 8px; font-size: var(--fs-16); }
+  .qa .q::before { content: "问："; }
+  .qa ul { margin: 6px 0 10px; padding-left: 1.2em; }
+
+  /* ---------- A 类组件：五件套检验器 ---------- */
+  .rule-picker {
+    display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 12px;
+  }
+  .rule-btn {
+    appearance: none; font: inherit; font-size: var(--fs-13); font-weight: 600;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+    border-radius: var(--radius-s); padding: 8px 12px; cursor: pointer; text-align: left;
+    line-height: 1.35;
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+    max-width: 100%;
+  }
+  .rule-btn:hover { background: var(--surface); }
+  .rule-btn[aria-pressed="true"] {
+    border-color: var(--primary-2);
+    background: var(--primary-tint);
+    color: var(--primary);
+  }
+  .rule-btn .rn { display: block; font-size: var(--fs-12); color: var(--muted); font-weight: 500; margin-bottom: 2px; }
+  .rule-btn[aria-pressed="true"] .rn { color: var(--primary); }
+
+  .five-grid {
+    display: grid; gap: 0; margin: 8px 0 4px;
+    border: 1px solid var(--line); border-radius: var(--radius-m); overflow: hidden;
+    background: var(--bg);
+  }
+  .five-row {
+    display: grid;
+    grid-template-columns: 84px 96px 1fr;
+    gap: 6px 14px; align-items: start;
+    padding: 12px 14px;
+    font-size: var(--fs-14);
+    border-top: 1px solid var(--line);
+    line-height: 1.55;
+  }
+  .five-row:first-child { border-top: none; }
+  .five-row .lbl {
+    font-weight: 650; color: var(--ink);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .five-row .lbl .num {
+    display: inline-block; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--surface); border: 1px solid var(--line);
+    text-align: center; line-height: 20px;
+    font-size: var(--fs-12); font-weight: 700; color: var(--muted);
+  }
+  .five-row .st {
+    font-size: var(--fs-12); font-weight: 700;
+    padding: 3px 8px; border-radius: 99px;
+    align-self: center; justify-self: start; white-space: nowrap;
+  }
+  .five-row .st.ok  { color: var(--primary);    background: var(--primary-tint); }
+  .five-row .st.no  { color: var(--danger-ink); background: var(--danger-tint, #fde5e5); }
+  .five-row .st.mid { color: var(--accent-ink); background: var(--accent-tint); }
+  .five-row .body { color: var(--ink); }
+  .five-row .body .why {
+    display: block; margin-top: 4px; color: var(--muted); font-size: var(--fs-13);
+  }
+  .five-row.miss { background: var(--surface); }
+
+  .verdict {
+    margin: 10px 0 4px;
+    padding: 12px 16px;
+    border-radius: var(--radius-m);
+    background: var(--surface); border: 1px solid var(--line);
+    font-size: var(--fs-15); line-height: 1.6;
+  }
+  .verdict.pass { background: var(--primary-tint); border-color: var(--primary-2); }
+  .verdict.fail { background: var(--danger-tint, #fde5e5); border-color: var(--danger-ink); }
+  .verdict.warn { background: var(--accent-tint); border-color: var(--accent); }
+  .verdict b { color: var(--ink); }
+  .verdict .head {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+    margin-bottom: 4px; flex-wrap: wrap;
+  }
+  .verdict .head b { font-size: var(--fs-16); }
+  .verdict .count {
+    font-size: var(--fs-13); color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .verdict.pass .head b { color: var(--primary); }
+  .verdict.fail .head b { color: var(--danger-ink); }
+  .verdict.warn .head b { color: var(--accent-ink); }
+
+  @media (max-width: 640px) {
+    .five-row { grid-template-columns: 1fr; }
+    .five-row .st { justify-self: start; }
+  }
+
+  /* 弃用 / 停发 · 时间轴 */
+  .timeline {
+    position: relative; padding: 8px 0 4px 24px;
+    margin: 12px 0;
+    border-left: 2px solid var(--line);
+  }
+  .timeline .ev {
+    position: relative; margin-bottom: 12px;
+    font-size: var(--fs-14);
+  }
+  .timeline .ev::before {
+    content: ""; position: absolute; left: -30px; top: 6px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--bg); border: 2px solid var(--muted);
+  }
+  .timeline .ev.dead::before { border-color: var(--danger-ink); background: var(--danger-tint, #fde5e5); }
+  .timeline .ev .yr {
+    font-weight: 650; color: var(--muted);
+    display: inline-block; margin-right: 8px; font-variant-numeric: tabular-nums;
+  }
+  .timeline .ev.dead .yr { color: var(--danger-ink); }
+</style>
+</head>
+<body data-page="s15">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 15 · 规则五件套齐全</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 15 / 15 · 最后一张</p>
+      <h1>卡 15 · 规则五件套齐全</h1>
+      <p class="core-q"><b>一句话：</b>读到任何一条投资规则（「设备订单是芯片周期领先指标」「book-to-bill &gt; 1 是买点」「AEHR 订单领先 Wolfspeed 财报」），若不能同时说清<strong>来源、机制、案例、操作、失效</strong>五件事，这条规则就不是「你的知识」，只是「一句你重复的话」。缺一件都可能让你在实盘里付学费。这张卡是本学习台所有工具的验收标准，也是骨架层最后一课。</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">读完这张卡你要能答的三个问题（现在答不上来是正常的）</span>
+      <ol style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>SEMI 北美 book-to-bill 报告 <strong>2016 年 12 月已经停发</strong>——为什么至今很多中文投资学习内容还在教「book-to-bill &gt; 1 是买点」这条规则？投资者拿它下判断会遇到什么？</li>
+        <li>本项目在建设过程中弃用过「AEHR 与 Wolfspeed 高度绑定」这条说法。<strong>「查无实据」为什么足以让一条听上去很合理的规则整条被删掉？</strong></li>
+        <li>看到一条流传很广、听着很顺的投资规则，你的第一反应问什么？（提示：不是「合不合理」，是另一件事）</li>
+      </ol>
+    </div>
+
+    <!-- ==================== 1. 现象 ==================== -->
+    <section class="spine-section" id="sec-phenom">
+      <div class="kicker">1 · 现象</div>
+      <h2>被广为流传的规则，来源可能十年前就已经死掉</h2>
+
+      <p>先看两条反差现场——都发生在你可能会读到、可能会引用、可能会拿去下判断的规则身上。</p>
+
+      <div class="gap-row">
+        <div class="gap-cell">
+          <h4>规则一 · 「book-to-bill &gt; 1 是买点」</h4>
+          <div class="fig">来源 2016-12 已停</div>
+          <p>SEMI（半导体行业协会）自 1990 年代起每月发布北美设备制造商 book-to-bill 报告，是半导体投资界最广为引用的领先指标之一。<strong>2016 年 12 月，SEMI 发布最后一份北美 book-to-bill 报告，之后正式停发</strong>——理由是数据代表性不足<span class="badge badge-verified">已核验 · SEMI 官方 2016-12 公告；模块 2 已建来源</span>。</p>
+        </div>
+        <div class="gap-arrow" aria-hidden="true">vs.</div>
+        <div class="gap-cell right">
+          <h4>规则二 · 「AEHR 订单领先 Wolfspeed 财报」</h4>
+          <div class="fig">项目已弃用</div>
+          <p>本项目在准备模块 3（封装测试）时，曾使用「AEHR 订单领先 Wolfspeed 财报」这条说法——听上去很合理：AEHR 做晶圆级老化测试设备、Wolfspeed 做碳化硅晶圆。但深度查证阶段翻遍 AEHR 的 SEC 季报、10-K、多个季度电话会转录，找不到 AEHR 官方文件明确点名 Wolfspeed 的绑定关系。<strong>本项目 2026 年建设记录里明确将这条规则弃用</strong><span class="badge badge-verified">已核验 · PROGRESS.md 项目自身记录</span>。</p>
+        </div>
+      </div>
+
+      <p>两条规则的共同点：<strong>都听上去很合理、都在圈内被引用过、都无法通过一次严肃查证</strong>。规则一在被引用到今天为止已经死了将近十年——只是没有人正式宣告死亡，所以还在中文投资教程和电视财经节目里被当成金句念。规则二在准备一份普通材料时被一次查证的动作拦下——如果没有这一步，本项目每一位读者都会读到一条无法回源的规则、然后以为自己学到了知识。</p>
+
+      <p>相似地，一条听起来简单直观的规则「英特尔 2023 年毛利率好转，是运营改善」——2023 年英特尔把服务器等设备的折旧年限从 <strong>5 年拉长到 8 年</strong>（会计政策变更）<span class="badge badge-verified">已核验 · Intel 2023 会计政策变更，spine02 已建</span>。同一份毛利率读数，会计口径切换后含义完全变了：数字更好看的一部分不是经营在变好、是每年计提的折旧被摊薄。<strong>不查会计政策附注（=「操作」件缺）就直接读毛利率，读到的可能是被口径改动过的假信号</strong>。</p>
+
+      <p class="spine-lead">三条规则、三种失效方式：一条<b>来源已死</b>、一条<b>找不到来源</b>、一条<b>操作细节没查</b>——但都被反复引用。这张卡讲透的模型是：<b>规则必须五件套齐全——来源、机制、案例、操作、失效</b>。缺一件，就不再是「你的知识」，只是「一句你重复的话」。这是本学习台所有 15 张骨架卡、所有手册页里「怎么判断」工具、所有实盘 memo 判断的最低验收线——也是本课的收官。</p>
+    </section>
+
+    <!-- ==================== 2. 机制 ==================== -->
+    <section class="spine-section" id="sec-mech">
+      <div class="kicker">2 · 机制</div>
+      <h2>为什么每一件都不能缺——一件件讲清楚</h2>
+
+      <p>五件套不是形式主义清单，是<strong>五种不同风险的对应工具</strong>。少任何一件，就有一种对应的风险留在你不知道的地方。逐条讲：</p>
+
+      <h3>a. 来源 · 防「道听途说 / 过时口径 / 断章取义」</h3>
+      <p><strong>没有出处的规则可能是三件事之一：道听途说、过时口径、断章取义</strong>。找不到一手出处（一手= 年报、10-K、财报电话会转录、官方统计、公司公告、监管备案），规则的可靠性无法评估。SEMI 北美 book-to-bill 是最好的例子——1990 年代来源确实存在，指标本身也是行业标准；但发布方 <strong>2016-12 停发之后</strong>，规则的来源就死掉了。今天引用这条规则的人，如果没有回到 SEMI 官网确认是否还在发布、如果没有翻一遍 2016 年之后的原始月度报告，就会重复一条<strong>来源已死</strong>的规则。<span class="badge badge-verified">已核验 · SEMI 官方公告</span></p>
+      <p>AEHR-Wolfspeed 那条更简单：<strong>连来源都从来不存在过</strong>——AEHR 的官方文件里从没明确点名过 Wolfspeed 的绑定关系。听上去合理、逻辑上讲得通，但一手出处这一步一开始就没跨过去。<strong>规则的合理性和规则的来源是两件独立的事，前者不能替代后者</strong>。</p>
+
+      <h3>b. 机制 · 防「相关性冒充因果」</h3>
+      <p>找到了来源，还要问一步：<strong>为什么这条规则会成立？物理基础在哪里？经济基础在哪里？</strong>没有机制的规则只是相关性——历史上碰巧一起动过，不等于将来会一起动。真机制来自「产能物理」（如卡 1 讲的扩产 24-36 个月）、「合同结构」（如卡 6 讲的直供长约 vs 现货）、「会计口径」（如卡 2 讲的固定成本 &gt; 50% 才有跳变）——这些是可以推导的、可以看到失效条件的。</p>
+      <p>「设备订单是芯片周期领先指标」这条规则之所以过关，是因为机制可以推导：设备交期以年计（EUV 一台 2.27 亿欧元、2024 全年全球仅交付 44 台<span class="badge badge-verified">已核验 · ASML 2024 年报</span>）；扩产必先订机；所以设备订单当然领先芯片厂收入。<strong>机制推得出来，规则才有立脚点</strong>。「缺货就是买点」这条规则则相反——它没有机制，只是把两件曾经一起出现过的事直接接在一起；卡 5 讲清楚了「缺货可能是牛鞭效应的极值信号，反而是买点的反向指标」，同一条相关性可以往两个方向读。</p>
+
+      <h3>c. 案例 · 防「纸上正确、实盘无用」</h3>
+      <p>找到了来源、推清了机制，还要问一步：<strong>这条规则在真实历史里被用过吗？结果如何？</strong>没有案例的规则只是理论——一个数字、一条曲线、一句管理层原话都不掉的规则，实盘里未必成立。真案例意味着：<strong>规则有一次可回放的应用</strong>（起点数字→过程动作→终点结果→归因）。</p>
+      <p>本项目的三个已核验决策复盘（台积电 N3 稀释 2024-01-18、ASML→KLA 传导 2026-01-02、英特尔 18A 爬坡 2026-02）都是「案例」件的典型格式：起点信息集、判断动作、终点数据、归因区分推理质量与结果运气。<strong>只有走过真实事件的规则，才能进入你的判断反射弧</strong>。没走过案例的规则，用来考试可以，用来下判断会出错。</p>
+
+      <h3>d. 操作 · 防「读不到、读不出、读错」</h3>
+      <p>找到了来源、推清了机制、跑过了案例，还要问一步：<strong>怎么在真实数据里读它？多久看一次？和什么交叉验证？</strong>没有操作细节的规则无法执行——你可能查错数据源、可能读到旧口径、可能读到被会计政策改动过的读数、可能忘了跟另一条信号交叉。</p>
+      <p>英特尔 2023 折旧年限 5→8 年就是「操作」件缺失的活例：如果你不知道要去看 10-K 里 Property, Plant and Equipment 会计政策附注段、不知道那里可能藏着口径切换，你就会把 2023 年的毛利率好转当成运营改善。<strong>操作细节不是形式——它是把规则从「理论」翻译成「你能读到的具体动作」的桥</strong>：数据在哪个源、多久更新、和什么交叉、有没有口径切换要盯附注。这些没写清楚，规则你就用不上。</p>
+
+      <h3>e. 失效 · 防「规则被滥用」</h3>
+      <p>前四件都齐了，还要问最后一件：<strong>什么时候这条规则会失效？真实的反例是什么？</strong>没有边界的规则会被滥用——一条规则被无差别地套到所有场景，就是灾难的起点。真失效意味着：<strong>有一条到几条可具体命名的边界</strong>，触碰哪一条就要停用这条规则。</p>
+      <p>「设备订单领先芯片周期」这条规则的失效边界至少三条：①国产替代政策扰动（中国设备订单可能因为地缘因素超前，与真实需求脱钩）；②扩产 PTSD 时期（厂商砍订单不代表需求真差，可能是心态问题，见卡 4）；③统计口径切换（SEMI 全球统计从 2016 年后由不同机构接手，历史数据难以直接连起来读）。没有这三条边界，就会把「订单转正」直接读成「买点」——历史上这样做的人都付过学费。<strong>失效边界是给规则「上锁」的东西</strong>；不上锁的工具会伤到自己。</p>
+
+      <h3>f. 关键洞察：五件套是「最低门槛」，不是「充分条件」</h3>
+      <p>五件都齐了，规则也不保证正确——历史上被证伪的「经典规则」列一长串（下面锚点段会举例）。<strong>五件套是「这条规则值得你花时间去用」的最低标准</strong>，过了这条门槛，还要用其他方法（跨市场、跨周期、跨机制交叉验证）继续检验。<strong>缺任何一件，就直接不用——不上判断桌</strong>。</p>
+      <p>换个说法：五件套是「入场券」，不是「奖杯」。看到不齐五件套的规则，第一动作不是「思考它对不对」，是「先把它挪出判断集」——直到能补齐五件套再回来。这是本卡最反直觉的地方：<strong>判断一条规则的第一步不是判断它对不对，是判断它有没有资格进入你的判断</strong>。</p>
+
+      <h3>g. 亲手拉一下：五件套检验器</h3>
+      <p>下面这个组件把六条真实规则（三条本站已建、两条流传广泛已死、一条 half-baked）并排放在一起。<strong>看什么：</strong>①点第一条「设备订单是芯片周期领先指标」——五件全齐，规则可用；②点「SEMI book-to-bill &gt; 1 是买点」——来源已死，其他都不重要了；③点「AEHR 订单领先 Wolfspeed 财报」——来源都找不到，无法起步；④对比三种失效方式差在哪一件——五件套哪一件缺，规则就会在哪一件对应的风险上出错。</p>
+
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-title">五件套检验器 · 六条真实规则的入场券检查</span>
+          <span class="viz-sub">六条规则全部来自本站已建或公开流传素材。检验判据即卡 15 五件套（来源 / 机制 / 案例 / 操作 / 失效）。</span>
+        </div>
+
+        <div class="rule-picker" role="group" aria-label="规则选择">
+          <button class="rule-btn" data-rule="r1" aria-pressed="true"><span class="rn">规则 1</span>设备订单是芯片周期领先指标</button>
+          <button class="rule-btn" data-rule="r2" aria-pressed="false"><span class="rn">规则 2</span>SEMI book-to-bill &gt; 1 是买点</button>
+          <button class="rule-btn" data-rule="r3" aria-pressed="false"><span class="rn">规则 3</span>AEHR 订单领先 Wolfspeed 财报</button>
+          <button class="rule-btn" data-rule="r4" aria-pressed="false"><span class="rn">规则 4</span>缺货就是买点</button>
+          <button class="rule-btn" data-rule="r5" aria-pressed="false"><span class="rn">规则 5</span>HBM 长约锁定 = 永久稳增长</button>
+          <button class="rule-btn" data-rule="r6" aria-pressed="false"><span class="rn">规则 6</span>毛利率涨了就是好公司</button>
+        </div>
+
+        <div id="fiveGrid" class="five-grid" role="table" aria-label="五件套检验结果"></div>
+
+        <div id="verdict" class="verdict pass" aria-live="polite"></div>
+
+        <p style="font-size:var(--fs-13);color:var(--muted);margin:10px 0 0">读完这条：<strong>缺一件就不用——这是「入场券」而不是「奖杯」</strong>。看到不齐的规则，动作不是继续思考它对不对，是先把它挪出你的判断集，直到能补齐。</p>
+      </div>
+    </section>
+
+    <!-- ==================== 3. 真实锚点 ==================== -->
+    <section class="spine-section" id="sec-anchor">
+      <div class="kicker">3 · 真实锚点</div>
+      <h2>三个已核验现场，一个共同模式</h2>
+
+      <h3>锚点一 · 来源已死 · SEMI 北美 book-to-bill 2016-12 停发</h3>
+      <p>SEMI 自 1990 年代起每月发布北美设备制造商 book-to-bill 报告——一个把新增订单（book）除以出货（bill）的比值，&gt; 1 意味着订单跑得比出货快，被广泛作为半导体行业周期领先指标。<strong>2016 年 12 月，SEMI 发布最后一份北美 book-to-bill 报告，之后停发</strong>，官方给出的理由是数据代表性不足<span class="badge badge-verified">已核验 · SEMI 官方停发公告；模块 2 已建来源</span>。</p>
+      <div class="timeline">
+        <div class="ev"><span class="yr">1990s</span>SEMI 北美 book-to-bill 报告开始发布，成为行业标准领先指标</div>
+        <div class="ev"><span class="yr">2011</span>日本、韩国版本相继停发或口径变更（SEMI 官方）</div>
+        <div class="ev dead"><span class="yr">2016-12</span>SEMI 发布最后一份北美 book-to-bill 报告，正式停发</div>
+        <div class="ev"><span class="yr">2017 起</span>中文投资教程、财经节目、部分卖方研报<strong>继续引用</strong>这条规则</div>
+        <div class="ev"><span class="yr">2026-07 · 今</span>「book-to-bill &gt; 1 是买点」在互联网教学内容里仍活跃</div>
+      </div>
+      <p><strong>一条规则的来源已经死了将近十年，但因为没人正式宣告死亡，它还在被念</strong>。这是「来源」件失效最标准的形态——不是规则错，是规则依附的东西已经不存在了、但规则的「传播路径」独立于「来源路径」还在自行运转。今天再引用这条规则做判断，实盘里对不上任何一份公开数据。</p>
+
+      <h3>锚点二 · 来源不存在 · 本项目弃用「AEHR-Wolfspeed 绑定」说法</h3>
+      <p>本项目建设过程中曾经使用「AEHR 订单领先 Wolfspeed 财报」这条说法——它写在 Learn Plan 早期版本模块 3（封装测试）的候选案例里。深度查证阶段做了这样一件事：翻 AEHR 官方 SEC 季报、10-K、多个季度电话会转录，寻找 AEHR 明确点名 Wolfspeed 作为主要客户或做出绑定表述的原始记录——<strong>没有找到</strong><span class="badge badge-verified">已核验 · PROGRESS.md 项目自身记录 · m03 后续用「AI 光互连硅光客户」替代</span>。</p>
+      <p>处理动作：<strong>项目 2026 年建设记录里明确将这条规则弃用</strong>——不改写成「AEHR 可能与 Wolfspeed 有一定关联」这类模糊说法蒙混（那种写法只是把「查无实据」用软化语言遮住了），直接整条删掉。同期，m03 里 AEHR 的引用改为 2026 年 3 月和 6 月两次已核验公告——AI 光互连硅光客户为超大规模数据中心光互连器件量产追加测试系统订单<span class="badge badge-verified">已核验 · AEHR 官方新闻稿</span>。</p>
+      <p>这条锚点的作用是<strong>示范「查无实据」的处理动作</strong>——不是软化写法，是整条删掉。规则的合理性和规则的来源是两件独立的事：前者是脑中的推理链，后者是硬邦邦的一手材料。<strong>再合理的推理链，缺一手来源就不能上判断桌</strong>——这是「来源」件失效的另一种形态，比 book-to-bill 那种更常见、更容易犯。</p>
+
+      <h3>锚点三 · 操作细节缺失 · 英特尔 2023 折旧年限切换</h3>
+      <p>2023 年英特尔发布公告：<strong>服务器等设备的折旧年限从 5 年拉长到 8 年</strong>（会计政策变更）<span class="badge badge-verified">已核验 · Intel 2023 会计政策变更；spine02 边界段已建</span>。会计上摊销压力人为放缓——公司每年计提的折旧减少、毛利率数字因此上升，但公司真实的经济现实（设备什么时候要换、现金流什么时候要出）没有变化。</p>
+      <p>「毛利率涨了就是好公司」这条规则本身很朴素、看上去也没什么问题，但如果不查 10-K 里的 Property, Plant and Equipment 会计政策附注段（=「操作」件缺失），2023 年读到英特尔毛利率好转的数字会直接得出错误结论。<strong>操作细节不是形式主义要求</strong>——它是把「结论型规则」翻译成「你能读到的具体动作」的桥。桥断了，规则再对也用不上。</p>
+
+      <h3>三条共同的模式</h3>
+      <p>三条锚点在不同「件」上失效，但结构完全一样：</p>
+      <ul>
+        <li><strong>都听上去很合理</strong>——book-to-bill 是行业标准、AEHR-Wolfspeed 逻辑通顺、毛利率涨了是好事，都是「让人不假思索点头」那一类规则；</li>
+        <li><strong>都在圈内被反复引用</strong>——它们不是野路子谣言，是圈内的「常识」；</li>
+        <li><strong>都无法通过一次严肃查证</strong>——一件缺就废掉整条。</li>
+      </ul>
+      <p>模式的意思是：<strong>规则的「圈内熟悉度」和规则的「五件套齐全度」是独立的两件事——熟悉度高不能替代五件套</strong>。事实上，越熟悉、越流传广的规则，越容易在某一件上藏着未被检查过的失效。这条元级的观察，就是本卡想让你带走的最重要一条。</p>
+    </section>
+
+    <!-- ==================== 4. 投资含义 ==================== -->
+    <section class="spine-section" id="sec-invest">
+      <div class="kicker">4 · 投资含义</div>
+      <h2>两个条件反射问句</h2>
+
+      <p>骨架卡的用法是<strong>把两个问句刻进反射弧</strong>——以后碰到相关情形，不用先想「对不对」，而是先自动问以下两个问题，答完再往下走。这两个问句是本学习台所有 14 张骨架卡与所有手册页的顶层验收线。</p>
+
+      <div class="qa">
+        <p class="q">读到一条投资规则（听人说、看研报、读社群、读教程），我第一反应问什么？</p>
+        <ul>
+          <li><strong>五件套齐不齐？</strong>——来源、机制、案例、操作、失效，一条条对着数。这是唯一动作，先于任何「对不对」的判断。</li>
+          <li>如果<strong>来源</strong>缺——先停下来查一手出处；查不到就把规则挪出判断集，不是软化写法蒙混（AEHR-Wolfspeed 那条就是模板）；</li>
+          <li>如果<strong>机制</strong>缺——只有相关性没有因果的规则不能用来外推，只能用来提示「这里可能有个模式，继续查」；</li>
+          <li>如果<strong>案例</strong>缺——规则没在真实历史里跑过，不能用它下判断，只能拿它做假说等待验证；</li>
+          <li>如果<strong>操作</strong>缺——不知道去哪读、多久读、和什么交叉，规则就是一句你重复的话；</li>
+          <li>如果<strong>失效</strong>缺——没有边界的规则会被滥用，用之前先补上至少两条可命名的失效边界；</li>
+          <li>缺一件就不用——不上判断桌、不下笔、不进 memo。<strong>这是入场券，不是奖杯</strong>。</li>
+        </ul>
+      </div>
+
+      <div class="qa">
+        <p class="q">写自己的投资 memo 时（模块 14 讲的 12 条模板），我第一反应查什么？</p>
+        <ul>
+          <li><strong>memo 里的每条判断都要挂五件套</strong>——一条判断句写下来，紧跟着一段用五件套自查：这条判断的来源在哪、机制推得出来吗、有没有真实案例支持、操作细节写清楚了吗、失效边界至少列了两条吗？</li>
+          <li>没挂上的判断句，不是投资推理，是「读了几段材料之后的感受」——感受不能上 memo；</li>
+          <li>反方观点这一段（模块 14 模板第 9 条）本质是「主动为自己的规则找失效边界」——如果反方观点写不出来，说明你的失效件没做好；</li>
+          <li><strong>什么情况证明我错了</strong>（模板第 10 条）本质是「把失效边界前置为可观察的信号」——写不出，说明规则还没具体到可执行；</li>
+          <li>memo 的价值不是「结论强不强」，是「结论背后的规则有没有五件套」——三个月后回头看这份 memo，凭挂在下面的五件套判断你当时对没对，不凭结果。</li>
+        </ul>
+      </div>
+
+      <p>把两个问句变成动作：<strong>读一条规则，先五件套查；写一份 memo，每条判断挂五件套查</strong>。这两个动作合起来，就是本学习台想让你带走的最终反射弧——比任何具体的行业知识都重要。</p>
+    </section>
+
+    <!-- ==================== 5. 边界 ==================== -->
+    <section class="spine-section" id="sec-limit">
+      <div class="kicker">5 · 边界</div>
+      <h2>五件套自己的失效边界</h2>
+
+      <p>元级规则也是规则，也要写清楚它自己的失效边界。四条：</p>
+
+      <ul>
+        <li><strong>五件套是「最低门槛」，不是「充分条件」</strong>。五件都齐了，规则也可能就是错的——历史上有大量五件套齐全但结论错误的例子。经典例子：「股票总是长期跑赢通胀」这条规则在 1970 年代美股滞涨、1990 年代日经泡沫后、2010 年代希腊等外围市场都出现过多年跑不赢通胀的情形——规则的来源、机制、案例、操作、失效在标准教材里都能写出来，但在具体市场具体时段就是错的。<strong>过了五件套门槛，还要用其他方法交叉验证</strong>：跨市场、跨周期、跨机制。五件套只是把规则「从传闻变成候选知识」——「从候选知识变成可靠知识」还有更长的路。</li>
+
+        <li><strong>五件套本身不能替代实盘</strong>。五件套是「案头动作」——它能过滤掉不该进判断集的规则，但它不能生成新知识。真正的知识生成来自实盘（Learn Plan 第四层）——一份 memo 写完、真金白银放下去、三个月后对账、错在哪归因、下一份 memo 修正。<strong>五件套是必要条件不是充分条件——它保证你不至于用垃圾规则下判断，但保证不了你会赚钱</strong>。</li>
+
+        <li><strong>极端场景不适用</strong>。有些交易场景本身就不给做五件套的时间——高频交易、日内博弈、事件驱动的秒级反应。这些场景不是本学习台的目标（Learn Plan「学习合同」明确写：不追求短线喊单、不追求预测单日股价）。<strong>本卡的适用范围是长期投资 memo 的判断规则</strong>——那种可以让你用几小时甚至几天时间做案头动作的规则。短线场景需要另一套完全不同的规则体系，本卡不涉及。</li>
+
+        <li><strong>其他 14 张骨架卡都是五件套的具体应用——本卡是元级</strong>。卡 1 到卡 14 讲的都是<strong>某一类具体的投资规则</strong>（供给慢需求快、固定成本主导、良率成本曲线、瓶颈定价权、牛鞭效应、库存结构、需求两种、技术代际、生态分工、需求传导链、领先指标、价格滞后、标题层与流程层、股价错位）——每一张卡本身就是一个已过五件套检验的完整规则包。<strong>本卡不引入新的领域知识</strong>，只讲「什么是好知识的判断标准」。所以本卡不预告某一张具体的下一卡，而是引导你回头把前 14 张卡当五件套检验的样本重新读一遍——这种回头读的动作本身就是本卡的最重要应用。</li>
+      </ul>
+    </section>
+
+    <!-- ==================== 6. 练习 ==================== -->
+    <section class="spine-section" id="sec-drill">
+      <div class="kicker">6 · 练习</div>
+      <h2>两道题</h2>
+
+      <div class="scenario">
+        <h4>练习一 · 复述题（3 分钟量级，讲给完全不懂的朋友听）</h4>
+        <p>合上卡片，用自己的话讲清楚：<strong>「为什么一条投资规则不齐五件套就不能用？」</strong>提示：从「你重复的话 vs 你的知识」这个入口讲最容易——什么叫「你重复的话」，什么叫「你的知识」，两者的差别是什么。</p>
+        <p class="scenario-hint">要点检查：<br>①五件（来源、机制、案例、操作、失效）都点到了没；<br>②讲清楚每一件缺了会具体带来什么风险——不能只是抽象地说「不完整」，要说清「缺来源会怎样、缺机制会怎样、缺案例会怎样、缺操作会怎样、缺失效会怎样」；<br>③点出「五件套是入场券不是奖杯」——齐全只是最低门槛不是充分条件；<br>④不用出现「元级」「必要条件」这些术语，大白话就够。<br>四条都到位，这张卡算过了本关。</p>
+      </div>
+
+      <article class="scenario">
+        <h4>练习二 · 推演题（从生活里找规则，用五件套审查）</h4>
+        <p>从下面三条你可能听过很多次的投资规则里挑一条（或自己从生活里找一条听过 &gt;5 次的规则），用本卡的五件套标准审查一遍。要求：</p>
+        <ul>
+          <li>「买你熟悉的公司」——通常归到彼得·林奇；</li>
+          <li>「长期持有指数基金」——通常归到巴菲特；</li>
+          <li>「技术分析看均线，均线金叉是买点」——技术分析教材常见。</li>
+        </ul>
+        <p>对你选的这一条，回答五个问题：</p>
+        <ul>
+          <li><strong>来源</strong>：这条规则最早由谁在什么时候在哪里提出？（找到一手出处：书、演讲、访谈、股东信……）如果找不到，规则不通过第一件；</li>
+          <li><strong>机制</strong>：这条规则的物理/经济基础是什么？（不能只说「熟悉的公司能看懂」，要说「为什么看得懂能带来超额收益？定价效率的什么假设失效了？」）</li>
+          <li><strong>案例</strong>：这条规则在真实历史里被用过一次的完整案例——起点信息、判断动作、终点结果、归因？（不是「XX 老师用这条规则赚了很多钱」这种笼统说法）</li>
+          <li><strong>操作</strong>：怎么在真实数据里判断「熟悉 / 长期 / 均线金叉」？「熟悉」是买了公司的产品，还是读过 10-K？「长期」是 3 年、5 年、10 年？均线用哪个周期、几日均线？和什么交叉验证？</li>
+          <li><strong>失效</strong>：这条规则失效的至少两条边界是什么？（例如「熟悉的公司在某类估值区间内不适用」「均线金叉在震荡市失效」）</li>
+        </ul>
+        <p>做完后自己给规则总评：这条规则你现在敢不敢挂在自己的 memo 里？如果不敢，缺了哪一件？<strong>不给标准答案</strong>——这一道题的答案就是「你审查完后手里剩下什么」，剩下的东西就是这条规则在你脑子里现在的真实状态。</p>
+        <p class="scenario-hint">
+          提示（不给标准答案）：<br>
+          · 「买你熟悉的公司」溯源：彼得·林奇 1989 年《One Up on Wall Street》——去找原书这一段，读一手，不看二手转述；<br>
+          · 「长期持有指数基金」溯源：巴菲特多份股东信、2007 年与 Ted Seides 的十年赌约（S&P 500 vs 五只对冲基金 FoF，2008-2017）；<br>
+          · 「均线金叉」溯源：这一条大概率一手来源就在中文投资教材，找到最早的书或论文再判断；<br>
+          三条都做的话，你会发现「巴菲特那条」是这三条里五件套最齐全的——不是因为巴菲特名声大，是因为他自己就在做五件套的动作（来源自己写、机制自己推、案例自己给、操作自己讲、失效自己承认）。<strong>这个练习本身就是本学习台想让你带走的元级反射</strong>——从此以后碰到任何规则，第一动作就是这套五件套审查。
+        </p>
+      </article>
+
+      <div class="note">
+        <span class="note-label">这张卡要带走的两个反射弧</span>
+        <ol style="margin:0;padding-left:1.3em">
+          <li>读到一条投资规则，先<strong>五件套查</strong>——缺一件就不上判断桌；</li>
+          <li>写自己的投资 memo 时，<strong>每条判断都挂五件套</strong>——挂不上的不是判断、是感受。</li>
+        </ol>
+        <p style="margin:8px 0 0">写不出来，回来重看第 2 节机制段和第 4 节反射问句段。</p>
+      </div>
+
+      <div class="note" style="max-width:860px;background:var(--primary-tint);border-color:var(--primary-2)">
+        <span class="note-label" style="color:var(--primary)">骨架层收官 · 15 张卡合起来是什么</span>
+        <p style="margin:0;font-size:var(--fs-15)">卡 1 到卡 14 是<strong>14 条已过五件套检验的具体规则</strong>——每一张卡本身就是一个五件套齐全的完整规则包（来源在页脚、机制在正文、案例带日期、操作在反射问句、失效在边界段）。卡 15 是<strong>五件套本身的元级规则</strong>——教你如何验收其他 14 张卡，也教你如何验收所有你以后会碰到的投资规则。</p>
+        <p style="margin:8px 0 0;font-size:var(--fs-15)">下一步：<strong>回头把前 14 张卡当五件套检验的样本重读一遍</strong>——每读一张，问「这张卡的五件套哪一件写得最扎实、哪一件其实还有隐藏薄弱环节」。这个回头读的动作，就是本骨架层真正的最后一课。然后开始学习案例主线（Learn Plan 第二层），把 15 张卡放到真实决策复盘里训练——直到把它变成条件反射，不再需要「合上卡片想一下」。</p>
+      </div>
+    </section>
+
+    <!-- ==================== 来源 ==================== -->
+    <section class="src">
+      <strong>卡 15 来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.semi.org/en/products-services/market-data">SEMI Equipment Market Statistics（现行统计口径 · 北美 book-to-bill 报告 2016-12 停发的官方说明；模块 2 已建来源清单）</a></li>
+        <li><a href="https://www.aehr.com/2026/03/aehr-receives-follow-on-order-for-fully-automated-wafer-level-burn-in-systems-powering-ai-optical-i-o-and-data-center-interconnects/">AEHR 2026-03 官方新闻稿：AI 光互连晶圆级老化测试追单（AEHR 官方文件中明确点名的客户业务方向为「AI 光互连硅光」，非 Wolfspeed）</a></li>
+        <li><a href="https://www.aehr.com/2026/06/aehr-receives-follow-on-order-from-major-silicon-photonics-customer-for-fully-automated-wafer-level-burn-in-system-for-hyperscale-data-center-optical-interconnect/">AEHR 2026-06 官方新闻稿：硅光客户再度追单（同上方向确认）</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0000050863/000005086325000009/intc-20241228.htm">Intel Corp Form 10-K FY2024（含 2023 年会计政策变更：服务器等设备折旧年限从 5 年调整为 8 年，Property, Plant and Equipment 附注段）</a></li>
+        <li><a href="spine02.html">本站 · 卡 2 边界段：英特尔 2023 折旧年限切换 · 会计口径改变毛利率读数含义</a></li>
+        <li><a href="m02.html">本站 · 模块 2「怎么判断」三工具（设备订单/交期/晶圆价格，每件五件套齐全）· 五件套写作实例的金标准</a></li>
+        <li><a href="m03.html">本站 · 模块 3（AEHR 引用现改为 AI 光互连硅光客户方向，AEHR-Wolfspeed 说法已弃用）</a></li>
+        <li>本项目内部记录 · PROGRESS.md「不可 violate 的纪律」第 4 条「规则五件套：来源→机制→案例→操作→失效，缺一删」；「查证铁律」条明确「凭记忆不上页，曾因查无实据弃用『AEHR 与 Wolfspeed 绑定』说法」</li>
+        <li>本项目内部记录 · Learn Plan「AI 教练协议」硬性纪律第 1 条「数字和事实必须可靠：不确定就明说不确定，禁止编造」</li>
+        <li>金标准页面：<a href="m02.html">m02.html「怎么判断」页</a>（第一次把五件套作为完整格式跑通）· <a href="spine02.html">spine02.html</a>（骨架卡固定六段结构 + 边界段用「操作细节」审查毛利率跳变的经典应用）</li>
+        <li>五件套是本学习台所有产出的元级验收标准；本卡不预告下一张具体骨架卡，而是引导回头重读前 14 张卡，用五件套逐张审查。</li>
+      </ul>
+      <p style="margin-top:14px;font-size:var(--fs-12)">徽章说明：<span class="badge badge-verified">已核验</span> 直接引用一手来源（年报、10-K、8-K、官方公告、项目内部建设记录）或经权威媒体转述的一手数据 · <span class="badge badge-expert">专家判断</span> 综合行业口径的判断性表达，无单一权威来源 · <span class="badge badge-assume">估算</span> 明确的推算，标注方法与年份。</p>
+    </section>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已学习</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine14.html"><span class="dir">← 上一张</span>卡 14 · 产业周期与股价错位</a>
+        <a href="m01.html" style="text-align:right"><span class="dir">→ 下一层</span>手册层 · 模块 1 · AI 为什么会变成硬件和制造业问题</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- A 类：五件套检验器 ---------- */
+  (function () {
+    /* 六条真实规则的五件套检验结果。每条五件里的状态是 "ok" / "mid" / "no"。
+       内容全部来自本站已建材料或公开可查一手来源。 */
+    const RULES = {
+      r1: {
+        name: "设备订单是芯片周期领先指标",
+        five: {
+          source: { st: "ok",  txt: "SEMI 全球设备市场统计（每季度报告，2023 $106.3B / 2024 $117.1B / 2025 $135B）· ASML/AMAT/KLA 各家 backlog 按季公开披露", why: "" },
+          mech:   { st: "ok",  txt: "推导链清楚：EUV 一台 2.27 亿欧元、2024 全年全球仅交付 44 台（ASML 2024 年报）——设备交期以年计，扩产必先订机，所以设备订单必然领先芯片厂收入", why: "" },
+          case:   { st: "ok",  txt: "本站已建案例 · 2026-01-02 ASML→KLA 传导：Aletheia 报告用「上游设备订单」推 2027 装机、下游收入 6-12 个月后兑现", why: "" },
+          op:     { st: "ok",  txt: "数据源：SEMI 官网每季公布；ASML/AMAT/KLA 季报 backlog 表；交叉验证：台积电资本开支公告、TrendForce CoWoS 排产口径（模块 2、模块 6 已建）", why: "" },
+          fail:   { st: "ok",  txt: "至少三条边界：①国产替代政策扰动订单（中国设备订单可能超前于真实需求）；②扩产 PTSD 时期厂商砍订单不代表需求真差；③统计口径切换（SEMI 全球统计 2016 后由不同机构接手，历史数据不能直连）", why: "" },
+        },
+        pass: "pass",
+        verdict: "五件全齐——规则可用",
+        remark: "这是本站模块 2「怎么判断」工具二的完整写法。上判断桌、可以进 memo。",
+      },
+      r2: {
+        name: "SEMI book-to-bill > 1 是买点",
+        five: {
+          source: { st: "no",  txt: "SEMI 北美 book-to-bill 报告 2016 年 12 月已停发（SEMI 官方停发公告）——规则依附的一手来源在十年前就已经死掉", why: "来源死掉后，规则不可回源、不可核对——今天再引用无法对应任何公开数据。" },
+          mech:   { st: "ok",  txt: "机制本身可推导：订单÷出货 > 1 意味着新增订单跑得比出货快，理论上是行业需求向上的信号——机制没问题", why: "" },
+          case:   { st: "mid", txt: "1990-2010 年代有大量案例引用，但基本都在停发前——2016 后没有新案例可以回放", why: "案例只能证明历史某时段规则曾成立，不能证明现在还成立。" },
+          op:     { st: "no",  txt: "无处可读——SEMI 官网现只保留 2016 前存档，不再更新；某些第三方（Sox 等）尝试恢复类似指标但方法论、覆盖范围不同", why: "指标死掉后，操作路径就断了——一条读不到的规则等于不存在。" },
+          fail:   { st: "mid", txt: "停发前失效边界大致包括：口径分歧、订单被库存干扰、非典型月份——但由于来源已死，这些边界现在没有实际用武之地", why: "" },
+        },
+        pass: "fail",
+        verdict: "来源件失效——规则不可用",
+        remark: "机制没问题不代表规则可用——来源死了，一票否决。这条规则今天再引用做判断，无法对应任何公开数据。缺一件就废，一件够废整条。",
+      },
+      r3: {
+        name: "AEHR 订单领先 Wolfspeed 财报",
+        five: {
+          source: { st: "no",  txt: "翻遍 AEHR 官方 SEC 季报、10-K、多个季度电话会转录，找不到 AEHR 明确点名 Wolfspeed 作为主要客户或做出绑定表述的原始记录", why: "来源根本不存在——不是「死了」，是「一开始就没有」。合理性和来源是两件独立的事，前者不能替代后者。" },
+          mech:   { st: "mid", txt: "逻辑上讲得通：AEHR 做晶圆级老化测试设备、Wolfspeed 做碳化硅晶圆——听上去应该有关联", why: "「听上去应该」不是机制——真正的机制要能通过一手材料确认业务往来。" },
+          case:   { st: "no",  txt: "没有真实历史案例——一次公开的、可回放的、AEHR 订单变化导致 Wolfspeed 业绩变化的时间线", why: "没有案例就等于没在真实历史里跑过——不能用来下判断。" },
+          op:     { st: "no",  txt: "无操作路径——你要跟踪什么？AEHR 季报里没有 Wolfspeed 分部；Wolfspeed 财报里没有 AEHR 说明；根本没有可读数据", why: "" },
+          fail:   { st: "no",  txt: "边界也无法定义——规则本身都没有立起来，怎么谈失效边界？", why: "" },
+        },
+        pass: "fail",
+        verdict: "来源不存在——规则整条弃用",
+        remark: "本项目 2026 年建设记录里明确弃用。处理动作不是软化写法（「AEHR 可能与 Wolfspeed 有一定关联」这种），是整条删掉。同期 m03 里的 AEHR 引用改为 2026 年 3 月和 6 月两次已核验的 AI 光互连硅光客户订单——那才是有来源的规则。",
+      },
+      r4: {
+        name: "缺货就是买点",
+        five: {
+          source: { st: "mid", txt: "有一些卖方研报和媒体在缺货周期反复引用，但缺少一位具名投资人在一手材料（书、演讲、股东信）里把它写成规则的原始出处", why: "「圈内常说」不算一手来源——追溯不到写下这条规则的具名人物和一手文本。" },
+          mech:   { st: "no",  txt: "本站卡 5 讲得清楚：缺货可能是牛鞭效应的极值信号——渠道逐层放大真实需求，缺货最凶的时候常是真实需求已经开始拐头之前、库存最厚之时。同一条相关性可以往两个方向读", why: "机制不成立——缺货并不「必然」意味着买点，反而在很多时候是反向指标（周期见顶信号）。" },
+          case:   { st: "no",  txt: "本站卡 1 讲的 2021-2022 电子周期就是反例：2021 年下半年到 2022 年初全行业「缺货」达到极值（交期 27 周）→ 2022-10 拐点 → 全行业库存塌方。跟着「缺货 = 买点」入场的人恰好在最坏时点入场", why: "有反例存在——规则不能作为一般规则使用。" },
+          op:     { st: "no",  txt: "「缺货」怎么读？看交期？看渠道库存？看厂商指引？没有细节的话，一句话完全无法执行", why: "" },
+          fail:   { st: "no",  txt: "边界完全没有——这条规则被无差别引用到任何缺货情形，滥用得非常厉害", why: "" },
+        },
+        pass: "fail",
+        verdict: "机制不成立 + 有反例——规则不可用",
+        remark: "这是「相关性冒充因果」的经典错误——历史上缺货和买点碰巧一起出现过，但机制上不是因果。学过卡 5 之后应该反射性地把这条规则挪出判断集。",
+      },
+      r5: {
+        name: "HBM 长约锁定 = 永久稳增长",
+        five: {
+          source: { st: "ok",  txt: "美光 FY26 Q3 电话会：一个季度签下 16 份 take-or-pay 战略客户协议、合同最低收入合计约 1000 亿美元，覆盖 2026-2030 年 HBM 供应（已核验，spine06 已建）", why: "" },
+          mech:   { st: "ok",  txt: "本站卡 6 讲清楚：直供长约把量、价、客户三层前置锁定，波动幅度被合同拉平——一次需求变化只留一小截波幅落到当期报表", why: "" },
+          case:   { st: "ok",  txt: "SK 海力士 3Q25 营业利润率 47%（历史第一次季度营业利润破 10 万亿韩元）——就是 HBM 长约兑现的具体现场", why: "" },
+          op:     { st: "ok",  txt: "跟踪：三家（三星/SK/美光）季度电话会 HBM 长约签约金额、认证进度、代际交接进度；交叉：Nvidia GPU 代际迭代节奏（12-18 个月）", why: "" },
+          fail:   { st: "no",  txt: "失效边界这一件严重缺失——HBM 长约的商业寿命只有 12 个月上下（对应 GPU 代际），下一代要重新谈；每代技术门槛跳变（HBM3E → HBM4）可能改变竞争格局；take-or-pay 的对手方（GPU 厂或云厂）本身如果需求塌方，长约也会重新协商", why: "没有边界就会被滥用——把「2026-2030 HBM 长约」直接读成「三家 DRAM 厂 5 年内稳增长」，忽视代际风险、竞争风险、对手方风险。" },
+        },
+        pass: "warn",
+        verdict: "四件齐、失效件缺——半熟规则，用之前先补失效边界",
+        remark: "这是「half-baked 规则」的典型——大部分件都齐了，但失效件缺失。用之前要先补上至少 2-3 条可命名的失效边界（代际锁定、认证竞赛、对手方风险），补上再用。这也是骨架卡 8（技术代际是生死）想让你带走的东西。",
+      },
+      r6: {
+        name: "毛利率涨了就是好公司",
+        five: {
+          source: { st: "mid", txt: "「毛利率是经营质量的核心指标」这种表述在很多投资教材里都能找到——但把它简化为「毛利率涨了 = 好公司」是二手总结，找不到一位严肃投资人这么原话说过", why: "严肃投资人如巴菲特谈毛利率时都会附加口径、附加时点、附加行业结构——简化版是二手总结。" },
+          mech:   { st: "mid", txt: "机制上毛利率变动来源有四类（本站卡 2 讲过）：ASP 变动、mix shift、利用率、一次性影响。前三类才对应「经营变化」，第四类往往不可持续", why: "「毛利率涨」这个信号本身多义——机制并不指向唯一结论。" },
+          case:   { st: "mid", txt: "本站卡 2 三个真实锚点：美光 FY23→FY25 毛利率跨 49pt（周期反转，好公司？还是好周期？）· 三星 DS 2023→2024 翻转 30 万亿韩元（同上）· 英特尔 Foundry 2024 -134 亿美元（同一模型另一端）", why: "案例存在，但案例表明毛利率变动更多是周期位置的读数，不是「公司是不是好」的读数。" },
+          op:     { st: "no",  txt: "严重缺失——英特尔 2023 折旧年限从 5 年拉长到 8 年，会计口径切换造成的毛利率上升，不是经营改善。要去看 10-K Property, Plant and Equipment 会计政策附注段。这个动作没写在规则里，规则就残缺", why: "操作细节不是形式主义——它是把结论型规则翻译成可执行动作的桥。桥断了，规则再对也用不上。" },
+          fail:   { st: "no",  txt: "失效边界几乎完全没写——固定成本主导行业跳变、mix shift 幻觉、一次性影响不可持续、会计口径切换……全部要写清楚才叫「有边界」", why: "" },
+        },
+        pass: "fail",
+        verdict: "操作 + 失效两件严重缺失——规则不可用",
+        remark: "这是「口头正确、无法执行」的典型——大意方向没问题，但缺关键的操作细节和失效边界。不能直接上判断桌，必须先拆成本站卡 2 的四类归因动作再来读。",
+      },
+    };
+
+    const LABELS = {
+      source: "来源",
+      mech:   "机制",
+      case:   "案例",
+      op:     "操作",
+      fail:   "失效",
+    };
+    const STATUS_TXT = {
+      ok:  "齐",
+      mid: "存疑",
+      no:  "缺",
+    };
+
+    const grid = document.getElementById("fiveGrid");
+    const verdict = document.getElementById("verdict");
+    const buttons = document.querySelectorAll("[data-rule]");
+
+    function paint(key) {
+      const r = RULES[key];
+      if (!r) return;
+      buttons.forEach((b) => {
+        b.setAttribute("aria-pressed", b.dataset.rule === key ? "true" : "false");
+      });
+
+      /* 顺序渲染五行 */
+      const order = ["source", "mech", "case", "op", "fail"];
+      let okCount = 0, midCount = 0, noCount = 0;
+      grid.innerHTML = "";
+      order.forEach((k, i) => {
+        const d = r.five[k];
+        if (d.st === "ok")  okCount++;
+        if (d.st === "mid") midCount++;
+        if (d.st === "no")  noCount++;
+        const row = document.createElement("div");
+        row.className = "five-row" + (d.st === "no" ? " miss" : "");
+        row.setAttribute("role", "row");
+        row.innerHTML =
+          '<span class="lbl"><span class="num">' + (i + 1) + '</span>' + LABELS[k] + '</span>' +
+          '<span class="st ' + d.st + '">' + STATUS_TXT[d.st] + '</span>' +
+          '<span class="body">' + d.txt +
+            (d.why ? '<span class="why">缺件后果：' + d.why + '</span>' : '') +
+          '</span>';
+        grid.appendChild(row);
+      });
+
+      /* 总评 */
+      verdict.className = "verdict " + r.pass;
+      verdict.innerHTML =
+        '<div class="head"><b>' + r.verdict + '</b>' +
+        '<span class="count">齐 ' + okCount + ' · 存疑 ' + midCount + ' · 缺 ' + noCount + '</span></div>' +
+        '<div>' + r.remark + '</div>';
+    }
+
+    buttons.forEach((b) => {
+      b.addEventListener("click", () => paint(b.dataset.rule));
+    });
+
+    /* 默认渲染第一条 */
+    paint("r1");
+  })();
+
+});
+</script>
+</body>
+</html>

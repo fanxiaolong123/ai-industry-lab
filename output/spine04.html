@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 4 · 出货 = 最短板</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 骨架卡专属版式 ---------- */
+  .spine-section { margin: 40px 0 24px; scroll-margin-top: 60px; }
+  .spine-section > h2 {
+    font-size: var(--fs-22);
+    font-weight: 650;
+    margin: 0 0 4px;
+    letter-spacing: -0.005em;
+  }
+  .spine-section > .kicker {
+    font-size: var(--fs-13);
+    font-weight: 650;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .spine-lead {
+    font-size: var(--fs-17);
+    color: var(--ink);
+    padding: 12px 16px;
+    background: var(--surface);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    margin: 12px 0 20px;
+  }
+  .spine-lead b { color: var(--primary); }
+
+  /* 情景切换按钮组 */
+  .scen-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 12px; }
+  .scen-btn {
+    appearance: none; font: inherit; font-size: var(--fs-13); font-weight: 600;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+    border-radius: var(--radius-s); padding: 6px 12px; cursor: pointer;
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .scen-btn:hover { background: var(--surface); }
+  .scen-btn[aria-pressed="true"] {
+    border-color: var(--primary-2);
+    background: var(--primary-tint);
+    color: var(--primary);
+  }
+  .scen-btn .yr { display: block; font-size: var(--fs-12); color: var(--muted); font-weight: 500; }
+  .scen-btn[aria-pressed="true"] .yr { color: var(--primary); }
+
+  /* 反应链条 · 首页现象展开 */
+  .contrast {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: stretch;
+    margin: 16px 0 8px;
+  }
+  .contrast-cell {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-m); padding: 14px 16px;
+  }
+  .contrast-cell h4 { margin: 0 0 6px; font-size: var(--fs-14); font-weight: 650; color: var(--muted); }
+  .contrast-cell .fig { font-size: 26px; font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; line-height: 1.25; }
+  .contrast-cell.right .fig { color: var(--accent-ink); }
+  .contrast-cell p { font-size: var(--fs-14); margin: 4px 0 0; color: var(--ink); }
+  .contrast-arrow {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: var(--muted); font-weight: 300;
+  }
+  @media (max-width: 640px) {
+    .contrast { grid-template-columns: 1fr; }
+    .contrast-arrow { transform: rotate(90deg); padding: 4px 0; }
+  }
+
+  /* 漂移接力示意 */
+  .baton-run {
+    display: flex; flex-wrap: nowrap; overflow-x: auto;
+    gap: 6px; margin: 14px 0 8px; padding-bottom: 6px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .baton-node {
+    flex: 0 0 auto; min-width: 140px;
+    padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-m);
+    background: var(--surface); font-size: var(--fs-13);
+  }
+  .baton-node .yr { font-size: var(--fs-12); color: var(--muted); font-weight: 600; }
+  .baton-node .who { font-weight: 650; font-size: var(--fs-15); color: var(--ink); margin-top: 2px; }
+  .baton-node .why { color: var(--muted); font-size: var(--fs-13); margin-top: 4px; }
+  .baton-arrow {
+    align-self: center; flex: 0 0 auto;
+    font-size: var(--fs-14); color: var(--muted); padding: 0 2px;
+  }
+</style>
+</head>
+<body data-page="s04">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 4 · 出货 = 最短板</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 4 / 15</p>
+      <h1>出货 = 最短板</h1>
+      <p class="core-q"><b>一句话：</b>一颗 AI 加速卡要 GPU、HBM、CoWoS 封装、ABF 载板、测试全部就位才能出厂——整体出货 = 各环节最矮那一根。<strong>最短板拿走定价权，且瓶颈会漂移</strong>。</p>
+    </header>
+
+    <!-- ==================== 1. 现象 ==================== -->
+    <section class="spine-section" id="sec-phenom">
+      <div class="kicker">1 · 现象</div>
+      <h2>GPU 出货两年涨了 7.5 倍，客户还在抱怨"买不到卡"</h2>
+
+      <p>2024 年 10 月 17 日的台积电三季度电话会上，管理层用了一句让所有 AI 供应链投资人立刻记本子的话：<strong>CoWoS 产能 2024 年、2025 年将连续两年翻倍，但需求仍将超过供给</strong><span class="badge badge-verified">已核验 · TSMC 2024-Q3 电话会</span>。翻倍两次、追不上——这是"缺货"这两个字最鲜活的形状。</p>
+
+      <p>把镜头拉远，同一时期英伟达的数据中心业务从 FY23 的 $15B、FY24 的 $47.5B，一路涨到 FY25 的 <strong>$115.2B（+142% 同比）</strong><span class="badge badge-verified">已核验 · NVIDIA FY25 Q4 8-K</span>——这个规模的公司主营业务两年涨 7.5 倍，是"英伟达没货可卖"的反面。反差就在这里：</p>
+
+      <div class="contrast">
+        <div class="contrast-cell">
+          <h4>供应端 · 英伟达数据中心营收</h4>
+          <div class="fig">$15B → $47.5B → $115.2B</div>
+          <p>FY23 → FY24 → FY25，两年涨 7.5 倍，出货规模史无前例</p>
+        </div>
+        <div class="contrast-arrow" aria-hidden="true">vs.</div>
+        <div class="contrast-cell right">
+          <h4>客户端 · 加速卡"依然缺货"</h4>
+          <div class="fig">CoWoS 翻倍还追不上</div>
+          <p>台积电 CEO 明说 2024/2025 CoWoS 连续两年翻倍，需求仍超供给</p>
+        </div>
+      </div>
+
+      <p class="spine-lead">这里有个投资上必须想通的直觉难题：<b>GPU 芯片本身供应正在飞速扩张，为什么 AI 卡还是缺？</b>答案不在英伟达身上——一颗加速卡不是一颗 GPU。它是 GPU + HBM + CoWoS 封装 + ABF 载板 + 测试装配的一串刚性装配，缺一样整卡就交不出去。整个链条的出货量 = <strong>所有环节里最矮的那根柱子</strong>。这张卡从这个"木桶定律"往下推。</p>
+    </section>
+
+    <!-- ==================== 2. 机制 ==================== -->
+    <section class="spine-section" id="sec-mech">
+      <div class="kicker">2 · 机制</div>
+      <h2>为什么会形成最短板，以及为什么它会漂移</h2>
+
+      <h3>a. 最短板的两个必然结论</h3>
+      <ol>
+        <li><strong>串联装配 = 各环节相乘、不是相加</strong>。GPU 大芯片 + 3-8 颗 HBM 堆叠 + CoWoS 中介层封装 + ABF 载板 + 测试。这五个环节不是并联，是串联——你不能"少要 CoWoS 多要 GPU"来凑数，也不能"用两颗 GPU 顶一颗 HBM"。任何一环缺，整卡就交不出。</li>
+        <li><strong>整体产能 = min(各环节产能)</strong>。数学结论直白：出货被最矮那根柱子钉死。GPU 产能过剩会变成在手库存，HBM 产能过剩也会变库存——都不会转成出货。</li>
+        <li><strong>瓶颈拿走全部超额利润</strong>。客户从下单到拿卡多出来的那笔预算，无处可去——只能被最紧的那个环节涨价拿走。GPU 有二十个客户等着抢，但一颗 GPU 拿不到 CoWoS 就是废硅，客户宁愿把差价加给 CoWoS 也不能拆开卖。这就是瓶颈环节的<strong>定价权</strong>——不是市场份额给的，是产业链结构给的。</li>
+      </ol>
+
+      <h3>b. 瓶颈为什么会漂移</h3>
+      <ol>
+        <li><strong>瓶颈环节被砸钱，扩产是必然反应</strong>。客户把预付款、多年长约堆到最短板厂门口——这台机器一旦启动，24-36 个月后（供给的时间常数，卡 1）新产能到货。</li>
+        <li><strong>瓶颈解除的那一刻，下一环节立刻变新短板</strong>。假设 CoWoS 从需求的 70% 扩到 130%，装配能力顶到 HBM 供应上限——HBM 立刻变成新的最短板，涨价权和超额利润转移过去。这不是慢慢过渡，是接力棒突然换手。</li>
+        <li><strong>漂移会一层一层往外传</strong>。CoWoS → HBM → 光模块 → 电力 → 液冷 → 电网。每一环的扩产周期不同（半年到十年），漂移速度不均匀——但方向清楚。<strong>投资视角看，瓶颈漂移就是产业链上一根"利润接力棒"，从一段传到下一段</strong>。这里预告一下卡 10（需求传导链）和卡 11（领先指标）：这两张卡教你怎么用设备订单、交期、长约这些前置信号判断棒往哪儿传。</li>
+      </ol>
+
+      <h3>c. 动手感受一下：瓶颈接力棒</h3>
+      <p>下面把五个环节的产能变成五根柱子。<strong>看什么</strong>：①最矮的柱子被涂成琥珀色，出货水位就压在它上面——非瓶颈环节的柱子高多少，都是闲置产能；②切换三个情景快照，观察瓶颈从 CoWoS 漂到 HBM、再往外漂的过程；③自己拖任一滑块，把当前瓶颈拉高——瓶颈自动漂到新的最矮那根上。</p>
+
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-title">加速卡瓶颈漂移模拟 · 5 环节</span>
+          <span class="viz-sub">数字为教学示意（单位：万卡/月折算量），用于展示结构关系。真实产能请以公司公告为准</span>
+        </div>
+
+        <div class="scen-row" role="group" aria-label="情景切换">
+          <button class="scen-btn" data-scenario="s2023" aria-pressed="true"><span class="yr">情景 A · 2023 前后</span>CoWoS 卡死</button>
+          <button class="scen-btn" data-scenario="s2025"><span class="yr">情景 B · 2025 推演</span>CoWoS 扩上来，HBM 变短板</button>
+          <button class="scen-btn" data-scenario="s2027"><span class="yr">情景 C · 2027 推演</span>接下去谁最可能变瓶颈</button>
+          <button class="scen-btn" data-scenario="reset">手动调节</button>
+        </div>
+
+        <div class="ctl-panel" style="margin:10px 0">
+          <div class="ctl"><label for="capGpu">① GPU 芯片</label><input type="range" id="capGpu" min="10" max="80" step="1" value="45"><output id="capGpuOut">45</output></div>
+          <div class="ctl"><label for="capHbm">② HBM 内存</label><input type="range" id="capHbm" min="10" max="80" step="1" value="35"><output id="capHbmOut">35</output></div>
+          <div class="ctl"><label for="capCow">③ CoWoS 封装</label><input type="range" id="capCow" min="10" max="80" step="1" value="18"><output id="capCowOut">18</output></div>
+          <div class="ctl"><label for="capAbf">④ ABF 载板</label><input type="range" id="capAbf" min="10" max="80" step="1" value="45"><output id="capAbfOut">45</output></div>
+          <div class="ctl"><label for="capTst">⑤ 测试 / 装配</label><input type="range" id="capTst" min="10" max="80" step="1" value="55"><output id="capTstOut">55</output></div>
+        </div>
+
+        <div id="driftChart"></div>
+        <div class="viz-readout" id="driftReadout" aria-live="polite"></div>
+      </div>
+
+      <p>玩三个情景一遍，就把这张卡最重要的三件事装进了眼睛：<strong>①瓶颈环节的柱子涂琥珀色，其余环节的多余高度都是闲置</strong>；<strong>②扩产一环，瓶颈跳到下一环</strong>；<strong>③非瓶颈环节的产能扩张对整卡出货毫无帮助——却会持续消耗它们自己的资本开支和库存</strong>。</p>
+    </section>
+
+    <!-- ==================== 3. 真实锚点 ==================== -->
+    <section class="spine-section" id="sec-anchor">
+      <div class="kicker">3 · 真实锚点</div>
+      <h2>三个已核验现场，一次瓶颈漂移史</h2>
+
+      <h3>锚点一 · CoWoS 两年翻倍还是不够（2024-10-17）</h3>
+      <p>台积电三季度电话会 CEO 魏哲家（C.C. Wei）明示：<strong>CoWoS 产能 2024 年、2025 年连续两年翻倍，仍然赶不上需求</strong><span class="badge badge-verified">已核验 · TSMC 2024-Q3 电话会经 TrendForce/SemiWiki 转述</span>。TrendForce 拆解的月产能数字：2024 年 35,000-40,000 片、2025 年 80,000 片、2026 年可能到 140,000-150,000 片<span class="badge badge-assume">估算 · TrendForce 2025-01-02</span>。</p>
+      <p>这是"瓶颈定价权 + 客户砸钱扩产"的现场：产能连翻两年还是被追着跑，说明短板的位置在过去两年一直没变。GPU 芯片本身两年涨 7.5 倍（见锚点二），但加速卡整体出货被 CoWoS 这一环钉住——这就是最短板机制的直接证据。</p>
+
+      <h3>锚点二 · GPU 出货猛涨 vs 加速卡缺货并存</h3>
+      <p>英伟达数据中心业务：<strong>FY23 $15B → FY24 $47.5B → FY25 $115.2B（+142% 同比）</strong><span class="badge badge-verified">已核验 · NVIDIA FY25 Q4 8-K</span>。如果只看这个数字，"英伟达没货可卖"的说法不成立——两年 7.5 倍的增长，出货规模在同规模公司中史无前例。但同一时期，云厂商、大企业客户依然在抱怨"H100/H200/GB200 拿不到"。</p>
+      <p>反差本身就是证据：<strong>"缺货"缺的从来不只是 GPU，而是一整颗完整的加速卡</strong>。GPU 供应飞速扩张，卡还是缺——因为出货被链条上另一环（CoWoS）钉着不放。</p>
+
+      <h3>锚点三 · HBM 售罄延伸到 2026——第二根短板已经在排队</h3>
+      <p>美光 CEO 桑贾伊·梅赫罗特拉 2024 年电话会：<strong>HBM 2024 年已售罄，2025 年绝大部分已分配</strong>；后续披露延伸至 2026 大部分产能价格已锁定<span class="badge badge-verified">已核验 · 电话会与 Tom's Hardware 报道，见 m03 页脚</span>。HBM 供应端只有三家（三星、海力士、美光），堆叠工艺良率是"层数的乘法"（m03 展开），扩产比 CoWoS 更慢。</p>
+      <p>把这三个锚点拼起来，就是一段可以直接观察的漂移史：<strong>2023-2024 卡 CoWoS → 2025 CoWoS 扩产落地、卡开始漂到 HBM → 再往后可能是电力、液冷、光模块或成熟节点的下一根短板</strong>。用一张接力棒示意图对照来看：</p>
+
+      <div class="baton-run" role="list" aria-label="瓶颈漂移接力示意">
+        <div class="baton-node" role="listitem">
+          <div class="yr">2021-2023</div>
+          <div class="who">ABF 载板</div>
+          <div class="why">交期一度 52 周<span class="badge badge-verified">已核验</span>；味之素/欣兴/日月光扩产</div>
+        </div>
+        <div class="baton-arrow" aria-hidden="true">→</div>
+        <div class="baton-node" role="listitem">
+          <div class="yr">2023-2024</div>
+          <div class="who">CoWoS 封装</div>
+          <div class="why">台积电占九成以上<span class="badge badge-assume">估算</span>；每年翻倍仍赶不上</div>
+        </div>
+        <div class="baton-arrow" aria-hidden="true">→</div>
+        <div class="baton-node" role="listitem">
+          <div class="yr">2024-2026</div>
+          <div class="who">HBM 内存</div>
+          <div class="why">美光/海力士/三星，2024-2026 售罄；三家寡头</div>
+        </div>
+        <div class="baton-arrow" aria-hidden="true">→</div>
+        <div class="baton-node" role="listitem">
+          <div class="yr">2026+</div>
+          <div class="who">电力 / 液冷 / 光模块 / ？</div>
+          <div class="why">下一根短板尚未落定，卡 10-11 教怎么用领先指标找</div>
+        </div>
+      </div>
+
+      <p style="font-size:var(--fs-13);color:var(--muted);margin-top:4px">补充历史锚点：2021 年 9 月《财富》报道，一家做 ABF 载板核心配套的台湾厂商（南亚电路板）股价三年涨超 <strong>1,200%</strong><span class="badge badge-verified">已核验 · Fortune 2021-09-16</span>——这是"瓶颈定价权"在二级市场的一个极端历史案例。行业当年宣布的 ABF 扩产投资合计超过 155 亿美元<span class="badge badge-assume">估算 · a2 Global Electronics 2022 综述</span>；扩产三年后，2024 年前后 ABF 短缺基本缓解——瓶颈已经漂走了。</p>
+    </section>
+
+    <!-- ==================== 4. 投资含义 ==================== -->
+    <section class="spine-section" id="sec-invest">
+      <div class="kicker">4 · 投资含义</div>
+      <h2>两个条件反射问句</h2>
+
+      <div class="chain">
+        <div class="chain-row">
+          <b>反射一</b>
+          <div>看到"某链条上多环节都缺货"的新闻，<strong>第一反应问三件事：哪个环节最紧？扩产周期多长？下一个漂移目标是谁？</strong>因为定价权只在最短板上——不是每个"缺货环节"都值得追。GPU 芯片"缺"不等于英伟达等 GPU 设计商能拿到超额利润，那笔钱大概率被 CoWoS/HBM 拿走。</div>
+        </div>
+        <div class="chain-row">
+          <b>反射二</b>
+          <div>看到"瓶颈环节公告扩产完成、产能开始落地"，<strong>第一反应查：下一环节的库存周转天数变化、订单是不是已经跳到那里？</strong>瓶颈解除的那一刻，超额利润就消失，下一环节才是接力棒的下一站。等到市场把接力棒的下一站也定价完毕，认知差就没了——所以这个反射的动作要快。</div>
+        </div>
+      </div>
+
+      <p style="margin-top:16px">这两个反射合起来，就是"用最短板视角在产业链上找钱"的最简版：<strong>不追缺货本身，追缺货的定价权流向</strong>。</p>
+    </section>
+
+    <!-- ==================== 5. 边界 ==================== -->
+    <section class="spine-section" id="sec-limit">
+      <div class="kicker">5 · 边界</div>
+      <h2>这张卡什么时候不适用</h2>
+
+      <ul>
+        <li><strong>有替代方案时，最短板效应打折</strong>。HBM3 短缺可以部分用 HBM3E 或多堆栈方案顶（同厂但更新代次）；ABF 长期看有玻璃基板等替代路径（还没量产但有节点）；甚至先进节点缺货时，客户可以退回上一代节点凑量。<strong>替代路径就绪的品类，"最短板"从刚性变成弹性</strong>——瓶颈溢价被削平。</li>
+        <li><strong>需求本身塌方时，谁是瓶颈都没意义</strong>。整体需求消失，讨论"哪根柱子最矮"就是无效功课。2023 年一般 DRAM 就是这样：需求塌了、行业深度亏损减产（见卡 1 存储案例）。卡 5（渠道逐层放大订单波动、缺货本身是风险信号）和卡 10（需求传导链）会展开这一层——<strong>不要把每个"缺货"都当利好</strong>。</li>
+        <li><strong>本卡只讲"最短板决定整体"的结构性事实，不告诉你怎么找下一个短板</strong>——那是卡 10（需求传导链：模型公司→云 CapEx→芯片→制造→设备→电力）与卡 11（领先指标：设备订单、交期、长约）的工作。三张卡合起来才是完整的"瓶颈接力棒"操作手册。</li>
+      </ul>
+    </section>
+
+    <!-- ==================== 6. 练习 ==================== -->
+    <section class="spine-section" id="sec-drill">
+      <div class="kicker">6 · 练习</div>
+      <h2>两道题</h2>
+
+      <div class="scenario">
+        <h4>练习一 · 复述题（2-3 分钟量级）</h4>
+        <p>合上这张卡片，用自己的话把这件事讲给一个完全不懂芯片的朋友：<strong>"英伟达数据中心业务两年涨了 7.5 倍——从 $15B 涨到 $115B——但同一时期客户还在抱怨买不到 AI 卡。为什么？"</strong></p>
+        <p class="scenario-hint">要点检查：①"一颗加速卡不是一颗 GPU"讲清楚了没；②"串联装配、min(各环节)"讲清楚了没；③点出当下的短板不在 GPU、在 CoWoS/HBM。三个都到位，这张卡算过了本关。</p>
+      </div>
+
+      <article class="scenario">
+        <h4>练习二 · 推演题（已核验前提，用机制自己推）</h4>
+        <p>两个已核验的前提：</p>
+        <ul>
+          <li>台积电 CoWoS 2026 年产能规划到每月 140,000-150,000 片<span class="badge badge-assume">估算 · TrendForce 2025-01-02</span>，是 2024 年（约 40,000 片/月）的三四倍；</li>
+          <li>美光 HBM 售罄状态延伸至 2026 大部分产能已锁定<span class="badge badge-verified">已核验 · 电话会</span>，且新增 HBM 产能受限于三家寡头的堆叠良率与晶圆产能。</li>
+        </ul>
+        <p>用本卡机制推：<strong>2026 下半年，如果 CoWoS 真的按规划落地、HBM 依然供不应求，AI 加速卡接下来最可能变成新瓶颈的是哪一层？会在市场上先看到什么公开信号？</strong></p>
+        <p class="scenario-hint">提示 1：加速卡出厂之后还要接哪些东西——服务器机架、集群互连（光模块）、供电、液冷、电力接入。逐层想：这些环节里，哪些的扩产周期比 CoWoS/HBM 更长？<br>提示 2：领先信号看什么——设备订单（相关设备商公告）、大客户长约（发电与配电公司的算力园区协议）、交期变化、上游材料订单。<br>提示 3：不附标准答案。写下你的推断和两三个具体的验证信号，两三个月后回来对照真实公告——这就是骨架卡训练的"用模型看新闻"能力。</p>
+      </article>
+    </section>
+
+    <!-- ==================== 来源 ==================== -->
+    <div class="src">
+      <strong>卡 4 来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.trendforce.com/news/2024/10/21/news-cowos-capacity-doubles-for-two-years-still-insufficient-positive-outlook-for-suppliers/">TrendForce 2024-10-21：TSMC CoWoS 产能 2024/2025 连续两年翻倍仍不足（转述 2024-10-17 电话会）</a></li>
+        <li><a href="https://www.trendforce.com/news/2025/01/02/news-tsmc-set-to-expand-cowos-capacity-to-record-75000-wafers-in-2025-doubling-2024-output/">TrendForce 2025-01-02：TSMC 2025 CoWoS 月产能规划至约 80,000 片</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581025000021/q4fy25pr.htm">NVIDIA FY2025 Q4 8-K：数据中心 FY25 营收 $115.2B（+142% 同比）</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581024000028/q4fy24pr.htm">NVIDIA FY2024 Q4 8-K：数据中心 FY24 营收 $47.5B</a></li>
+        <li><a href="https://www.tomshardware.com/pc-components/gpus/micron-says-high-bandwidth-memory-is-sold-out-for-2024-and-most-of-2025-intense-demand-portends-potential-ai-gpu-production-bottleneck">Tom's Hardware：美光 HBM 2024 售罄、2025 大部分已分配（转述 CEO 电话会原话）</a>；后续售罄延伸至 2026 见 m03 页脚清单</li>
+        <li><a href="https://fortune.com/2021/09/16/chip-shortage-supplier-component-abf-substrate-shares/">Fortune 2021-09-16：ABF 载板配套厂商股价三年涨超 1,200%</a></li>
+        <li><a href="https://a2globalelectronics.com/shortage-mitigation/abf-substrate-shortages/">a2 Global Electronics 综述：ABF 载板 2021-2023 短缺、交期一度 52 周、行业扩产投资合计 $15.5B（估算）</a></li>
+        <li>预告参考：卡 10（需求传导链）、卡 11（领先指标）——本卡边界与推演题指向的下一步</li>
+      </ul>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已学习</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine03.html"><span class="dir">← 上一张</span>卡 3 · 良率 = 成本曲线</a>
+        <a href="spine05.html" style="text-align:right"><span class="dir">下一张 →</span>卡 5 · 渠道逐层放大订单波动</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- 五环节瓶颈漂移模拟 ---------- */
+  const ids = ["Gpu", "Hbm", "Cow", "Abf", "Tst"];
+  const names = {
+    Gpu: "① GPU",
+    Hbm: "② HBM",
+    Cow: "③ CoWoS",
+    Abf: "④ ABF 载板",
+    Tst: "⑤ 测试装配"
+  };
+
+  /* 情景快照：教学示意数字（万卡/月折算），非真实产能 */
+  const scenarios = {
+    s2023: { Gpu: 45, Hbm: 35, Cow: 18, Abf: 45, Tst: 55,
+             note: "2023 年前后：CoWoS 是最矮的柱子（约 40% 需求）——瓶颈定价权集中在台积电封装环节，客户预付款、长约都堆到那里。GPU、HBM、ABF 都够（此刻），却帮不上出货——它们的多余产能全变成在手库存。" },
+    s2025: { Gpu: 55, Hbm: 32, Cow: 48, Abf: 55, Tst: 55,
+             note: "2025 情景推演：CoWoS 按规划扩到接近大部队，瓶颈立刻漂到 HBM（三家寡头、扩产更慢）。CoWoS 的紧缺溢价在产能解除的那一刻消失，接力棒交到 HBM 手里——超额利润跟着换环节。" },
+    s2027: { Gpu: 65, Hbm: 55, Cow: 62, Abf: 58, Tst: 58,
+             note: "2027 情景推演：前几层大致跟上，五个柱子变得接近——此时新瓶颈往哪一层漂已不确定，很可能漂到卡外的电力、液冷、光模块或电网侧。手动拖任一环节的滑块把它拉低，感受新短板出现的过程。" },
+    reset: null
+  };
+
+  const W = 720, H = 300, L = 60, R = 24, T = 30, B = 46, MAXV = 80;
+  const root = document.getElementById("driftChart");
+  const svg = APP.svgEl("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+    "aria-label": "柱状图：GPU、HBM、CoWoS、ABF 载板、测试装配五个环节的月产能对比，最矮的一根被涂成琥珀色，标出整卡出货水位线" });
+  root.appendChild(svg);
+
+  const y = (v) => T + (1 - v / MAXV) * (H - T - B);
+
+  function applyScenario(key) {
+    const s = scenarios[key];
+    if (!s) return;
+    ids.forEach((id) => {
+      document.getElementById("cap" + id).value = s[id];
+    });
+    draw();
+  }
+
+  function draw() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const vals = ids.map((id) => +document.getElementById("cap" + id).value);
+    ids.forEach((id, i) => { document.getElementById("cap" + id + "Out").textContent = vals[i]; });
+    const minV = Math.min.apply(null, vals);
+    const minIdx = vals.indexOf(minV);
+    const sortedVals = vals.slice().sort(function (a, b) { return a - b; });
+    const secondMin = sortedVals[1];
+
+    /* 网格 + Y 轴刻度 */
+    for (let v = 0; v <= MAXV; v += 20) {
+      svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: "var(--viz-grid)", "stroke-width": 1 }));
+      const t = APP.svgEl("text", { x: L - 8, y: y(v) + 4, "text-anchor": "end", class: "axis-txt" });
+      t.textContent = v;
+      svg.appendChild(t);
+    }
+
+    /* 出货水位线（琥珀色） */
+    svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: y(minV), y2: y(minV), stroke: "var(--accent)", "stroke-width": 1.5, opacity: 0.85 }));
+    const wl = APP.svgEl("text", { x: W - R, y: y(minV) - 7, "text-anchor": "end", class: "anno-txt" });
+    wl.textContent = "整卡出货水位 " + minV + " 万卡/月";
+    svg.appendChild(wl);
+
+    /* 五根柱子 */
+    const slot = (W - L - R) / ids.length;
+    vals.forEach((v, i) => {
+      const bw = 30, cx = L + slot * i + slot / 2, x0 = cx - bw / 2;
+      const yTop = y(v), yBase = H - B, r = 4;
+      const d = "M" + x0 + " " + yBase +
+        " L" + x0 + " " + (yTop + r) +
+        " Q" + x0 + " " + yTop + " " + (x0 + r) + " " + yTop +
+        " L" + (x0 + bw - r) + " " + yTop +
+        " Q" + (x0 + bw) + " " + yTop + " " + (x0 + bw) + " " + (yTop + r) +
+        " L" + (x0 + bw) + " " + yBase + " Z";
+      const bar = APP.svgEl("path", { d, fill: i === minIdx ? "var(--accent)" : "var(--viz-s3)", tabindex: "0" });
+      bar.addEventListener("mousemove", (e) => APP.showTip(
+        "<b>" + names[ids[i]] + "</b><br>产能 " + v + " 万卡/月" +
+        (i === minIdx ? "<br><b>当前瓶颈</b>" : "<br>闲置 " + (v - minV) + " 万卡"),
+        e.clientX, e.clientY));
+      bar.addEventListener("mouseleave", APP.hideTip);
+      svg.appendChild(bar);
+
+      /* 顶部数值 */
+      const lbl = APP.svgEl("text", { x: cx, y: yTop - 8, "text-anchor": "middle", class: "bar-lbl" });
+      lbl.textContent = v + (i === minIdx ? "（瓶颈）" : "");
+      svg.appendChild(lbl);
+      /* 底部环节名 */
+      const name = APP.svgEl("text", { x: cx, y: H - B + 20, "text-anchor": "middle", class: "axis-txt" });
+      name.textContent = names[ids[i]];
+      svg.appendChild(name);
+    });
+
+    /* 底轴 */
+    svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: H - B, y2: H - B, stroke: "var(--viz-axis)", "stroke-width": 1 }));
+
+    /* 读数 */
+    const idle = vals.map((v) => v - minV);
+    const totalIdle = idle.reduce((a, b) => a + b, 0);
+    const gap = secondMin - minV;
+    let extra = "";
+    if (gap > 0 && gap <= 3) {
+      extra = "　<span class='warn'>下一根短板 " + names[ids[vals.indexOf(secondMin)]] + " 已经贴近瓶颈——只要 " + names[ids[minIdx]] + " 再扩 " + (gap + 1) + " 万卡，接力棒就会交出去。</span>";
+    } else if (gap > 20) {
+      extra = "　<span class='warn'>瓶颈领先第二短板 " + gap + " 万卡——短期不会漂，超额利润集中在 " + names[ids[minIdx]] + "。</span>";
+    }
+    document.getElementById("driftReadout").innerHTML =
+      "整卡出货 = min(" + vals.join(", ") + ") = <b>" + minV + " 万卡/月</b>，卡在 <b>" +
+      names[ids[minIdx]] + "</b>。其余环节合计 <b>" + totalIdle + "</b> 万套产能闲置——变成在手库存或等米下锅的资本开支。" + extra;
+  }
+
+  ids.forEach((id) => document.getElementById("cap" + id).addEventListener("input", () => {
+    /* 手动拖动 → 切换到"手动调节" */
+    document.querySelectorAll(".scen-btn").forEach((b) => b.setAttribute("aria-pressed", b.dataset.scenario === "reset" ? "true" : "false"));
+    draw();
+  }));
+
+  /* 情景按钮 */
+  const noteEl = document.getElementById("driftReadout");
+  document.querySelectorAll(".scen-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.scenario;
+      document.querySelectorAll(".scen-btn").forEach((b) => b.setAttribute("aria-pressed", "false"));
+      btn.setAttribute("aria-pressed", "true");
+      if (key !== "reset" && scenarios[key]) {
+        applyScenario(key);
+        /* 追加情景解读到读数区 */
+        const s = scenarios[key];
+        noteEl.innerHTML = noteEl.innerHTML + "<br><span style='color:var(--muted)'>" + s.note + "</span>";
+      } else {
+        draw();
+      }
+    });
+  });
+
+  /* 初次绘制：默认情景 A */
+  applyScenario("s2023");
+  const initS = scenarios.s2023;
+  noteEl.innerHTML = noteEl.innerHTML + "<br><span style='color:var(--muted)'>" + initS.note + "</span>";
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 3 · 良率 = 成本曲线</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="s03">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 3 · 良率 = 成本曲线</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 3 / 15</p>
+      <h1>良率 = 成本曲线</h1>
+      <p class="core-q"><b>一句话：</b>新节点点火时良率低、单位成本极高；良率沿一条陡的曲线爬升，单位成本沿它的镜像沉下去。「良率每月改善 X%」不是空话，它是一张三年长的毛利率日历——<strong>爬坡的斜率，就是日历上的翻页速度</strong>。</p>
+    </header>
+
+    <section class="prose">
+
+      <h2>1. 现象：一颗被物理残废的芯片</h2>
+      <p>2018 年 5 月，英特尔把首款商业化 10nm 处理器 <strong>Core i3-8121U</strong> 装进联想 Ideapad 330 上市。这颗芯片物理上刻着一颗集成显卡 GPU，但工厂 binning（分选）时把 GPU <strong>整体禁用</strong>了——只留两个 CPU 核心可用；同一台笔记本还要额外配一颗独立显卡才能显示。原因不是产品定位，是 10nm 良率——芯片里任何一处缺陷让 GPU 部分不合格，就把 GPU 一起关掉，让剩下的 CPU 部分还能出货收点钱。<a class="badge badge-verified" href="#src-cannon-lake">已核验 · Wikipedia / Tom's Hardware / WikiChip · 2018-05</a></p>
+      <p>Cannon Lake 是 x86 微架构史上最短命的一代之一：只出了这一款、只上了这一台笔记本、1.5 年就被下一代替换。<strong>近三十年，第一次，全球最大的 IDM 巨头不得不把自家芯片的核心功能物理砍掉才能推向市场。</strong></p>
+      <p>Cannon Lake 不是笑话，它是「良率」在报表之外的样子。一颗芯片没做出来，工程师拿到的成本账不是「少赚一点」，是<strong>整片晶圆的钱要摊到活着出来的那几颗上——芯片少一半，每颗成本翻一倍</strong>。良率、单位成本、毛利率这三个词，在财报里像三件事，工厂里就是一件事的三个刻度。这张卡讲这一件事——<strong>良率是成本曲线，爬坡的斜率就是毛利率的日历</strong>。</p>
+
+      <h2>2. 机制：为什么这三件事是一件事</h2>
+      <p>先把公式推出来，再谈生意。三步，读完你就能自己复现。</p>
+
+      <p><strong>第一步 · 良率是什么。</strong>一片 300 毫米直径的晶圆上会划出很多个小方块——每一块就是一颗 die（芯片，可能是 CPU、GPU、存储控制器）。一片晶圆能切出多少 die 记作 <strong>N</strong>：手机芯片 die 小、一片能切几千颗；H100 那种 814 平方毫米的巨型 die，一片晶圆按标准排版只能切约 63 颗<a class="badge badge-verified" href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/" target="_blank" rel="noopener">已核验 · 英伟达 Hopper 白皮书</a>。这些 die 里合格能卖钱的比例，就是<strong>良率 Y</strong>。一片晶圆里能卖钱的 die 数 = Y × N。</p>
+
+      <p><strong>第二步 · 单位成本从哪来。</strong>一片晶圆从进车间到出厂的总成本记作 <strong>C</strong>——先进制程 C 大约 1.5 万美元一片<a class="badge badge-assume" href="#src-cset-wafer-cost">估算 · CSET 2020</a>。C 里包含设备折旧、光罩、光刻胶、气体、水、人工——<strong>其中绝大部分与最后活下来几颗 die 无关</strong>：机器要走完全部工序，气要通，水要冲，折旧要提。所以每颗合格 die 分摊到的成本是一个除法：</p>
+
+      <div class="derive">
+        <span class="expr">单颗成本 = C ÷ (Y × N)</span>
+        <span class="unit">分母越大，成本越小</span>
+      </div>
+
+      <p>这条公式的形状是双曲线：Y 从 0 到 100%，单颗成本从「无穷大」沿一条陡的下降曲线走。<strong>良率翻倍，成本减半；良率再翻倍，成本再减半——良率不是加法，它是分母。</strong>Cannon Lake 那种「整片晶圆里 GPU 部分合格的太少」的情况，正是这个分母压得抬不起头——不砍功能，每颗芯片摊到的成本高过售价。</p>
+
+      <p><strong>第三步 · 为什么会爬坡。</strong>新制程首次投产时缺陷密度 D0 高——每平方厘米上飘着的致命颗粒和工艺偏差多。台积电在技术论坛给过一个真实刻度：<strong>N5 制程投产初期 D0 约 0.10 个/平方厘米，一年后逼近 0.06</strong><a class="badge badge-verified" href="https://www.tomshardware.com/tech-industry/tsmc-discloses-n2-defect-density-lower-than-n3-at-the-same-stage-of-development" target="_blank" rel="noopener">已核验 · 台积电技术论坛披露 · Tom's Hardware 报道</a>。缺陷随机散布时，一颗面积 A 平方厘米的 die「一个都不沾」的概率是 <strong>e<sup>−A×D0</sup></strong>——泊松良率公式（完整推导见 m02 手册页第 3 节）。这里的重点不是公式本身，而是它的动态：</p>
+      <ul>
+        <li>D0 每个季度往下磨一点，e<sup>−A×D0</sup> 每个季度抬一点；</li>
+        <li>Y × N 每个季度扩大一点，C ÷ (Y × N) 每个季度沉一点；</li>
+        <li>所以「制程刚推出时单位成本高、贵、亏损，随时间沿一条曲线下降」<strong>不是运气，是缺陷密度这台机器磨出来的必然</strong>。</li>
+      </ul>
+
+      <p>现在把「爬坡斜率 = 毛利率日历」落到财务上。假设代工厂对客户的售价 P 在制程内基本固定（合同价），那这片晶圆的<strong>毛利 = P − C</strong>、<strong>毛利率 = (P − C) / P</strong>。C 每个月被良率的爬坡拉低，毛利每个月扩大，毛利率沿一条镜像曲线爬升。「良率每月改善 X%」这句话不是空话，<strong>它是一张财务日历</strong>：你能算出几个月后单位成本追上上一代、几个季度后这条产线不再拖后腿、几个季度后开始贡献毛利。管理层甚至懒得自己算——因为算这道题只需要三步除法，任何投资人拿计算器都能跟上。</p>
+
+      <p>现在，让公式变成日历——亲手拖一次滑块看清「斜率就是日历」是什么意思。</p>
+
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-title">良率月历 · 三条曲线的联动</span>
+          <span class="viz-sub">看什么：①拖「月改善率」，整条日历会同步压缩或拉长——这就是「斜率就是日历」；②切「绝对/相对」，同一句话得到差好几个月的日历——这是投资家里必踩一次的坑。</span>
+        </div>
+        <div class="ctl-panel">
+          <div class="ctl">
+            <label for="y0">起始良率 Y<sub>0</sub></label>
+            <input type="range" id="y0" min="20" max="70" step="1" value="40">
+            <output id="y0Out">40%</output>
+          </div>
+          <div class="ctl">
+            <label for="rr">月改善率</label>
+            <input type="range" id="rr" min="1" max="12" step="0.5" value="7.5">
+            <output id="rrOut">7.5%</output>
+          </div>
+          <div class="ctl">
+            <label for="yref">上一代稳态良率</label>
+            <input type="range" id="yref" min="65" max="95" step="1" value="85">
+            <output id="yrefOut">85%</output>
+          </div>
+          <div class="viz-foot" style="margin-top:2px">
+            <span style="font-size:var(--fs-14);font-weight:600">月改善口径</span>
+            <button class="btn" type="button" id="modeRel" aria-pressed="true">相对（复利）</button>
+            <button class="btn btn-ghost" type="button" id="modeAbs" aria-pressed="false">绝对（加法）</button>
+          </div>
+        </div>
+        <div id="calChart"></div>
+        <ul class="viz-legend" id="calLegend" style="justify-content:center;margin-top:2px"></ul>
+        <div class="viz-readout" id="calReadout" aria-live="polite"></div>
+        <p style="font-size:var(--fs-13);color:var(--muted);margin:8px 0 0">教学简化：售价固定、每片 die 数 N 恒定、良率上限设 98%（真实中末段月改善会衰减，见下方「边界」）。单位成本以「上一代稳态成本」为基准 = 1，读数是相对倍数。</p>
+      </div>
+
+      <p>拖到极端一点你会看到两件事：<strong>①</strong> 起始良率 40%、月相对改善 3% 时，追平上一代要一年半以上；把改善率拖到 8%，缩到半年多——<strong>斜率就是日历</strong>。<strong>②</strong> 同样起点、同样是「每月 7%」，切成「绝对」的话追平时间比「相对」快得多——因为「相对 7%」在低良率时每月实际抬 3 个百分点，在高良率时抬 6 个百分点，前慢后快；而「绝对 7 个点」是均匀的。<strong>行业惯例是「相对」（复利口径），但管理层原话未必严谨说明</strong><a class="badge badge-expert" href="#src-tsmc-n3-dilution">专家判断 · 通行的买方跟踪法</a>——投资人第一件事是追问口径。</p>
+
+      <h2>3. 真实锚点 · 两个已核验的现场</h2>
+
+      <p><strong>锚点一：台积电 3nm（N3）的三年长日历。</strong>2024-01-18 财报电话会上，台积电管理层把整套语言原封不动放上桌：3nm 爬坡将<strong>稀释</strong> 2024 全年毛利率约 3-4 个百分点；历史上 N5/N7 用 8-10 个季度回到公司平均毛利率水平，N3 因复杂度和早期定价预计 10-12 个季度。<a class="badge badge-verified" href="https://www.fool.com/earnings/call-transcripts/2024/01/18/taiwan-semiconductor-manufacturing-tsm-q4-2023-ear/" target="_blank" rel="noopener">已核验 · 2024-01-18 电话会转录</a> 翻译：管理层自己把一张 3 年长的毛利率日历告诉了投资人。随后 2024 年逐季毛利率兑现：53.1% → 53.2% → 57.8% → 59.0%，全年 56.1%；2025 年全年 59.9%。<a class="badge badge-verified" href="#src-tsmc-n3-dilution">已核验 · 公司业绩公告</a> 稀释在报表上是这样一格一格挪出来的。（案例复盘的完整决策拆解在手册页 m02 · 决策复盘二。）</p>
+
+      <p><strong>锚点二：英特尔 18A 的当代验证。</strong>2026 年 2 月，英特尔 CEO 陈立武在 Cisco AI 峰会上说：接手时 18A 良率「相当差」，他把 PDF Solutions 和 KLA 请来一起攻，「<strong>现在良率以每月 7-8% 的速度改善</strong>——这是行业最佳实践的速度」；并预期 2026 下半年拿到多家代工客户承诺。<a class="badge badge-verified" href="#src-intel-18a-yield">已核验 · Cisco AI Summit 2026-02 · Yahoo Finance / Motley Fool / TrendForce 报道</a> 这一句里塞了两层信息：① 「月改善 7-8%」是可以直接验证的成本曲线斜率；② 「下半年拿承诺」暗示他觉得几个月内能到给客户看的良率水平——两个数字放到同一张日历上，投资人可以自己核验一致性（正是下面「练习」要做的事）。</p>
+
+      <h2>4. 投资含义 · 两个条件反射</h2>
+
+      <div class="note">
+        <span class="note-label">问句一</span>
+        <p><strong>「听到某厂公告『良率月改善 X%』时，我第一反应算什么？」</strong></p>
+        <p style="margin-bottom:0">三个数一算：<strong>①</strong> X 是相对还是绝对（差异见上）——先追问口径；<strong>②</strong> 从当前良率到目标良率需要几个月（公式：相对是 <code>ln(目标/当前)/ln(1+r)</code>，绝对是 <code>(目标−当前)/r</code>）；<strong>③</strong> 这几个月对应哪几个季度的毛利率？三个数一放，管理层给的「财务日历」是否自洽就摆在桌面。<strong>如果 CEO 又说「月改善 7-8%」又说「下半年拿承诺」，两句话的日历对不上，那其中一句话是嘴上功夫。</strong></p>
+      </div>
+
+      <div class="note">
+        <span class="note-label">问句二</span>
+        <p><strong>「看到某厂某新节点收入占比快速上升、但公司毛利率反而下降，我第一反应查什么？」</strong></p>
+        <p style="margin-bottom:0">查这个新节点在爬坡日历的哪个位置。<strong>新节点占收入越大、爬坡越早期，稀释就越猛</strong>——台积电 2024 年那句「N3 稀释 3-4 个点」就是这么长出来的。反过来，新节点占比上升同时毛利率也上升，说明爬坡已过转正拐点——这时该问：<strong>「下一个节点什么时候点火，日历会不会再重来一次？」</strong>（爬坡日历叠加对财务的量化机制，见手册页 <a href="m11.html">m11 · 财务语言与估值</a>——毛利率跳变一节；卡 3 只讲机制的直觉版。）</p>
+      </div>
+
+      <h2>5. 边界 · 这张卡什么时候不适用</h2>
+      <ul>
+        <li><strong>节点难度不同，同一 X% 的含义不一样。</strong>先进制程（3nm、2nm）D0 起点高、爬坡窗口长；成熟制程（28nm）D0 早已磨平，「良率每月改 7%」在成熟制程上几乎没意义——曲线在那儿已贴着上限。同一句管理层措辞，用在 N2 和 N28 上要打完全不同的折扣。</li>
+        <li><strong>无厂设计公司（fabless）没有自家良率。</strong>英伟达、AMD、博通这类公司的单位成本曲线不由自己的良率决定，而由代工报价、产能配额、以及自家 die 设计对良率的容错度（chiplet 拆分、坏区余量——H100 物理预留 12 组坏区余量，SXM/PCIe 版本按启用单元数分层出售<a class="badge badge-verified" href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/" target="_blank" rel="noopener">已核验 · 英伟达白皮书</a>）决定。看设计公司别套这张卡的口径找它的「日历」——看长约、产能配额、chiplet 良率共振（卡 9 生态分工降低设计门槛 展开）。</li>
+        <li><strong>「售价固定」是教学简化。</strong>真实合同里代工价可以按节点、按窗口调整，客户在爬坡末段常拿到降价换更长订单——m11 展开这类合同细节。这张卡的公式让你先看到日历的形状；手册页告诉你日历上每一节的合同条款。</li>
+        <li><strong>月改善率会衰减。</strong>良率越接近 100%，进一步改善越难——同样 7% 复利，在 40% 起点是「每月抬 3 个绝对百分点」，到 85% 起点是「每月抬 6 个百分点」；但物理上到 85% 之后 D0 已经很难再压下去。<strong>「best practice」这个词说的是行业标杆速度，不是可持续保持的承诺</strong>——外推末段要打折。</li>
+        <li><strong>「良率」这两个字可能是复合口径。</strong>先进制程晚期常出现「D0 良率 vs 参数良率」「机械良率 vs 电测良率」「Wafer sort vs Final test」的口径混淆，管理层不总是讲清——问句一里追问口径不只是问相对绝对，也是问「哪一层良率」。</li>
+      </ul>
+
+      <h2>6. 练习两道</h2>
+
+      <article class="scenario">
+        <h4>复述题（3 分钟量）</h4>
+        <p>合上这张卡，用自己的话讲给一个完全不懂制造业的朋友：<strong>为什么一家代工厂新推出制程的头一年毛利率反而被拉低？</strong>请把三件事按顺序讲清楚：</p>
+        <ol>
+          <li>一片晶圆走完全部工序的总成本，跟这片上有几颗合格 die 有没有关系？</li>
+          <li>新制程刚点火时，为什么合格 die 的比例必然低？</li>
+          <li>合格 die 少，是通过哪条数学关系拉低毛利率的？</li>
+        </ol>
+        <p style="margin-bottom:0">不用背具体数字（0.10、0.06、53.1%……），把三步因果讲对就行——讲得出来，模型才算装进脑子。</p>
+      </article>
+
+      <article class="scenario">
+        <h4>推演题（本卡没直接给答案，用机制自己推）</h4>
+        <p>已知两件已核验的真事：</p>
+        <ul>
+          <li>台积电 N5 制程投产初期 D0 约 0.10 个/平方厘米，一年后逼近 0.06<a class="badge badge-verified" href="https://www.tomshardware.com/tech-industry/tsmc-discloses-n2-defect-density-lower-than-n3-at-the-same-stage-of-development" target="_blank" rel="noopener">已核验 · 台积电技术论坛披露</a>；</li>
+          <li>英特尔 CEO 陈立武 2026 年 2 月说 18A 良率以每月 7-8% 的速度改善<a class="badge badge-verified" href="#src-intel-18a-yield">已核验 · Cisco AI Summit</a>。</li>
+        </ul>
+        <p>再给两个作练习假设的前提（未披露，标估算）：</p>
+        <ul>
+          <li>18A 起步良率约 40%<a class="badge badge-assume" href="#src-intel-18a-yield">估算</a>；</li>
+          <li>上一代 Intel 7（10nm 增强）现在稳态良率约 85%<a class="badge badge-assume" href="#src-intel-18a-yield">估算</a>；同种 die，即 N 相同；两代节点售价一样（教学简化）。</li>
+        </ul>
+        <p><strong>问：如果 18A 每月相对改善 7%，大约几个月后 18A 的单颗成本能追平 Intel 7？</strong></p>
+        <p>提示（不给答案）：</p>
+        <ol>
+          <li>单颗成本 <code>C/(Y×N)</code> 追平，等价于 Y×N 相等；</li>
+          <li>题里 N 相同，即良率追平就行；</li>
+          <li>相对复利：<code>40% × 1.07<sup>n</sup> = 85%</code> → 求 n（拿上面的良率月历滑到 40% + 7% 就是答案）。</li>
+        </ol>
+        <p style="margin-bottom:0">算完再想一层：<strong>这个 n 落在陈立武「下半年拿客户承诺」的时间窗内吗？如果不落，可能哪里出了口径差异？（提示：可能是「相对 vs 绝对」的口径、可能是我假设的起点错了、可能是「客户承诺」不需要等到追平上一代成本。）</strong></p>
+      </article>
+
+      <div class="src">
+        <strong>卡 3 来源</strong>
+        <ul style="margin:8px 0 0;padding-left:1.3em">
+          <li id="src-cannon-lake">Cannon Lake Core i3-8121U 出货于联想 Ideapad 330、GPU 因良率原因禁用、1.5 年内下架——<a href="https://en.wikipedia.org/wiki/Cannon_Lake_(microprocessor)" target="_blank" rel="noopener">Wikipedia</a>；<a href="https://www.tomshardware.com/news/intel-10nm-processor-core-i3-8121u,37054.html" target="_blank" rel="noopener">Tom's Hardware（2018-05）</a>；<a href="https://en.wikichip.org/wiki/intel/core_i3/i3-8121u" target="_blank" rel="noopener">WikiChip</a>；<a href="https://www.tomshardware.com/news/cannon-lake-graphics-support-dead" target="_blank" rel="noopener">Tom's Hardware · 显卡支持正式终结</a>。</li>
+          <li id="src-tsmc-n3-dilution">台积电 3nm 稀释毛利率 3-4pt、N5/N7 8-10 季回正、N3 预计 10-12 季——<a href="https://www.fool.com/earnings/call-transcripts/2024/01/18/taiwan-semiconductor-manufacturing-tsm-q4-2023-ear/" target="_blank" rel="noopener">台积电 2023Q4 财报电话会转录（2024-01-18）</a>；台积电 2024 逐季毛利率与 FY24/FY25 数据——公司业绩公告 6-K。</li>
+          <li id="src-tsmc-d0">台积电 N5 D0 从约 0.10 降至 0.06、N3E 同期水平、N2 更优——<a href="https://www.tomshardware.com/tech-industry/tsmc-discloses-n2-defect-density-lower-than-n3-at-the-same-stage-of-development" target="_blank" rel="noopener">Tom's Hardware 报道台积电技术论坛披露</a>。</li>
+          <li id="src-intel-18a-yield">英特尔 18A 每月 7-8% 良率改善、请来 PDF Solutions/KLA、2H26 拿客户承诺——<a href="https://www.dailypolitical.com/2026/02/03/intel-conference-lip-bu-tan-talks-foundry-turnaround-18a-yield-gains-and-14a-roadmap-push.html" target="_blank" rel="noopener">Cisco AI Summit 陈立武发言报道（2026-02）</a>；<a href="https://www.trendforce.com/news/2026/05/19/news-intel-18a-yields-improve-7-8-monthly-with-2h26-customers-expected-reportedly-pushes-18a-cpus-amid-tight-supply/" target="_blank" rel="noopener">TrendForce 后续报道（2026-05）</a>。</li>
+          <li id="src-hopper">H100 die 面积 814 mm²、坏区余量 144/132/114 组计算单元——<a href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/" target="_blank" rel="noopener">英伟达 Hopper 架构技术博客</a>。</li>
+          <li id="src-cset-wafer-cost">先进制程晶圆成本约 1.5-1.7 万美元/片——CSET 《AI Chips: What They Are and Why They Matter》（2020）估算。</li>
+        </ul>
+      </div>
+
+    </section>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine02.html"><span class="dir">← 上一张</span>卡 2 · 固定成本主导</a>
+        <a href="spine04.html" style="text-align:right"><span class="dir">下一张 →</span>卡 4 · 出货 = 最短板</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- 良率月历（三条曲线的联动） ---------- */
+
+  const y0 = document.getElementById("y0");
+  const rr = document.getElementById("rr");
+  const yref = document.getElementById("yref");
+  const y0Out = document.getElementById("y0Out");
+  const rrOut = document.getElementById("rrOut");
+  const yrefOut = document.getElementById("yrefOut");
+  const modeRel = document.getElementById("modeRel");
+  const modeAbs = document.getElementById("modeAbs");
+  const readout = document.getElementById("calReadout");
+
+  let mode = "rel"; /* "rel" 相对复利；"abs" 绝对加法 */
+
+  const CAP = 98; /* 教学良率上限 */
+  const MONTHS = 24;
+
+  function yieldAt(t) {
+    const Y0 = +y0.value / 100;
+    const r = +rr.value / 100;
+    let Y;
+    if (mode === "rel") Y = Y0 * Math.pow(1 + r, t);
+    else Y = Y0 + r * t;
+    return Math.min(Y, CAP / 100);
+  }
+
+  /* 单位成本相对指数：以上一代稳态成本为 1 */
+  function costIndex(t) {
+    const Yr = +yref.value / 100;
+    const Y = yieldAt(t);
+    return Yr / Y; /* Y 越小成本越高（>1）；Y = Yref 时 = 1；Y > Yref 时 < 1 */
+  }
+
+  /* 良率达到目标的月份（用于标线） */
+  function monthsToTarget() {
+    const Y0 = +y0.value / 100;
+    const r = +rr.value / 100;
+    const Yt = +yref.value / 100;
+    if (Y0 >= Yt) return 0;
+    if (mode === "rel") {
+      if (r <= 0) return Infinity;
+      return Math.log(Yt / Y0) / Math.log(1 + r);
+    } else {
+      if (r <= 0) return Infinity;
+      return (Yt - Y0) / r;
+    }
+  }
+
+  /* ---------- 画图 ---------- */
+
+  const W = 720, H = 300, PL = 56, PR = 60, PT = 20, PB = 40;
+  const iw = W - PL - PR, ih = H - PT - PB;
+
+  const svg = APP.svgEl("svg", {
+    viewBox: "0 0 " + W + " " + H, role: "img",
+    "aria-label": "良率月历双轴曲线：良率随月份上升，单位成本相对指数随月份下降"
+  });
+  document.getElementById("calChart").appendChild(svg);
+
+  const legend = document.getElementById("calLegend");
+  legend.innerHTML =
+    '<li><span class="key" style="height:3px;width:22px;background:var(--viz-s3)"></span>良率（左轴）</li>' +
+    '<li><span class="key" style="height:3px;width:22px;background:var(--accent)"></span>单位成本指数（右轴，越低越好）</li>' +
+    '<li><span class="key" style="height:0;width:22px;border-top:1.5px dashed var(--muted)"></span>上一代稳态参照</li>';
+
+  const xAt = (t) => PL + t / MONTHS * iw;
+  const yAtL = (v) => PT + (1 - v) * ih; /* 左轴：0-100% 映射 */
+
+  /* 右轴：单位成本指数，0.5-3.0 之间；线性 */
+  const COST_MIN = 0.5, COST_MAX = 3.0;
+  const yAtR = (v) => {
+    const c = Math.max(COST_MIN, Math.min(COST_MAX, v));
+    return PT + (c - COST_MIN) / (COST_MAX - COST_MIN) * ih;
+  };
+
+  function render() {
+    y0Out.textContent = y0.value + "%";
+    rrOut.textContent = (+rr.value).toFixed(1) + (mode === "rel" ? "%（相对）" : " pt（绝对）");
+    yrefOut.textContent = yref.value + "%";
+
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    /* 背景网格与左轴刻度（良率 0/25/50/75/100） */
+    [0, 0.25, 0.5, 0.75, 1].forEach((v) => {
+      svg.appendChild(APP.svgEl("line", {
+        x1: PL, x2: PL + iw, y1: yAtL(v), y2: yAtL(v),
+        stroke: "var(--viz-grid)", "stroke-width": 1
+      }));
+      const t = APP.svgEl("text", { x: PL - 8, y: yAtL(v) + 4, "text-anchor": "end", class: "axis-txt" });
+      t.textContent = Math.round(v * 100) + "%";
+      svg.appendChild(t);
+    });
+    /* 左轴标签 */
+    const lLbl = APP.svgEl("text", { x: PL - 40, y: PT + ih / 2, "text-anchor": "middle", transform: "rotate(-90 " + (PL - 40) + " " + (PT + ih / 2) + ")", class: "axis-txt" });
+    lLbl.textContent = "良率";
+    svg.appendChild(lLbl);
+
+    /* 右轴刻度（成本指数） */
+    [0.5, 1.0, 1.5, 2.0, 3.0].forEach((v) => {
+      const y = yAtR(v);
+      const t = APP.svgEl("text", { x: PL + iw + 8, y: y + 4, class: "axis-txt" });
+      t.textContent = v.toFixed(1) + "×";
+      svg.appendChild(t);
+    });
+    const rLbl = APP.svgEl("text", { x: PL + iw + 48, y: PT + ih / 2, "text-anchor": "middle", transform: "rotate(90 " + (PL + iw + 48) + " " + (PT + ih / 2) + ")", class: "axis-txt" });
+    rLbl.textContent = "单位成本指数";
+    svg.appendChild(rLbl);
+
+    /* 底轴月份标签 */
+    [0, 4, 8, 12, 16, 20, 24].forEach((t) => {
+      const label = APP.svgEl("text", { x: xAt(t), y: PT + ih + 18, "text-anchor": "middle", class: "axis-txt" });
+      label.textContent = t + " 月";
+      svg.appendChild(label);
+    });
+
+    /* 上一代稳态参照线（左轴 = yref） */
+    const yrefV = +yref.value / 100;
+    svg.appendChild(APP.svgEl("line", {
+      x1: PL, x2: PL + iw, y1: yAtL(yrefV), y2: yAtL(yrefV),
+      stroke: "var(--muted)", "stroke-width": 1, "stroke-dasharray": "5 5"
+    }));
+    /* 上一代稳态成本 = 1× 参照线（右轴） */
+    svg.appendChild(APP.svgEl("line", {
+      x1: PL, x2: PL + iw, y1: yAtR(1), y2: yAtR(1),
+      stroke: "var(--muted)", "stroke-width": 1, "stroke-dasharray": "2 4", opacity: 0.5
+    }));
+
+    /* 良率曲线（左轴） */
+    let dY = "";
+    for (let t = 0; t <= MONTHS; t += 0.25) {
+      const Y = yieldAt(t);
+      dY += (t === 0 ? "M" : "L") + xAt(t).toFixed(1) + " " + yAtL(Y).toFixed(1);
+    }
+    svg.appendChild(APP.svgEl("path", {
+      d: dY, fill: "none", stroke: "var(--viz-s3)", "stroke-width": 2.5,
+      "stroke-linejoin": "round", "stroke-linecap": "round"
+    }));
+
+    /* 成本指数曲线（右轴） */
+    let dC = "";
+    for (let t = 0; t <= MONTHS; t += 0.25) {
+      const c = costIndex(t);
+      dC += (t === 0 ? "M" : "L") + xAt(t).toFixed(1) + " " + yAtR(c).toFixed(1);
+    }
+    svg.appendChild(APP.svgEl("path", {
+      d: dC, fill: "none", stroke: "var(--accent)", "stroke-width": 2.5,
+      "stroke-linejoin": "round", "stroke-linecap": "round"
+    }));
+
+    /* 追平月份的垂直标线 */
+    const mm = monthsToTarget();
+    if (isFinite(mm) && mm >= 0 && mm <= MONTHS) {
+      const x = xAt(mm);
+      svg.appendChild(APP.svgEl("line", {
+        x1: x, x2: x, y1: PT, y2: PT + ih,
+        stroke: "var(--primary-2)", "stroke-width": 1.5, "stroke-dasharray": "3 4"
+      }));
+      const lbl = APP.svgEl("text", {
+        x: x + 6, y: PT + 14, class: "end-lbl", fill: "var(--primary)"
+      });
+      lbl.textContent = "追平 · " + mm.toFixed(1) + " 月";
+      svg.appendChild(lbl);
+    }
+
+    /* 底轴 */
+    svg.appendChild(APP.svgEl("line", {
+      x1: PL, x2: PL + iw, y1: PT + ih, y2: PT + ih,
+      stroke: "var(--viz-axis)", "stroke-width": 1
+    }));
+
+    /* readout 文本 */
+    const Y0v = +y0.value, rrv = +rr.value, yrefv = +yref.value;
+    const c12 = costIndex(12), c24 = costIndex(24);
+    const modeTxt = mode === "rel" ? "相对复利" : "绝对加法";
+    const catchTxt = isFinite(mm)
+      ? (mm > MONTHS ? "在 24 个月内不追平" : "约 <b>" + mm.toFixed(1) + "</b> 个月追平上一代")
+      : "永远追不平（月改善率 ≤ 0）";
+    const warn = (mode === "rel" && rrv >= 8 && Y0v <= 40)
+      ? "　<span class='warn'>「起始 40%、月相对 8%」是行业最佳实践速度——现实中末段会衰减，末段月数要打折。</span>"
+      : "";
+    readout.innerHTML =
+      "起点 <b>" + Y0v + "%</b>、月改善 <b>" + rrv.toFixed(1) + (mode === "rel" ? "%" : "pt") +
+      "</b>（" + modeTxt + "）→ " + catchTxt +
+      "；12 个月时单位成本仍是上一代的 <b>" + c12.toFixed(2) + "×</b>，24 个月时 <b>" + c24.toFixed(2) + "×</b>。" +
+      "这条 24 个月长的日历就是「爬坡斜率 = 毛利率的日历」的可视化。" + warn;
+  }
+
+  [y0, rr, yref].forEach((el) => el.addEventListener("input", render));
+  modeRel.addEventListener("click", () => {
+    mode = "rel";
+    modeRel.setAttribute("aria-pressed", "true");
+    modeAbs.setAttribute("aria-pressed", "false");
+    modeRel.classList.remove("btn-ghost");
+    modeAbs.classList.add("btn-ghost");
+    /* 相对时 rr 用「%」单位（当前默认），无需换值 */
+    render();
+  });
+  modeAbs.addEventListener("click", () => {
+    mode = "abs";
+    modeRel.setAttribute("aria-pressed", "false");
+    modeAbs.setAttribute("aria-pressed", "true");
+    modeAbs.classList.remove("btn-ghost");
+    modeRel.classList.add("btn-ghost");
+    /* 绝对时 rr 用「pt」单位；沿用滑块数值，读数在 rrOut 里改字 */
+    render();
+  });
+
+  render();
+
+});
+</script>
+</body>
+</html>

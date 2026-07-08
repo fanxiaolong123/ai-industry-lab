@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模块 4 · 半导体行业前史</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 页面专属样式 ---------- */
+  .mile { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+  .mile-btn {
+    text-align: left; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--surface); cursor: pointer; font: inherit; color: var(--ink);
+    display: flex; flex-direction: column; gap: 4px; transition: background .15s var(--ease, ease), border-color .15s var(--ease, ease);
+  }
+  .mile-btn:hover { background: var(--surface-2); }
+  .mile-btn[aria-expanded="true"] { border-color: var(--primary); background: var(--primary-tint); }
+  .mile-btn .y { font-size: var(--fs-13); color: var(--muted); font-weight: 600; letter-spacing: .05em; }
+  .mile-btn .t { font-weight: 650; font-size: var(--fs-15); }
+  .mile-btn[aria-expanded="true"] .y { color: var(--primary); }
+  .mile-panel { padding: 12px 14px; border-left: 3px solid var(--primary); background: var(--surface); border-radius: 0 10px 10px 0; margin: 6px 0 14px; }
+  .mile-panel[hidden] { display: none; }
+  .mile-panel p { margin: 0 0 8px; }
+  .mile-panel p:last-child { margin-bottom: 0; }
+
+  /* 存储霸主时间线 */
+  .baton { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 14px 0; }
+  .baton-cell {
+    padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface);
+  }
+  .baton-cell h4 { margin: 0 0 4px; font-size: var(--fs-15); font-weight: 650; }
+  .baton-cell .yrs { font-size: var(--fs-13); color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+  .baton-cell p { margin: 0; font-size: var(--fs-14); }
+  .baton-cell.era-us { border-color: oklch(0.85 0.05 250); }
+  .baton-cell.era-jp { border-color: oklch(0.85 0.06 28); }
+  .baton-cell.era-kr { border-color: oklch(0.85 0.06 140); }
+  @media (max-width: 640px) { .baton { grid-template-columns: 1fr; } }
+
+  /* 决策档案表 */
+  .arch {
+    border-collapse: collapse; width: 100%; font-size: var(--fs-14); margin: 12px 0;
+  }
+  .arch th, .arch td {
+    text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top;
+  }
+  .arch th { font-weight: 650; font-size: var(--fs-13); color: var(--muted); background: var(--surface); }
+  .arch tr.pivot-good td:first-child { border-left: 3px solid var(--primary); }
+  .arch tr.pivot-bad td:first-child { border-left: 3px solid var(--accent); }
+  .arch td.dt { white-space: nowrap; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+  @media (max-width: 640px) {
+    .arch thead { display: none; }
+    .arch, .arch tbody, .arch tr, .arch td { display: block; width: 100%; }
+    .arch tr { padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .arch td { padding: 4px 12px; border-bottom: none; }
+    .arch td.dt { padding-top: 8px; }
+  }
+
+  /* 需求台阶开关 */
+  .step-toggle {
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 6px;
+    border: 1px solid var(--line); background: var(--surface); font-size: var(--fs-13); cursor: pointer; font: inherit;
+  }
+  .step-toggle .sw {
+    width: 12px; height: 12px; border-radius: 3px; display: inline-block;
+  }
+  .step-toggle[aria-pressed="false"] { color: var(--muted); background: transparent; }
+  .step-toggle[aria-pressed="false"] .sw { opacity: 0.3; }
+</style>
+</head>
+<body data-page="m04">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">模块 4 · 半导体行业前史</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">第一层 · 零基础体感 · 模块 4 / 14</p>
+      <h1>半导体行业前史</h1>
+      <p class="core-q"><b>核心问题：</b>为什么半导体这个行业一边长期成长，一边经常暴涨暴跌？为什么同一批公司，命运可以在一两个岔口上分成天堂和地狱？</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">学完这个模块，你要能独立回答（现在答不上来是正常的）</span>
+      <ul style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>一家半导体公司的收入增速有 30%，你从哪几个信号判断这是「结构成长」、「周期反弹」，还是「两者叠加」？</li>
+        <li>2021 年缺货新闻满天飞时，为什么老手会说「缺得越猛越要警惕」？——用 1997 年一篇经典论文里的一个词回答。</li>
+        <li>英特尔的 10nm 从「原定 2016」一路推到「2019 才勉强上市」，中间管理层每次都说「按计划推进」——你会去看哪三份公开材料判断技术是不是真的在掉队？</li>
+      </ul>
+    </div>
+
+    <ul class="concepts" aria-label="本模块概念清单">
+      <li>摩尔定律</li><li>FinFET</li><li>GAA</li><li>PC 周期</li><li>手机周期</li><li>云计算周期</li><li>AI 周期</li><li>存储战争</li><li>牛鞭效应</li><li>周期成长</li><li>掌门人决定论</li><li>技术掉队瞒不住</li>
+    </ul>
+
+    <div class="tabs" data-tabs>
+      <div class="tablist" role="tablist" aria-label="模块内容">
+        <button role="tab" id="tab-a" aria-controls="panel-a" aria-selected="true">本质</button>
+        <button role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false">怎么判断</button>
+        <button role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false">练习</button>
+      </div>
+
+      <!-- ==================== 本质 ==================== -->
+      <section role="tabpanel" id="panel-a" aria-labelledby="tab-a" class="prose">
+
+        <h2>1. 长期成长与剧烈波动，为什么在同一个行业里同时出现</h2>
+        <p>把半导体过去六十年的收入曲线拉长看，你会看见两件互相矛盾的事：<strong>一条稳步向上的长期趋势</strong>——每十年市场规模大致翻一倍甚至更多；<strong>叠加一连串剧烈波动</strong>——短短一两年内，同一批公司可以从「货卖爆」跌到「卖不动」。前者叫结构成长，后者叫周期振荡。绝大多数亏钱的故事，本质是把这两件事混在了一起：把长期趋势当成短期买点、把短期缺货当成长期瓶颈。</p>
+        <p>这一层的两台发动机各自独立：<strong>结构成长的发动机是「摩尔定律 + 新的应用平台」</strong>——工艺一代一代往下缩，每一代解锁一批新用途，PC、手机、云、AI 一层一层堆上来；<strong>周期振荡的发动机是「供给慢、需求快」（骨架卡 1）加上「订单在供应链里被逐层放大」</strong>——需求端一颗小石子，扔进链条里能激起制造端和设备端的滔天大浪。这一模块就是把这两台发动机拆开看，让你在后面所有模块里都能一眼分清「你在看的是哪一台在响」。</p>
+        <p>先看结构成长这台的燃料是什么。</p>
+
+        <h2>2. 摩尔定律：不是自然律，是行业的共同承诺</h2>
+        <p>1965 年 4 月 19 日，Fairchild 半导体的研发主管 Gordon Moore 应邀给《Electronics》杂志三十五周年特刊写了一篇短文，题目就叫「Cramming more components onto integrated circuits」——「把更多的元件塞到集成电路里去」，只有几页纸<span class="badge badge-verified">已核验 · 原始出处 Electronics 1965-04-19, vol 38, No 8, pp.114-117</span>。他画了一张对数坐标图，看了看过去几年芯片上元件数的增长趋势，随手写下一个预测：单位芯片上的元件数<strong>每一年翻一倍</strong>，未来十年应该会继续这样。1975 年他把周期修正为大约<strong>两年</strong>。加州理工的 Carver Mead 教授几年后把这个观察叫做「Moore's Law」，名字才叫响。</p>
+        <p>这里有一个很多人误会的关键：<strong>摩尔定律不是物理定律，不是自然律</strong>——它没有推导，只是一个从经验外推出来的行业目标。之所以过去六十年真的兑现了，是因为整个行业每隔几年就必须完成一次「工艺发明」，硬把它续命下去。回头看，续命的关键节点就是三代结构性跳跃：</p>
+
+        <div class="mile" role="group" aria-label="摩尔定律里程碑">
+          <button class="mile-btn" data-reveal data-reveal-group="mile" aria-controls="mile-1" aria-expanded="false">
+            <span class="y">1965</span><span class="t">Moore 的原始预测</span>
+          </button>
+          <button class="mile-btn" data-reveal data-reveal-group="mile" aria-controls="mile-2" aria-expanded="false">
+            <span class="y">1971</span><span class="t">首颗商用微处理器 4004</span>
+          </button>
+          <button class="mile-btn" data-reveal data-reveal-group="mile" aria-controls="mile-3" aria-expanded="false">
+            <span class="y">2011</span><span class="t">FinFET · 平面变立体</span>
+          </button>
+          <button class="mile-btn" data-reveal data-reveal-group="mile" aria-controls="mile-4" aria-expanded="false">
+            <span class="y">2022</span><span class="t">GAA · 全环绕栅极</span>
+          </button>
+        </div>
+
+        <div class="mile-panel" id="mile-1" hidden>
+          <p><strong>1965 年 Moore 的原始预测</strong>：他推测到 1975 年，一片四分之一平方英寸的芯片上能塞下 65,000 个元件<span class="badge badge-verified">已核验 · Computer History Museum 存档原文</span>。当时的商用芯片只有几十上百个晶体管。这篇文章发出来时几乎没人当回事，连英特尔自己后来都找不到一本原始杂志，2005 年悬赏一万美元才收到<span class="badge badge-verified">已核验 · Computer History Museum 记录</span>。</p>
+          <p>为什么它变成了行业圣经？因为 Moore 后来自己创办了英特尔（1968），把这条曲线当作全公司的路线图；行业其他玩家也很快意识到——<strong>如果我不跟这条线，我就会被跟上线的人淘汰</strong>。摩尔定律从预测变成了自我实现的承诺。</p>
+        </div>
+        <div class="mile-panel" id="mile-2" hidden>
+          <p><strong>1971 年，英特尔 4004 微处理器发布</strong>——把过去需要一整块电路板才能实现的运算，压进一颗指甲盖大的芯片。这是「摩尔定律从预测变成产业逻辑」的第一个可见成果：只有把元件数按 Moore 的曲线堆上去，才能让「一颗芯片当一台计算机」成为可能。此后 PC 时代就长在这条曲线上——1980s 到 1990s 每一代新 CPU 都是曲线的下一步。</p>
+          <p>这里第一次出现「代际是生死」的雏形：不上下一代工艺 = 卖不动。这个道理到今天没变。</p>
+        </div>
+        <div class="mile-panel" id="mile-3" hidden>
+          <p><strong>2011 年 5 月 4 日，英特尔宣布 22 纳米节点采用「Tri-Gate」立体晶体管</strong>，代号 Ivy Bridge 的处理器成为全球首个高量产使用 FinFET 结构的芯片<span class="badge badge-verified">已核验 · Intel Newsroom 2011-05-04 发布材料 + EE Times 报道</span>。此前几十年，晶体管都是「平面」的——沟道躺在硅片表面，栅极从上面盖下来。工艺缩到二十几纳米时，平面结构再也压不住漏电：芯片不通电时也在慢慢漏电，越缩越离谱。</p>
+          <p>FinFET 是把沟道竖起来做成一片薄薄的「鳍」（fin），栅极从三面把它包住——泄漏立刻好转，性能和功耗都跳一级。<strong>这一次不是「继续缩」，是「换结构」——摩尔定律靠一次结构性发明续了十年命</strong>。此后 16nm、10nm、7nm 一路走下来，用的都是 FinFET 的变种。</p>
+        </div>
+        <div class="mile-panel" id="mile-4" hidden>
+          <p><strong>2022 年 6 月 30 日，三星宣布 3 纳米节点开始量产，全球首个使用 GAA（Gate-All-Around，环绕栅极）架构的商用工艺</strong>，三星把自家的 GAA 命名为 MBCFET<span class="badge badge-verified">已核验 · Samsung Newsroom 2022-06-30 官方公告</span>。GAA 相当于把 FinFET 的「三面包围」升级为「四面全包围」：栅极从上下左右把沟道完全环绕，对漏电和性能的控制再进一步。台积电 2 纳米也采用 GAA 结构（模块 5 展开）。</p>
+          <p>为什么讲这一段？因为这是继 FinFET 之后又一次「不能靠继续缩、只能换结构」的续命节点——<strong>每一次这样的节点都是新一轮资本开支的开始</strong>：新设备、新材料、新的爬坡日历。你把这条时间线记下，任何一次「代际跳跃」新闻出来，你都能立刻在心里定位：这是又一次结构性投资周期的启动信号，不是普通升级。</p>
+        </div>
+
+        <p>把这三个节点摞起来看一件事：<strong>摩尔定律的「继续兑现」，本身就是设备市场（模块 2 的 WFE）永远有活干的物理原因</strong>——因为每续一次命，都要一次全行业级别的换机改造。这也是后面模块 9 讲「WFE 的长期底盘为什么在」的根据。</p>
+
+        <h2>3. 需求台阶：PC、手机、云、AI 是叠加不是替代</h2>
+        <p>结构成长的第二台燃料，是每隔十几年就出现一个<strong>新的应用平台</strong>把半导体的需求推上一个新台阶。这一节的关键认知是：<strong>后一个平台不是取代前一个，是叠加在前一个之上</strong>——PC 出现时打字机没有消失，手机出现时 PC 没有消失，云出现时家用电脑没有消失，AI 出现时云也不会消失。</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">四十年四级台阶：应用平台是怎么叠加的</span>
+            <span class="viz-sub">看什么：<b>纵轴是半导体总需求（示意）</b>，每一层是一个平台，四层是叠加的关系——「新台阶起来」不等于「旧台阶塌了」。曲线为教学示意，非精确统计。</span>
+          </div>
+          <div id="stepChart" role="img" aria-label="堆叠面积图：从 1985 年 PC 起，到 2007 年手机、2010 年代云、2022 年 AI，四层需求逐层叠加"></div>
+          <div class="viz-foot" id="stepLegend" role="group" aria-label="切换台阶"></div>
+          <div class="viz-readout" id="stepReadout" aria-live="polite"></div>
+        </div>
+
+        <p>四层台阶各自的画像，用几个可核验的锚点定住：</p>
+        <ul>
+          <li><strong>PC 时代（1980s 起飞）</strong>：4004（1971）→ IBM PC（1981）→ Wintel 组合 → 桌面普及。这层需求的驱动是「一家一台电脑」的替换周期，典型的换机式需求（骨架卡 7）。</li>
+          <li><strong>手机时代（2007 起飞）</strong>：iPhone 2007 年发布。手机 SoC 让一颗芯片装下 CPU、GPU、基带、ISP——从「一家一台」到「一人一台」，用户基数扩大一个数量级。「手机替代 PC」是错觉：PC 的服务器和企业市场至今在长，只是手机把「新用户」的增量吃掉了。</li>
+          <li><strong>云计算时代（2010s）</strong>：AWS 2006 年推出，2010s 起云厂商 CapEx 成为芯片需求的一个独立台阶——不再靠个人换机驱动，而是几个巨头的资本开支决定订单节奏（模块 1 讲过这条传导链）。</li>
+          <li><strong>AI 时代（2022- 起飞）</strong>：ChatGPT 2022 年 11 月上线，2023-2024 年英伟达数据中心业务成为最直接的读数——FY23（截止 2023 年 1 月）数据中心收入 <strong>150 亿美元</strong>，FY24 <strong>475 亿美元</strong><span class="badge badge-verified">已核验 · Nvidia Q4FY23、Q4FY24 8-K 财报公告</span>。一年多时间三倍出头，这是「新台阶起来」的量级。</li>
+        </ul>
+        <p>每次台阶起来时，市场都会经历同一种误判：把「新台阶」当成「旧台阶要塌」，进而卖掉云、卖掉手机。这是模块 10「Secular 与 Cyclic」要专门拆的错误。你先记住一个反射：<strong>看到「AI 台阶」新闻时，先问「上一层台阶（云）在不在同时长」</strong>——绝大多数时候是同时长的，只是新台阶更陡。</p>
+
+        <h2>4. 存储战争：三次霸主更替，都是同一种剧本</h2>
+        <p>结构成长解释「长期为什么向上」，但半导体的短期振荡凶起来是要命的。最凶的战场叫存储（DRAM），过去五十年在三大洲之间换过两次主人。这段历史不是背年份用的，它是「掌门人决定论」和「技术掉队瞒不住」这两条铁律的原始现场。</p>
+
+        <div class="baton">
+          <div class="baton-cell era-us">
+            <h4>美国霸权</h4>
+            <div class="yrs">1970 – 1970s 末</div>
+            <p>Intel 1971 年发布全球首个商用 DRAM（1103）；美光、德州仪器、Motorola 等把 DRAM 做成美国半导体的现金牛。这个时期 DRAM 是设计、工艺和资本都在美国的成熟工业。</p>
+          </div>
+          <div class="baton-cell era-jp">
+            <h4>日本接管</h4>
+            <div class="yrs">1980s（1986 顶峰约 75%）</div>
+            <p>NEC、Hitachi、Toshiba、Fujitsu 靠通产省协调、低成本资金和 5 年一次的 VLSI 研究联盟，日本 DRAM 市占率从 1978 年不到 30% 一路涨到 1986 年约 75%<span class="badge badge-verified">已核验 · 参见页脚 NBER/Wikipedia 转引数据</span>。美国厂商被迫大规模退出：Intel 1984-1985 年撤出 DRAM 业务（专注 CPU），只有美光死守。</p>
+          </div>
+          <div class="baton-cell era-kr">
+            <h4>韩国接管</h4>
+            <div class="yrs">1992 起至今</div>
+            <p>1992 年 12 月，三星在全球 DRAM 市场超过 Toshiba、NEC 等日本厂商，成为出货量第一，1993 年正式坐上第一的位置，此后三十年再没让出<span class="badge badge-verified">已核验 · 参见页脚 Britannica/HBS Samsung Case</span>。同期海力士（原现代电子）跟上，日韩合力挤出更多日本玩家。</p>
+          </div>
+        </div>
+
+        <p>为什么两次都换主人？两条铁律的最原始版本：</p>
+        <p><strong>铁律一 · 掌门人决定论</strong>——在低谷期押注下一代技术，是所有霸主更替的共同剧本。三星的登顶不是运气：1980 年代初，李健熙（Lee Kun-hee）说服父亲，把半导体当作三星集团的未来主赛道；1983-1985 年全球半导体处于深度衰退、Intel 都在退出 DRAM 时，三星依然投入了超过 <strong>1 亿美元</strong>用于 DRAM 研发<span class="badge badge-verified">已核验 · 见页脚 HBS Samsung Electronics Case</span>；到 1992 年冬天，三星做出世界首颗 64Mb DRAM，规模化的生产效率超过日本，就此登顶<span class="badge badge-verified">已核验 · HBS Case + Britannica Lee Kun-Hee</span>。<strong>关键决策不是发生在鼎盛期，而是发生在低谷期——鼎盛期的决策只不过是收割低谷期的选择</strong>。</p>
+        <p><strong>铁律二 · 技术掉队瞒不住</strong>——日本 DRAM 的坍塌，不完全是 1986 年美日半导体协议（1986-09-02 签署，限制日本对美倾销、要求日本市场开放<span class="badge badge-verified">已核验 · 见页脚 Wikipedia/NBER</span>）的政治打击，更深层是日本厂商押错了下一代技术方向：过度依赖大型机 DRAM 的高质量高价格模式，没抓住 PC 兴起后需要的「够用、便宜、快速迭代」这条主线。政治协议是加速剂，技术方向选错才是根子。这个判断以后要一次次复用：<strong>当行业景气还在时看不清谁掉队；等景气一转，谁能拿出下一代产品、谁只能靠上一代死守，答案立刻分出来</strong>。</p>
+        <p>这段历史留给你的两个可复用模型：一，<strong>存储比逻辑周期性凶得多</strong>——因为存储的工艺与设计强耦合，只能一体化经营，需求错判就要整厂承担损失（模块 7 展开）；二，<strong>行业霸主的更替发生在两条时间线上</strong>：技术掉队线（悄悄，几年）+ 政策/危机线（快，几个月）。等两条线在报纸头版汇合时，翻盘窗口已经关上了。</p>
+
+        <h2>5. 牛鞭效应：需求波在链条上被逐层放大</h2>
+        <p>周期振荡这台发动机的机械原理，1997 年有一篇经典论文说清了——Lee, Padmanabhan, Whang 三位学者在《Management Science》杂志发表「Information Distortion in a Supply Chain: The Bullwhip Effect」（供应链中的信息扭曲：牛鞭效应）<span class="badge badge-verified">已核验 · Management Science 43(4), 546-558, 1997（斯坦福 GSB 存档）</span>。核心结论一句话：<strong>越靠上游，看到的订单波形就越剧烈——需求端一个小的抖动，传到制造端和设备端时会被放大好几倍。</strong></p>
+        <p>四个放大机制作者都拆出来了：①<strong>需求信号加工</strong>——每一层看到订单变化，都要修正对未来的预期，修正过头就形成放大；②<strong>配给博弈</strong>——货紧时买家怕拿不到，故意多下单，缺货本身诱发订单虚增；③<strong>批量下单</strong>——每层都攒一段时间再下单，波形被切成大块；④<strong>价格波动</strong>——预期涨价时提前囤货、预期跌价时拖延。<strong>这四个机制里，②「配给博弈」在半导体缺货潮里几乎必然出现——这就是模块 2「怎么判断」页交期工具在讲的「重复下单污染」</strong>。</p>
+        <p>亲眼动一下，比读一百字管用。下面这个模拟器把需求波沿供应链传导四层：终端 → 分销 → 制造 → 设备。你调终端需求怎么变、每一级客户想留几周的安全库存，看每一层的订单波峰被放大多少：</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">牛鞭效应模拟 · 从终端到设备四层放大</span>
+            <span class="viz-sub">看什么：<b>同一个终端订单波形，越往上游放得越大</b>。这不是玄学，是每一层「留一点安全库存」和「按订单变化调整预期」两个动作的机械叠加。教学模型；真实产业链层数更多、动态更复杂。</span>
+          </div>
+          <div class="ctl-panel">
+            <div class="ctl">
+              <label for="bwPattern">终端需求模式</label>
+              <select id="bwPattern" style="padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font:inherit;color:var(--ink)">
+                <option value="pulse">脉冲：需求短期抬升 30%（疫情缺货型）</option>
+                <option value="dip">反转：需求短期回落 30%（周期见顶型）</option>
+                <option value="wave">波动：稳态微幅正弦波动</option>
+              </select>
+              <output style="text-align:left">&nbsp;</output>
+            </div>
+            <div class="ctl">
+              <label for="bwSafety">每层安全库存（周）</label>
+              <input type="range" id="bwSafety" min="1" max="6" step="1" value="3">
+              <output id="bwSafetyOut">3 周</output>
+            </div>
+            <div class="ctl">
+              <label for="bwPanic">缺货时重复下单倍数</label>
+              <input type="range" id="bwPanic" min="1" max="2.5" step="0.1" value="1.3">
+              <output id="bwPanicOut">1.3×</output>
+            </div>
+          </div>
+          <div id="bwChart" style="margin-top:6px"></div>
+          <ul class="viz-legend" id="bwLegend" style="justify-content:center"></ul>
+          <div class="viz-readout" id="bwReadout" aria-live="polite"></div>
+        </div>
+
+        <p>把 2020-2022 这一轮真实数据套到这台模型里，你会看到教科书对话现实。终端（个人电脑、手机、汽车）需求 2020 年只是从疫情前的水平上抬了一档，但在供应链上传到晶圆代工厂时，芯片交期从常态的 10-14 周被拉到<strong>2021 年 8 月突破 20 周</strong>，<strong>2022 年年中最高约 27 周</strong>，直到 <strong>2022 年 10 月 17 日</strong>彭博援引 Susquehanna 数据报道交期出现几年来最大单月缩短，拐点才第一次在公开信息里显形<span class="badge badge-verified">已核验 · 数据来源同模块 2 · 详细见页脚</span>。随后几个月，全行业砍单去库存，2023 年三星 Q1 利润从上年同期 <strong>14.1 万亿韩元</strong>塌到 <strong>0.6 万亿韩元</strong>，海力士、美光同期亏损减产<span class="badge badge-verified">已核验 · 三星 2023-Q1 财报</span>。<strong>「哪里都没货」这句话真正的信号价值，不是「买」，而是牛鞭已经被拉到极致——反转会来得又快又猛</strong>。</p>
+        <p>后面第 6 节的「掌门人决定论」用的判断素材，也直接来自牛鞭：谁在缺货潮里克制住不扩产、谁在低谷期不撤——五年后拉出来看，就是霸主排位赛的答卷。</p>
+
+        <h2>6. 掌门人决定论 + 技术掉队瞒不住：三家公司的决策档案</h2>
+        <p>「掌门人决定论」听起来玄，其实很硬：<strong>芯片公司在关键岔口的一两个决策——押哪代技术、砍不砍旧业务、换不换 CEO——五到十年后就是公司命运。</strong>不是每一次「战略调整」都值得放上桌，我们只看那些有明确时点、明确决策、明确后果、且能公开核验的岔口。同一张表可以横向对照三条命运轨迹。</p>
+
+        <table class="arch" aria-label="三家公司的关键决策档案">
+          <thead>
+            <tr><th>日期</th><th>公司 · 决策</th><th>后来发生了什么</th></tr>
+          </thead>
+          <tbody>
+            <tr class="pivot-good">
+              <td class="dt">1996-1997</td>
+              <td>Nvidia 濒死时，Huang 押上剩余现金开发 RIVA 128 显卡，员工从上百人裁到剩下一半左右</td>
+              <td>RIVA 128 于 1997 年 8 月发售，四个月内售出 100 万片，公司从破产边缘走出<span class="badge badge-verified">已核验 · 见页脚 Acquired/Wikipedia</span>。「押一把，赌对了活下来」是它的第一课。</td>
+            </tr>
+            <tr class="pivot-good">
+              <td class="dt">2006-11-08</td>
+              <td>Nvidia 发布 GeForce 8800 GTX，采用 G80 架构——业内首个统一着色器架构；同时推出 CUDA 编程平台（正式版 2007 年）</td>
+              <td>GPU 从「专用图形芯片」变成「可编程并行计算平台」<span class="badge badge-verified">已核验 · 见页脚 CUDA Wikipedia</span>。十六年后 AI 训练直接建在这套硬件+软件之上——这一步决策的回报窗口跨了近二十年。<span class="badge badge-expert">专家判断</span></td>
+            </tr>
+            <tr class="pivot-bad">
+              <td class="dt">2011-05</td>
+              <td>Nvidia 以 3.67 亿美元收购 Icera，试图切入手机基带市场（配合 Tegra 手机 SoC 路线）</td>
+              <td>无论技术如何，商业上做不过高通。这次收购成为反面教材<span class="badge badge-verified">已核验 · 见页脚 Icera Wikipedia</span>。</td>
+            </tr>
+            <tr class="pivot-good">
+              <td class="dt">2015-05-05</td>
+              <td>Nvidia 宣布关停 Icera 移动基带业务，正式退出手机基带市场</td>
+              <td>公开声明写着要把资源集中到「游戏、汽车和云端计算（含深度学习）」<span class="badge badge-verified">已核验 · The Register 2015-05-05 报道英伟达官方声明原文</span>。当时市场把它当止损，事后看是「聚焦并行计算」这条主线得以走通的关键——所有资源被强行推回同一个方向。</td>
+            </tr>
+            <tr class="pivot-good">
+              <td class="dt">2014-10-08</td>
+              <td>AMD 董事会任命苏姿丰（Lisa Su）为总裁兼 CEO，接替 Rory Read</td>
+              <td>接手时公司负债 20 亿美元、现金紧张<span class="badge badge-expert">专家判断 · 综合行业媒体口径</span>。她提出的路线：聚焦高性能计算，用 Zen 架构翻身<span class="badge badge-verified">已核验 · AMD 2014-10-08 官方公告</span>。</td>
+            </tr>
+            <tr class="pivot-good">
+              <td class="dt">2017-03-02</td>
+              <td>AMD 发布首代 Ryzen（Zen 架构，14nm FinFET），正面对标英特尔主流 CPU</td>
+              <td>桌面 CPU 市占率从 2017 年约 7%（笔记本+桌面合计），到 2024 年爬到 30%+<span class="badge badge-verified">已核验 · Zen Wikipedia 引 Statista</span>。「换一个懂产品的 CEO + 憋出一代硬产品」两步走对，是 AMD 翻身的完整叙事。</td>
+            </tr>
+            <tr class="pivot-bad">
+              <td class="dt">2015-07</td>
+              <td>Intel 首次官宣 10nm 延期：Cannon Lake 从 2016 推迟至 2017</td>
+              <td>此时管理层措辞仍是「按计划推进」<span class="badge badge-verified">已核验 · Intel 2015-07 季报电话会</span>。这是第一份可以事后归档的「掉队信号」。</td>
+            </tr>
+            <tr class="pivot-bad">
+              <td class="dt">2018-04</td>
+              <td>Intel 10nm 首颗产品 Core i3-8121U 出货（Cannon Lake 系列唯一量产品）</td>
+              <td>为了绕开良率问题，把集成显卡整个关掉才勉强出货<span class="badge badge-verified">已核验 · Tom's Hardware / TechInsights 拆解报道</span>。「量产一颗残缺的芯片」是掉队最直白的公开证据。</td>
+            </tr>
+            <tr class="pivot-bad">
+              <td class="dt">2019H2</td>
+              <td>Intel Ice Lake 上市，10nm 才算真正意义上量产</td>
+              <td>距原定 2016 已延迟约 3 年。同期台积电已量产 7nm、准备 5nm<span class="badge badge-verified">已核验 · 参见模块 2 台积电节点披露</span>。产品层的差距在此时全面外显。</td>
+            </tr>
+            <tr class="pivot-bad">
+              <td class="dt">2020-07-23</td>
+              <td>Intel 财报电话会宣布 7nm 再延期 6 个月，CEO Bob Swan 承认「良率进度比目标晚了 12 个月」，同时说要考虑外部代工</td>
+              <td>Intel 股价单日下跌约 16%<span class="badge badge-verified">已核验 · Fortune 2020-07-24 报道</span>。「承认要用竞争对手代工」这句话本身，是 IDM 模式动摇的信号。</td>
+            </tr>
+            <tr class="pivot-good">
+              <td class="dt">2021-02-15</td>
+              <td>Pat Gelsinger 出任 Intel CEO，接替 Bob Swan</td>
+              <td>三十年 Intel 老兵、原 VMware CEO<span class="badge badge-verified">已核验 · Intel 8-K 2021-01-13 公告</span>。他上任后启动 IDM 2.0 战略、开放代工——这是 Intel 的一次自我承认。后续 18A 节点的爬坡纪律与陈立武（Lip-Bu Tan）2026 年谈良率月改善的现场，都是这次转向的延续（模块 2 复盘二）。</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>反例更能说明问题——同一时期还有两家公司在岔口上把命运选错：</p>
+        <ul>
+          <li><strong>Cyrix</strong>：1990s 上半期与 Intel、AMD 三足鼎立的 x86 兼容 CPU 玩家，1997 年 11 月被 National Semiconductor 收购，1999 年 6 月又被 VIA 以 1.67 亿美元买走，此后作为品牌逐渐消失<span class="badge badge-verified">已核验 · TechSpot / National Semi 8-K</span>。<strong>技术不是致命伤，「一步跟不上」的资本约束是</strong>——当时它跟不上 Intel/AMD 的资本开支节奏，制程节点差一代就摊不平成本。</li>
+          <li><strong>3dfx</strong>：1990s 3D 图形芯片的开创者（Voodoo 系列），2000 年 12 月 15 日核心资产被 Nvidia 以 7,000 万美元现金 + 100 万美元股票买下，2001 年 4 月交割<span class="badge badge-verified">已核验 · 3dfx Wikipedia / PCWorld</span>。<strong>3dfx 的致命错误是自己收购了显卡组装厂 STB（1998），从「卖芯片给板卡厂」变成「自己做板卡」——一夜之间和所有客户变成竞争对手</strong><span class="badge badge-expert">专家判断 · 通行的 3D 图形史归因</span>。技术在，商业模式选错了，一样出局。</li>
+        </ul>
+
+        <p>把这张档案表看透，两个可复用的判断模型：<strong>技术掉队瞒不住</strong>——延期、跳过节点、承认外部代工，这三种公开语言是最硬的信号，比任何「基本面转好」的分析师报告都硬；<strong>掌门人决定论不是虚词</strong>——CEO 更换、关键产品发布、砍掉长期亏损业务，这三类事件带明确日期、可以事后回查，是判断一家公司走向的 T 型账。这两个模型的落地版本，「怎么判断」页把它做成了工具。</p>
+
+        <div class="note">
+          <span class="note-label">不要学太深</span>
+          <p>你不需要记住所有历史公司和年份，也不需要做完整半导体史研究。要带走的是四个能生成判断的模型：<strong>摩尔定律 = 行业的共同承诺，每一次续命都是一次结构性投资周期</strong>；<strong>需求平台是叠加不是替代</strong>（AI 起来 ≠ 云会塌）；<strong>牛鞭效应 = 缺得越猛越危险，越靠上游波形越剧烈</strong>；<strong>掌门人决定论与技术掉队瞒不住</strong>——用可查证的公开决策记录，替代对「基本面」的模糊叙事。</p>
+        </div>
+      </section>
+
+      <!-- ==================== 怎么判断 ==================== -->
+      <section role="tabpanel" id="panel-b" aria-labelledby="tab-b" class="prose" hidden>
+
+        <p style="font-size:var(--fs-15);color:var(--muted)">这一页只交付三件真实存在的工具。每件都按同一结构给齐：<strong>来源 → 为什么成立 → 真实案例 → 怎么操作 → 失效边界</strong>。找不到出处、无法用真实案例验证的「规则」，不会出现在这里。</p>
+
+        <h2>工具一：先站到台阶上，再判周期——分清结构成长与周期振荡</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>这不是新工具，是把本页第 1、3 节讲的「两台发动机」变成决策口径。这套口径在头部买方的行业报告里被反复使用，也是 Uncover Alpha、SemiAnalysis 等专业研究机构做半导体分析时的第一道分层<span class="badge badge-expert">专家判断 · 通行的行业分析框架</span>。</div></div>
+          <div class="chain-row"><b>机制</b><div>结构成长（Secular）来自「摩尔定律 + 需求台阶叠加」——每十年一次新的应用平台叠加，边际增量是新用户和新用途；周期振荡（Cyclic）来自「供给慢、需求快 + 牛鞭放大」——同一批客户重复下单，产能超前扩产，一两年内翻脸。<strong>两台发动机可以同时开</strong>——「周期成长」的说法就是这个意思：结构长期向上，短期仍有大幅波动。忽略哪一台都会误判。</div></div>
+          <div class="chain-row"><b>案例</b><div>2022-2024 英伟达数据中心业务是「双引擎同时点火」的最典型样本：AI 台阶起飞（结构增量：FY23 数据中心 $15.01B → FY24 $47.5B）叠加 CoWoS/HBM 供给受限（周期紧缺，短期是价格弹性和领先指标的方向）<span class="badge badge-verified">已核验 · Nvidia 8-K</span>。同一时点看，你需要同时用两条线读它，不能只读一条。反面例子：2021 年汽车芯片缺货潮，市场普遍把它读成「结构性长期紧缺」——结果 2022 年下半年到 2023 年，汽车芯片就跌回过剩，这是纯周期。</div></div>
+          <div class="chain-row"><b>操作</b><div>把每一家标的的收入增长归因到两条线，用一个简单模板：①<strong>结构线</strong>——问「上一层台阶（如云）还在长吗？下一层台阶（如 agent 推理）在起吗？」验证源：hyperscaler CapEx（模块 1 讲过）、模型公司算力合同、token 用量披露；②<strong>周期线</strong>——问「交期在哪个位置？库存周转在哪个位置？重复下单浓不浓？」验证源：Susquehanna 交期数据、分销商库存周转（如 Arrow、Avnet 财报）、行业协会（SEMI、SIA）月度统计。<strong>两个都答上再下结论</strong>。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①「新台阶起来」有假信号——曾出现过 PC 3D 视觉、元宇宙、Web3 等短期看似新平台、最后没起来的情形；判断新台阶必须看「渗透率进入自我增强阶段」（有可测的活跃用户 + 有真金白银的 CapEx 决策），而不是新闻热度；②周期线在跨市场时读数有偏差——美股/A 股/日韩台的库存周期错位是常态（模块 12），单看一个市场会误判全球；③台阶叠加的斜率不同——AI 台阶更陡，用旧台阶的斜率去外推 AI 会低估，反之亦然。</div></div>
+        </div>
+
+        <h2>工具二：牛鞭链层数——判断你在链条哪一层看订单</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>Lee, Padmanabhan, Whang 1997 年《Management Science》论文<span class="badge badge-verified">已核验 · 见本页脚</span>是学术原型，四类放大机制（需求信号加工、配给博弈、批量下单、价格波动）被后来的行业研究反复引用。半导体行业买方通行的做法：读完某一层公司的订单变化，先在心里贴一个层数标签，再决定这个信号可以怎么用。</div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 5 节的模拟器把物理原理演示过一遍：越靠上游，波形放得越大、见顶/见底也越晚。<strong>这决定了同一个信号在链条上不同层，含义完全不同。</strong>四层的典型放大关系（教学近似）：终端 1×、分销 1.3-1.5×、代工 1.5-2×、设备 2-3×。放大倍数不是常量，会随每层安全库存策略变化。</div></div>
+          <div class="chain-row"><b>案例</b><div>2021-2023 完整现场：①终端（PC/手机/汽车）需求 2020-2021 相比疫情前只是抬了一档；②分销商开始双重下单以对冲交期风险；③代工厂交期从 10-14 周被推到 27 周（模块 2 已核验），报出「历史性增长」；④设备端 2021 年 SEMI 销售额同比 +44% 达到 $102.6B、2022 年再上 $107.6B——设备端的波峰放大最猛<span class="badge badge-verified">已核验 · SEMI 历年统计</span>。然后 2022 年下半年反转：终端只是回归常态，代工/设备/存储端却经历了深度砍单、产能利用率跌至 60% 附近，最上游波谷同样最深。<strong>这就是「越靠上游波形越剧烈」的实盘印证</strong>。</div></div>
+          <div class="chain-row"><b>操作</b><div>读任何订单类新闻之前，先给自己贴层数标签：<strong>你在看哪一层的数据？</strong>①云厂商 CapEx = 结构信号 + 需求上游，前置性最好，但含预期成分（软信号）；②代工厂订单/交期 = 中游中层，硬度中等；③设备商订单/积压 = 上游偏顶，硬度高但波动被放大；④分销商库存周转 = 底层交叉验证，能戳穿重复下单的伪需求。把这四层数据同一时间横向对比——<strong>四层同向 = 真信号；四层背离 = 牛鞭正在建立或崩塌</strong>。这个动作在模块 2 工具二里用过一次，本页只是把它上升成通用工具。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①长约直供品类几乎没牛鞭——HBM 这类 100% 长约锁死的品类，重复下单机制被合同结构掐掉，你看不到经典的放大波形（模块 7 展开）；②政策/事件扰动会撞进供应链——2019 年之后中国大陆的国产替代扩产、2022 年的出口管制，都在总量数据上叠加了非需求驱动的项，读设备数据必须先拆区域和用途（同模块 2 工具二的失效条）；③放大倍数不是常量——每一轮周期，每层的安全库存策略、金融环境、信贷成本都在变，历史倍数不能直接外推。</div></div>
+        </div>
+
+        <h2>工具三：掌门人决策档案——公开信号的可回查清单</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>本页第 6 节的档案表就是这件工具的原型。它不是玄学「看 CEO 靠不靠谱」，而是把三类可回查的公开事件按日期归档：<strong>CEO 更换、关键产品/节点节奏（延期/量产/发布）、砍掉或收购大业务线</strong>。三类都有明确日期、都能事后核对，都会显现在 8-K、财报电话会转录、官方公告里。</div></div>
+          <div class="chain-row"><b>机制</b><div>「技术掉队瞒不住」不是抽象话——它在公开渠道有三个具体表现：①<strong>连续延期</strong>：官宣节点每次跳票半年到一年，累计跳票超过一年就是硬信号；②<strong>产品降规格上市</strong>（如 Intel 10nm Cannon Lake 关闭核显）——比延期更硬；③<strong>承认要外部代工</strong>——对 IDM 是自我否定级别的信号。「掌门人决定论」同样有具体表现：新 CEO 上任前六个月的战略陈述、下一份年报的资本开支再分配、被砍掉的业务线（如英伟达 2015 关 Icera），这些事件天然带日期和金额，可以按<strong>决策 → 后果</strong>做 T 型账。</div></div>
+          <div class="chain-row"><b>案例</b><div>已经在第 6 节完整走过：Nvidia 三次押注（1997 RIVA、2006 CUDA、2015 关 Icera）都对了，AMD 换 CEO（2014）+ 出 Zen（2017）两步对了、Intel 三次延期 + 一次残缺量产 + 一次承认外部代工，是「技术掉队瞒不住」的经典教材<span class="badge badge-verified">已核验 · 见档案表徽章</span>。同样重要的负面样本 Cyrix、3dfx，把「技术不错但商业模式或资本节奏错」也演示了。</div></div>
+          <div class="chain-row"><b>操作</b><div>对你在跟踪的每一家公司，起一份「决策档案」文件（本地就行），字段固定：日期 / 决策类型（CEO 更换 / 节点节奏 / 大业务动作）/ 官方原话链接 / 我当时的解读 / 事后一年、三年、五年的结果。每季度更新一次。<strong>这个档案的价值三五年后才显现——它是判断「谁在真做事、谁在讲故事」的最便宜的记账法</strong><span class="badge badge-expert">专家判断 · 通行的买方跟踪法</span>。做半年，一家公司「说到没做到」的分布就会露出来。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①CEO 更换≠必然翻身——AMD 那样的翻身是幸存者偏差，同期换 CEO 后继续下坡的公司更多；判断翻身还要看「第二步产品发布」是不是跟上；②节点延期≠必死——台积电 N3 也曾延期，但商业模式（代工，可通过定价传导成本）和 IDM 完全不同，同一现象在不同商业模式下含义不一样；③档案里也会有假动作——比如「宣布战略转型」但资本开支并没有转、「宣布退出某业务」但资源实际还在——这些都要靠季度更新去戳穿。</div></div>
+        </div>
+
+        <h2>操作清单：判断一家老牌半导体标的的技术健康度</h2>
+        <p style="font-size:var(--fs-14);color:var(--muted)">以下每一项都由本页机制直接推导，括号内注明依据——它们不是独立的外部工具，是三件工具的落地检查位。</p>
+        <ul class="checklist">
+          <li><label><input type="checkbox"><span><b>它站在哪一个平台台阶上？下一个台阶起来时它有产品吗？</b>（依据：工具一——结构成长的燃料是台阶叠加）</span></label></li>
+          <li><label><input type="checkbox"><span><b>最近三年是否有过节点连续延期或产品降规格上市？</b>（依据：工具三——技术掉队的公开信号）</span></label></li>
+          <li><label><input type="checkbox"><span><b>它在链条哪一层？它的收入变化是「牛鞭上游」还是「牛鞭下游」？</b>（依据：工具二——层数决定信号含义）</span></label></li>
+          <li><label><input type="checkbox"><span><b>过去五年它砍过或收过什么业务？</b>（依据：工具三——决策档案里的大动作）</span></label></li>
+          <li><label><input type="checkbox"><span><b>如果行业下一次转过冷，它是「减产但资产负债表撑得住」，还是「必须砍研发才能过冬」？</b>（依据：本页第 4 节存储战争的逆势投入决胜规律）</span></label></li>
+        </ul>
+      </section>
+
+      <!-- ==================== 练习 ==================== -->
+      <section role="tabpanel" id="panel-c" aria-labelledby="tab-c" class="prose" hidden>
+
+        <h2>决策复盘一 · 2014 年 10 月 8 日：AMD 换帅苏姿丰上任，你的动作是什么？</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2014-10-08 · 事件已核验</p>
+          <h4>当天你看到的全部信息：AMD 董事会宣布任命苏姿丰（Lisa Su，44 岁）为总裁兼 CEO，接替 Rory Read（52 岁）；她 2012 年加入 AMD，此前在 IBM 与飞思卡尔任职。当时 AMD 有约 20 亿美元长期债务、现金紧张、股价长期在 3-4 美元区间；同期 Intel Broadwell 上市在即。<span class="badge badge-verified">已核验 · AMD 2014-10-08 官方公告</span></h4>
+          <p class="case-note">这类新闻是很典型的「掌门人决定论」的判断时点。你会不会入场？先选一个动作再看拆解。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>跟着买 AMD（相信新 CEO 会翻身）</button>
+            <button type="button" data-pick>不动，等下一份财报再说</button>
+            <button type="button" data-pick>做空 AMD（历史上「换 CEO 就翻身」的概率不高）</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>先看背景</b><div>AMD 上一次「翻身叙事」是 2003 年 Athlon 64；此后与 Intel 差距逐步拉大。2014 年时的 AMD 处在「持续掉队 + 债务重压」双重压力下。这是一个真正的岔口，不是普通换帅。</div></div>
+              <div class="chain-row"><b>第一件事</b><div>不要立刻交易——先做工具三的<strong>决策档案第一条</strong>：日期已经有了（2014-10-08），下一步等她的第一份完整战略陈述（通常在下一份年报或分析师日），看她要押什么。</div></div>
+              <div class="chain-row"><b>第二件事</b><div>她真正的动作要用「大业务动作」+「产品节奏」两个字段去等。事后回查：2015 年 5 月分析师日她讲了「高性能计算」路线；2016 年 8 月开始 Zen 架构对外披露、2017 年 3 月 2 日 Ryzen 首发<span class="badge badge-verified">已核验 · 见档案表</span>。<strong>换 CEO 到产品验证隔了两年半——这是掌门人决定论的正常时间窗，不是新闻一出就见效</strong>。</div></div>
+              <div class="chain-row"><b>时间价值</b><div>如果你在 2014-10-08 就上车 AMD 并拿住到 2017 首代 Ryzen 上市，收益极大；但同样这个赌局里，2015-2016 一年半时间股价还在 2 美元附近趴过，等待窗口很长——<strong>「掌门人决定论」的赌局赢的都是耐心和纪律</strong>。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>这次赌局赢家是幸存者偏差的常见样本——同期换 CEO 后继续下坡的公司远多于翻身的。<strong>推理链是「等第二步验证再决策」，不是「换 CEO 立刻上车」</strong>。判断对了，还需要模块 10-11 的周期与估值功课来决定买不买、买多少；且不同资金性质（能不能拿三年）决定策略是否可行。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>决策复盘二 · 2015 年 5 月 5 日：Nvidia 宣布关停 Icera 移动基带业务，你怎么理解这句公告？</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2015-05-05 · 事件已核验</p>
+          <h4>当天你看到的全部信息：Nvidia 宣布关停 2011 年以 3.67 亿美元收购的 Icera 移动基带业务，正式退出手机基带市场；公司声明写「未来将聚焦游戏、汽车和云端计算（含深度学习）」；此时 Nvidia 数据中心业务收入相对总盘子还很小。<span class="badge badge-verified">已核验 · The Register 2015-05-05 报道</span></h4>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>负面读：一次巨额并购完全失败，管理层执行力有问题</button>
+            <button type="button" data-pick>中性读：正常止损，业务组合调整而已</button>
+            <button type="button" data-pick>正面读：主动砍掉分散注意力的业务，资源被推向长期主线</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>第一层拆解</b><div>Icera 收购确实是失败的：3.67 亿美元 4 年后归零，从财务角度是负面。但把这次公告放到公司决策档案里看，它是<strong>把 CUDA 路线（2006 起）走完的必要一步</strong>——如果继续在移动基带上耗，工程资源被切成两半。</div></div>
+              <div class="chain-row"><b>第二层拆解</b><div>公告原话「聚焦游戏、汽车和云端计算（含深度学习）」——「深度学习」这四个字出现在 2015 年的一份关业务公告里，是当时市场普遍还没定价的信号。<strong>「新的一层需求台阶正在起来，管理层已经把公司往这个方向掉头」——用工具一的框架读，这是把结构线站队完成的动作</strong>。</div></div>
+              <div class="chain-row"><b>第三层拆解</b><div>回头看结局：2016 年 GTC「AI 是新的电力」演讲、2020 年 A100、2022 年 H100、2024 年数据中心收入 $47.5B<span class="badge badge-verified">已核验 · Nvidia 8-K</span>。<strong>2015 年这份公告事后是「关键岔口决策」——决策档案里应该打绿标</strong>。当时市场普遍没这么读。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>这个复盘容易变成事后合理化。真实要求：<strong>决策的判断质量与结果质量要分开</strong>。当时能做的正确动作不是「立刻重仓 Nvidia」（谁也不知道 CUDA 会等到 2022 年爆发），而是<strong>「在决策档案里给这次公告打一个『押结构成长台阶』的标签，同时把 Nvidia 加进跟踪清单，等下一年的资源再分配和产品节奏验证」</strong>——这个判断对不对，要等到 2016-2017 GTC 讲 AI 的时候再回来打分。推理链对不保证股价。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>迁移题（模块里没有现成答案，用机制自己推）</h2>
+
+        <article class="scenario">
+          <h4>迁移一 · AI 是新台阶，那接下来两年会不会重演 2022 那种周期反转</h4>
+          <p>用本页两台发动机的框架推：2022-2024 年英伟达数据中心收入从 <strong>$15.01B 涨到 $47.5B</strong><span class="badge badge-verified">已核验</span>，同期 CoWoS/HBM 供给全面紧张。你会用哪三个信号，判断这次 AI 台阶是「结构成长压过周期振荡（不会大反转）」还是「周期成分已经很重（有反转风险）」？</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr1" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr1">
+            <div class="chain">
+              <div class="chain-row"><b>信号一：终端需求硬度</b><div>token 用量与推理收入是不是仍在扩张？如果 hyperscaler 的 API 用量披露仍以三位数百分比增长，说明「新台阶还在垫高」；如果开始转成「资本开支上调但 token 增速掉档」，就是台阶垫完、周期成分抬头。</div></div>
+              <div class="chain-row"><b>信号二：牛鞭上游同步度</b><div>用工具二——如果云厂商 CapEx、GPU 出货、HBM 长约、CoWoS 产能扩产四层同向且斜率相当，是真信号；如果 CapEx 已经开始平指或下调、但下游代工/设备端订单还在飙——牛鞭正在最后一段膨胀，反转已经在路上（这是模块 2 交期工具「拐点信号」的另一形态）。</div></div>
+              <div class="chain-row"><b>信号三：管理层语言变化</b><div>把英伟达、台积电、SK 海力士、ASML 电话会上关于 AI 的措辞逐季记录——从「visibility 极强、几年长约在手」变成「订单能见度有所下降」，这句措辞变化在过去周期里几乎百分百领先一到两个季度出现。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>结构与周期不是二选一——大概率是「结构在，周期也在」，只是斜率会缓下来。用「反转就是零」的极端框架去交易，历史上错的次数多过对的。这个题的正确答案是<strong>把三条信号做成看板，季度更新</strong>，而不是当下押一个方向。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario">
+          <h4>迁移二 · 一家公司靠营销和小步迭代维持了几年领先叙事，你怎么提前看穿它是不是在掉队</h4>
+          <p>不给公司名字（避免结果导向）。用本页工具三，列出你会去查的<strong>三份公开材料 + 三种官方语言</strong>，判断这家公司的技术是不是已经在掉队。</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr2" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr2">
+            <div class="chain">
+              <div class="chain-row"><b>公开材料一</b><div>过去五年的<strong>技术路线图公告</strong>与实际发布对照——每一次节点/产品的原定时间与实际时间。累计滑点超过一年的，标红。（Intel 10nm 就是这么被抓出来的：2015→2016→2017→2018→2019。）</div></div>
+              <div class="chain-row"><b>公开材料二</b><div><strong>财报电话会问答环节的转录</strong>——分析师问技术进度时，管理层用的具体词。「按计划推进」重复出现两个季度以上但没有产品数据的支撑，是常见的技术措辞泡沫。</div></div>
+              <div class="chain-row"><b>公开材料三</b><div><strong>关键工程人才的公开动向</strong>——LinkedIn、公司 8-K/DEF 14A 里的高管变动、被同行公司挖走的核心工艺/架构负责人。「技术掉队」经常在这里最早显形。<span class="badge badge-expert">专家判断 · 买方通行的软信号跟踪</span></div></div>
+              <div class="chain-row"><b>官方语言一</b><div>「探索外部代工」——对 IDM 是自我否定级别的信号（Intel 2020-07 就是当天股价 -16% 的直接触发）。</div></div>
+              <div class="chain-row"><b>官方语言二</b><div>产品「先阉割后上市」——特定功能被砍以配合良率（Intel Cannon Lake 关核显是教材级别的例子）。</div></div>
+              <div class="chain-row"><b>官方语言三</b><div>关键节点的<strong>口径消失</strong>——之前每季度给的良率百分比、爬坡时间表突然不再提，比口径恶化本身更危险（同模块 2 工具三失效条 ③）。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>三条信号一起才算硬。单独一条容易误判——一次延期不代表技术出问题；一次核心人员离职也可能是私人原因。<strong>三条以上的信号在同一季度或半年内叠加时，做出判断的置信度才够</strong>。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <h2>自测（算得出来才算会）</h2>
+
+        <div class="quiz" data-quiz data-explain="牛鞭效应的四个机制里，配给博弈就是「缺货时怕抢不到货，故意多下单」；缺得越猛，重复下单越浓，牛鞭上游波形越剧烈，反转也越猛。所以在半导体行业里，「哪里都没货」既是短期缺货信号，也是中期周期反转风险信号。">
+          <p class="quiz-q">1. 一则新闻说「芯片满世界缺货，客户在四家供应商同时下单」，用牛鞭效应的四个机制解释，最主要触发的是哪一个？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q1"><span>需求信号加工（每层修正预期）</span></label>
+            <label><input type="radio" name="q1" data-correct="1"><span>配给博弈（缺货时重复下单）</span></label>
+            <label><input type="radio" name="q1"><span>批量下单（波形被切成大块）</span></label>
+            <label><input type="radio" name="q1"><span>价格波动（囤货与拖延）</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="用工具三的三个「技术掉队」公开信号：连续延期、产品降规格上市、承认外部代工。三条中两条以上出现，就是硬信号；且这些信号在延期发生的当季就已经在电话会 Q&amp;A 里显形——比等财务恶化早得多。">
+          <p class="quiz-q">2. Intel 从 2015 年首次官宣 10nm 延期到 2019 年 Ice Lake 才勉强量产，中间四年最直接的三个「技术掉队」公开信号是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q2"><span>股价下跌、总裁离职、财报预警</span></label>
+            <label><input type="radio" name="q2" data-correct="1"><span>连续延期、产品降规格上市（关闭核显）、承认要用外部代工</span></label>
+            <label><input type="radio" name="q2"><span>竞争对手涨得多、机构评级下调、DRAM 涨价</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="FY23 数据中心 $15.01B → FY24 $47.5B，一年 3.17 倍，绝对增量约 325 亿美元。这个量级两点意义：一是它单独就超过了一些成熟半导体公司的全年总收入；二是它是「AI 台阶起飞」在财报层最硬的读数——不是新闻不是分析师报告，是 SEC 备案的 8-K。">
+          <p class="quiz-q">3. 用财报数据检验「AI 是不是一个新的需求台阶」：Nvidia 数据中心 FY23 收入 $15.01B、FY24 $47.5B，一年增长倍数最接近下列哪一项？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q3"><span>约 1.8 倍</span></label>
+            <label><input type="radio" name="q3"><span>约 2.4 倍</span></label>
+            <label><input type="radio" name="q3" data-correct="1"><span>约 3.2 倍</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="note">
+          <span class="note-label">本模块要带走的 memo 能力</span>
+          <p>对一家半导体标的，你现在应该能：说清它站在哪一层需求台阶上、下一层台阶起来时它有没有产品；用牛鞭链层数标签给它的订单信号定位；把它过去五年的 CEO 更换、节点节奏、大业务动作按时点归档，判断「谁在真做事、谁在讲故事」。写不出来，回到对应小节重学。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="src">
+      <strong>本页资料来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.computerhistory.org/siliconengine/moores-law-predicts-the-future-of-integrated-circuits/">Computer History Museum：1965 年 Moore 摩尔定律原始论文档案</a> · <a href="https://ieeexplore.ieee.org/document/4785860/">IEEE Xplore 转载 "Cramming more components onto integrated circuits"（Electronics 1965-04-19）</a></li>
+        <li><a href="https://download.intel.com/newsroom/kits/22nm/pdfs/22nm-Announcement_Presentation.pdf">Intel Newsroom：22nm Tri-Gate FinFET 首次量产宣布（2011-05-04）</a> · <a href="https://www.eetimes.com/intel-putting-fins-on-at-22-nm/">EE Times 报道</a></li>
+        <li><a href="https://news.samsung.com/global/samsung-begins-chip-production-using-3nm-process-technology-with-gaa-architecture">Samsung Newsroom：三星 3nm GAA MBCFET 首次量产公告（2022-06-30）</a></li>
+        <li><a href="https://www.gsb.stanford.edu/faculty-research/publications/information-distortion-supply-chain-bullwhip-effect">Stanford GSB：Lee, Padmanabhan, Whang "Information Distortion in a Supply Chain: The Bullwhip Effect"（Management Science 43(4):546-558, 1997）</a> · <a href="https://courses.ie.bilkent.edu.tr/ie460/wp-content/uploads/sites/12/2019/02/Lee-Padmanabhan-Whang-1997-MS.pdf">论文 PDF 存档</a></li>
+        <li><a href="https://en.wikipedia.org/wiki/1986_U.S.%E2%80%93Japan_Semiconductor_Agreement">Wikipedia：1986 年美日半导体协议（1986-09-02 签署）</a> · <a href="https://www.nber.org/system/files/chapters/c8717/c8717.pdf">NBER：美日半导体贸易冲突（含 1978-1986 日本 DRAM 份额从 <30% 到 75% 数据）</a></li>
+        <li><a href="http://www.simonfoucher.com/MBA/MBA%20622%20-%20Strategy%201/COURSE%20PACK/Samsung%20Electronics.pdf">HBS Samsung Electronics Case（1980s 李健熙 DRAM 押注、1992 超 Toshiba 成 DRAM 第一）</a> · <a href="https://www.britannica.com/money/Lee-Kun-Hee">Britannica：李健熙生平（含半导体主赛道决策）</a></li>
+        <li><a href="https://www.acquiredbriefing.com/p/nvidia-i">Acquired Briefing：Nvidia 1993-2006 早期史（1996 濒死、RIVA 128 押注、100 万片/4 个月）</a> · <a href="https://en.wikipedia.org/wiki/Jensen_Huang">Jensen Huang Wikipedia（RIVA 128 时间线）</a></li>
+        <li><a href="https://en.wikipedia.org/wiki/CUDA">Wikipedia：CUDA 与 GeForce 8800 GTX / G80（2006-11-08 首个 CUDA 兼容 GPU 发布，CUDA SDK 正式版 2007）</a></li>
+        <li><a href="https://en.wikipedia.org/wiki/Icera">Wikipedia：Icera（Nvidia 2011-05 以 $367M 收购、2015-05-05 关停）</a> · <a href="https://www.theregister.com/2015/05/05/nvidia_to_shutter_icera_modem_business/">The Register：Nvidia 官方声明「聚焦游戏、汽车、云端含深度学习」</a></li>
+        <li><a href="https://ir.amd.com/news-events/press-releases/detail/568/amd-appoints-dr-lisa-su-as-president-and-chief-executive-officer">AMD 官方公告：任命苏姿丰为总裁兼 CEO（2014-10-08）</a></li>
+        <li><a href="https://en.wikipedia.org/wiki/Zen_(first_generation)">Wikipedia：Zen 架构一代与 Ryzen 首发（2017-03-02）</a> · 2017-2024 AMD 桌面/笔电 CPU 市场份额 7% → 30% 数据来源同上（引 Statista）</li>
+        <li><a href="https://www.tomshardware.com/news/intel-announces-delay-to-7nm-processors-now-one-year-behind-expectations">Tom's Hardware：Intel 2020-07-23 财报电话会 CEO Bob Swan 宣布 7nm 再延期 6 个月、良率晚 12 个月，考虑外部代工</a> · <a href="https://fortune.com/2020/07/24/what-the-hell-just-happened-to-intel/">Fortune：当日 Intel 股价约 -16%</a></li>
+        <li><a href="https://en.wikichip.org/wiki/intel/core_i3/i3-8121u">WikiChip：Intel Core i3-8121U（Cannon Lake 系列唯一量产品，2018 出货，关闭核显）</a> · <a href="https://www.notebookcheck.net/TechInsight-dissects-and-analyzes-the-Cannon-Lake-Core-i3-8121U.313402.0.html">TechInsight/Notebookcheck 拆解报道</a></li>
+        <li><a href="https://www.silicon.co.uk/workspace/components/intel-first-10th-gen-processors-257841">Silicon UK：Intel 10 代酷睿（Ice Lake，10nm）2019 下半年出货</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0000050863/000119312521009142/d82915dex991.htm">Intel 8-K（2021-01-13 公告 Pat Gelsinger 任 CEO，生效 2021-02-15）</a> · <a href="https://www.cnbc.com/2021/01/13/intel-ceo-bob-swan-to-step-down-in-february.html">CNBC 报道</a></li>
+        <li><a href="https://en.wikipedia.org/wiki/3dfx">Wikipedia：3dfx Interactive（2000-12-15 核心资产被 Nvidia 以 $70M 现金 + $1M 股票收购，2001-04-18 交割；1998 收购 STB 是致命错误公论）</a></li>
+        <li><a href="https://www.techspot.com/article/2120-cyrix/">TechSpot：Cyrix 兴衰史</a> · <a href="https://www.sec.gov/Archives/edgar/data/0000070530/000007053097000019/0000070530-97-000019.txt">National Semiconductor 8-K：Cyrix 收购完成（1997-11-17）</a> · <a href="https://www.eetimes.com/update-via-technologies-looks-to-centaur-subsidiary-to-propel-processor-road-map/">EE Times：VIA 1999-06 以 $167M 收购 Cyrix CPU 部门</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/1045810/000104581023000014/q4fy23pr.htm">Nvidia Q4 FY23 财报 8-K（2023-02-22）：FY23 数据中心收入 $15.01B、总收入 $26.97B</a> · <a href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2024">Nvidia FY24 财报：数据中心收入 $47.5B</a></li>
+        <li><a href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing">彭博：芯片交期缩短、几年来最大降幅（2022-10-17，Susquehanna 数据）</a> · <a href="https://www.datacenterdynamics.com/en/news/chip-lead-times-hit-202-weeks-as-semiconductor-shortage-drags-on/">DCD：交期突破 20 周（2021-08）</a></li>
+        <li><a href="https://www.cnbc.com/2023/04/26/samsung-electronics-q1-2023-results.html">CNBC / Samsung 2023-Q1 财报：营业利润 14.1 万亿韩元（22Q1）→ 0.6 万亿韩元（23Q1），存储行业深度亏损与减产</a></li>
+        <li><a href="https://www.semi.org/en/products-services/market-data/equipment">SEMI 全球半导体设备市场统计（2021 $102.6B、2022 $107.6B 等历年数据）</a></li>
+      </ul>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本模块为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="m03.html"><span class="dir">← 上一模块</span>模块 3 · 封装、测试与系统集成 101</a>
+        <a href="m05.html" style="text-align:right"><span class="dir">下一模块 →</span>模块 5 · 半导体产业链总地图</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- 需求台阶叠加图（A 类：可视化台阶叠加） ---------- */
+  (function () {
+    const W = 720, H = 300, L = 46, R = 30, T = 16, B = 34;
+    const YEAR_MIN = 1975, YEAR_MAX = 2028;
+    const xs = (y) => L + (y - YEAR_MIN) / (YEAR_MAX - YEAR_MIN) * (W - L - R);
+    const ys = (v) => T + (1 - v / 100) * (H - T - B);
+
+    /* 教学示意 · 每层是 0-100 的占位规模，累加成总量。数字不追精确，追台阶起飞时点与叠加关系。 */
+    const LAYERS = [
+      { id: "pc",  label: "PC（1980s 起飞）",        color: "var(--viz-s1)",
+        curve: (y) => y < 1980 ? 0 : Math.min(30, (y - 1980) * 2.6) },
+      { id: "mob", label: "手机（2007 iPhone 起飞）", color: "var(--viz-s2)",
+        curve: (y) => y < 2007 ? 0 : Math.min(28, (y - 2007) * 2.3) },
+      { id: "cld", label: "云计算（2010s 起飞）",    color: "var(--viz-s3)",
+        curve: (y) => y < 2010 ? 0 : Math.min(30, (y - 2010) * 1.9) },
+      { id: "ai",  label: "AI（2022 起飞）",         color: "var(--accent)",
+        curve: (y) => y < 2022 ? 0 : Math.min(45, (y - 2022) * 8.5) },
+    ];
+    const active = new Set(LAYERS.map(l => l.id));
+
+    const mount = document.getElementById("stepChart");
+    const svg = APP.svgEl("svg", {
+      viewBox: "0 0 " + W + " " + H,
+      role: "img",
+      "aria-label": "堆叠面积图：PC 从 1980s 起飞、手机从 2007 起飞、云从 2010s 起飞、AI 从 2022 起飞，四层叠加逐年抬高"
+    });
+    mount.appendChild(svg);
+
+    const legend = document.getElementById("stepLegend");
+    LAYERS.forEach(l => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "step-toggle";
+      b.setAttribute("aria-pressed", "true");
+      b.innerHTML = '<span class="sw" style="background:' + l.color + '"></span>' + l.label;
+      b.addEventListener("click", () => {
+        const on = b.getAttribute("aria-pressed") === "true";
+        b.setAttribute("aria-pressed", String(!on));
+        if (on) active.delete(l.id); else active.add(l.id);
+        draw();
+      });
+      legend.appendChild(b);
+    });
+
+    function draw() {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      /* 网格 */
+      for (let v = 0; v <= 100; v += 25) {
+        svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: ys(v), y2: ys(v), stroke: "var(--viz-grid)", "stroke-width": 1 }));
+      }
+      svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: ys(0), y2: ys(0), stroke: "var(--viz-axis)", "stroke-width": 1 }));
+      for (let y = 1980; y <= 2025; y += 5) {
+        const t = APP.svgEl("text", { x: xs(y), y: H - B + 18, "text-anchor": "middle", class: "axis-txt" });
+        t.textContent = y;
+        svg.appendChild(t);
+      }
+      /* 堆叠：从最早的一层开始逐层叠加 */
+      const step = 1;
+      const years = [];
+      for (let y = YEAR_MIN; y <= YEAR_MAX; y += step) years.push(y);
+
+      const stack = years.map(() => 0);
+      LAYERS.forEach(l => {
+        if (!active.has(l.id)) return;
+        const top = years.map((y, i) => stack[i] + l.curve(y));
+        let d = "";
+        years.forEach((y, i) => { d += (i ? "L" : "M") + xs(y).toFixed(1) + " " + ys(top[i]).toFixed(1) + " "; });
+        for (let i = years.length - 1; i >= 0; i--) d += "L" + xs(years[i]).toFixed(1) + " " + ys(stack[i]).toFixed(1) + " ";
+        d += "Z";
+        svg.appendChild(APP.svgEl("path", { d, fill: l.color, opacity: 0.75 }));
+        top.forEach((v, i) => { stack[i] = v; });
+      });
+
+      /* 关键事件锚点 */
+      const marks = [
+        { y: 1981, v: 6,  label: "IBM PC" },
+        { y: 2007, v: 26, label: "iPhone" },
+        { y: 2010, v: 40, label: "云起飞" },
+        { y: 2022, v: 60, label: "ChatGPT" },
+      ];
+      marks.forEach(m => {
+        svg.appendChild(APP.svgEl("line", { x1: xs(m.y), x2: xs(m.y), y1: ys(m.v), y2: ys(0),
+          stroke: "var(--viz-axis)", "stroke-width": 1, "stroke-dasharray": "2 3", opacity: 0.55 }));
+        const t = APP.svgEl("text", { x: xs(m.y), y: ys(m.v) - 6, "text-anchor": "middle", class: "anno-txt" });
+        t.textContent = m.label + " · " + m.y;
+        svg.appendChild(t);
+      });
+
+      const on = LAYERS.filter(l => active.has(l.id)).map(l => l.label.split("（")[0]).join(" + ");
+      document.getElementById("stepReadout").innerHTML = on
+        ? "当前显示叠加：<b>" + on + "</b>。点上面的色块可以只看单层——把 PC 关掉你会发现「PC 层」四十多年来一直在长（没有崩），只是斜率放缓——这就是「叠加不是替代」。"
+        : "所有层都已关闭，点色块打开一层。";
+    }
+    draw();
+  })();
+
+  /* ---------- 牛鞭效应模拟（A 类：需求波在链条上逐层放大） ---------- */
+  (function () {
+    const W = 720, H = 320, L = 46, R = 30, T = 20, B = 34;
+    const WEEKS = 40;
+    const xs = (i) => L + (i / (WEEKS - 1)) * (W - L - R);
+    const ys = (v) => T + (1 - (v - 60) / (200 - 60)) * (H - T - B); /* 60~200 的订单区间 */
+
+    const mount = document.getElementById("bwChart");
+    const svg = APP.svgEl("svg", {
+      viewBox: "0 0 " + W + " " + H,
+      role: "img",
+      "aria-label": "折线图：四层供应链订单曲线，越靠上游（设备）波形越剧烈"
+    });
+    mount.appendChild(svg);
+
+    /* 层顺序：终端(0) → 分销(1) → 制造(2) → 设备(3)，越往上游放大越大 */
+    const TIERS = [
+      { key: "end", label: "① 终端",    color: "var(--viz-s1)" },
+      { key: "dis", label: "② 分销",    color: "var(--viz-s2)" },
+      { key: "fab", label: "③ 制造",    color: "var(--viz-s3)" },
+      { key: "eq",  label: "④ 设备",    color: "var(--accent)" },
+    ];
+
+    /* 简化模型：
+       - 终端订单是预设波形 x100 基线
+       - 每层订单 = 下层订单 * (1 + 库存修正) + 缺货时的重复下单放大
+       - 库存修正随 safety 增加而增加（越想留库存，波形越放大）
+       - 缺货重复下单只在需求上抬时触发 */
+    function genSeries() {
+      const pattern = document.getElementById("bwPattern").value;
+      const safety = +document.getElementById("bwSafety").value;
+      const panic = +document.getElementById("bwPanic").value;
+
+      /* 终端序列 */
+      const end = [];
+      for (let t = 0; t < WEEKS; t++) {
+        let base = 100;
+        if (pattern === "pulse") {
+          if (t >= 6 && t <= 20) base = 130;
+          else if (t >= 21 && t <= 26) base = 105;
+        } else if (pattern === "dip") {
+          if (t >= 8 && t <= 22) base = 70;
+          else if (t >= 23 && t <= 28) base = 90;
+        } else if (pattern === "wave") {
+          base = 100 + 8 * Math.sin(t * Math.PI / 6);
+        }
+        end.push(base);
+      }
+      /* 逐层放大：k = 层号 */
+      const layers = [end];
+      for (let k = 1; k < 4; k++) {
+        const prev = layers[k - 1];
+        const cur = new Array(WEEKS).fill(0);
+        /* 预期需求 = 过去 (safety) 周的移动平均 */
+        for (let t = 0; t < WEEKS; t++) {
+          let sum = 0, n = 0;
+          for (let j = Math.max(0, t - safety + 1); j <= t; j++) { sum += prev[j]; n++; }
+          const expected = sum / Math.max(1, n);
+          /* 订单 = 预期 + (预期 - 前一期实际) × safety（追赶）*/
+          const chase = safety * (expected - prev[Math.max(0, t - 1)]);
+          let order = expected + chase;
+          /* 缺货重复下单：上一期订单显著上升就恐慌 */
+          if (t > 0 && prev[t] - prev[t - 1] > 5) {
+            order = order * panic;
+          }
+          cur[t] = Math.max(60, Math.min(200, order));
+        }
+        layers.push(cur);
+      }
+      return layers;
+    }
+
+    function draw() {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      /* 网格与坐标 */
+      for (let v = 60; v <= 200; v += 20) {
+        svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: ys(v), y2: ys(v), stroke: "var(--viz-grid)", "stroke-width": 1 }));
+        const t = APP.svgEl("text", { x: L - 8, y: ys(v) + 4, "text-anchor": "end", class: "axis-txt" });
+        t.textContent = v;
+        svg.appendChild(t);
+      }
+      svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: ys(60), y2: ys(60), stroke: "var(--viz-axis)", "stroke-width": 1 }));
+      for (let w = 0; w <= WEEKS - 1; w += 5) {
+        const t = APP.svgEl("text", { x: xs(w), y: H - B + 18, "text-anchor": "middle", class: "axis-txt" });
+        t.textContent = "第 " + w + " 周";
+        svg.appendChild(t);
+      }
+      const xl = APP.svgEl("text", { x: L, y: T - 4, "text-anchor": "start", class: "axis-txt" });
+      xl.textContent = "订单量（基线 = 100）";
+      svg.appendChild(xl);
+
+      const layers = genSeries();
+      /* 画四条线 */
+      layers.forEach((series, k) => {
+        let d = "";
+        series.forEach((v, i) => { d += (i ? "L" : "M") + xs(i).toFixed(1) + " " + ys(v).toFixed(1) + " "; });
+        svg.appendChild(APP.svgEl("path", {
+          d, fill: "none", stroke: TIERS[k].color, "stroke-width": 2,
+          "stroke-linejoin": "round", "stroke-linecap": "round",
+          opacity: k === 3 ? 1 : 0.9
+        }));
+      });
+
+      /* legend */
+      const leg = document.getElementById("bwLegend");
+      leg.innerHTML = "";
+      TIERS.forEach((t, k) => {
+        const li = document.createElement("li");
+        const maxV = Math.max(...layers[k]);
+        const minV = Math.min(...layers[k]);
+        li.innerHTML = '<span class="key" style="height:10px;width:14px;background:' + t.color + '"></span>' +
+          t.label + " · 峰 " + Math.round(maxV) + " · 谷 " + Math.round(minV);
+        leg.appendChild(li);
+      });
+
+      /* 读出：终端与设备的峰值放大倍数 */
+      const endPeak = Math.max(...layers[0]) - 100;
+      const eqPeak = Math.max(...layers[3]) - 100;
+      const endTrough = 100 - Math.min(...layers[0]);
+      const eqTrough = 100 - Math.min(...layers[3]);
+      const pattern = document.getElementById("bwPattern").value;
+      const desc = pattern === "pulse" ? "终端需求短抬 30%" :
+                   pattern === "dip"   ? "终端需求短跌 30%" : "终端稳态微波动";
+      let readout;
+      if (pattern === "wave") {
+        readout = desc + "——设备端订单峰谷差 <b>" + Math.round(Math.max(...layers[3]) - Math.min(...layers[3])) +
+                  "</b>，比终端 <b>" + Math.round(Math.max(...layers[0]) - Math.min(...layers[0])) +
+                  "</b> 已经放大数倍。稳态里的微抖动也在被链条放大——所以老手才说「稳态里也不能没有牛鞭意识」。";
+      } else if (pattern === "pulse") {
+        readout = desc + "——设备端订单峰值达到 <b>+" + Math.round(eqPeak) + "%</b>（对比终端 +" + Math.round(endPeak) +
+                  "%），放大 <b>" + (endPeak ? (eqPeak / endPeak).toFixed(1) : "—") +
+                  " 倍</b>。这就是「哪里都没货」时设备商订单飙到疯狂的物理原因。";
+      } else {
+        readout = desc + "——设备端订单低点跌到 <b>−" + Math.round(eqTrough) + "%</b>（对比终端 −" + Math.round(endTrough) +
+                  "%），放大 <b>" + (endTrough ? (eqTrough / endTrough).toFixed(1) : "—") +
+                  " 倍</b>。下行时反过来：终端只是稍微冷，设备端一片肃杀。";
+      }
+      document.getElementById("bwReadout").innerHTML = readout +
+        "<br><span style='color:var(--muted);font-size:var(--fs-13)'>教学模型，参数与真实数值有差异；用来看链条放大方向与相对幅度，不用来做点估计。</span>";
+    }
+
+    document.getElementById("bwPattern").addEventListener("change", draw);
+    document.getElementById("bwSafety").addEventListener("input", () => {
+      document.getElementById("bwSafetyOut").textContent = document.getElementById("bwSafety").value + " 周";
+      draw();
+    });
+    document.getElementById("bwPanic").addEventListener("input", () => {
+      document.getElementById("bwPanicOut").textContent = document.getElementById("bwPanic").value + "×";
+      draw();
+    });
+    draw();
+  })();
+
+  /* ---------- 决策复盘卡通用交互（照抄 m02 页内脚本） ---------- */
+  document.querySelectorAll("[data-case]").forEach((box) => {
+    const reveal = box.parentElement.querySelector(".case-reveal");
+    box.querySelectorAll("[data-pick]").forEach((btn) => {
+      btn.setAttribute("aria-pressed", "false");
+      btn.addEventListener("click", () => {
+        box.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        if (reveal && reveal.hidden) {
+          reveal.hidden = false;
+        }
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>

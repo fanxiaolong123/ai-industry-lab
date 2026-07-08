@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 1 · 供给慢，需求快 · 半导体投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 骨架卡专属样式 ---------- */
+  .card-sec { margin-top: 40px; }
+  .card-sec:first-of-type { margin-top: 28px; }
+  .card-sec > h2 {
+    font-size: var(--fs-22);
+    font-weight: 650;
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .card-sec > h3 {
+    font-size: var(--fs-17);
+    font-weight: 650;
+    margin: 22px 0 8px;
+    color: var(--primary);
+  }
+  .thesis {
+    font-size: var(--fs-19);
+    font-weight: 650;
+    background: var(--primary-tint);
+    border-left: 3px solid var(--primary);
+    padding: 12px 18px;
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    margin: 14px 0 0;
+    color: var(--primary);
+  }
+  .reflex {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 16px 18px;
+    margin: 12px 0;
+    background: var(--surface);
+  }
+  .reflex .r-head {
+    font-size: var(--fs-13);
+    color: var(--muted);
+    font-weight: 650;
+    margin-bottom: 6px;
+  }
+  .reflex .r-q {
+    font-size: var(--fs-17);
+    font-weight: 650;
+    color: var(--primary);
+    margin: 4px 0 8px;
+  }
+  .reflex p { margin-bottom: 0; }
+  .anchor-list {
+    display: grid;
+    gap: 10px;
+    margin: 14px 0 8px;
+    padding: 0;
+    list-style: none;
+  }
+  .anchor-list > li {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 12px 16px;
+    background: var(--bg);
+    font-size: var(--fs-14);
+  }
+  .anchor-list .a-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    align-items: baseline;
+    margin-bottom: 4px;
+  }
+  .anchor-list .a-num {
+    font-size: var(--fs-19);
+    font-weight: 650;
+    color: var(--primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .anchor-list .a-title { font-weight: 650; font-size: var(--fs-15); }
+  .anchor-list .a-note { color: var(--muted); font-size: var(--fs-13); margin-top: 4px; }
+
+  /* 练习题卡 */
+  .drill {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 16px 20px;
+    margin: 14px 0;
+  }
+  .drill h4 { font-size: var(--fs-16); font-weight: 650; margin: 0 0 8px; }
+  .drill .hint {
+    background: var(--surface);
+    border-radius: var(--radius-s);
+    padding: 10px 14px;
+    font-size: var(--fs-14);
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* ---------- A 类组件：供需时间尺度对比 ---------- */
+  #sdChart { min-height: 320px; }
+  .sd-stage {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 12px 0 4px;
+    font-size: var(--fs-13);
+  }
+  .sd-stage > div {
+    padding: 10px 12px;
+    border-radius: var(--radius-s);
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .sd-stage b { display: block; color: var(--primary); font-size: var(--fs-14); }
+  @media (max-width: 640px) { .sd-stage { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body data-page="s01">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 1 · 供给慢，需求快</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 1 / 15</p>
+      <h1>卡 1 · 供给慢，需求快</h1>
+      <p class="core-q"><b>本卡模型：</b>半导体行业的供给和需求，时间常数不在一个数量级上——供给要按年计的时间才能变，需求可以按月计的时间就变。这条不对称是这个行业一切周期现象（缺货、涨价、砍单、库存山）的根源。</p>
+    </header>
+
+    <div class="prose" style="max-width:860px">
+
+      <!-- =================== 1. 现象 =================== -->
+      <section class="card-sec">
+        <h2>1. 现象</h2>
+        <p>2021 年，全球芯片交期（下单到提货的等待时间）从常态的 <strong>10-14 周</strong>一路拉长到<strong>超过 20 周</strong>，买家排队抢货<a class="badge badge-verified" href="#src-lead-times">已核验 · Susquehanna / DCD</a>；仅仅一年后，<strong>2022 年 10 月</strong>彭博报道交期出现几年来最大单月缩短<a class="badge badge-verified" href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing" target="_blank" rel="noopener">已核验 · 彭博 2022-10-17</a>，随后全行业陷入砍单和库存积压。同一批公司，一年之内从「货卖爆」到「卖不动」。为什么这个行业总是大起大落？根子是一条不对称：</p>
+        <p class="thesis">供给的时间常数是「年」，需求的时间常数是「月」。</p>
+      </section>
+
+      <!-- =================== 2. 机制 =================== -->
+      <section class="card-sec">
+        <h2>2. 机制</h2>
+
+        <h3>供给为什么慢（三段时间，一段都省不掉）</h3>
+        <ol>
+          <li><strong>盖厂</strong>：晶圆厂车间对空气洁净度的要求比手术室高几个数量级，土建加净化一年以上。真实刻度：台积电亚利桑那工厂 <strong>2020 年 5 月</strong>宣布，<strong>2025 年</strong>首厂才量产<a class="badge badge-verified" href="https://pr.tsmc.com/english/news/2033" target="_blank" rel="noopener">已核验 · 台积电官方公告</a>——海外新建接近五年；行业通行口径下，从拍板到有效产出也要 <strong>24-36 个月</strong><a class="badge badge-expert" href="#src-fab-cycle-expert">专家判断</a>。</li>
+          <li><strong>等设备</strong>：最关键的 EUV 光刻机全球只有 ASML 一家能造，<strong>2024 全年只交付 44 台、单台均价 2.27 亿欧元</strong><a class="badge badge-verified" href="https://ourbrand.asml.com/m/ee9da90a119cc9d/original/2024-Financial-performance-section.pdf" target="_blank" rel="noopener">已核验 · ASML 2024 年报</a>——想插队也没有队可插。</li>
+          <li><strong>调试爬坡</strong>：设备装好后，一片晶圆在产线上走完全程要 <strong>3-4 个月</strong><a class="badge badge-verified" href="https://semiengineering.com/battling-fab-cycle-times/" target="_blank" rel="noopener">已核验 · SemiEngineering</a>，良品率从惨淡爬到经济水平还要几个季度。</li>
+        </ol>
+
+        <p>反方向同样慢：<strong>产能收缩也踩不了急刹车</strong>。工厂建成后设备折旧照提，减产等于单位成本上升，所以过剩时厂商会拖到深度亏损才肯砍产量。2023 年存储行业就是现场：芯片卖价跌破成本，<strong>三星 2023 年一季度利润从上年同期的 14.1 万亿韩元跌到 0.6 万亿</strong>，随后宣布大幅减产，海力士、美光同期亏损减产，全行业几乎停止产能投资<a class="badge badge-verified" href="#src-samsung-2023">已核验 · CNBC / The Register / Motley Fool 2023</a>。供给这台机器，油门和刹车都要踩很久才起作用。</p>
+
+        <h3>需求为什么快，以及为什么永远摆不到「刚刚好」</h3>
+        <p>需求可以几个月内改天换地——<strong>ChatGPT 2022 年 11 月上线</strong>，几个月内全世界都在抢算力。更深一层的结构是：今天的扩产决策是对今天的价格和缺口做出的，但产能两三年后才到货，<strong>到货时的世界已经不是下单时的世界</strong>；而且所有厂商看到同一个缺口、同时做出同样的扩产决定，新产能会在同一个时间窗集中涌出。所以系统天然过冲：缺货时涨过头，过剩时跌过头。农产品的猪周期是同一个数学，但芯片建设期更长、单厂投资以百亿美元计，摆得更猛。</p>
+
+        <!-- ================= A 类组件：供需时间尺度对比 ================= -->
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">供给-需求时间尺度对比 · 交货为什么总是晚一步</span>
+            <span class="viz-sub">看什么：蓝色需求线立刻抬起（月尺度）；绿色产能线要等一年才动、24 个月才有量、约 36 个月才补齐。中间的红色缺口就是抢货、涨价、签长约的时期；把「需求维持时长」拖短，产能到货时需求已经落了，蓝色区域就是过冲——「摆不到刚刚好」的直观化。</span>
+          </div>
+          <div class="ctl-panel">
+            <div class="ctl">
+              <label for="demandAmp">需求脉冲幅度</label>
+              <input type="range" id="demandAmp" min="20" max="80" step="5" value="40">
+              <output id="demandAmpOut">+40%</output>
+            </div>
+            <div class="ctl">
+              <label for="demandHold">需求维持时长</label>
+              <input type="range" id="demandHold" min="6" max="42" step="1" value="20">
+              <output id="demandHoldOut">20 个月</output>
+            </div>
+          </div>
+          <div id="sdChart" role="img" aria-label="双线图：需求脉冲在 0 月立即抬升，产能曲线要经过盖厂 12 月、设备到位 24 月、爬坡 36 月三段延迟才达到目标水平"></div>
+          <ul class="viz-legend" id="sdLegend" style="justify-content:center"></ul>
+          <div class="sd-stage" aria-label="供给三段时间">
+            <div><b>0-12 月 · 盖厂</b>土建加净化，产能几乎不动，只能吃老库存。参数默认取自亚利桑那 2020-05 宣布、2021 开工。</div>
+            <div><b>12-24 月 · 等设备</b>厂房好了，EUV 等关键设备逐台交付、装机——但队伍在 ASML 那里，插不了。</div>
+            <div><b>24-36 月 · 爬坡</b>设备装完，晶圆走完全程 3-4 个月，良率再爬几个季度到经济水平。</div>
+          </div>
+          <div class="viz-readout" id="sdReadout" aria-live="polite"></div>
+          <p style="font-size:var(--fs-13);color:var(--muted);margin:8px 0 0">教学模型；真实每个环节的时间常数会随节点（先进/成熟）、地区（本土/海外）、模式（代工/IDM）差别浮动。三段延迟以卡 1 已核验锚点（24-36 个月周期、亚利桑那 2020-05 到 2025 量产、EUV 交付节奏、3-4 个月产线周期）为参数默认值。</p>
+        </div>
+      </section>
+
+      <!-- =================== 3. 真实锚点 =================== -->
+      <section class="card-sec">
+        <h2>3. 真实锚点</h2>
+        <p style="font-size:var(--fs-15);color:var(--muted)">机制段里的推理，全部落在这四个可核验的数字和事件上。每一条都能点开原始来源核对，凭记忆的数字不上卡。</p>
+        <ol class="anchor-list">
+          <li>
+            <div class="a-head"><span class="a-num">01</span><span class="a-title">台积电亚利桑那：2020-05 宣布 → 2025 量产</span><a class="badge badge-verified" href="https://pr.tsmc.com/english/news/2033" target="_blank" rel="noopener">已核验 · 台积电官方公告</a></div>
+            <div>2020 年 5 月 15 日台积电公告在亚利桑那建 5nm 晶圆厂，规划投资约 <strong>120 亿美元</strong>，计划 2021 年开工、2024 年投产（后延至 2025 年）。<strong>海外新建近五年</strong>，是「盖厂以年计」最硬的现场刻度。</div>
+            <div class="a-note">这个日期是本卡投资含义段「加 24-36 个月」条件反射的原始参照点之一。</div>
+          </li>
+          <li>
+            <div class="a-head"><span class="a-num">02</span><span class="a-title">ASML 2024：全年 44 台 EUV，单台均价 2.27 亿欧元</span><a class="badge badge-verified" href="https://ourbrand.asml.com/m/ee9da90a119cc9d/original/2024-Financial-performance-section.pdf" target="_blank" rel="noopener">已核验 · ASML 2024 年报</a></div>
+            <div>EUV 光刻机全球独家供应，<strong>2024 年全球一共交付 44 台（低数值孔径 42 台 + 高数值孔径 2 台），低数值孔径机型均价约 €2.27 亿</strong>。这是「等设备」这一段时间常数的物理来源——想插队没有队可插，扩产先在 ASML 排队。</div>
+          </li>
+          <li>
+            <div class="a-head"><span class="a-num">03</span><span class="a-title">产线周期：一片晶圆走完全程 3-4 个月</span><a class="badge badge-verified" href="https://semiengineering.com/battling-fab-cycle-times/" target="_blank" rel="noopener">已核验 · SemiEngineering</a></div>
+            <div>先进逻辑晶圆需完成 <strong>500-1,000+ 道工序、80-120 次图案化循环</strong>，物理周期约 <strong>3-4 个月</strong>；设备装完还要几个季度把良率从惨淡爬到经济水平。这是「调试爬坡」阶段的时间锚点。</div>
+          </li>
+          <li>
+            <div class="a-head"><span class="a-num">04</span><span class="a-title">2023 存储：三星 Q1 利润 14.1 万亿韩元 → 0.6 万亿韩元</span><a class="badge badge-verified" href="#src-samsung-2023">已核验 · CNBC / The Register / Motley Fool 2023</a></div>
+            <div>2023 年一季度三星营业利润从 <strong>2022 Q1 的 14.1 万亿韩元</strong>跌到 <strong>0.6 万亿</strong>（同比 -95%），半导体分部录得约 <strong>4.58 万亿韩元亏损</strong>；4 月宣布大幅减产，海力士（Q1 亏损 3.4 万亿韩元）、美光同期减产、砍资本开支。全行业几乎停止产能投资——「产能收缩也踩不了急刹车」的现场，同时也是 2024 年之后紧缺的种子。</div>
+          </li>
+          <li>
+            <div class="a-head"><span class="a-num">05</span><span class="a-title">2022-10-17：彭博报道交期几年来最大单月缩短</span><a class="badge badge-verified" href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing" target="_blank" rel="noopener">已核验 · 彭博 / Susquehanna 数据</a></div>
+            <div>Susquehanna 每月统计芯片交期：常态 10-14 周，2021 年 8 月突破 20 周，2022 年中约 <strong>27 周</strong>见顶，2022 年 10 月 17 日彭博援引其数据报道「几年来最大单月缩短」——拐点在公开信息里第一次显形。「同一批公司一年内从货卖爆到卖不动」不是文学修辞，就是这条曲线的形状。</div>
+          </li>
+        </ol>
+      </section>
+
+      <!-- =================== 4. 投资含义 =================== -->
+      <section class="card-sec">
+        <h2>4. 投资含义 · 两个条件反射</h2>
+        <div class="reflex">
+          <div class="r-head">条件反射一 · 缺货新闻</div>
+          <p>看到「缺货涨价」新闻，第一反应不是兴奋，是问：</p>
+          <p class="r-q">「新产能什么时候到？」</p>
+          <p>答案可查：谁宣布了扩产、哪天宣布的、加 <strong>24-36 个月</strong>、用设备订单验证。红利期的长度可以估算，不是玄学。</p>
+        </div>
+        <div class="reflex">
+          <div class="r-head">条件反射二 · 亏损减产新闻</div>
+          <p>看到「全行业亏损、集体减产」新闻，第一反应是问：</p>
+          <p class="r-q">「这是不是在给两三年后的缺货埋种子？」</p>
+          <p>被砍掉的供给，不会在需求回来时立刻长回来。</p>
+        </div>
+      </section>
+
+      <!-- =================== 5. 边界 =================== -->
+      <section class="card-sec">
+        <h2>5. 边界（这张卡什么时候不适用）</h2>
+        <ul>
+          <li>不是所有环节都一样慢：无厂设计公司的「产能」是人和代工配额，弹性完全不同；封装扩产比晶圆厂快；成熟制程扩产比先进制程容易——不同环节摆动幅度差别巨大（<strong>卡 6、卡 9 展开</strong>）。</li>
+          <li>「需求快」也可能是假象：缺货时订单里混着大量重复下单，表观需求高估真实需求（<strong>卡 5 讲这个陷阱</strong>）。</li>
+        </ul>
+      </section>
+
+      <!-- =================== 6. 练习 =================== -->
+      <section class="card-sec">
+        <h2>6. 练习</h2>
+
+        <div class="drill">
+          <h4>练习一 · 复述题</h4>
+          <p>合上卡片，用自己的话把「为什么这个行业永远大起大落」讲给一个完全不懂的人听（两三分钟的量）。</p>
+          <div class="hint">自测三条：①能不能不用「时间常数」这种词，直接用「盖厂要好几年、需求几个月就变」的白话说清？②能不能举一个真实数字或事件（不许翻回卡片）？③能不能推到「所以缺货和过剩都会摆过头」这一步？</div>
+        </div>
+
+        <div class="drill">
+          <h4>练习二 · 推演题</h4>
+          <p>已知两件已核验的真事：<strong>①</strong> 2023 年存储芯片全行业深度亏损，三星、海力士、美光先后大幅减产，几乎停止产能投资；<strong>②</strong> 2024-2025 年 AI 需求爆发，AI 服务器需要大量存储。</p>
+          <p>用这张卡推：<strong>2026 年存储市场大概率处于什么状态？厂商和买家分别会有什么行为？</strong></p>
+          <button class="btn btn-ghost" data-reveal aria-controls="drill2-hint" data-open-text="收起推演提示">展开推演提示（不含标准答案）</button>
+          <div id="drill2-hint" hidden>
+            <div class="hint" style="margin-top:10px">
+              <p style="margin:0 0 8px"><strong>提示一 · 用「供给刹车也慢」推：</strong>2023 年砍掉的产能到 2026 年还没恢复——被砍掉的供给不会在需求回来时立刻长回来。这时候新加的产能哪来？谁宣布了扩产、加 24-36 个月落到哪一年？</p>
+              <p style="margin:0 0 8px"><strong>提示二 · 用「新产能什么时候到」推：</strong>AI 需求 2024 年爆发时，如果那一刻才拍板扩产，最早到货落在什么时候？2026 年 AI 需求还在增长的话，供需两条曲线在这一年会是什么样？</p>
+              <p style="margin:0"><strong>提示三 · 分别推厂商和买家的行为：</strong>厂商会更愿意接长约还是现货？会给谁配货、给谁排队？买家（比如买 HBM 的英伟达、买普通 DRAM 的服务器 OEM）会做什么动作对冲？<em>这题没有标准答案，你的推理链是不是完整、有没有落在两条真事和一张卡的机制上，就是评分标准。</em></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- =================== 卡 1 来源 =================== -->
+    <section class="src" style="max-width:1080px">
+      <strong>卡 1 来源</strong>
+      <ol style="margin:8px 0 0;padding-left:1.3em">
+        <li id="src-tsmc-arizona"><a href="https://pr.tsmc.com/english/news/2033" rel="noopener noreferrer">台积电官方公告：Intention to Build and Operate an Advanced Semiconductor Fab in the United States（2020-05-15）</a> · <a href="https://pr.tsmc.com/english/news/3210" rel="noopener noreferrer">台积电官方公告：亚利桑那投资扩至 1,650 亿美元、多座厂陆续量产（2025-03）</a></li>
+        <li id="src-asml-2024"><a href="https://ourbrand.asml.com/m/ee9da90a119cc9d/original/2024-Financial-performance-section.pdf" rel="noopener noreferrer">ASML 2024 年报财务部分：44 台 EUV、低数值孔径均价 €2.27 亿</a></li>
+        <li id="src-fab-cycle"><a href="https://semiengineering.com/battling-fab-cycle-times/" rel="noopener noreferrer">SemiEngineering：Battling Fab Cycle Times（先进制程 500-1,000+ 道工序、80-120 次循环、3-4 个月周期）</a></li>
+        <li id="src-lead-times"><a href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing" rel="noopener noreferrer">彭博：Chip Delivery Times Shrink in Sign That Supply Crunch Is Easing（2022-10-17，援引 Susquehanna 数据）</a> · <a href="https://www.datacenterdynamics.com/en/news/chip-lead-times-hit-202-weeks-as-semiconductor-shortage-drags-on/" rel="noopener noreferrer">DCD：Chip Lead Times Hit 20.2 Weeks（2021-08）</a></li>
+        <li id="src-samsung-2023"><a href="https://www.cnbc.com/2023/04/27/samsung-earnings-q1-2023.html" rel="noopener noreferrer">CNBC：Samsung Q1 2023 利润 6,400 亿韩元、同比 -95%（2023-04-27）</a> · <a href="https://www.theregister.com/2023/04/27/samsung_sk_hynix_losses/" rel="noopener noreferrer">The Register：Samsung、SK Hynix 十年最大营业变化（2023-04-27）</a> · <a href="https://www.fool.com/investing/2023/04/12/samsung-production-cut-win-for-micron/" rel="noopener noreferrer">Motley Fool：Samsung Cuts Memory Production（2023-04-12）</a> · <a href="https://www.cnbc.com/2023/04/26/sk-hynix-reports-record-quarterly-operating-loss-forecasts-better-outlook.html" rel="noopener noreferrer">CNBC：SK Hynix Q1 2023 record operating loss 3.4 万亿韩元</a></li>
+        <li id="src-fab-cycle-expert">通行行业口径：晶圆厂从拍板到有效产出通常需 24-36 个月——各卖方研究与公司电话会常见口径（无单一权威链接）</li>
+      </ol>
+    </section>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine01.html" style="visibility:hidden" aria-hidden="true"><span class="dir">&nbsp;</span>&nbsp;</a>
+        <a href="spine02.html" style="text-align:right"><span class="dir">下一张 →</span>卡 2 · 固定成本主导：利润的跳变不是线性</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- A 类组件：供需时间尺度对比模拟 ---------- */
+  (function () {
+    const W = 720, H = 320, L = 46, R = 30, T = 24, B = 40;
+    const MONTH_MAX = 48;
+    const V_MIN = 60, V_MAX = 180;
+    const xs = (m) => L + (m / MONTH_MAX) * (W - L - R);
+    const ys = (v) => T + (1 - (v - V_MIN) / (V_MAX - V_MIN)) * (H - T - B);
+
+    /* 三段延迟锚点（月）：0-12 盖厂 · 12-24 等设备 · 24-36 爬坡 */
+    const SEG = { build: 12, equip: 24, ramp: 36 };
+
+    /* 需求曲线：t=0 立即抬升 amp%；持续 hold 个月后线性回落到基线 */
+    function demandAt(t, amp, hold) {
+      const fade = 6; /* 回落用 6 个月线性走完 */
+      if (t < 0) return 100;
+      if (t <= hold) return 100 + amp;
+      if (t <= hold + fade) return 100 + amp * (1 - (t - hold) / fade);
+      return 100;
+    }
+    /* 产能曲线：0-build 不动；build-equip 线性到 amp 的 40%；equip-ramp 线性到 amp 的 100% */
+    function supplyAt(t, amp) {
+      if (t <= SEG.build) return 100;
+      if (t <= SEG.equip) return 100 + amp * 0.4 * (t - SEG.build) / (SEG.equip - SEG.build);
+      if (t <= SEG.ramp)  return 100 + amp * 0.4 + amp * 0.6 * (t - SEG.equip) / (SEG.ramp - SEG.equip);
+      return 100 + amp;
+    }
+
+    const mount = document.getElementById("sdChart");
+    const svg = APP.svgEl("svg", {
+      viewBox: "0 0 " + W + " " + H,
+      role: "img",
+      preserveAspectRatio: "xMidYMid meet"
+    });
+    mount.appendChild(svg);
+
+    /* 阶段背景带（盖厂 / 等设备 / 爬坡）——只画一次 */
+    function drawBackground() {
+      const bands = [
+        { x0: 0, x1: SEG.build,  label: "盖厂",   fill: "oklch(0.96 0.02 60)" },
+        { x0: SEG.build, x1: SEG.equip, label: "等设备", fill: "oklch(0.97 0.02 145)" },
+        { x0: SEG.equip, x1: SEG.ramp,  label: "爬坡",   fill: "oklch(0.96 0.03 145)" }
+      ];
+      bands.forEach(b => {
+        svg.appendChild(APP.svgEl("rect", {
+          x: xs(b.x0), y: T, width: xs(b.x1) - xs(b.x0), height: H - T - B,
+          fill: b.fill, opacity: 0.55
+        }));
+        const t = APP.svgEl("text", {
+          x: (xs(b.x0) + xs(b.x1)) / 2, y: T + 14,
+          "text-anchor": "middle", class: "anno-txt", opacity: 0.85
+        });
+        t.textContent = b.label;
+        svg.appendChild(t);
+      });
+    }
+
+    const demandColor = "var(--viz-s3)";     /* 蓝：需求 */
+    const supplyColor = "oklch(0.55 0.15 145)"; /* 绿：产能 */
+    const gapColor    = "oklch(0.90 0.12 28)";  /* 红：缺口 */
+    const overColor   = "oklch(0.90 0.08 230)"; /* 浅蓝：过冲/过剩 */
+
+    /* legend */
+    const leg = document.getElementById("sdLegend");
+    [
+      ["需求（月尺度：立刻反应）", demandColor],
+      ["产能（年尺度：三段延迟）", supplyColor],
+      ["缺口（需求 > 产能）",       gapColor],
+      ["过剩（产能 > 需求）",       overColor]
+    ].forEach(it => {
+      const li = document.createElement("li");
+      li.innerHTML = '<span class="key" style="height:10px;width:14px;background:' + it[1] + '"></span>' + it[0];
+      leg.appendChild(li);
+    });
+
+    function draw() {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      drawBackground();
+
+      /* 网格线（Y 轴） */
+      for (let v = 60; v <= 180; v += 20) {
+        svg.appendChild(APP.svgEl("line", {
+          x1: L, x2: W - R, y1: ys(v), y2: ys(v),
+          stroke: "var(--viz-grid)", "stroke-width": 1
+        }));
+        const t = APP.svgEl("text", {
+          x: L - 8, y: ys(v) + 4, "text-anchor": "end", class: "axis-txt"
+        });
+        t.textContent = v + (v === 100 ? " (基线)" : "");
+        svg.appendChild(t);
+      }
+      /* X 轴刻度（每 6 个月） */
+      for (let m = 0; m <= MONTH_MAX; m += 6) {
+        const t = APP.svgEl("text", {
+          x: xs(m), y: H - B + 18, "text-anchor": "middle", class: "axis-txt"
+        });
+        t.textContent = m + " 月";
+        svg.appendChild(t);
+      }
+      svg.appendChild(APP.svgEl("line", {
+        x1: L, x2: W - R, y1: ys(100), y2: ys(100),
+        stroke: "var(--viz-axis)", "stroke-width": 1
+      }));
+
+      const amp = +document.getElementById("demandAmp").value;
+      const hold = +document.getElementById("demandHold").value;
+
+      /* 生成两条序列 */
+      const pts = [];
+      const stepM = 0.5;
+      for (let t = 0; t <= MONTH_MAX; t += stepM) {
+        pts.push({ t, d: demandAt(t, amp, hold), s: supplyAt(t, amp) });
+      }
+
+      /* 缺口/过剩面积 */
+      function fillArea(topFn, botFn, color, opacity) {
+        let d = "";
+        pts.forEach((p, i) => {
+          d += (i ? "L" : "M") + xs(p.t).toFixed(1) + " " + ys(topFn(p)).toFixed(1) + " ";
+        });
+        for (let i = pts.length - 1; i >= 0; i--) {
+          const p = pts[i];
+          d += "L" + xs(p.t).toFixed(1) + " " + ys(botFn(p)).toFixed(1) + " ";
+        }
+        d += "Z";
+        svg.appendChild(APP.svgEl("path", { d, fill: color, opacity }));
+      }
+      /* 缺口阴影：从 max(d,s) 到 s——只在 d>s 时非零面积（红色） */
+      fillArea(p => Math.max(p.d, p.s), p => p.s, gapColor, 0.32);
+      /* 过剩阴影：从 s 到 min(d,s)——只在 s>d 时非零面积（浅蓝） */
+      fillArea(p => p.s, p => Math.min(p.d, p.s), overColor, 0.32);
+
+      /* 需求线 */
+      let d1 = "";
+      pts.forEach((p, i) => { d1 += (i ? "L" : "M") + xs(p.t).toFixed(1) + " " + ys(p.d).toFixed(1) + " "; });
+      svg.appendChild(APP.svgEl("path", {
+        d: d1, fill: "none", stroke: demandColor, "stroke-width": 2.2,
+        "stroke-linejoin": "round", "stroke-linecap": "round"
+      }));
+      /* 产能线 */
+      let d2 = "";
+      pts.forEach((p, i) => { d2 += (i ? "L" : "M") + xs(p.t).toFixed(1) + " " + ys(p.s).toFixed(1) + " "; });
+      svg.appendChild(APP.svgEl("path", {
+        d: d2, fill: "none", stroke: supplyColor, "stroke-width": 2.2,
+        "stroke-linejoin": "round", "stroke-linecap": "round"
+      }));
+
+      /* 阶段分界线 */
+      [SEG.build, SEG.equip, SEG.ramp].forEach(m => {
+        svg.appendChild(APP.svgEl("line", {
+          x1: xs(m), x2: xs(m), y1: T + 22, y2: ys(100),
+          stroke: "var(--viz-axis)", "stroke-width": 1, "stroke-dasharray": "3 3", opacity: 0.55
+        }));
+      });
+
+      /* 需求维持时长竖线 */
+      if (hold >= 1 && hold <= MONTH_MAX) {
+        svg.appendChild(APP.svgEl("line", {
+          x1: xs(hold), x2: xs(hold), y1: T + 22, y2: H - B,
+          stroke: demandColor, "stroke-width": 1.2, "stroke-dasharray": "4 4", opacity: 0.6
+        }));
+        const lab = APP.svgEl("text", {
+          x: xs(hold), y: T + 34, "text-anchor": "middle", class: "anno-txt", fill: demandColor
+        });
+        lab.textContent = "需求开始回落";
+        svg.appendChild(lab);
+      }
+
+      /* readout */
+      document.getElementById("demandAmpOut").textContent = "+" + amp + "%";
+      document.getElementById("demandHoldOut").textContent = hold + " 个月";
+
+      const gapMonths = Math.max(0, Math.min(SEG.equip, hold + 6)); /* 缺口大致持续时间：需求高于产能的区间 */
+      /* 精确算：找 t*，t < t* 时 d > s */
+      let gapPeakT = 0, gapPeakV = 0, overPeakT = 0, overPeakV = 0;
+      pts.forEach(p => {
+        const gap = p.d - p.s;
+        if (gap > gapPeakV) { gapPeakV = gap; gapPeakT = p.t; }
+        const over = p.s - p.d;
+        if (over > overPeakV) { overPeakV = over; overPeakT = p.t; }
+      });
+
+      const readout = document.getElementById("sdReadout");
+      let msg = "需求脉冲 <b>+" + amp + "%</b>、维持 <b>" + hold + " 个月</b>。";
+      if (gapPeakV > 1) {
+        msg += "最深缺口出现在第 <b>" + Math.round(gapPeakT) + " 个月</b>（需求已上抬，产能还没动），缺口深度约 <b>" + Math.round(gapPeakV) +
+               "</b> 个基点。";
+      }
+      if (overPeakV > 1) {
+        msg += "产能到位后需求已回落，出现<b>过剩</b>——过剩最大值约在第 <b>" + Math.round(overPeakT) + " 个月</b>，深度 <b>" + Math.round(overPeakV) +
+               "</b> 个基点。";
+      }
+      if (hold < 24) {
+        msg += "　<span class='warn'>需求回落时点 &lt; 24 个月：产能还没有效到位，过冲不可避免——这就是「摆不到刚刚好」。</span>";
+      } else if (hold >= 36) {
+        msg += "　需求持续到产能满产之后，缺口时间被拉长，但一旦回落还是会出现尾段过剩。";
+      }
+      readout.innerHTML = msg;
+    }
+
+    document.getElementById("demandAmp").addEventListener("input", draw);
+    document.getElementById("demandHold").addEventListener("input", draw);
+    draw();
+  })();
+
+});
+</script>
+</body>
+</html>

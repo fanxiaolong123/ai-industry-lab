@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模块 9 · 四铁律</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+/* 页面专属样式：四铁律打分器、库存弹性对比、扩产时序动画 */
+.tenets { display:grid; gap:10px; margin:18px 0 8px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+.tenet {
+  border:1px solid var(--line);
+  border-radius:var(--radius-m);
+  padding:14px 16px;
+  background:var(--surface);
+}
+.tenet .no { font-size:var(--fs-12); color:var(--muted); font-weight:650; letter-spacing:0.04em; }
+.tenet .t { font-weight:650; font-size:var(--fs-16); margin:2px 0 6px; }
+.tenet .d { font-size:var(--fs-13); color:var(--muted); line-height:1.55; }
+
+/* 库存弹性对比双时间线 */
+.stock-cmp { display:grid; gap:16px; grid-template-columns:1fr 1fr; margin:8px 0; }
+@media (max-width:640px) { .stock-cmp { grid-template-columns:1fr; } }
+.stock-cmp > div {
+  border:1px solid var(--line);
+  border-radius:var(--radius-m);
+  padding:14px 14px 10px;
+  background:var(--bg);
+}
+.stock-cmp h4 {
+  font-size:var(--fs-15);
+  font-weight:650;
+  margin:0 0 6px;
+}
+.stock-cmp .side-tag {
+  font-size:var(--fs-12);
+  color:var(--muted);
+  margin-bottom:8px;
+}
+.stock-lgd {
+  font-size:var(--fs-12);
+  color:var(--muted);
+  margin-top:8px;
+  line-height:1.6;
+}
+.stock-lgd .k {
+  display:inline-block;
+  width:12px;
+  height:3px;
+  border-radius:2px;
+  vertical-align:0.22em;
+  margin-right:6px;
+}
+
+/* 四铁律打分器 */
+.scorer {
+  border:1px solid var(--line);
+  border-radius:var(--radius-m);
+  padding:18px 20px;
+  background:var(--bg);
+  margin:18px 0;
+}
+.scorer .picker { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+.scorer .rows { display:grid; gap:10px; }
+.scorer-row {
+  display:grid;
+  grid-template-columns:12em 1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-s);
+  background:var(--surface);
+  font-size:var(--fs-14);
+}
+.scorer-row .lbl b { font-weight:650; }
+.scorer-row .lbl .why { display:block; font-size:var(--fs-12); color:var(--muted); font-weight:400; }
+.scorer-row .segs {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:4px;
+}
+.scorer-row .segs button {
+  appearance:none;
+  font:inherit;
+  font-size:var(--fs-13);
+  font-weight:600;
+  border:1px solid var(--line);
+  background:var(--bg);
+  color:var(--ink);
+  padding:6px 4px;
+  border-radius:var(--radius-s);
+  cursor:pointer;
+  transition:background var(--dur) var(--ease),border-color var(--dur) var(--ease);
+}
+.scorer-row .segs button:hover { background:var(--surface-2); }
+.scorer-row .segs button[aria-pressed="true"] {
+  background:var(--primary-tint);
+  border-color:var(--primary-2);
+  color:var(--primary);
+}
+.scorer-row .pt {
+  font-variant-numeric:tabular-nums;
+  font-weight:650;
+  color:var(--primary);
+  min-width:1.8em;
+  text-align:right;
+}
+@media (max-width:640px) {
+  .scorer-row { grid-template-columns:1fr; }
+  .scorer-row .pt { text-align:left; }
+}
+.scorer-out {
+  margin-top:14px;
+  padding:12px 16px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-s);
+  background:var(--surface);
+  font-size:var(--fs-14);
+}
+.scorer-out b { color:var(--primary); }
+.scorer-out .warn { color:var(--accent-ink); font-weight:650; }
+.scorer-req {
+  margin-top:10px;
+  font-size:var(--fs-13);
+  color:var(--muted);
+}
+.scorer-req ul { margin:4px 0 0; padding-left:1.3em; }
+
+/* 扩产时序 */
+.ramp-legend {
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+  font-size:var(--fs-12);
+  color:var(--muted);
+  margin-top:8px;
+}
+.ramp-legend .k {
+  display:inline-block;
+  width:14px;
+  height:3px;
+  border-radius:2px;
+  vertical-align:0.22em;
+  margin-right:6px;
+}
+</style>
+</head>
+<body data-page="m09">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">模块 9 · 四铁律</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">第三层 · 投资判断 · 模块 9 / 14</p>
+      <h1>四铁律</h1>
+      <p class="core-q"><b>核心问题：</b>怎么把「AI 有需求」翻译成「这家公司真的能拿到定价权」？为什么同一波 AI 存储热里，SK 海力士能做出 47% 的季度营业利润率，而光模块厂拼到毛利也只有 30% 出头？</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">学完这个模块，你要能独立回答（现在答不上来是正常的）</span>
+      <ul style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>「四铁律」是本课程自创的打分框架，不是行业通用工具。它把已核验的四个物理机制打包成一张打分表——请说出这四条是什么、每一条的核心问句是什么、每条最硬的公开证据在哪里查。</li>
+        <li>SK 海力士 3Q25 营业利润率 47%、AAOI 2025 年全年毛利率 30%——两家都受益于 AI 数据中心投资，为什么利润弹性差一档？用四铁律逐条打分给出答案。</li>
+        <li>2022 年上半年芯片交期还在 27 周，年底同一家分析机构报出「几年来最大单月降幅」，全行业下季度砍单——用「库存弹性」和「扩产创伤」两条铁律解释，为什么下行来得那么快、以及为什么「这一次不会重演」的说法值得警惕。</li>
+      </ul>
+    </div>
+
+    <ul class="concepts" aria-label="本模块概念清单">
+      <li>Bottleneck 瓶颈</li><li>Monopoly 垄断</li><li>Inventory Elasticity 库存弹性</li><li>扩产 PTSD</li><li>lead time</li><li>LTA 长约</li><li>take-or-pay</li><li>预付款</li><li>定价权</li><li>disciplined capex</li><li>渠道库存</li><li>直供</li>
+    </ul>
+
+    <div class="tabs" data-tabs>
+      <div class="tablist" role="tablist" aria-label="模块内容">
+        <button role="tab" id="tab-a" aria-controls="panel-a" aria-selected="true">本质</button>
+        <button role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false">怎么判断</button>
+        <button role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false">练习</button>
+      </div>
+
+      <!-- ==================== 本质 ==================== -->
+      <section role="tabpanel" id="panel-a" aria-labelledby="tab-a" class="prose">
+
+        <p style="font-size:var(--fs-15);color:var(--muted)">先讲清楚这一条：<strong>「四铁律」是本课程整理的自有分析框架，不是行业通用工具</strong>——你在券商报告或财报电话会里不会看到「四铁律」这四个字。它做的事，是把前面模块已经建过的四个物理机制打包成一张可对号入座的打分表：每一条都有出处、有机制、有真实锚点。本页写的每个数字都能回源；每条铁律都能被反例证伪。这一点是本框架和「万能公式」的区别。</p>
+
+        <h2>1. 为什么要有一张打分表：从「有需求」到「有定价权」还差四关</h2>
+        <p>面对同一波 AI 需求，市场里同时冒出十几种叙事——「AI 长周期」、「HBM 三家寡头」、「CoWoS 售罄」、「光模块 800G 起量」、「近线盘冷存储」、「电力液冷卡口」……哪条硬？哪条软？哪一条是真的能兑现成毛利率？直觉靠不住，必须放到秤上称。</p>
+        <p>秤是什么？这一课程的答案是：<strong>看它能不能同时满足下面四个条件</strong>——瓶颈、垄断、低库存弹性、扩产创伤。四条全过，才算是真正的「多年 sold out + 高毛利率 + 供给追不上」结构。缺一条，故事会继续讲，但兑现的时间表和高度会打折。</p>
+
+        <div class="tenets">
+          <div class="tenet">
+            <div class="no">铁律一 · Bottleneck</div>
+            <div class="t">瓶颈</div>
+            <div class="d">出货 = 最短板。真瓶颈才是拿走定价权的那个环节，也是预付款和 take-or-pay 的收款人。</div>
+          </div>
+          <div class="tenet">
+            <div class="no">铁律二 · Monopoly</div>
+            <div class="t">垄断 / 有效寡头</div>
+            <div class="d">卖方少 + 客户切不动 = 定价权。三家寡头不一定够；「有份额」和「有定价权」是两件事。</div>
+          </div>
+          <div class="tenet">
+            <div class="no">铁律三 · Inventory Elasticity</div>
+            <div class="t">库存弹性</div>
+            <div class="d">库存能吸收多少需求波动。渠道厚 = 反转凶；直供无库存 = 涨价稳、下行也钝。</div>
+          </div>
+          <div class="tenet">
+            <div class="no">铁律四 · Expansion PTSD</div>
+            <div class="t">扩产创伤</div>
+            <div class="d">上一轮扩产被套后的集体记忆。有创伤 = 供给刹车/油门都慢，缺口会持续得更久。</div>
+          </div>
+        </div>
+
+        <p>下面四小节，每一条都建在前面模块已经推过的机制上——不新引入物理原理，只把它们打包成一个投资判断动作。看完四小节之后，第 6 节用两家上市公司同期财报做一次真实对照：<strong>同一波 AI 需求，四条打满 vs 只打两条，兑现在毛利率上的差距是多少</strong>。</p>
+
+        <h2>2. 铁律一 · Bottleneck（瓶颈）：出货 = 最短板，而不是最长板</h2>
+        <p><strong>核心机制</strong>：模块 3 已经推过——一张 AI 加速卡出货，要 GPU、HBM、CoWoS 三个环节同时到位，缺哪个都出不了货，出货量等于三者最小的那个。把这条从产品层扩到产业链层，就是本铁律：<strong>整条链的收入被最紧的那个环节挟持，短板环节接得住需求的全部预付款和涨价，其他环节只能等着</strong>。</p>
+
+        <p><strong>真实锚点（这一波已经在合同层坐实）</strong>：</p>
+        <ul>
+          <li><strong>台积电 CoWoS 是当前最硬的瓶颈。</strong>台积电 CEO 魏哲家在 2023Q4 至 2024Q2 的电话会里反复讲同一件事：AI 芯片先进封装「supply very tight」「will not balance out demand until 2025 or 2026」；2024 年 CoWoS 产能相比前一年翻倍，2025 年再翻一倍，仍不够<span class="badge badge-verified">已核验 · 台积电 2024 电话会与后续披露</span>。到 2026 年，行业统计口径下 CoWoS-L/S 依然 fully booked、扩产目标是从 2024 年月产约 3.5 万片翻到 2026 年末约 13 万片<span class="badge badge-verified">已核验 · TrendForce 与 Silicon Analysts 2025-12/2026</span>——四倍产能还接不住需求，这是短板的字面证据。</li>
+          <li><strong>HBM 是同一时期第二硬的瓶颈。</strong>三家 DRAM 大厂 2024-2026 分别宣布 HBM 与整体 DRAM/NAND 产能多年 sold out（美光、SK 海力士、模块 7 已建）。</li>
+          <li><strong>ASML EUV 是先进制程扩产的硬瓶颈</strong>——一家独供，2024 全年只交付 44 台（模块 2 已建）。</li>
+        </ul>
+
+        <p><strong>反例（这波里同样受益于 AI，但不是瓶颈）</strong>：以太网光模块。同期 AAOI（Applied Optoelectronics）四季度和竞争对手 Lumentum、Coherent、Ciena 一起吃到 800G/1.6T 需求，2025 年全年收入 4.56 亿美元、翻倍于 2024 年的 2.49 亿——增长很凶，但<strong>市场上有多家能做，缺口是「产能不够」，不是「只有我能做」</strong>。相应地，2025 全年 GAAP 毛利率 30%、非 GAAP 30.9%<span class="badge badge-verified">已核验 · AAOI 官方 4Q25 业绩公告</span>——比 2024 年 24.8% 有提升，但没有出现「多年 sold out + 毛利率跳升」的形态。有需求 ≠ 有瓶颈。</p>
+
+        <p><strong>第一反应问句</strong>：这个环节，如果它的产能翻倍，出货和收入会翻倍吗？答「是」= 它是当前的瓶颈；答「否，客户会转去下一家」= 它是竞争者之一，不是瓶颈。</p>
+
+        <p><strong>失效边界</strong>：<strong>瓶颈会漂移</strong>——今天的瓶颈，明天可能不是。CoWoS 扩产到位后，HBM 就可能变成新的短板；HBM 到位后，先进制程逻辑晶圆或者电力散热可能接棒。这也是为什么四铁律不是一次性打分，是季度动作（模块 10 讲周期位置时接手）。</p>
+
+        <h2>3. 铁律二 · Monopoly（垄断/有效寡头）：卖方少不等于定价权</h2>
+        <p><strong>核心机制</strong>：卡 1 建立过——供给扩不动、需求要抢的，才是稀缺资产。但稀缺的第二层是：<strong>客户能不能换供应商？</strong>换不动 = 有效垄断；换得动 = 三家一起涨、一起跌。模块 7 讲过 HBM 是「多年 take-or-pay 战略客户协议」制、模块 3 讲过 CoWoS 由台积电占绝对主导——这是「客户切不动」的两个典型现场。</p>
+
+        <p><strong>关键区分</strong>：「份额高」和「有定价权」是两回事。DRAM 全球是三家寡头（三星 36% + SK 海力士 32.1% + 美光 22.4%，2025Q4 TrendForce 口径，模块 7 已建）——这是有效寡头。但 HBM 又是三家里更窄的一层：真正稳定通过 Nvidia 认证、拿到主流份额的只有 SK 海力士（HBM 全球市占约 56%，模块 7 已建）；同一时期三星 HBM3E 在 Nvidia 认证反复受挫（模块 7 已建）——这就是「掉队瞒不住」在四铁律层的表现（卡 8）：即便份额在，认证不过，那一轮就出局。</p>
+
+        <p><strong>真实锚点（垄断兑现为定价权的最强现场）</strong>：SK 海力士 3Q25 财报——季度营收 24.4 万亿韩元、营业利润 11.38 万亿韩元、<strong>营业利润率 47%</strong>，季度营业利润首次破 10 万亿韩元<span class="badge badge-verified">已核验 · SK 海力士 3Q25 官方财报公告</span>。同期公司披露 2026 年 DRAM 与 NAND 产能全部售罄。营业利润率四成七、连续多个季度合同层证据在场——这是「垄断 × 瓶颈」的可测边界。</p>
+
+        <p><strong>反例（有多家玩家、每家都有份额，但客户切得动）</strong>：数据中心以太网光模块。AAOI 2025 增长确实由 800G/1.6T 拉动，同时 Lumentum、Coherent、Ciena 都能供货，超大规模云厂商可以在多家之间切分订单。行业本身在 AI 需求下扩张，但没有单一玩家可以要求 take-or-pay——所以毛利率就停在 30% 附近，不会跳到 40%+。<strong>同一份需求，被垄断者收走的部分溢价被多家玩家的竞争摊掉了</strong>。</p>
+
+        <p><strong>第一反应问句</strong>：这个环节的关键客户，如果不用这家用另一家，付出的代价是多少？答「几个月的重新认证 + 大概相同的价格」= 无有效垄断；答「一整代产品掉队、必须重新做 HBM/CoWoS 认证周期」= 有效垄断。</p>
+
+        <p><strong>失效边界</strong>：<strong>垄断者也可能自己搞砸</strong>。三星就是活样本——它同时具备份额和产能，但因为 HBM3E 认证问题一度拿不到 Nvidia 主流订单（模块 7 已建）。这说明「有效垄断」不是自动的，得看当代产品的认证卡位。垄断这条要跟卡 8（技术代际）一起看——掉队一代，垄断变纸面。</p>
+
+        <h2>4. 铁律三 · Inventory Elasticity（库存弹性）：库存能吸收多少需求波动</h2>
+        <p><strong>核心机制</strong>：卡 6 建过——库存结构决定波动结构。库存弹性指的是<strong>产业链上下游有多少「储物空间」能吸收需求的短期波动</strong>：</p>
+        <ul>
+          <li><strong>高弹性（渠道库存厚）</strong>——需求突然涌来时先把渠道库存吃空、价格才涨；需求突然退时先把渠道库存吐出、价格才崩。反应慢一层，但反转时更凶（有「牛鞭效应」的合同层放大，卡 5）。</li>
+          <li><strong>低弹性（直供无库存）</strong>——需求变化直接压到产能，价格反应更快；反转时也钝——因为没库存可吐，先动的只有订单。</li>
+        </ul>
+
+        <p><strong>直观看什么</strong>：下面这个动画拿同一波「需求先涨后落」的曲线打进两条产业链——左边普通 DRAM（渠道厚，商品化），右边 HBM（直供无库存）。看两条价格轨迹的形态差异——不是幅度差，是<strong>拐点先后 + 反转陡度</strong>差。</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">库存弹性对比 · 同一波需求 → 两种价格轨迹</span>
+            <span class="viz-sub">看什么：普通 DRAM 有渠道库存缓冲，价格晚涨但陡跌；HBM 直供无库存，价格早涨但下行钝——反转的凶险度差一档。为教学示意，形态参考 2020-2023 存储周期与同期 HBM 沿革。</span>
+          </div>
+          <div class="viz-foot" style="margin-bottom:8px">
+            <button class="btn" type="button" id="stkPlay" aria-pressed="false">播放对照</button>
+            <button class="btn btn-ghost" type="button" id="stkReset">重置</button>
+            <span style="font-size:var(--fs-13);color:var(--muted);margin-left:auto" id="stkPhase">阶段：就绪</span>
+          </div>
+          <div class="stock-cmp">
+            <div>
+              <h4>普通 DRAM（渠道厚 · 高弹性）</h4>
+              <div class="side-tag">典型销售路径：现货 + 3-6 个月合同价</div>
+              <div id="stkA"></div>
+            </div>
+            <div>
+              <h4>HBM（直供长约 · 低弹性）</h4>
+              <div class="side-tag">典型销售路径：多年 take-or-pay，无现货</div>
+              <div id="stkB"></div>
+            </div>
+          </div>
+          <div class="stock-lgd">
+            <span><span class="k" style="background:var(--viz-s3)"></span>需求指数</span>&nbsp;&nbsp;
+            <span><span class="k" style="background:var(--accent)"></span>渠道库存水位</span>&nbsp;&nbsp;
+            <span><span class="k" style="background:var(--danger)"></span>价格</span>
+          </div>
+          <div class="viz-readout" id="stkReadout" aria-live="polite">点「播放对照」看同一波需求进入两种库存结构的差异。</div>
+        </div>
+
+        <p><strong>真实锚点（正反两面都在过去五年里发生过）</strong>：</p>
+        <ul>
+          <li><strong>反面（低弹性怎么保护涨价）</strong>：2024-2026 HBM 涨价的持续性——由于 HBM 是直供长约、无现货市场，价格上行没有渠道库存来吸收，多年 sold out 的合同结构直接推着毛利率上台阶（SK 海力士 3Q25 营业利润率 47% 是它的兑现，本模块第 3 节）。</li>
+          <li><strong>正面（高弹性怎么放大反转）</strong>：2021-2023 普通 DRAM 与 NAND。lead time 从常态 10-14 周一路拉到 2022 年中约 27 周，广受报道；2022 年 10 月 17 日彭博援引 Susquehanna 数据「几年来最大单月降幅」（模块 2 已建）——渠道库存开始吐货。随后半年三星 Q1 2023 营业利润跌到 6,400 亿韩元（-96% YoY），半导体分部亏损 4.58 万亿韩元<span class="badge badge-verified">已核验 · 三星财报 / CNBC 2023-04</span>。同一批公司，一年之内从「货卖爆」翻成深度亏损——这就是库存弹性把需求波动放大到财务报表的样子。</li>
+        </ul>
+
+        <p><strong>第一反应问句</strong>：这个环节需求突然减半，价格会几个月内跌 40%（高弹性），还是一年内稳步下移 15%（低弹性）？<strong>答不出来 = 还没搞清楚它的销售路径，工具二（怎么判断页）会给操作方法</strong>。</p>
+
+        <p><strong>失效边界</strong>：<strong>库存弹性会变。</strong>2022-2023 的普通 DRAM 是高弹性；到 2025-2026，HBM 挤占普通 DDR5 产能后，普通 DRAM 也开始出现「产能有承诺、渠道被清空」的部分低弹性形态——1Q26 TrendForce 上修 conventional DRAM 涨幅至 +90-95% QoQ（模块 7 已建）。<strong>同一品类，销售路径变了，弹性就变了</strong>。</p>
+
+        <h2>5. 铁律四 · Expansion PTSD（扩产创伤）：上一轮的伤是这一轮的护城河</h2>
+        <p><strong>核心机制</strong>：这条最反直觉。卡 1 已经推过——供给的时间常数是「年」（扩产 24-36 个月），刹车油门都慢。但物理慢只是一半。<strong>另一半是心理慢</strong>：上一轮扩产被套过的行业，本轮不敢扩、扩得慢、扩前先要几个季度的合同证据。这是「集体记忆」在资本开支决策里的直接表现——存储业几十年周期反复养出来的一种本能。</p>
+
+        <p>下面这个动画把物理慢和心理慢叠加起来看：一条需求跳升，供给两三年后到——中间的缺口在时间上有多长？两种响应速度差多少？</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">扩产时序 · 需求跳升 → 供给几时到 → 缺口有多久</span>
+            <span class="viz-sub">看什么：需求变化是月，供给变化是年——中间的缺口就是长约与预付款的收款窗口。加上「扩产创伤」时长（本轮扩产前先等几个季度确认真需求），缺口再延长半年。为教学示意，滑块可调。</span>
+          </div>
+          <div class="ctl-panel" style="margin:10px 0">
+            <div class="ctl">
+              <label for="rampBuild">扩产工程周期（月）</label>
+              <input type="range" id="rampBuild" min="12" max="36" step="2" value="24">
+              <output id="rampBuildOut">24 月</output>
+            </div>
+            <div class="ctl">
+              <label for="rampPtsd">扩产创伤延迟（月）</label>
+              <input type="range" id="rampPtsd" min="0" max="12" step="1" value="6">
+              <output id="rampPtsdOut">6 月</output>
+            </div>
+            <div class="viz-foot" style="margin:0">
+              <button class="btn btn-ghost" type="button" data-ptsd-preset="12,0">数字设计（弹性快）</button>
+              <button class="btn btn-ghost" type="button" data-ptsd-preset="24,3">封装（中）</button>
+              <button class="btn btn-ghost" type="button" data-ptsd-preset="30,9">存储（有伤）</button>
+              <button class="btn btn-ghost" type="button" data-ptsd-preset="36,12">先进逻辑（最慢）</button>
+            </div>
+          </div>
+          <div id="rampViz"></div>
+          <div class="ramp-legend">
+            <span><span class="k" style="background:var(--viz-s3)"></span>需求</span>
+            <span><span class="k" style="background:var(--primary-2)"></span>供给（无创伤）</span>
+            <span><span class="k" style="background:var(--accent)"></span>供给（有创伤）</span>
+            <span><span class="k" style="background:oklch(0.85 0.08 45);border:1px solid var(--accent-ink)"></span>缺口窗口</span>
+          </div>
+          <div class="viz-readout" id="rampReadout" aria-live="polite"></div>
+        </div>
+
+        <p><strong>真实锚点</strong>：三家 DRAM 大厂 2023 那次深度亏损。</p>
+        <ul>
+          <li><strong>亏损锚</strong>——三星 Q1 2023 营业利润从上年同期 14.12 万亿韩元跌到 6,400 亿（-96% YoY），半导体分部亏损 4.58 万亿韩元；4 月 7 日三星官方宣布「meaningful level」减产，正式加入 SK 海力士、美光的减产阵营<span class="badge badge-verified">已核验 · 三星官方 2023-04-07 / CNBC / TechCrunch</span>。同期美光和 SK 海力士也在减产：2023 年上半年 DRAM wafer starts 削减 20-30%<span class="badge badge-verified">已核验 · Wikipedia 综合业界统计</span>。三星整体产能一度砍到约五成<span class="badge badge-assume">估算 · 综合行业报道</span>。</li>
+          <li><strong>创伤锚</strong>——这段深度亏损塑造了行业未来两三年的资本开支语言。SK 海力士在其后的电话会里反复强调「CapEx discipline based on demand visibility」「maintain capex-to-sales ratio in mid-30% range on rolling three-year average」<span class="badge badge-verified">已核验 · SK 海力士 3Q25 / 4Q25 电话会</span>——这套「以需求可见度为前提做资本开支」的语言，就是扩产创伤的行业级证据。三星 2025 年 CapEx 计划约 47.4 万亿韩元<span class="badge badge-verified">已核验 · 公司公告 2025</span>——数字看着大，但同期营收/需求增长的斜率更陡，产能增长跟不上需求增长。</li>
+        </ul>
+
+        <p><strong>为什么创伤兑现为缺口</strong>：2024-2026 的 AI 需求穿透存储金字塔（模块 7 已建）时，前一次减产砍掉的产能没有立刻回来——因为管理层把资本开支决策上了「需求可见度」这一层锁：不签下 take-or-pay，不上产能。这套锁把「合同层证据」和「供给释放」直接绑在一起。<strong>所以本轮 sold out 到 2027-2028 年的合同，不只是需求量大，也是供给端主动收紧的选择</strong>。</p>
+
+        <p><strong>第一反应问句</strong>：这个环节的主要玩家，上一轮有没有被深度亏损过？他们本轮的资本开支语言里，有没有「discipline」「demand-led」「visibility」这种词？两个都是——扩产创伤在场，缺口窗口会延长半年到一年。</p>
+
+        <p><strong>失效边界</strong>：<strong>PTSD 可以被治好，也可能没PTSD</strong>——如果本轮涨价周期够长、够甜、龙头之间又出现份额争夺，管理层最终会踩油门，创伤会消退（历史上存储业每一轮都是这样收尾的，卡 5、模块 4 讲）。此外，扩产创伤是「集体表现」——单一玩家（比如新入场的中国大陆存储厂）没有 PTSD 时，可能成为破坏者，逻辑不同（模块 12 讲跨市场差异）。</p>
+
+        <h2>6. 四条合在一起 · 只满足一半会怎样：SK 海力士 vs AAOI 的真实对照</h2>
+        <p>拿两家上市公司同一年的公开财报做一次真实对照，四条铁律一起看：</p>
+        <ul>
+          <li><strong>SK 海力士（HBM 供应商）</strong>——瓶颈：<strong>是</strong>（HBM 是当前最紧的存储层）；有效垄断：<strong>是</strong>（三家中稳定通过 Nvidia 认证的目前只有它）；库存弹性：<strong>低</strong>（HBM 直供长约，无渠道库存）；扩产创伤：<strong>在场</strong>（2023 深度亏损，本轮 CapEx discipline 语言）。<strong>四条全过</strong>。兑现：3Q25 营业利润率 47%、季度营业利润破 10 万亿韩元、2026 产能全部售罄<span class="badge badge-verified">已核验</span>。</li>
+          <li><strong>AAOI（数据中心以太网光模块厂）</strong>——瓶颈：<strong>不是</strong>（Lumentum/Coherent/Ciena 都在供货）；有效垄断：<strong>不是</strong>（同上）；库存弹性：<strong>较高</strong>（渠道有一定库存深度，销售是逐季订单）；扩产创伤：<strong>不明显</strong>（光模块厂上一轮没有集体深度亏损的相同规模）。<strong>四条中 0-1 条</strong>。兑现：2024 全年毛利率 24.8%、2025 全年 30%、收入从 2.49 亿翻到 4.56 亿美元<span class="badge badge-verified">已核验 · AAOI 官方 4Q25</span>——收入增长很凶，但毛利率天花板比 SK 海力士低一个数量级。</li>
+        </ul>
+
+        <div class="derive">
+          <span class="expr">SK 海力士 3Q25 营业利润率 47%　vs　AAOI 2025 全年毛利率 30%（GAAP）</span>
+          <span class="res">≈17pt 差</span>
+          <span class="unit">同一波 AI 需求 · 差距不是需求，是四铁律的打分差</span>
+        </div>
+
+        <p>差距的来源不是「哪个赛道更好」，是<strong>同一波 AI 需求进入不同产业结构时，被四条铁律留在生产者手里的部分不一样</strong>：SK 海力士拿到「多年 sold out + 直供长约 + 集体扩产纪律」——溢价被合同结构完整保留；AAOI 拿到「短期订单 + 多家竞争 + 客户可切分」——溢价被竞争摊掉一半以上。</p>
+
+        <p>这也解释了本模块开篇的验收题二。<strong>兑现在毛利率上的差距，是四条铁律打分差的物理后果</strong>。看到这里，「AI 长周期」这类叙事在你面前就该被拆成四小问：卡在瓶颈那条吗？有有效垄断吗？低库存弹性吗？扩产创伤在场吗？——四小问逐条问过，才知道叙事能兑现到什么高度。</p>
+
+        <div class="note">
+          <span class="note-label">不要学太深</span>
+          <p>不用记打分器的每种权重、也不用背哪家公司四条全过——公司会变、周期会变。要带走的是四个能生成判断的模型：<strong>瓶颈 = 出货短板 = 定价权收款人</strong>、<strong>垄断 = 客户切不动，不是份额高</strong>、<strong>库存弹性 = 波动被吸收 vs 直接压到产能</strong>、<strong>扩产创伤 = 上一轮亏损给本轮供给上锁</strong>。四条打完，还要过模块 10（周期位置）和模块 11（估值）——四铁律是「结论强度」不是「买卖信号」。</p>
+        </div>
+      </section>
+
+      <!-- ==================== 怎么判断 ==================== -->
+      <section role="tabpanel" id="panel-b" aria-labelledby="tab-b" class="prose" hidden>
+
+        <p style="font-size:var(--fs-15);color:var(--muted)">这一页只交付三件真实存在的工具。每件都按同一结构给齐：<strong>来源 → 机制 → 案例 → 操作 → 失效</strong>。找不到出处、无法用真实案例验证的「规则」，不会出现在这里。四铁律本身是本课程自创的打分框架（见「本质」页声明段），落地时靠下面三件真实工具去查证。</p>
+
+        <h2>工具一：合同层证据 —— LTA / take-or-pay / 预付款是垄断硬度的收款凭证</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>厂商在财报电话会与业绩材料里披露长期协议、预付款和产能分配状态——公开、可查、有会计科目对应。典型现场：美光 FY26 Q3 电话会 16 份 take-or-pay 战略客户协议合计 $100B 最低合同收入<span class="badge badge-verified">已核验 · 电话会备稿</span>；SK 海力士 CEO Kwak 2024-05-02「HBM 2024 已售罄、2025 差不多售罄」<span class="badge badge-verified">已核验 · Korea Herald</span>；台积电 2024 年报披露客户预付款项目累计约 NT$291 亿新台币量级——具体是把客户先支付的产能保留款计入资产负债表<span class="badge badge-verified">已核验 · 台积电 2024 年报综合披露与业界解读</span>；希捷「近线 HDD 产能卖到 2027 年末」、西数「2026 全年产能对前七大客户售罄、长约延至 2028」<span class="badge badge-verified">已核验 · 见模块 7</span>。</div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 2、3 节推过：只有真正的瓶颈+有效垄断者，才能要求客户签「不拿货也要付钱」的合同或预付真金白银。买家不会甘心把钱压在空气上——除非没有其他选择。所以合同层证据不是营销话术，是「垄断硬度」的账面凭证。它同时体现在四条铁律里：<strong>瓶颈</strong>（客户为拿货接受违约成本）、<strong>垄断</strong>（客户没法切走）、<strong>低库存弹性</strong>（合同锁量意味着没有渠道缓冲）、<strong>扩产创伤</strong>（供给方要看到合同才肯扩）。四条同时兑现在同一份合同上。</div></div>
+          <div class="chain-row"><b>案例</b><div>把美光 HBM 收入曲线摆一遍：2024 年首次说「HBM 售罄」时收入几乎从零起步；FY25 Q2 HBM 单季首破 10 亿美元，Q4 约 20 亿、年化近 80 亿；HBM 加高容量内存条组合全年 100 亿美元、五倍于上年<span class="badge badge-verified">已核验 · 美光 FY25 Q2/Q4，见模块 3/7</span>。这是「合同层预告 → 收入端逐季坐实」的完整时间线。同一逻辑在台积电身上体现在预付款科目：<strong>NT$291 亿新台币的客户预付款没被藏在电话会里，就写在资产负债表附注里——愿意付这笔钱的客户，是在为「铁律一（瓶颈）× 铁律二（垄断）」用真金买账</strong>。合同层证据的正确用途是<strong>校准四铁律里「瓶颈 × 垄断」这两条的硬度</strong>，不是抄底逃顶的秒表——真金付出后，收入兑现仍需要几个季度爬坡。</div></div>
+          <div class="chain-row"><b>操作</b><div>免费公开数据源：财报电话会转录（公司投资者关系页、Seeking Alpha 等转录站）、公司年报/10-K 附注中的「合同负债/客户预付款」（Contract Liabilities / Advance Receipts from Customers）科目。按下面这张<strong>由本页机制推导</strong>的硬度对照表读措辞：<br>「宣布投资 XX 亿扩产」——最软，只是意向，随时可撤；<br>「产能已分配 (allocated)」——中软，客户还有议价空间；<br>「XX 年产能已售罄 (sold out)」——中硬，看是不是 take-or-pay 型合同；<br>「take-or-pay 多年战略客户协议 + 预付款」——最硬，违约有明确对价，账面上有科目。<strong>看到最硬那档 = 铁律一 × 铁律二 至少各打 2 分</strong>。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①下行期长约会被重谈——历史上存储战争里反复上演，客户可以拖延、拆单、走仲裁（模块 4 与模块 7 已建）；②「售罄」口径含糊——可能是「所有意向订单加起来 = 产能」，也可能是「合同下已锁量 = 产能」，硬度差一档；必须查资产负债表上合同负债的实际变化；③预付款不都是垄断证据——有些是财务安排（比如客户/关联方之间的融资），不构成「客户对短缺的下注」，要看是否落到具体产能上；④合同金额大 ≠ 净利润大——$100B 是 minimum revenue，不是利润；不同产品的毛利率和爬坡节奏差别巨大（模块 7 迁移二的失效边界）。</div></div>
+        </div>
+
+        <h2>工具二：交期 × 渠道库存 = 库存弹性的量化读数</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>Susquehanna Financial Group 逐月统计全行业芯片交期（模块 2 已建），彭博与路透每月转述；行业常态 10-14 周，回到该区间才算短缺结束<span class="badge badge-verified">已核验 · 彭博等报道</span>。另一半是<strong>渠道库存数据</strong>：分销商（Arrow、Avnet 等）财报里的库存周转天数（Inventory Days Outstanding，DIO）、Applied Optoelectronics/AAOI 这类模块厂季度库存净额、微控制器分销商 IHS/Omdia 的渠道存货指数（有些为付费报告，业务部分为免费转述）。</div></div>
+          <div class="chain-row"><b>机制</b><div>库存弹性不是玄学，就是<strong>「渠道能吸收几周需求」</strong>——交期读的是订单端排队长度、库存周转天数读的是渠道端存货深度。两者组合成同一个物理量的两个视角：<br>· 交期短 + 库存周转天数正常 = 供需平衡；<br>· 交期长 + 库存周转天数低 = 真短缺，弹性正在被消耗；<br>· 交期长 + 库存周转天数抬升 = <strong>重复下单污染或囤货，弹性还在，但已被订单虚增蒙住</strong>；<br>· 交期缩短 + 库存周转天数抬升 = <strong>拐点确认，弹性反向释放（下行凶险信号）</strong>。这是四张组合，第四张就是 2022 年 10 月的现场。</div></div>
+          <div class="chain-row"><b>案例</b><div>2021-2023 全球芯片周期完整走过一遍：常态 10-14 周 → 2021-08 破 20 周 → 2022 年中约 27 周见顶（订单虚增中）→ 2022-10-17 彭博援引 Susquehanna「单月缩短四天、几年来最大降幅」<span class="badge badge-verified">已核验 · 彭博</span>——第四种组合出现 → 随后半年三星 Q1 2023 营业利润跌到 6,400 亿韩元（-96% YoY），存储行业全面减产（本质页第 5 节）。这轮反转的凶险度，就是「铁律三 库存弹性 高」× 「铁律四 扩产创伤 尚未在场」的双重放大。对照现在的 HBM：无现货交期可读、无渠道库存可查——工具二在 HBM 上「读不出信号」这件事本身就是信号：它是低弹性直供品类，弹性维度上不适用交期温度计（模块 7 工具一失效①）。</div></div>
+          <div class="chain-row"><b>操作</b><div>免费公开数据源：Susquehanna 数据经彭博/路透转述；分销商季报（Arrow、Avnet 等）披露 DIO；模块厂季报库存净额与「渠道库存回归正常」措辞。<strong>由本页机制推导</strong>的四张组合表就是操作清单：把每季度读到的「交期方向 + 渠道库存方向」记进两个格子，落到哪一格就是当前的库存弹性状态。跨模块提示：这套工具与模块 2 的交期温度计、模块 4 的牛鞭效应、模块 7 的产品结构 mix 是同一物理量在不同尺度上的读数。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①重复下单污染——缺货时客户向多家供应商重复下单，交期本身被订单虚增推高，然后一起消失（模块 2 工具一失效①）；②直供长约品类钝化——HBM 这类被 take-or-pay 锁定、无渠道库存的品类，交期与库存指标都读不到，弹性维度上不适用该工具；③口径错配——不同渠道对「分销商库存」的定义包不包括在途、包不包括保税仓，跨季度可比性差；跨市场比较之前先确认口径（欧美渠道 vs 台韩日供应链）。</div></div>
+        </div>
+
+        <h2>工具三：扩产语言 —— 电话会措辞是扩产创伤的可测边界</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>存储厂 2023-2026 的季度电话会给出了一整套关于资本开支的<strong>行业级共同措辞</strong>。三阶段沿革：2023 减产期用「meaningful level cuts」「production discipline」；2023-2024 底部用「disciplined capex」「focus on profitability, not market share」；2025-2026 上行期改用「demand-led capex」「capex-to-sales ratio in mid-30% range on rolling three-year average」（SK 海力士 3Q25 电话会措辞）<span class="badge badge-verified">已核验 · SK 海力士 3Q25 / 4Q25 电话会</span>。Samsung 2025 CapEx 计划约 47.4 万亿韩元，2026 大幅上修至逾 110 万亿<span class="badge badge-verified">已核验 · Samsung 公司公告 2025 / 2026</span>——数字扩了但斜率仍慢于需求增长斜率。这套语言在模块 4 讲存储战争与掌门人决定论时会更完整。</div></div>
+          <div class="chain-row"><b>机制</b><div>扩产创伤在会计上没有「PTSD 科目」，只能通过<strong>管理层措辞变化 + 实际资本开支斜率 + 单位产能扩张速度</strong>三条交叉读。为什么关注措辞？因为供给决定权在管理层手里；管理层措辞记录的是他们在拍板时的心态。「discipline」「demand-led」「visibility」出现在电话会里，等于把「本轮不为市占率打仗」写在纸面上——这是本轮供给端不会主动破坏价格的公开承诺。</div></div>
+          <div class="chain-row"><b>案例</b><div>2023 三家 DRAM 大厂减产深度：三星 2023-04 官方「meaningful level」减产，Micron/SK Hynix 早期 wafer starts 削减 20-30%<span class="badge badge-verified">已核验 · 三星官方 / Wikipedia 综合业界统计 / TrendForce 2023</span>；随后两年这套语言演化到 2025-2026 的「demand-led capex + mid-30% capex-to-sales ratio」。<strong>结果对照</strong>：SK 海力士 3Q25 营业利润率 47%、Samsung 存储部门在同期恢复正利润率（本质页第 5、6 节）。这套语言持续 4-6 个季度是硬信号；持续一两季然后管理层改口是软信号（往往说明份额争夺快回来了）。</div></div>
+          <div class="chain-row"><b>操作</b><div>免费公开数据源：三家 DRAM 大厂季度电话会转录（公司投资者关系页 / Seeking Alpha / Alpha Sense 等）；台积电 / SEMI 全球设备销售统计（模块 2 已建）交叉对照——「说 discipline」但设备订单同时飙升 = 措辞与行动不匹配。<strong>由本页机制推导</strong>的三阶段沿革参考表：<br>Phase A · 亏损底 = 「meaningful cuts」「production discipline」→ 铁律四打 2 分（创伤在场）<br>Phase B · 恢复中 = 「disciplined capex」「focus on profitability」→ 铁律四打 1-2 分<br>Phase C · 上行期 = 「demand-led capex」「visibility-based investment」→ 铁律四打 1 分（还未破锁）<br>Phase D · 破锁 = 恢复份额争夺、CapEx 绝对值飙升不再谈 discipline → 铁律四打 0 分（PTSD 治愈，缺口窗口收缩）</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①管理层可以随时改口——措辞是软证据，需要设备订单和实际 CapEx 数字硬证据交叉；②表态与实际支出不一致——「说 discipline，但 CapEx 绝对值同期跳升」是常见的行业级不一致（比如 Samsung 2026 CapEx 大幅上修，但仍在讲「demand-led」）；③单一厂商刹车、另外两家踩油门时，整体创伤消散——本条铁律读的是<strong>集体行为</strong>，不是任何单家的选择；④新入场者（比如没经历过上一轮周期的中国大陆存储厂）没有 PTSD，可能成为破坏者——跨市场读时要小心（模块 12）。</div></div>
+        </div>
+
+        <h2>操作清单：判断一个 AI 半导体标的</h2>
+        <p style="font-size:var(--fs-14);color:var(--muted)">以下每一项都由本页机制直接推导——不是独立工具，是三件工具与四条铁律的落地检查位。先用这份清单把四条铁律逐条问过一遍，再用下面的打分器把每条量化到 0-2 分。</p>
+        <ul class="checklist">
+          <li><label><input type="checkbox"><span><b>这个环节如果产能翻倍，收入会翻倍吗？</b>（依据：铁律一「瓶颈」——真瓶颈才吃得下扩产；本质页第 2 节 + 工具一合同层证据）</span></label></li>
+          <li><label><input type="checkbox"><span><b>关键客户如果换供应商，代价是几周还是几年？</b>（依据：铁律二「有效垄断」——「客户能不能切」而非「份额多高」；本质页第 3 节 + 卡 8 技术代际）</span></label></li>
+          <li><label><input type="checkbox"><span><b>需求突然减半，价格是几个月内跌 40%（高弹性）还是一年稳步下移 15%（低弹性）？</b>（依据：铁律三「库存弹性」；工具二交期 × 渠道库存组合表）</span></label></li>
+          <li><label><input type="checkbox"><span><b>主要玩家上一轮有没有集体深度亏损？管理层电话会里有没有 discipline / demand-led / visibility 的措辞？</b>（依据：铁律四「扩产创伤」；工具三三阶段沿革参考表）</span></label></li>
+          <li><label><input type="checkbox"><span><b>它当前处在周期哪一段？估值有没有把未来两年的打分定价完？</b>（依据：跨模块检查——铁律读结论强度，模块 10 读周期位置，模块 11 读估值买卖时点）</span></label></li>
+        </ul>
+
+        <p style="font-size:var(--fs-14);color:var(--muted);margin-top:14px">把四条问句量化：下面的打分器（每条 0-2 分、合计 0-8 分）由本页机制直接推导，与上面清单同源，交互形式便于对不同标的做横向对比。<strong>选一个预设，或对四条铁律各打 0-2 分，看它落在哪个结论强度</strong>。</p>
+
+        <div class="scorer">
+          <div class="picker">
+            <span style="font-size:var(--fs-13);color:var(--muted);margin-right:6px;align-self:center">预设：</span>
+            <button class="btn btn-ghost" type="button" data-preset="skh">SK 海力士（HBM）</button>
+            <button class="btn btn-ghost" type="button" data-preset="tsmc-cowos">台积电 CoWoS</button>
+            <button class="btn btn-ghost" type="button" data-preset="asml">ASML（EUV）</button>
+            <button class="btn btn-ghost" type="button" data-preset="aaoi">AAOI（以太网光模块）</button>
+            <button class="btn btn-ghost" type="button" data-preset="commodity-dram">普通消费级 DDR5</button>
+            <button class="btn btn-ghost" type="button" data-preset="blank">清空</button>
+          </div>
+          <div class="rows" id="scorerRows"></div>
+          <div class="scorer-out" id="scorerOut">先选一个预设，或对四条铁律各打 0-2 分。</div>
+          <div class="scorer-req" id="scorerReq"></div>
+        </div>
+      </section>
+
+      <!-- ==================== 练习 ==================== -->
+      <section role="tabpanel" id="panel-c" aria-labelledby="tab-c" class="prose" hidden>
+
+        <h2>决策复盘一 · 2024 年 5 月 2 日：HBM 三家寡头都在，你怎么选一家</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2024-05-02 · 事件已核验</p>
+          <h4>当天信息：韩国先驱报头条——SK 海力士 CEO Kwak Noh-jung 表示「HBM 2024 已经全部售罄，2025 供应也差不多售罄」<span class="badge badge-verified">已核验 · Korea Herald 2024-05-02</span>。当时市面上「能量产 HBM 的三家寡头」是三星、SK 海力士、美光；<strong>SK 海力士当天股价与 AI 存储板块整体上涨</strong>。你眼前是三家寡头，怎么选？先动手打分再看拆解。</h4>
+          <p class="case-note">对三家用四铁律逐条打分，先选一个动作。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>三家平均买（HBM 是寡头逻辑）</button>
+            <button type="button" data-pick>只买 SK 海力士</button>
+            <button type="button" data-pick>观望，等下一季财报数据</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>铁律一 · 瓶颈</b><div>三家都在 HBM 这一层，同属瓶颈环节——<strong>这一条三家平手，都 2 分</strong>。</div></div>
+              <div class="chain-row"><b>铁律二 · 有效垄断</b><div>关键分歧在这条。三家份额都在，但<strong>2024-2025 年真正稳定通过 Nvidia HBM3E 认证的只有 SK 海力士（HBM 全球市占约 56%，2026 数据）</strong>；同期三星 HBM3E 在 Nvidia 认证反复受挫，美光在追赶（模块 7 已建）。<strong>SK 打 2 分，三星和美光当时只能打 1 分</strong>——这就是「份额高但客户在切」的中间状态。</div></div>
+              <div class="chain-row"><b>铁律三 · 库存弹性</b><div>HBM 直供长约、无现货市场——三家都是低弹性，<strong>三家都 2 分</strong>。</div></div>
+              <div class="chain-row"><b>铁律四 · 扩产创伤</b><div>三家都经历了 2023 亏损底，都在讲「discipline」——<strong>三家都 2 分</strong>。</div></div>
+              <div class="chain-row"><b>合并总分</b><div>SK 8/8、三星与美光 7/8。分差看着小，兑现在毛利率上的差距就是本模块第 6 节那张对照——真正稳定拿到 Nvidia 认证的那家，把四条打满溢价完整保留。<strong>这就是「铁律二没打满，铁律三 × 铁律四打的分被稀释」的现场证明</strong>。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>这个推理给出的是<strong>当时打分的结论强度</strong>，不是股价必然涨。SK 海力士当天已跳，之后走势和 mix shift 兑现节奏、Nvidia GB200/GB300 需求实际到位速度、三星/美光在下一代 HBM4 的追赶都相关（模块 7 决策复盘一）。三星 2025 年下半年拿到 12-Hi HBM3E 认证的进度<span class="badge badge-verified">已核验 · 见模块 7</span>——铁律二可以在几个季度里重新洗牌，认证一过，分数就补齐。<strong>四铁律读的是当前打分，不是永远打分；季度动作</strong>。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>决策复盘二 · 2022 年 10 月 17 日：交期出现「几年来最大单月降幅」，你的存储持仓怎么办</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2022-10-17 · 事件已核验</p>
+          <h4>当天信息：彭博援引 Susquehanna 数据，全球芯片交期出现几年来最大的单月缩短<span class="badge badge-verified">已核验 · 彭博 2022-10-17</span>。你手上持有一批普通 DRAM 与 NAND 相关标的（消费级、渠道厚），也持有一小部分 AI 数据中心相关的直供长约品类。这条新闻对两种持仓意味着什么？</h4>
+          <p class="case-note">用四铁律先看两种持仓分别在哪一条上被打脸，再选动作。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>都不动，等下一季财报</button>
+            <button type="button" data-pick>清仓所有存储持仓</button>
+            <button type="button" data-pick>按库存弹性分层——高弹性砍、低弹性留</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>信号性质</b><div>「几年来最大单月降幅」是<strong>库存弹性反向释放</strong>的第一个可见信号（工具二第四种组合：交期缩短 + 渠道库存抬升）。它对高弹性品类（普通 DRAM、消费 NAND）是硬拐点信号；对低弹性品类（HBM 直供、企业级 SSD 长约）几乎读不出——低弹性品类的价格轨迹由合同层证据决定，不由现货交期决定。</div></div>
+              <div class="chain-row"><b>普通消费级 DRAM 打分</b><div>铁律一（瓶颈）0 分——渠道厚，短板不在这一层；铁律二（垄断）1 分——三家寡头是名义寡头，客户能切；铁律三（库存弹性）0 分——渠道厚、正在吐货；铁律四（扩产创伤）0 分——2022 年 10 月还没到深度亏损，创伤尚未在场。<strong>合计 1/8——反转风险极大</strong>。事后：随后半年三星 Q1 2023 营业利润 -96% YoY，全行业深度亏损（本质页第 5、6 节）。</div></div>
+              <div class="chain-row"><b>假设的 AI 直供品类打分</b><div>假设你当时手里有一小部分与 HBM/CoWoS/eSSD 长约相关的直供品类（这些品类在 2022 年 10 月的合同结构已经存在，只是市场还没定价 AI）——铁律三（库存弹性）2 分：直供长约无渠道库存可吐；交期信号对它读不出。铁律一至四各条也普遍打 1-2 分。<strong>合计 5-7/8——这条铁律层保护了这部分持仓</strong>。事后：HBM 由此走进 2024-2026 的三年 sold out 结构。</div></div>
+              <div class="chain-row"><b>操作</b><div>分层处理——把高弹性部分按拐点信号砍掉；把低弹性部分保留，改用工具一的合同层证据（LTA、take-or-pay、预付款）跟踪。这不是「都不动 vs 全清仓」的二选一——四铁律的用途就是让你在同一条新闻面前<strong>把持仓拆开对待</strong>。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>2022 年 10 月这个动作在事后看非常干净，但要说清楚三件事：①当时市场没有那么明确的「AI 直供 vs 消费商品」分层——AI 需求还在孕育期，直供品类的存在还没被广泛认知；②交期数据本身也可能被重复下单污染，第一时间看到「拐点」不等于拐点已经确认；③即便打分对了，仓位控制和退出节奏是模块 14 的功课，四铁律只保证「知道该动」，不保证「动得漂亮」。<strong>四铁律训练的是「怎么判断」，动作的干净度要靠实盘练习积累</strong>。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>迁移题（模块里没有现成答案，用机制自己推）</h2>
+
+        <article class="scenario">
+          <h4>迁移一 · 给一条 2026 年的 AI 相关新闻打四铁律分</h4>
+          <p>假设你看到这样一条真实的新闻：<strong>「某数据中心以太网 800G 光模块厂商公告积压订单 3.24 亿美元、2026 年产能不足」</strong>。乍看和 HBM sold out 的叙事结构一样。用四铁律逐条打分给出你的结论强度，并列出你为每一条会去查证的一手数据源。</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr1" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr1">
+            <div class="chain">
+              <div class="chain-row"><b>铁律一 · 瓶颈</b><div>0-1 分。查证方向：这个厂商在同代产品（800G/1.6T）的市场份额有多大？主要竞争对手（Lumentum、Coherent、Ciena、部分中国厂商）产能情况？如果客户可以在多家之间切分订单，就不是真瓶颈。可查一手源：竞争对手 4Q 财报数据中心业务收入、LightCounting 或 Omdia 光模块市场份额报告（部分免费转述）、超大规模云厂商光模块采购结构公开披露（少量）。</div></div>
+              <div class="chain-row"><b>铁律二 · 垄断</b><div>0-1 分。同理，光模块厂之间产品替代成本较低——同代产品之间的切换成本以周计，不像 HBM 的多代认证以年计。查证方向：客户认证周期有多长？切换成本有多高？答「客户可在数月内切换」= 0 分；答「客户已锁定单一供应商、切换成本以季度计」= 1 分。</div></div>
+              <div class="chain-row"><b>铁律三 · 库存弹性</b><div>1 分（中）。光模块有一定渠道深度，但不像消费 DRAM 那么厚。查证方向：分销商 DIO（Arrow、Avnet 等）、公司季度库存净额环比。</div></div>
+              <div class="chain-row"><b>铁律四 · 扩产创伤</b><div>0-1 分。光模块厂上一轮没有和存储业同规模的深度亏损集体记忆；扩产更接近数字设计品类，弹性较快。查证方向：过去五年行业整体是否有集体减产纪律？主要玩家近年产能扩张速度？</div></div>
+              <div class="chain-row"><b>合并</b><div>预期总分 1-4/8。<strong>比 SK 海力士 8/8 差三到七分，兑现在毛利率上的差距见本质页第 6 节</strong>——AAOI 2025 毛利率 30% 是这个打分能拿到的天花板。「积压订单大」是叙事，「垄断硬度」才是溢价能否兑现的物理约束。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>本推理对「光模块厂」是一般化描述——具体某一家可能因专利 / 客户绑定 / 独家产品拿到更高分（比如某些高端 EML 激光器有更强的技术卡位）。四铁律不是给赛道打分，是给<strong>具体标的的当前打分</strong>——每家都要单独查证。也不要反过来：AAOI 分数低不等于股票会跌、SK 海力士分数高不等于股票会涨，模块 10（周期位置）和模块 11（估值）才是买卖判断。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario">
+          <h4>迁移二 · 一条新闻同时提到「A 设备商」和「B 材料商」都是「AI 上游卡点」——如何用四铁律鉴别哪个更真</h4>
+          <p>2026 年常见的 A 股 / 港股炒作模式：某新闻把一条 AI 相关产业链上下游的多家公司同时冠以「上游瓶颈」标签。假设 A 是关键设备商（下游客户少、订单可查、产品差异化明确），B 是某种功能性化学材料的分销商（多家能供、订单口径含糊）。用四铁律逐条鉴别哪条叙事更硬，并说出你会去查的三个一手证据。</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr2" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr2">
+            <div class="chain">
+              <div class="chain-row"><b>关键分歧</b><div>A（关键设备商）和 B（材料分销商）的差别不在「是否受益于 AI」，而在<strong>四铁律里的哪几条真的成立</strong>。设备商的「订单可查」直接对应工具一的合同层证据（真金买产能，铁律二证据）；材料分销商「口径含糊」通常意味着<strong>没有 take-or-pay 合同、没有多年 sold out、没有明确的客户切换成本</strong>——四条里可能只有铁律一（甚至连铁律一都不成立）。</div></div>
+              <div class="chain-row"><b>三个一手证据</b><div>①A 的订单公告是否具体到客户、产品、金额、交付时间？→ 铁律一 × 铁律二 硬度；②A 的资产负债表合同负债/预付款项目环比变化？→ 客户是否为其产能付出真金；③A 和 B 的历史资本开支节奏——最近两三年扩了多少产能、单位产能弹性是几个季度？→ 铁律四是否在场。B 端如果查不到这三条中的两条，铁律层就基本破功——即使新闻叙事把 A 和 B 并列。</div></div>
+              <div class="chain-row"><b>补充</b><div>模块 5 讲产业链定位、模块 12 讲跨市场差异——A 股的「材料分销商」叙事有时是<strong>层层映射</strong>而非直接受益（模块 12 会展开）。四铁律的判断纪律和跨市场判断纪律是同一层：<strong>叙事在标题层、证据在合同层</strong>（卡 13）。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>不要因为 B 是国产替代或有政策题材就放宽标准——铁律的物理性不受市场偏好影响。反过来，也不要因为 A 分数高就直接买——高分只是结论强度，估值层的溢价可能已经把未来两年的分数都定价完了（模块 11、卡 14）。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <h2>自测（算得出来才算会）</h2>
+
+        <div class="quiz" data-quiz data-explain="不一定。份额高 ≠ 有效垄断。DRAM 三家寡头（三星 36% + SK 32.1% + 美光 22.4%，2025Q4 TrendForce 口径）合计 90.5%，但 HBM 认证竞赛中三星 HBM3E 在 Nvidia 面前反复受挫——「客户能切」的时候，份额再高也拿不到 take-or-pay。有效垄断的判据是「客户能不能换供应商」，不是「市占率高不高」。">
+          <p class="quiz-q">1. 三家 DRAM 大厂合计占全球 90% 以上市场——这算不算符合「垄断」这条铁律？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q1"><span>算，份额压倒性高就是垄断</span></label>
+            <label><input type="radio" name="q1" data-correct="1"><span>不一定——要看客户能不能切换供应商，看具体产品代际的认证卡位</span></label>
+            <label><input type="radio" name="q1"><span>不算，因为三家不是一家</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="低。HBM 是直供长约、无现货市场、无渠道库存——需求变化不经过缓冲直接压到产能。低库存弹性意味着：需求上行时价格反应快、幅度稳；需求下行时反转钝，因为没库存可吐。这是它「毛利率能稳定站在 40%+」的物理基础之一。">
+          <p class="quiz-q">2. HBM 的库存弹性属于高还是低？为什么这条铁律对它有利？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q2"><span>高，因为 HBM 是新技术，渠道深度还没建起来</span></label>
+            <label><input type="radio" name="q2" data-correct="1"><span>低——直供长约无渠道库存，需求变化直接压产能，涨价稳，下行钝</span></label>
+            <label><input type="radio" name="q2"><span>中等，和普通 DRAM 差不多</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="因为「discipline」不是保证——只是心态。管理层可以随时改口，实际 CapEx 数字如果同期在跳升，说明措辞与行动不一致；单一玩家踩油门（比如新入场者）也会让整体创伤消散。要读三个交叉证据：措辞、CapEx 数字斜率、单位产能扩张速度——三个都指向克制才算铁律四打满。">
+          <p class="quiz-q">3. 三家 DRAM 大厂电话会都在讲「disciplined capex」——这句话是否等于铁律四（扩产创伤）打满 2 分？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q3"><span>是——三家一起说就是集体承诺</span></label>
+            <label><input type="radio" name="q3" data-correct="1"><span>不一定——措辞是软证据，要交叉 CapEx 数字斜率和单位产能扩张速度</span></label>
+            <label><input type="radio" name="q3"><span>不是——电话会的话不用信</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="打分差 ≈ 5 分。SK 海力士 HBM：瓶颈 2 + 有效垄断 2 + 低库存弹性 2 + 扩产创伤在场 2 = 8/8。AAOI 光模块：瓶颈 0-1 + 有效垄断 0-1 + 库存弹性中等 1 + 扩产创伤不明显 0-1 = 大约 2-3/8。分差 5 分兑现为毛利率差约 17 个百分点（3Q25 SK 营业利润率 47% vs 2025 全年 AAOI GAAP 毛利率 30%）——这个数字关系不是巧合，是四铁律的物理后果。">
+          <p class="quiz-q">4. 用四铁律给 SK 海力士（HBM）和 AAOI（以太网光模块）分别打分，两家的分差是多少？兑现在毛利率上大概差多少个百分点？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q4"><span>差 1-2 分，毛利率差 3-5 个百分点</span></label>
+            <label><input type="radio" name="q4" data-correct="1"><span>差 5 分左右，毛利率差 15-20 个百分点</span></label>
+            <label><input type="radio" name="q4"><span>差 8 分，毛利率差 30 个百分点以上</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="铁律一（瓶颈）——瓶颈会漂移。今天的瓶颈可能明天不是。CoWoS 扩产到位后，HBM 就可能变成新的短板；HBM 到位后，先进制程逻辑或者电力散热接棒。所以四铁律必须是季度动作，不是一次性打分。垄断、库存弹性也会变（认证掉队、渠道结构变化），但漂移最快、最需要频繁重估的是瓶颈这一条。">
+          <p class="quiz-q">5. 四条铁律里，哪一条最容易在几个季度里发生漂移，让打分需要重估？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q5" data-correct="1"><span>铁律一 · 瓶颈——瓶颈会漂移，最动态</span></label>
+            <label><input type="radio" name="q5"><span>铁律二 · 垄断——一旦垄断就长期锁定</span></label>
+            <label><input type="radio" name="q5"><span>铁律四 · 扩产创伤——创伤是集体心态，几年不会变</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="note">
+          <span class="note-label">本模块要带走的 memo 能力</span>
+          <p>对任何一个 AI 半导体标的，你现在应该能：用四铁律逐条打分（每条 0-2 分），并说出每一条需要什么公开证据来支撑；把打分结果翻译成「结论强度」，而不是买入信号；至少认出三种「符合部分铁律但不满足全部」的常见组合（HBM 三家寡头对照、AAOI 类光模块对照、消费 DRAM 反转对照），并说清楚每种组合的毛利率天花板大约在哪。写不出来任何一项，回到对应小节重学。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="src">
+      <strong>本页资料来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.theregister.com/2024/07/18/tsmc_ceo_predicts_ai_chip/">The Register：台积电 CEO 魏哲家 Q2 2024 电话会「supply won't balance demand until 2025 or 2026」</a> · <a href="https://siliconanalysts.com/analysis/foundry-allocation-status-q1-2026">Silicon Analysts：TSMC CoWoS 2026 fully booked、产能沿革</a> · <a href="https://www.trendforce.com/news/2025/12/08/news-tsmcs-cowos-l-s-reportedly-fully-booked-osat-partners-step-up-with-ases-cowop-in-focus/">TrendForce：TSMC CoWoS-L/S 2026 fully booked（2025-12-08）</a></li>
+        <li><a href="https://www.trendforce.com/news/2025/01/02/news-tsmc-set-to-expand-cowos-capacity-to-record-75000-wafers-in-2025-doubling-2024-output/">TrendForce：TSMC CoWoS 2025 产能目标翻倍至约 75K WPM（2025-01-02）</a></li>
+        <li><a href="https://techsoda.substack.com/p/explainer-tsmcs-2024-annual-report">TechSoda：台积电 2024 年报客户预付款 NT$291.1B 解读</a> · <a href="https://investor.tsmc.com/static/annualReports/2024/english/index.html">台积电 2024 年报官网</a></li>
+        <li><a href="https://news.skhynix.com/sk-hynix-announces-3q25-financial-results/">SK 海力士 3Q25 官方财报（营收 24.4 万亿韩元、营业利润 11.38 万亿、营业利润率 47%、2026 产能全售罄）</a> · <a href="https://www.trendforce.com/news/2025/10/29/news-sk-hynix-posts-record-3q-profit-three-highlights-spotlight-hbm4-soaring-capex-and-2026-outlook/">TrendForce：SK 海力士 3Q25 记录性业绩三大看点（2025-10-29）</a></li>
+        <li><a href="https://www.koreaherald.com/article/3382821">Korea Herald：SK 海力士 CEO Kwak Noh-jung「HBM 2024 售罄、2025 差不多售罄」（2024-05-02）</a></li>
+        <li><a href="https://investors.ao-inc.com/news-releases/news-release-details/applied-optoelectronics-reports-fourth-quarter-and-full-year-5">Applied Optoelectronics 4Q25 与全年 2025 业绩公告（毛利率 30%、全年收入 4.56 亿美元）</a></li>
+        <li><a href="https://www.cnbc.com/2023/04/27/samsung-earnings-q1-2023.html">CNBC：三星 Q1 2023 营业利润 6,400 亿韩元、-96% YoY、半导体分部亏损 4.58 万亿韩元</a> · <a href="https://techcrunch.com/2023/04/06/samsung-cuts-memory-chip-production-as-it-hits-worst-quarterly-profit-since-2009/">TechCrunch：三星 2023-04-07 官方宣布 meaningful level 减产</a></li>
+        <li><a href="https://en.wikipedia.org/wiki/2024%E2%80%932025_global_memory_supply_shortage">Wikipedia：2024-2025 全球存储供应短缺综述（含 Micron/SK Hynix 2023 DRAM wafer starts 削减 20-30% 综合业界统计）</a></li>
+        <li><a href="https://www.investing.com/news/company-news/samsung-plans-474-trillion-won-capex-for-2025-93CH-4318046">Investing.com：Samsung 2025 CapEx 计划约 47.4 万亿韩元</a> · <a href="https://www.trendforce.com/presscenter/news/20251113-12780.html">TrendForce：2026 存储行业维持谨慎 CapEx（2025-11-13）</a></li>
+        <li><a href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing">彭博：芯片交期几年来最大单月缩短（2022-10-17，Susquehanna 数据）</a></li>
+        <li>模块 2 / 3 / 7 页脚已核验来源：台积电 N3 稀释与 EUV 数据、AEHR 测试设备、Aletheia 上调 ASML、美光 FY25/FY26 HBM 收入与 $100B take-or-pay、SanDisk 分拆等——本页复用，不重复列出</li>
+      </ul>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本模块为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="m08.html"><span class="dir">← 上一模块</span>模块 8 · 光、电力、液冷与上游材料</a>
+        <a href="m10.html" style="text-align:right"><span class="dir">下一模块 →</span>模块 10 · 周期、库存与供需拐点</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ================================================================
+     A 类组件一：库存弹性对比双时间线动画
+     ================================================================ */
+  (function () {
+    const rootA = document.getElementById("stkA");
+    const rootB = document.getElementById("stkB");
+    if (!rootA || !rootB) return;
+
+    const W = 400, H = 200, L = 34, R = 12, T = 12, B = 26;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* 12 期需求：一个先涨后落的钟形 */
+    const DEMAND = [50, 55, 62, 74, 88, 100, 108, 108, 96, 78, 60, 48];
+    const N = DEMAND.length;
+
+    const gx = (i) => L + i / (N - 1) * (W - L - R);
+    const gy = (v) => T + (1 - (v - 30) / 130) * (H - T - B);
+
+    function mkSvg(root) {
+      const svg = APP.svgEl("svg", {
+        viewBox: "0 0 " + W + " " + H, role: "img",
+        "aria-label": "价格与库存随需求变化的时间线"
+      });
+      root.appendChild(svg);
+      return svg;
+    }
+    const svgA = mkSvg(rootA);
+    const svgB = mkSvg(rootB);
+
+    function drawGrid(svg) {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      for (let v = 40; v <= 150; v += 30) {
+        svg.appendChild(APP.svgEl("line", {
+          x1: L, x2: W - R, y1: gy(v), y2: gy(v),
+          stroke: "var(--viz-grid)", "stroke-width": 1
+        }));
+      }
+      /* x 轴刻度 */
+      for (let i = 0; i < N; i += 3) {
+        const t = APP.svgEl("text", { x: gx(i), y: H - B + 16, "text-anchor": "middle", class: "axis-txt" });
+        t.textContent = "T" + i;
+        svg.appendChild(t);
+      }
+      svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: gy(30), y2: gy(30), stroke: "var(--viz-axis)", "stroke-width": 1 }));
+    }
+
+    /* 计算两条曲线 */
+    function seriesA() {
+      /* 普通 DRAM：渠道厚，库存吸收前几期需求；库存被吃空后价格才涨，需求回落时库存立刻反弹，价格陡跌 */
+      const stock = [], price = [];
+      let s = 80, p = 60;
+      for (let i = 0; i < N; i++) {
+        const d = DEMAND[i];
+        const gap = d - 70;              /* 相对基线 */
+        s = Math.max(0, Math.min(160, s - gap * 0.5)); /* 库存被吃空/回补 */
+        /* 价格：库存低于 40 时才敏感，库存回补时快速回落 */
+        if (s < 40) p = Math.min(150, p + (40 - s) * 0.9);
+        else if (s > 80) p = Math.max(40, p - (s - 80) * 0.55);
+        else p = p * 0.92 + (60 + gap * 0.35) * 0.08;
+        stock.push(s); price.push(p);
+      }
+      return { stock, price };
+    }
+    function seriesB() {
+      /* HBM：直供无库存，价格随合同层新增/减少缓慢台阶变化；库存维持在很低水位 */
+      const stock = [], price = [];
+      let p = 60;
+      for (let i = 0; i < N; i++) {
+        const d = DEMAND[i];
+        const gap = d - 70;
+        /* 价格反应稍滞后但更稳；下行不明显反转（多年合同保护）*/
+        p = p * 0.85 + (60 + Math.max(0, gap) * 0.6) * 0.15;
+        if (i > 8) p = p * 0.985; /* 后期缓慢向下，无陡跌 */
+        stock.push(6 + Math.random() * 4); /* 极薄库存 */
+        price.push(Math.min(150, Math.max(40, p)));
+      }
+      return { stock, price };
+    }
+
+    const seriesData = { a: seriesA(), b: seriesB() };
+
+    function line(svg, pts, color, w, dash) {
+      let d = "";
+      pts.forEach((v, i) => { d += (i ? " L " : "M ") + gx(i).toFixed(1) + " " + gy(v).toFixed(1); });
+      const attrs = { d, fill: "none", stroke: color, "stroke-width": w || 2, "stroke-linejoin": "round", "stroke-linecap": "round" };
+      if (dash) attrs["stroke-dasharray"] = dash;
+      svg.appendChild(APP.svgEl("path", attrs));
+    }
+    function marker(svg, i, v, color) {
+      svg.appendChild(APP.svgEl("circle", { cx: gx(i), cy: gy(v), r: 3.4, fill: color, stroke: "var(--bg)", "stroke-width": 1.5 }));
+    }
+
+    function paint(step) {
+      /* step 从 0 到 N-1 */
+      const s = Math.max(0, Math.min(N - 1, step));
+      [["a", svgA], ["b", svgB]].forEach(([k, svg]) => {
+        drawGrid(svg);
+        const dat = seriesData[k];
+        const dSlice = DEMAND.slice(0, s + 1);
+        const stSlice = dat.stock.slice(0, s + 1);
+        const pSlice = dat.price.slice(0, s + 1);
+        line(svg, dSlice, "var(--viz-s3)", 2);
+        line(svg, stSlice, "var(--accent)", 2, "4 3");
+        line(svg, pSlice, "var(--danger)", 2.5);
+        marker(svg, s, DEMAND[s], "var(--viz-s3)");
+        marker(svg, s, dat.stock[s], "var(--accent)");
+        marker(svg, s, dat.price[s], "var(--danger)");
+      });
+      const phase =
+        s <= 2 ? "阶段：需求起步 · 库存吸收中，两边都还没涨" :
+        s <= 5 ? "阶段：需求上行 · 左边库存被吃空后价格开始跳；右边价格已在稳步上台阶" :
+        s <= 8 ? "阶段：需求见顶 · 两边价格都在高位，形态开始分化" :
+        "阶段：需求回落 · 左边库存反弹→价格陡跌；右边合同层保护→价格钝性下移";
+      document.getElementById("stkPhase").textContent = phase;
+      const readout = document.getElementById("stkReadout");
+      readout.innerHTML =
+        "T" + s + " · 需求 <b>" + DEMAND[s].toFixed(0) + "</b> · " +
+        "左（普通 DRAM）库存 <b>" + seriesData.a.stock[s].toFixed(0) + "</b>、价格 <b>" + seriesData.a.price[s].toFixed(0) + "</b>；" +
+        "右（HBM）库存 <b>" + seriesData.b.stock[s].toFixed(0) + "</b>、价格 <b>" + seriesData.b.price[s].toFixed(0) + "</b>。" +
+        (s >= 9 ? "　<span class='warn'>看形态：左边价格陡跌，右边价格钝——这就是库存弹性的两面。</span>" : "");
+    }
+
+    let step = 0, timer = null;
+    const btn = document.getElementById("stkPlay");
+    const rst = document.getElementById("stkReset");
+
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+      btn.setAttribute("aria-pressed", "false");
+      btn.textContent = "播放对照";
+    }
+    btn.addEventListener("click", () => {
+      if (timer) return stop();
+      if (step >= N - 1) step = 0;
+      btn.setAttribute("aria-pressed", "true");
+      btn.textContent = "暂停";
+      const iv = reduce ? 300 : 500;
+      timer = setInterval(() => {
+        step++;
+        if (step >= N - 1) { paint(step); stop(); return; }
+        paint(step);
+      }, iv);
+    });
+    rst.addEventListener("click", () => { stop(); step = 0; paint(step); });
+    paint(step);
+  })();
+
+  /* ================================================================
+     A 类组件二：扩产时序与缺口窗口
+     ================================================================ */
+  (function () {
+    const root = document.getElementById("rampViz");
+    if (!root) return;
+
+    const W = 720, H = 260, L = 44, R = 22, T = 14, B = 34;
+    const TMAX = 48; /* 月 */
+    const svg = APP.svgEl("svg", {
+      viewBox: "0 0 " + W + " " + H, role: "img",
+      "aria-label": "扩产时序动画：需求跳升后，无扩产创伤的供给曲线与有扩产创伤的供给曲线；两条之间是缺口窗口"
+    });
+    root.appendChild(svg);
+
+    const gx = (t) => L + t / TMAX * (W - L - R);
+    const gy = (v) => T + (1 - v / 200) * (H - T - B);
+
+    function paint() {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      const build = +document.getElementById("rampBuild").value;
+      const ptsd = +document.getElementById("rampPtsd").value;
+      document.getElementById("rampBuildOut").textContent = build + " 月";
+      document.getElementById("rampPtsdOut").textContent = ptsd + " 月";
+
+      /* 网格 */
+      for (let v = 0; v <= 200; v += 50) {
+        svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: gy(v), y2: gy(v), stroke: "var(--viz-grid)", "stroke-width": 1 }));
+        const t = APP.svgEl("text", { x: L - 8, y: gy(v) + 4, "text-anchor": "end", class: "axis-txt" });
+        t.textContent = v;
+        svg.appendChild(t);
+      }
+      /* x 刻度 · 6 月 */
+      for (let m = 0; m <= TMAX; m += 6) {
+        const t = APP.svgEl("text", { x: gx(m), y: H - B + 16, "text-anchor": "middle", class: "axis-txt" });
+        t.textContent = "M" + m;
+        svg.appendChild(t);
+      }
+      const yl = APP.svgEl("text", { x: L - 8, y: T + 4, "text-anchor": "end", class: "axis-txt" });
+      yl.textContent = "指数";
+      svg.appendChild(yl);
+      const xl = APP.svgEl("text", { x: W - R, y: H - B + 30, "text-anchor": "end", class: "axis-txt" });
+      xl.textContent = "月";
+      svg.appendChild(xl);
+
+      /* 需求曲线：M6 前 100，M6 跳到 180，M40 后缓慢回落到 130 */
+      const demand = [];
+      for (let m = 0; m <= TMAX; m++) {
+        let v;
+        if (m < 6) v = 100;
+        else if (m < 40) v = 100 + 80 * Math.min(1, (m - 6) / 6);
+        else v = 180 - Math.min(50, (m - 40) * 6);
+        demand.push(v);
+      }
+      /* 无创伤供给：M6 起触发扩产，M6+build 后线性追上；追上后与需求同步 */
+      const supNo = [];
+      for (let m = 0; m <= TMAX; m++) {
+        let v;
+        if (m < 6) v = 100;
+        else if (m < 6 + build) {
+          const p = (m - 6) / build;
+          v = 100 + 80 * p;
+        } else v = demand[m];
+        supNo.push(v);
+      }
+      /* 有创伤供给：延迟 ptsd 个月后才开始扩产 */
+      const supPtsd = [];
+      for (let m = 0; m <= TMAX; m++) {
+        let v;
+        if (m < 6 + ptsd) v = 100;
+        else if (m < 6 + ptsd + build) {
+          const p = (m - 6 - ptsd) / build;
+          v = 100 + 80 * p;
+        } else v = demand[m];
+        supPtsd.push(v);
+      }
+
+      /* 缺口窗口（需求 vs 有创伤供给之间的面积）*/
+      let gapPath = "M " + gx(0) + " " + gy(demand[0]);
+      for (let m = 1; m <= TMAX; m++) gapPath += " L " + gx(m).toFixed(1) + " " + gy(demand[m]).toFixed(1);
+      for (let m = TMAX; m >= 0; m--) gapPath += " L " + gx(m).toFixed(1) + " " + gy(supPtsd[m]).toFixed(1);
+      gapPath += " Z";
+      svg.appendChild(APP.svgEl("path", { d: gapPath, fill: "oklch(0.90 0.08 45)", opacity: 0.5 }));
+
+      function drawLine(pts, color, w, dash) {
+        let d = "";
+        pts.forEach((v, i) => { d += (i ? " L " : "M ") + gx(i).toFixed(1) + " " + gy(v).toFixed(1); });
+        const attrs = { d, fill: "none", stroke: color, "stroke-width": w || 2, "stroke-linejoin": "round", "stroke-linecap": "round" };
+        if (dash) attrs["stroke-dasharray"] = dash;
+        svg.appendChild(APP.svgEl("path", attrs));
+      }
+      drawLine(demand, "var(--viz-s3)", 2.5);
+      drawLine(supNo, "var(--primary-2)", 2, "4 4");
+      drawLine(supPtsd, "var(--accent)", 2.5);
+
+      /* 标签：跳升点、扩产触发点 */
+      const jx = gx(6);
+      svg.appendChild(APP.svgEl("line", { x1: jx, x2: jx, y1: gy(0), y2: gy(190), stroke: "var(--muted)", "stroke-width": 1, "stroke-dasharray": "2 4" }));
+      const jl = APP.svgEl("text", { x: jx + 4, y: T + 12, class: "axis-txt" });
+      jl.textContent = "需求跳升 M6";
+      svg.appendChild(jl);
+
+      /* 计算缺口面积作为读数 */
+      let gapSum = 0;
+      for (let m = 0; m <= TMAX; m++) gapSum += Math.max(0, demand[m] - supPtsd[m]);
+      /* 缺口窗口宽度：需求跳升到供给追平的月数 */
+      let close = TMAX;
+      for (let m = 6; m <= TMAX; m++) {
+        if (supPtsd[m] >= demand[m] - 1) { close = m; break; }
+      }
+      const window = close - 6;
+
+      document.getElementById("rampReadout").innerHTML =
+        "扩产工程周期 <b>" + build + " 月</b> · 扩产创伤延迟 <b>" + ptsd + " 月</b> · " +
+        "缺口窗口 <b>" + window + " 月</b>（需求跳升 → 供给追平）· " +
+        "累计缺口面积 <b>" + Math.round(gapSum) + " 单位·月</b>——这就是长约与预付款的收款窗口。" +
+        (ptsd >= 9 ? "　<span class='warn'>扩产创伤深时，缺口窗口延长约 " + Math.round(ptsd) + " 月——铁律四打满时的物理后果。</span>" : "");
+    }
+    ["rampBuild", "rampPtsd"].forEach((id) => document.getElementById(id).addEventListener("input", paint));
+    document.querySelectorAll("[data-ptsd-preset]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const [b, p] = btn.dataset.ptsdPreset.split(",").map(Number);
+        document.getElementById("rampBuild").value = b;
+        document.getElementById("rampPtsd").value = p;
+        paint();
+      });
+    });
+    paint();
+  })();
+
+  /* ================================================================
+     B 类组件：四铁律打分器
+     ================================================================ */
+  (function () {
+    const rows = document.getElementById("scorerRows");
+    if (!rows) return;
+
+    const TENETS = [
+      {
+        id: "bn",
+        label: "铁律一 · 瓶颈",
+        why: "出货短板 = 定价权收款人",
+        opts: [
+          { p: 0, t: "不是瓶颈", d: "同代产品多家能供、客户可切分" },
+          { p: 1, t: "部分瓶颈", d: "有紧但仍有替代路径" },
+          { p: 2, t: "硬瓶颈", d: "多年 sold out、翻倍扩产仍接不住" }
+        ]
+      },
+      {
+        id: "mn",
+        label: "铁律二 · 有效垄断",
+        why: "客户切不动 · 不只是份额高",
+        opts: [
+          { p: 0, t: "多家竞争", d: "认证周期短、切换成本低" },
+          { p: 1, t: "名义寡头", d: "份额集中但当代认证不稳" },
+          { p: 2, t: "有效垄断", d: "客户当代切换成本以年计" }
+        ]
+      },
+      {
+        id: "ie",
+        label: "铁律三 · 库存弹性",
+        why: "低弹性 = 价格反应稳、下行钝",
+        opts: [
+          { p: 0, t: "高弹性", d: "渠道厚，反转凶" },
+          { p: 1, t: "中等", d: "有渠道深度但也有直供" },
+          { p: 2, t: "低弹性", d: "直供长约无渠道库存" }
+        ]
+      },
+      {
+        id: "pt",
+        label: "铁律四 · 扩产创伤",
+        why: "上一轮亏损 → 本轮供给上锁",
+        opts: [
+          { p: 0, t: "无创伤", d: "行业没经历过集体深度亏损" },
+          { p: 1, t: "部分在场", d: "个别玩家克制、集体未定" },
+          { p: 2, t: "全面在场", d: "多年 disciplined capex、visibility-based" }
+        ]
+      }
+    ];
+
+    const PRESETS = {
+      "skh": {
+        name: "SK 海力士（HBM）",
+        scores: { bn: 2, mn: 2, ie: 2, pt: 2 },
+        note: "四条打满。3Q25 营业利润率 47%、2026 产能全售罄——铁律的兑现上限。"
+      },
+      "tsmc-cowos": {
+        name: "台积电 CoWoS",
+        scores: { bn: 2, mn: 2, ie: 2, pt: 1 },
+        note: "瓶颈 × 垄断打满（CEO 语「supply won't balance until 2025/26」，客户预付 NT$291B）；先进封装历史上没经历过存储式集体亏损，扩产创伤打 1。"
+      },
+      "asml": {
+        name: "ASML（EUV）",
+        scores: { bn: 2, mn: 2, ie: 2, pt: 1 },
+        note: "独家供应、交付以年计、订单积压硬。扩产层由客户端 CapEx 决定，供给端本身无创伤。"
+      },
+      "aaoi": {
+        name: "AAOI（数据中心以太网光模块）",
+        scores: { bn: 1, mn: 0, ie: 1, pt: 0 },
+        note: "受益于 AI 但多家竞争（Lumentum/Coherent/Ciena）；2025 全年毛利率 30% 是这个打分能拿到的天花板。"
+      },
+      "commodity-dram": {
+        name: "普通消费级 DDR5",
+        scores: { bn: 0, mn: 1, ie: 0, pt: 2 },
+        note: "非瓶颈、渠道厚、名义寡头；但受 HBM 挤压 + 三家 discipline 保护——2025-2026 价格反弹是「铁律四保护 + 铁律一被动挤出」的组合，不是本身的垄断。"
+      },
+      "blank": { name: "自定义", scores: {}, note: "自己选一个标的，逐条打分。" }
+    };
+
+    const state = {};
+
+    function renderRows() {
+      rows.innerHTML = "";
+      TENETS.forEach((tn) => {
+        const row = document.createElement("div");
+        row.className = "scorer-row";
+        row.innerHTML =
+          '<div class="lbl"><b>' + tn.label + '</b><span class="why">' + tn.why + '</span></div>' +
+          '<div class="segs" data-t="' + tn.id + '">' +
+            tn.opts.map((o) => '<button type="button" data-p="' + o.p + '" title="' + o.d + '">' + o.p + ' · ' + o.t + '</button>').join("") +
+          '</div>' +
+          '<div class="pt" id="pt-' + tn.id + '">—</div>';
+        rows.appendChild(row);
+      });
+      rows.querySelectorAll(".segs").forEach((seg) => {
+        const t = seg.dataset.t;
+        seg.querySelectorAll("button").forEach((b) => {
+          b.setAttribute("aria-pressed", "false");
+          b.addEventListener("click", () => {
+            seg.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", "false"));
+            b.setAttribute("aria-pressed", "true");
+            state[t] = +b.dataset.p;
+            document.getElementById("pt-" + t).textContent = "+" + state[t];
+            paintOut();
+          });
+        });
+      });
+    }
+    renderRows();
+
+    function paintOut() {
+      const filled = TENETS.every((tn) => state[tn.id] !== undefined);
+      const out = document.getElementById("scorerOut");
+      const req = document.getElementById("scorerReq");
+      if (!filled) {
+        out.innerHTML = "已选 <b>" + Object.keys(state).length + "/4</b> 条。四条都选完出总分与结论强度。";
+        req.innerHTML = "";
+        return;
+      }
+      const total = TENETS.reduce((s, tn) => s + state[tn.id], 0);
+      let level, blurb;
+      if (total >= 7) { level = "极强"; blurb = "多年 sold out + 高毛利率的完整结构，兑现天花板类似 SK 海力士 3Q25 的 47% 营业利润率——但估值是否已经反映要过模块 11。"; }
+      else if (total >= 5) { level = "较强"; blurb = "两三条铁律硬，兑现节奏取决于哪条打不满——常见形态是「瓶颈+垄断在场但库存弹性中等」或「打满前三条但扩产创伤开始消散」。"; }
+      else if (total >= 3) { level = "中等"; blurb = "有一半铁律支撑，通常是「有需求但没定价权」——毛利率天花板类似 AAOI 2025 的 30% 附近。"; }
+      else { level = "弱"; blurb = "四条大多不成立——受益于 AI 是叙事，落到毛利率上会被竞争或渠道摊掉大部分。"; }
+      out.innerHTML =
+        "四铁律总分 <b>" + total + "/8</b>——结论强度 <b>" + level + "</b>。<br>" +
+        blurb + "<br>" +
+        "<span class='warn'>提醒：分数只是结论强度，不是买入信号——还要过模块 10 周期位置和模块 11 估值。</span>";
+      /* 提示每条需要什么证据 */
+      const lows = TENETS.filter((tn) => state[tn.id] < 2);
+      if (lows.length) {
+        req.innerHTML = "<strong>要把这些条打满，公开可查的证据方向：</strong><ul>" +
+          lows.map((tn) => {
+            const hint = ({
+              bn: "对手扩产能否吃掉客户订单？连续两三个季度 sold out 措辞是否出现？",
+              mn: "客户切换供应商的成本以周还是以年计？当代产品认证卡位如何？",
+              ie: "分销商 DIO 走势？公司季度库存净额环比？是否有 take-or-pay 合同？",
+              pt: "近两年 CapEx 增速 vs 需求增速比？管理层电话会措辞 discipline/demand-led/visibility 是否连续出现？"
+            })[tn.id];
+            return "<li><b>" + tn.label + "</b>：" + hint + "</li>";
+          }).join("") +
+          "</ul>";
+      } else {
+        req.innerHTML = "<strong>四条都打满时的下一步：</strong>用模块 10 判断当前周期位置、用模块 11 判断估值是否已把两年打分定价完。铁律读结论强度、模块 10-11 读买卖时点。";
+      }
+    }
+
+    document.querySelectorAll("[data-preset]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const preset = PRESETS[btn.dataset.preset];
+        if (!preset) return;
+        Object.keys(state).forEach((k) => delete state[k]);
+        Object.keys(preset.scores).forEach((k) => state[k] = preset.scores[k]);
+        rows.querySelectorAll(".segs").forEach((seg) => {
+          const t = seg.dataset.t;
+          seg.querySelectorAll("button").forEach((b) => {
+            b.setAttribute("aria-pressed", String(+b.dataset.p === state[t]));
+          });
+          const cell = document.getElementById("pt-" + t);
+          if (state[t] !== undefined) cell.textContent = "+" + state[t];
+          else cell.textContent = "—";
+        });
+        if (btn.dataset.preset === "blank") {
+          document.getElementById("scorerOut").innerHTML = "选一个预设或对四条铁律各打 0-2 分。";
+          document.getElementById("scorerReq").innerHTML = "";
+        } else {
+          paintOut();
+          const out = document.getElementById("scorerOut");
+          out.innerHTML = "<b>" + preset.name + "</b>：" + preset.note + "<br>" + out.innerHTML;
+        }
+      });
+    });
+  })();
+
+  /* ================================================================
+     决策复盘卡通用交互（照 m02/m07）
+     ================================================================ */
+  document.querySelectorAll("[data-case]").forEach((box) => {
+    const reveal = box.parentElement.querySelector(".case-reveal");
+    box.querySelectorAll("[data-pick]").forEach((btn) => {
+      btn.setAttribute("aria-pressed", "false");
+      btn.addEventListener("click", () => {
+        box.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        if (reveal && reveal.hidden) reveal.hidden = false;
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>

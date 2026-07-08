@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 7 · 需求分两种 · 半导体投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 页面专属样式 ---------- */
+  .split {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0;
+  }
+  .split > div {
+    border: 1px solid var(--line); border-radius: var(--radius-m);
+    padding: 14px 16px; background: var(--surface);
+  }
+  .split .cap {
+    font-size: var(--fs-13); font-weight: 650; color: var(--muted); margin-bottom: 6px;
+    display: flex; justify-content: space-between; gap: 8px;
+  }
+  .split .big {
+    font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums;
+    line-height: 1.25; color: var(--ink);
+  }
+  .split .cyc .big { color: var(--accent-ink); }
+  .split .step .big { color: var(--primary); }
+  .split .row { font-size: var(--fs-14); color: var(--ink); margin-top: 4px; }
+  .split .row + .row { border-top: 1px dashed var(--line); padding-top: 6px; margin-top: 6px; }
+  @media (max-width: 640px) { .split { grid-template-columns: 1fr; } }
+
+  .qa {
+    border-left: 3px solid var(--primary);
+    background: var(--primary-tint);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    padding: 12px 16px 4px;
+    margin: 14px 0;
+  }
+  .qa .q { font-weight: 650; color: var(--primary); margin: 0 0 8px; font-size: var(--fs-16); }
+  .qa .q::before { content: "问："; }
+  .qa ul { margin: 6px 0 10px; padding-left: 1.2em; }
+
+  /* 分类对比 */
+  .cmp {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 14px 0;
+    border: 1px solid var(--line); border-radius: var(--radius-m); overflow: hidden;
+  }
+  .cmp > div { padding: 14px 18px; }
+  .cmp > div + div { border-left: 1px solid var(--line); background: var(--surface); }
+  .cmp h4 { font-size: var(--fs-15); font-weight: 650; margin: 0 0 8px; }
+  .cmp .cyc h4 { color: var(--accent-ink); }
+  .cmp .step h4 { color: var(--primary); }
+  .cmp ul { margin: 0; padding-left: 1.2em; font-size: var(--fs-14); }
+  .cmp li { margin-bottom: 6px; }
+  @media (max-width: 640px) {
+    .cmp { grid-template-columns: 1fr; }
+    .cmp > div + div { border-left: none; border-top: 1px solid var(--line); }
+  }
+
+  /* 双引擎图例 */
+  #d2Legend {
+    display: flex; gap: 10px; font-size: var(--fs-13);
+    margin: 8px 0 0; padding: 0; list-style: none; flex-wrap: wrap;
+  }
+  #d2Legend button {
+    appearance: none; font: inherit; background: none; border: 1px dashed var(--line);
+    border-radius: 6px; padding: 4px 10px; color: var(--muted); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  #d2Legend button[aria-pressed="true"] {
+    color: var(--ink); border-style: solid; border-color: var(--line); background: var(--bg);
+  }
+  #d2Legend .key {
+    display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: 0.22em;
+  }
+</style>
+</head>
+<body data-page="s07">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 7 · 需求分两种</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 7 / 15</p>
+      <h1>卡 7 · 需求分两种</h1>
+      <p class="core-q"><b>一句话：</b>半导体需求可以拆成两台性质完全不同的发动机。<strong>换机式需求</strong>由装机存量的自然老化和缓慢升级驱动，量在一条水平线上做 ±20% 的周期振荡（PC 换代、手机换代、汽车换代都是它）；<strong>范式革命需求</strong>由新的应用平台驱动，量突然跳到一个新水平且不再回落（PC 起飞、智能手机起飞、云起飞、AI 起飞都是它）。两台发动机会叠加运行，但对投资的含义完全不同：换机讲估值均值回归，范式讲估值重估。同一句「需求强劲」，读错分类可能亏得很惨。</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">读完这张卡你要能答的三个问题（现在答不上来是正常的）</span>
+      <ol style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>2022-2023 年全球 PC 出货连续两年双位数下滑（-16%、-14.8%），同一时段英伟达数据中心业务从 $15B 一路涨到 $115B——两个数据都是真的、都发生在「半导体行业」里。为什么可以同时发生？</li>
+        <li>看到一家公司财报「需求强劲、订单饱满」，你的第一反应问什么？（答案不是「买不买」）</li>
+        <li>看到一个板块的估值倍数从 12 倍 PE 跳到 30 倍 PE，你的第一反应问什么？</li>
+      </ol>
+    </div>
+
+    <section class="prose">
+
+      <h2>1 · 现象：同一栋写字楼里，一边深冬、一边盛夏</h2>
+
+      <p>把时间钉在 2022-2024 这两年，同时看两组已核验的公开数据——两组都真实、都发生在「半导体」这个词覆盖的行业里：</p>
+
+      <div class="split">
+        <div class="cyc">
+          <div class="cap"><span>全球 PC 出货</span><span>Gartner 官方季度报告</span></div>
+          <div class="big">-16% → -14.8%</div>
+          <div class="row">2022、2023 连续两年双位数下滑<span class="badge badge-verified">已核验</span></div>
+          <div class="row">2021 峰值 3.40 亿台 → 2023 波谷 2.42 亿台，跌破 2006 年以来最低</div>
+          <div class="row">2024 反弹 +1.3%、2025 反弹 +9.1%，回到均衡带</div>
+        </div>
+        <div class="step">
+          <div class="cap"><span>英伟达数据中心业务</span><span>SEC 8-K 全年财报</span></div>
+          <div class="big">$15B → $115B</div>
+          <div class="row">两个财年 7.7 倍<span class="badge badge-verified">已核验</span></div>
+          <div class="row">FY23 $15.01B → FY24 $47.5B → FY25 $115.2B（+142% YoY）</div>
+          <div class="row">不是「从上一年高点又长了 30%」，是量级跳到了一个从没有过的水平</div>
+        </div>
+      </div>
+
+      <p>同一栋写字楼里，PC 事业部在深冬砍单、数据中心事业部在盛夏扩产。<strong>不是「半导体行业整体好」，也不是「半导体行业整体坏」——是两台不同的需求发动机在同时运转，一台在波谷、一台在起点。</strong></p>
+
+      <p>2022 年绝大多数评论把这两件事混在一起读：有人看到 PC 塌方，说「半导体见顶了」；有人看到英伟达数据中心暴增，说「整个半导体在起飞」。两种读法都是错的——错在没有先分清面前是哪一台发动机。这就是卡 7 要讲透的一个模型：<strong>半导体需求必须先分类，再判周期</strong>。</p>
+
+      <h2>2 · 机制：换机式（水平线波动）与范式革命（跳台阶）</h2>
+
+      <h3>2.1 两种需求分别是什么形状</h3>
+
+      <div class="cmp">
+        <div class="cyc">
+          <h4>换机式需求（周期）</h4>
+          <ul>
+            <li><strong>驱动力</strong>：装机存量的自然老化 + 缓慢的性能升级欲望</li>
+            <li><strong>规模上限</strong>：存量 ÷ 平均寿命 ≈ 均衡年换机量</li>
+            <li><strong>形状</strong>：在一条水平线附近做 ±20% 的周期振荡；波峰之后一定回归</li>
+            <li><strong>典型现场</strong>：PC 换代、成熟后的手机换代（2017-）、汽车芯片换代</li>
+          </ul>
+        </div>
+        <div class="step">
+          <h4>范式革命需求（台阶）</h4>
+          <ul>
+            <li><strong>驱动力</strong>：新的应用平台从「能用」跨到「经济上合算」</li>
+            <li><strong>规模上限</strong>：新平台可达用户数 × 每用户的算力/存储/连接量</li>
+            <li><strong>形状</strong>：某一年突然跳到新水平，且不再回落（旧平台的存量替换需求仍在跑）</li>
+            <li><strong>典型现场</strong>：PC 起飞（1980s）、智能手机起飞（2007-）、云起飞（2010s）、AI 起飞（2022-）</li>
+          </ul>
+        </div>
+      </div>
+
+      <p>用一个粗略的算术把「换机式」钉住。全球在用 PC 存量按行业通行口径约 12-15 亿台<span class="badge badge-expert">专家判断 · 综合 Statista/Canalys 通行口径</span>，平均寿命 5-7 年——两个数一乘一除，均衡年换机量落在 2-2.5 亿台附近。真实每年出货就在这个区间上下做 ±20% 波动：2021 拉货冲到 3.40 亿台（波峰），2022 砍到约 2.85 亿台，2023 触底 2.42 亿台，2024 回到约 2.45 亿台（+1.3%）<span class="badge badge-verified">已核验 · Gartner 历年季度报告</span>。<strong>这条水平线上下的摆动就是「换机式需求」——它从不真正塌，也从不真正跳。</strong></p>
+
+      <p>再钉住「范式革命」。英伟达数据中心业务 2019-2021 年一直在几十亿美元级：FY21 $6.7B、FY22 $10.61B<span class="badge badge-verified">已核验 · Nvidia Q4 FY22 8-K（2022-02-16）</span>；2022 年 11 月 ChatGPT 上线后，两个财年跨了 7.7 倍到 FY25 $115.2B，把这家公司的数据中心业务从「高端云计算配件」重估到「AI 算力基础设施」。<strong>这不是「多卖了一些」——是「卖了以前根本不存在的东西」——量级跳到新水平，而以前的高端云计算需求并没有消失</strong>。这条曲线不会回到跳升前的水平。</p>
+
+      <h3>2.2 双引擎叠加 —— 你实际读到的是两条曲线的和</h3>
+
+      <p>关键的一层：现实里我们看到的「总需求」永远是<strong>换机基线 + 台阶</strong>的加和。云的台阶 2010s 起来时，PC 的换机周期还在跑；AI 的台阶 2022 起来时，云的台阶还在长、PC 的换机波谷正在形成。三条独立曲线叠加成我们在财报上读到的那一条。<strong>把它们分开读，「需求强劲」这句话才有可操作的含义</strong>。</p>
+
+      <p>下面这台图把这件事变得可以亲手拉。<strong>看什么：</strong>①拉「换机振幅」滑块——振幅越大，换机基线的波峰高点在读数上越像「新台阶」；②拉「台阶起点年份」——台阶跳升的那一年，如果同时是换机波峰，两台发动机会同向叠加、读数上是「史无前例的强劲」；③关掉台阶（把起点滑到区间外），你会看到「如果没有 AI 台阶，光靠换机波动，2024-2028 年的需求曲线长什么样」。</p>
+
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-title">双引擎解耦图 · 换机基线 + 范式台阶 = 总需求</span>
+          <span class="viz-sub">教学示意 · 数值为相对指数（0-220），非精确统计；练的是「分类识别」这个动作</span>
+        </div>
+        <div class="ctl-panel">
+          <div class="ctl">
+            <label for="d2Amp">换机振幅</label>
+            <input type="range" id="d2Amp" min="0" max="0.40" step="0.01" value="0.20">
+            <output id="d2AmpOut">20%</output>
+          </div>
+          <div class="ctl">
+            <label for="d2Year">台阶起点年份</label>
+            <input type="range" id="d2Year" min="2015" max="2030" step="1" value="2022">
+            <output id="d2YearOut">2022</output>
+          </div>
+          <div class="ctl">
+            <label for="d2Height">台阶高度</label>
+            <input type="range" id="d2Height" min="0" max="120" step="5" value="80">
+            <output id="d2HeightOut">80</output>
+          </div>
+          <div class="viz-foot" style="margin:0">
+            <button class="btn btn-ghost" type="button" data-preset-d2="ai22">AI 双引擎（换机 20%、台阶 2022 起、高 80）</button>
+            <button class="btn btn-ghost" type="button" data-preset-d2="peakonly">纯换机波峰（换机 35%、无台阶）</button>
+            <button class="btn btn-ghost" type="button" data-preset-d2="pure">纯台阶（无换机波动、台阶 2022 起）</button>
+          </div>
+        </div>
+        <div id="d2Chart" role="img" aria-label="三条曲线：换机基线在水平线上下波动、范式台阶在指定年份跳升并慢慢爬坡、总需求为两者之和"></div>
+        <ul id="d2Legend" role="group" aria-label="切换曲线显示"></ul>
+        <div class="viz-readout" id="d2Readout" aria-live="polite"></div>
+        <p style="font-size:var(--fs-13);color:var(--muted);margin:8px 0 0">读完这条：<strong>把「换机 35%、无台阶」和「换机 20% + 台阶 2022」在 2023 那一年比大小</strong>——总需求读数可能非常接近，但一个是「波峰、下一步回归」、一个是「起点、下一步继续爬」。这就是「需求强劲」新闻最容易读错的时刻。</p>
+      </div>
+
+      <h3>2.3 分类不同 → 估值方式完全不同</h3>
+
+      <p>分类的实用价值全在这里：<strong>两种需求对应两套完全不同的估值方式</strong>。搞错了，就是把周期高点当成增长股买、把新台阶起点当成周期股卖。</p>
+
+      <ul>
+        <li><strong>换机式需求 → 均值回归估值</strong>。用 PB/PE 的历史均值 ± 一个标准差定合理带；反直觉的规则：<strong>周期高点估值应该低</strong>（下一步是回归到均衡）、<strong>周期低点估值应该高</strong>（下一步是反弹）。存储厂、成熟制程代工厂、汽车芯片、消费级 SoC 大多吃这一套。</li>
+        <li><strong>范式革命需求 → 重估</strong>。市场给它的估值倍数会结构性上调；从「周期股 8-12 倍 PE」跳到「成长股 25-40 倍 PE」甚至更高，直到台阶进入平台期。AI 加速卡、云基础设施、iPhone 时代的手机 SoC 都吃这一套。</li>
+        <li><strong>叠加期的合理估值取决于哪一台是主导</strong>。范式主导时估值靠近成长股；换机主导时估值向周期均值回归；两者并驾齐驱时市场往往先按「更高的那一条」定价，再随信息更清晰慢慢分离——这段过渡期波动最大，是分类判断收益最高的时段。</li>
+      </ul>
+
+      <p>把这三条并起来看一句话：<strong>估值方式不是从财报里读出来的，是先分清面前是哪一台发动机后决定的</strong>。分类先于估值——这是本卡的整个用法。</p>
+
+      <h2>3 · 真实锚点：两台发动机的原始现场</h2>
+
+      <h3>锚点一 · 换机波谷 + 范式起点，同一时段</h3>
+
+      <table class="tbl">
+        <caption>2021-2024 · PC 换机曲线 与 英伟达数据中心台阶，并排读<span class="badge badge-verified">已核验 · Gartner PC 出货公告；Nvidia FY22-FY25 8-K</span></caption>
+        <thead>
+          <tr><th>日历年</th><th>全球 PC 出货</th><th>YoY</th><th>英伟达数据中心（同财年，截止次年 1 月）</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2021</td><td>3.40 亿台</td><td class="num">+9.9%</td><td>$10.61B（FY22）</td></tr>
+          <tr><td>2022</td><td>约 2.85 亿台</td><td class="num">-16%</td><td>$15.01B（FY23）</td></tr>
+          <tr><td>2023</td><td>2.42 亿台</td><td class="num">-14.8%</td><td>$47.5B（FY24）</td></tr>
+          <tr><td>2024</td><td>约 2.45 亿台</td><td class="num">+1.3%</td><td>$115.2B（FY25）</td></tr>
+        </tbody>
+      </table>
+
+      <p>两条曲线并排读：PC 从 2021 波峰（3.40 亿台）跌到 2023 波谷（2.42 亿台）、再回归到 2024 的 2.45 亿——<strong>典型的换机式，围绕 2-2.5 亿台/年的均衡水平做 ±20% 摆动</strong>；同一时段英伟达数据中心：$10.6B → $15B → $47.5B → $115.2B——<strong>典型的范式革命，量级从「十几亿」跨到「上百亿」，且不会回落</strong>。</p>
+
+      <p>两条曲线合起来，就是 2022-2024 半导体行业你看到的所有分析师报告：一半在说「周期见底」（换机式的语言），一半在说「新时代开始」（范式的语言）。谁都没错，只是他们说的不是同一台发动机。</p>
+
+      <h3>锚点二 · 智能手机的完整台阶：起飞 → 稳态换机</h3>
+
+      <table class="tbl">
+        <caption>全球智能手机出货 · 从范式台阶转为稳态换机的完整样本<span class="badge badge-verified">已核验 · IDC/Statista 历年统计</span></caption>
+        <thead>
+          <tr><th>阶段</th><th>年份</th><th>全球出货</th><th>形状</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>起飞</td><td>2007</td><td>约 1.2 亿台（首年）</td><td>iPhone 2007-06-29 首次开售，新台阶起点</td></tr>
+          <tr><td>爬升</td><td>2011</td><td>约 4.9 亿台</td><td>五年翻四倍——典型的台阶陡爬期</td></tr>
+          <tr><td>登顶</td><td>2016</td><td>约 14.7 亿台</td><td>渗透率触及全球用户上限</td></tr>
+          <tr><td>稳态换机</td><td>2017-2023</td><td>11-14 亿台区间</td><td>从「台阶」性质转为「换机式」性质</td></tr>
+          <tr><td>反弹</td><td>2024</td><td>12.4 亿台（+6.4%）</td><td>换机式的正常反弹</td></tr>
+        </tbody>
+      </table>
+
+      <p>这张表说明一件重要的事：<strong>任何一个范式革命，达到饱和后都会转化为换机式</strong>。台阶不是永远陡爬，它有终点——终点之后进入稳态换机，估值也随之从「重估」转向「均值回归」。看到智能手机现在在 11-13 亿台区间波动，用换机式的均值回归去估值就对了；用 2010-2016 那种台阶陡爬期的重估去估值就大错。</p>
+
+      <h3>锚点三 · 云：一个用了十年才被市场认清的台阶</h3>
+
+      <p>AWS EC2 于 <strong>2006-08</strong> 上线；直到 <strong>2015 年</strong>，AWS 才成为亚马逊最赚钱的业务；<strong>2016 年</strong> AWS 全年收入 $12.2B，正式坐上市场第一<span class="badge badge-verified">已核验 · Amazon 2016 年报、AWS 官方历史</span>。云的台阶跨度约十年——从「这东西真能省钱吗」到「这东西是新的独立利润中心」，市场用了整整十年才把估值方式从「传统零售业配件」重估到「独立云服务公司」。<strong>台阶不是一夜起来的；跨度长的台阶在爬升中期常常被市场当成周期波峰错读</strong>。云的历史给你的教训：确认新台阶要有耐心，但错过整个爬升期的机会成本也很大。</p>
+
+      <p>三个锚点合起来读：换机式的原始形状（PC 2021-2024）、完整台阶的四段式（智能手机 2007-2024）、慢慢爬起来的台阶（云 2006-2016）。分别对应「分类识别」的三种常见样本。</p>
+
+      <h2>4 · 投资含义：两个「第一反应问句」</h2>
+
+      <p>骨架卡的用法是<strong>把两个问句刻进反射弧</strong>——以后看到相关新闻，不是先想「涨还是跌」、「买还是卖」，而是先自动问以下这两个问题，答完再下结论。</p>
+
+      <div class="qa">
+        <p class="q">看到某厂财报「需求强劲、订单饱满」，我第一反应问什么？</p>
+        <ul>
+          <li><strong>拆需求来源</strong>——这个「需求」是存量升级（换机）还是新平台首装（范式）？看财报里客户结构、下游行业分布、客户新旧比。</li>
+          <li><strong>定当下位置</strong>——如果是换机式，现在是均衡带、波峰、还是波谷？如果是范式，现在是起点（第 1-2 年）、陡爬（第 3-8 年）、还是接近平台期？</li>
+          <li><strong>定估值方式</strong>——换机式用 PB/PE 均值±σ；范式用重估倍数。<strong>估值方式不匹配，好新闻和坏新闻都会被读反</strong>。</li>
+        </ul>
+      </div>
+
+      <div class="qa">
+        <p class="q">看到某板块估值倍数从 12 倍 PE 跳到 30 倍 PE，我第一反应问什么？</p>
+        <ul>
+          <li><strong>市场在给它重估，还是给它周期高点定价？</strong>——重估意味着市场认为这是新台阶（长期增长中枢换了档），跳升会持续；周期高点定价意味着市场只是把最近几季的高增速外推，一旦拐点出现就崩。</li>
+          <li><strong>两种含义对应的持有周期完全不同</strong>——重估应该拿几年，周期高点定价应该在出现拐点信号时及时降仓。</li>
+          <li><strong>验证方法</strong>——同时看：①下游平台是不是已经进入「渗透率自我增强」阶段（有可测的活跃用户 + 有真金白银的 CapEx 决策）；②供给端有没有为这个台阶结构性扩产（卡 1 讲的 24-36 个月扩产周期）。两个都有 = 大概率是重估；只有一个 = 可能是周期高点。</li>
+        </ul>
+      </div>
+
+      <p>合起来的操作：<strong>看到「需求强劲」，先分类；看到「估值跳升」，先分辨重估还是周期定价</strong>。这两个问句答完，再去看是不是买点、要不要加仓、拿多久。</p>
+
+      <h2>5 · 边界：什么时候本卡不适用</h2>
+
+      <ul>
+        <li><strong>台阶起点与换机波峰在数字上可以非常像。</strong>都是「需求强劲、订单饱满」；区分要靠额外证据——新平台的可用性/经济性拐点、存量替换比例、CapEx 结构性变化。前面的双引擎解耦图就是让你亲眼看到这两种「需求强劲」读起来多像。</li>
+        <li><strong>范式革命也有假拐点。</strong>3D 电视（2010）、Google Glass（2013）、VR（2016）、区块链挖矿（2018）、Web3/元宇宙（2021）——这些当年都被当成「新台阶起点」讲过，但没起来。分辨真台阶假台阶要看：①渗透率是否进入自我增强阶段（有可测的活跃用户 + 有真金白银的 CapEx 决策）；②不是新闻热度、不是分析师报告数量。<strong>技术起飞不等于市场起飞</strong>。</li>
+        <li><strong>本卡讲分类，不讲信号可信度。</strong>缺货可能是需求真的强，也可能是重复下单虚增——<strong>卡 5（缺货是牛鞭极值）</strong>是分类之后的第二步：分完类，还要判断这个「需求」的可信度打几折。两张卡合在一起才是完整的「需求信号读法」。</li>
+        <li><strong>本卡讲分类，不讲传导链定位。</strong>需求分类之后，还要知道你在看的公司处在链条哪一层——模型公司 → 云 CapEx → 芯片订单 → 制造/封装 → 设备/材料，越上游波形放大越大、前瞻性越低。<strong>卡 10（需求传导链）</strong>展开这一层。</li>
+        <li><strong>确认是新台阶 ≠ 立即买入。</strong>即使你确认某板块处在范式革命起点，股价可能已经把 3-5 年预期定价进去了——认知领先市场半年是超额收益的来源，认知落后市场半年是价值毁灭的来源。<strong>卡 14（产业刚开始 ≠ 股价便宜）</strong>展开「分类正确」和「择时正确」的区别。</li>
+      </ul>
+
+      <h2>6 · 练习两道</h2>
+
+      <div class="scenario">
+        <h4>练习一 · 复述题（合上卡片，3 分钟讲给完全不懂的人听）</h4>
+        <p>题目：为什么 2022-2023 年全球 PC 出货连续两年双位数下滑，同一时段英伟达数据中心业务从 $15B 涨到 $115B，两个数字都是真的、都发生在「半导体」这个词覆盖的行业里？</p>
+        <p class="scenario-hint">提示：不用出现「换机式」「范式革命」这些术语。从两句大白话入手——「PC 卖得少了，是因为大家家里的 PC 还能用几年，不是这个行业不行了」；「数据中心卖得多了，是因为出现了一种以前根本没有的新东西」。这两件事是分开发生的：一个是换周期，一个是全新起步。能不能把这两句话讲成对方能听懂的例子，是掌握本卡的最低门槛。</p>
+      </div>
+
+      <div class="scenario">
+        <h4>练习二 · 推演题（用已核验事实做前提，用本卡机制推）</h4>
+        <p>已核验的两件真事：</p>
+        <ul>
+          <li>全球智能手机出货 2016 年达峰约 14.7 亿台，此后 2017-2023 年在 11-14 亿台区间波动，2024 年 IDC 报出货 +6.4% 回到 12.4 亿台<span class="badge badge-verified">已核验 · IDC 2025-01 报告、Statista 历年统计</span>；</li>
+          <li>2024-2026 年「AI 手机」（端侧 AI 处理器 + 系统级 AI 助手）成为主流厂商发布的主要卖点：Apple Intelligence（2024-06 WWDC 发布）、高通 Snapdragon 8 Gen 3/4、联发科天玑 9300/9400，三星、小米、OPPO、vivo 均已推出「AI 旗舰」<span class="badge badge-verified">已核验 · Apple/Qualcomm/联发科官方公告与厂商发布会</span>。</li>
+        </ul>
+        <p>请你推：2025-2026 年智能手机需求处于什么状态？把它拆成「换机式」和「范式革命」两台发动机分别评估：</p>
+        <ol>
+          <li>换机式那一台：全球在用智能手机存量按行业口径约 55-65 亿台，平均寿命 3-4 年——算出均衡年出货量，与 2024 年 12.4 亿台比对。当前处在均衡带、波谷、还是波峰？</li>
+          <li>范式那一台：「AI 手机」是不是新台阶起点？用判断真假台阶的两条来判——①渗透率是否已进入自我增强阶段（有可测的活跃用户 + 有真金白银的 CapEx 决策）；②新增了以前根本没有的应用类别，还是给旧场景（打电话、拍照、社交）加了个新功能？</li>
+        </ol>
+        <p class="scenario-hint">提示：可以参考 5G 手机 2019-2022 的样本——当年也被讲成「新台阶」，事后看更接近「换机式的一个新升级理由」，因为它没有打开以前根本没有的应用类别。AI 手机的现状要自己判断——目前它更像 2015 前的 4K 电视（已上市，未爆发），还是 2006 前的 iPhone（已研发，未量产）？<strong>不给标准答案</strong>——你的推理链正确比结论正确更重要。</p>
+      </div>
+
+      <div class="note">
+        <span class="note-label">这张卡要带走的两个反射弧</span>
+        <ol style="margin:0;padding-left:1.3em">
+          <li>看到<strong>「需求强劲」</strong>新闻，先分类：换机式还是范式革命？再定位置：波峰/波谷/均衡带 vs 起点/陡爬/平台期？</li>
+          <li>看到<strong>「估值跳升」</strong>新闻，先分辨：市场在重估（认可新台阶）还是在给周期高点定价？两种含义对应的持有周期完全不同。</li>
+        </ol>
+        <p style="margin:8px 0 0">写不出来，回来重看第 4 节。</p>
+      </div>
+
+    </section>
+
+    <section class="src">
+      <strong>卡 7 来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.gartner.com/en/newsroom/press-releases/2022-01-12-gartner-says-worldwide-pc-shipments-declined-5-percent-in-fourth-quarter-of-2021-but-grew-nearly-10-percent-for-the-year">Gartner 2022-01-12：全球 PC 出货 2021 全年 339.8M 台、+9.9%（2013 年以来最高）</a></li>
+        <li><a href="https://www.gartner.com/en/newsroom/press-releases/2022-06-30-gartner-forecasts-worldwide-pc-shipments-to-decline-9-5-percent-in-2022">Gartner 2022-06-30：2022 全年 PC 出货预期下调（实际全年约 -16%）</a></li>
+        <li><a href="https://www.gartner.com/en/newsroom/press-releases/01-10-2024-gartner-says-worldwide-pc-shipments-increased-zero-point-three-percent-in-fourth-quarter-of-2023-but-declined-fourteen-point-eight-percent-for-the-year">Gartner 2024-01-10：2023 全年 PC 出货 241.8M 台、-14.8%，跌破 2006 年以来最低</a></li>
+        <li><a href="https://www.gartner.com/en/newsroom/press-releases/2025-01-15-gartner-says-worldwide-pc-shipments-increased-1-point-4-percent-in-fourth-quarter-of-2024">Gartner 2025-01-15：2024 全年 PC 出货 +1.3%（约 2.45 亿台）</a></li>
+        <li><a href="https://www.gartner.com/en/newsroom/press-releases/2026-1-20-gartner-says-worldwide-pc-shipments-increased-9-point-3-percent-in-fourth-quarter-of-2025-and-9-point-1-percent-for-the-full-year">Gartner 2026-01-20：2025 全年 PC 出货 +9.1%，回归均衡带</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581022000008/q4fy22pr.htm">Nvidia Q4 FY22 8-K（2022-02-16）：FY22 数据中心全年收入 $10.61B</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/1045810/000104581023000014/q4fy23pr.htm">Nvidia Q4 FY23 8-K（2023-02-22）：FY23 数据中心全年收入 $15.01B</a></li>
+        <li><a href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2024">Nvidia FY24 Q4 财报公告：FY24 数据中心全年收入 $47.5B</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581025000021/q4fy25pr.htm">Nvidia Q4 FY25 8-K（2025-02-26）：FY25 数据中心全年收入 $115.2B（+142% YoY）；总收入 $130.5B（+114%）</a></li>
+        <li><a href="https://en.wikipedia.org/wiki/IPhone_(1st_generation)">Wikipedia：iPhone（第一代）2007-06-29 首次开售</a></li>
+        <li><a href="https://www.statista.com/statistics/263437/global-smartphone-sales-to-end-users-since-2007/">Statista：全球智能手机出货 2007-2023 历年数据（2016 峰值约 14.7 亿台）</a></li>
+        <li><a href="https://my.idc.com/getdoc.jsp?containerId=prUS53072325">IDC 2025-01：2024 全球智能手机出货 +6.4% 至 12.4 亿台</a></li>
+        <li><a href="https://en.wikipedia.org/wiki/Amazon_Web_Services">Wikipedia：AWS 历史（EC2 2006-08 上线；2015 成为亚马逊最赚钱业务；2016 年收入 $12.2B）</a></li>
+        <li><a href="https://www.apple.com/newsroom/2024/06/introducing-apple-intelligence-for-iphone-ipad-and-mac/">Apple Newsroom 2024-06-10：Apple Intelligence 发布（端侧 AI 系统集成公告）</a></li>
+      </ul>
+      <p style="margin-top:14px;font-size:var(--fs-12)">徽章说明：<span class="badge badge-verified">已核验</span> 直接引用一手来源（年报、8-K、官方公告、权威统计） · <span class="badge badge-expert">专家判断</span> 综合行业口径的判断性表达，无单一权威来源 · <span class="badge badge-assume">估算</span> 明确的推算，标注方法与年份。</p>
+    </section>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine06.html"><span class="dir">← 上一张</span>卡 6 · 库存结构决定波动结构</a>
+        <a href="spine08.html" style="text-align:right"><span class="dir">下一张 →</span>卡 8 · 技术代际是生死</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- 双引擎解耦图 ---------- */
+  (function () {
+    const W = 720, H = 320, PX = 46, PY = 20, PR = 20, PB = 40;
+    const IW = W - PX - PR, IH = H - PY - PB;
+    const yrMin = 2015, yrMax = 2029;
+    const yMin = 0, yMax = 220;
+
+    const chart = document.getElementById("d2Chart");
+    const svg = APP.svgEl("svg", {
+      viewBox: "0 0 " + W + " " + H,
+      role: "img",
+      "aria-label": "三条曲线：换机基线（在水平线上下 ±X% 波动）、范式台阶（在设定年份跳升后爬坡）、总需求（两者之和）"
+    });
+    chart.appendChild(svg);
+
+    /* 坐标映射 */
+    const xY = (y) => PX + (y - yrMin) / (yrMax - yrMin) * IW;
+    const yV = (v) => PY + (yMax - v) / (yMax - yMin) * IH;
+
+    /* 网格与坐标轴 */
+    const gridG = APP.svgEl("g", {});
+    svg.appendChild(gridG);
+    /* 淡淡的基线水平带 */
+    const baseline = 60;
+    const bandTop = 60 * 1.4, bandBot = 60 * 0.6;
+    gridG.appendChild(APP.svgEl("rect", {
+      x: PX, y: yV(bandTop), width: IW, height: yV(bandBot) - yV(bandTop),
+      fill: "var(--surface)", opacity: 0.6
+    }));
+    for (let v = 0; v <= yMax; v += 40) {
+      const y = yV(v);
+      gridG.appendChild(APP.svgEl("line", {
+        x1: PX, y1: y, x2: PX + IW, y2: y,
+        stroke: "var(--viz-grid)", "stroke-width": 1
+      }));
+      const lbl = APP.svgEl("text", { x: PX - 8, y: y + 4, "text-anchor": "end", class: "axis-txt" });
+      lbl.textContent = v;
+      gridG.appendChild(lbl);
+    }
+    for (let year = yrMin; year <= yrMax; year += 2) {
+      const x = xY(year);
+      gridG.appendChild(APP.svgEl("line", {
+        x1: x, y1: PY, x2: x, y2: PY + IH,
+        stroke: "var(--viz-grid)", "stroke-width": 1
+      }));
+      const lbl = APP.svgEl("text", { x: x, y: PY + IH + 16, "text-anchor": "middle", class: "axis-txt" });
+      lbl.textContent = year;
+      gridG.appendChild(lbl);
+    }
+    const axX = APP.svgEl("text", { x: PX + IW / 2, y: PY + IH + 32, "text-anchor": "middle", class: "axis-txt" });
+    axX.textContent = "年份";
+    svg.appendChild(axX);
+    const axY = APP.svgEl("text", {
+      x: 14, y: PY + IH / 2, "text-anchor": "middle",
+      class: "axis-txt", transform: "rotate(-90 14 " + (PY + IH / 2) + ")"
+    });
+    axY.textContent = "相对需求指数";
+    svg.appendChild(axY);
+
+    /* 三条曲线 */
+    const cycPath = APP.svgEl("path", { fill: "none", stroke: "var(--viz-s2)", "stroke-width": 2 });
+    const stepPath = APP.svgEl("path", { fill: "none", stroke: "var(--primary)", "stroke-width": 2 });
+    const totPath = APP.svgEl("path", { fill: "none", stroke: "var(--ink)", "stroke-width": 3 });
+    svg.appendChild(cycPath);
+    svg.appendChild(stepPath);
+    svg.appendChild(totPath);
+
+    /* 可见性 */
+    const vis = { cyc: true, step: true, tot: true };
+
+    /* 控件 */
+    const d2Amp = document.getElementById("d2Amp"),
+          d2Year = document.getElementById("d2Year"),
+          d2Height = document.getElementById("d2Height");
+    const d2AmpOut = document.getElementById("d2AmpOut"),
+          d2YearOut = document.getElementById("d2YearOut"),
+          d2HeightOut = document.getElementById("d2HeightOut");
+    const readout = document.getElementById("d2Readout");
+    const legend = document.getElementById("d2Legend");
+
+    function cyclic(t, amp) { return baseline * (1 + amp * Math.sin((t - yrMin) * Math.PI / 3.5)); }
+    function stepFn(t, yr, h) {
+      if (h <= 0 || t < yr) return 0;
+      const y = t - yr;
+      /* 慢启动爬坡（教学示意） */
+      return h * (1 - Math.exp(-y / 1.8));
+    }
+
+    function buildPath(fn) {
+      const pts = [];
+      for (let t = yrMin; t <= yrMax + 0.001; t += 0.1) {
+        const v = Math.max(yMin, Math.min(yMax, fn(t)));
+        pts.push(xY(t).toFixed(1) + "," + yV(v).toFixed(1));
+      }
+      return "M " + pts.join(" L ");
+    }
+
+    function paint() {
+      const amp = parseFloat(d2Amp.value),
+            yr = parseInt(d2Year.value),
+            h = parseFloat(d2Height.value);
+      d2AmpOut.textContent = Math.round(amp * 100) + "%";
+      d2YearOut.textContent = yr > yrMax ? "关闭" : yr;
+      d2HeightOut.textContent = h;
+
+      const cycFn = (t) => cyclic(t, amp);
+      const stepFnBound = (t) => stepFn(t, yr, h);
+      const totFn = (t) => cycFn(t) + stepFnBound(t);
+
+      cycPath.setAttribute("d", buildPath(cycFn));
+      cycPath.setAttribute("opacity", vis.cyc ? "0.95" : "0.10");
+      stepPath.setAttribute("d", buildPath(stepFnBound));
+      stepPath.setAttribute("opacity", vis.step ? "0.95" : "0.10");
+      totPath.setAttribute("d", buildPath(totFn));
+      totPath.setAttribute("opacity", vis.tot ? "1" : "0.10");
+
+      /* readout：把 2023 那一年的三值报出来 */
+      const t = 2023;
+      const c = cycFn(t), s = stepFnBound(t), tot = c + s;
+      const stepOn = h > 0 && yr <= t;
+      const scenario = stepOn && amp > 0.15
+        ? "两台发动机同时贡献——只看总需求这条黑线，你分不清哪部分是波动、哪部分是趋势。这就是「需求强劲」新闻最容易读错的时刻。"
+        : stepOn
+          ? "只有台阶在贡献增量——形状是「跳升 + 爬坡」，读作范式革命，估值方式用重估。"
+          : "没有台阶，只有换机基线上下波动——读作换机式，估值方式用均值回归。";
+      readout.innerHTML = "在 <b>2023</b> 年：换机基线 <b>" + c.toFixed(0) +
+        "</b>（在 " + baseline + " 上下 ±" + Math.round(amp * 100) + "% 波动）；台阶贡献 <b>" +
+        s.toFixed(0) + "</b>；总需求 <b>" + tot.toFixed(0) + "</b>。" +
+        "<br><span" + (stepOn && amp > 0.15 ? ' class="warn"' : "") + ">" + scenario + "</span>";
+    }
+
+    function buildLegend() {
+      const items = [
+        { key: "cyc",  color: "var(--viz-s2)",  label: "换机基线（水平线上下波动）" },
+        { key: "step", color: "var(--primary)", label: "范式台阶（在设定年份跳升）" },
+        { key: "tot",  color: "var(--ink)",     label: "总需求（两者之和，实际读到的曲线）" }
+      ];
+      legend.innerHTML = "";
+      items.forEach((item) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.setAttribute("aria-pressed", "true");
+        b.innerHTML = '<span class="key" style="background:' + item.color + '"></span>' + item.label;
+        b.addEventListener("click", () => {
+          const on = b.getAttribute("aria-pressed") === "true";
+          b.setAttribute("aria-pressed", String(!on));
+          vis[item.key] = !on;
+          paint();
+        });
+        legend.appendChild(b);
+      });
+    }
+
+    [d2Amp, d2Year, d2Height].forEach((el) => el.addEventListener("input", paint));
+
+    document.querySelectorAll("[data-preset-d2]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const k = btn.dataset.presetD2;
+        if (k === "ai22") { d2Amp.value = 0.20; d2Year.value = 2022; d2Height.value = 80; }
+        else if (k === "peakonly") { d2Amp.value = 0.35; d2Year.value = 2030; d2Height.value = 0; }
+        else if (k === "pure") { d2Amp.value = 0; d2Year.value = 2022; d2Height.value = 100; }
+        paint();
+      });
+    });
+
+    buildLegend();
+    paint();
+  })();
+
+});
+</script>
+</body>
+</html>

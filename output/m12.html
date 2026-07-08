@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模块 12 · 跨市场差异</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 页面专属样式 ---------- */
+
+  /* 各市场半导体上市公司分布地图 · A 类直观化 */
+  .mkmap { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 14px 0 8px; }
+  .mkmap-card {
+    border: 1px solid var(--line); border-radius: var(--radius-m); background: var(--surface);
+    padding: 12px 14px; position: relative;
+  }
+  .mkmap-card .flag { font-size: var(--fs-13); color: var(--muted); font-weight: 600; letter-spacing: 0.03em; }
+  .mkmap-card .cty { font-size: var(--fs-17); font-weight: 700; color: var(--primary); margin: 2px 0 8px; }
+  .mkmap-card ul { padding-left: 1.2em; margin: 0; font-size: var(--fs-14); line-height: 1.55; }
+  .mkmap-card ul li + li { margin-top: 2px; }
+  .mkmap-card .role { display: inline-block; font-size: var(--fs-12); padding: 1px 6px; border-radius: 4px;
+    background: var(--surface-2); color: var(--muted); margin-left: 4px; }
+
+  /* 传导时差回放组件 · A 类核心 */
+  .tdiff { border: 1px solid var(--line); border-radius: var(--radius-m); background: var(--surface); padding: 14px 16px; margin: 14px 0 10px; }
+  .tdiff-head { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; margin-bottom: 8px; }
+  .tdiff-title { font-size: var(--fs-15); font-weight: 650; }
+  .tdiff-sub { font-size: var(--fs-13); color: var(--muted); }
+  .tdiff-rows { display: grid; gap: 6px; margin: 8px 0; }
+  .tdiff-row {
+    display: grid; grid-template-columns: 128px 1fr 96px; gap: 12px; align-items: center;
+    border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--bg); padding: 8px 12px;
+  }
+  .tdiff-row .lbl { font-size: var(--fs-13); font-weight: 650; color: var(--ink); line-height: 1.35; }
+  .tdiff-row .lbl .u { display: block; font-size: var(--fs-12); color: var(--muted); font-weight: 500; margin-top: 2px; }
+  .tdiff-row .track { position: relative; height: 30px; }
+  .tdiff-row .track svg { display: block; width: 100%; height: 100%; }
+  .tdiff-row .val { text-align: right; font-size: var(--fs-14); font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; }
+  .tdiff-scrub {
+    display: grid; grid-template-columns: 128px 1fr 96px; gap: 12px; align-items: center; margin-top: 8px;
+  }
+  .tdiff-scrub label { font-size: var(--fs-13); font-weight: 650; color: var(--muted); }
+  .tdiff-scrub output { text-align: right; font-size: var(--fs-14); font-weight: 650; color: var(--primary); font-variant-numeric: tabular-nums; }
+  .tdiff-events { display: flex; gap: 10px 18px; flex-wrap: wrap; margin-top: 8px; font-size: var(--fs-13); color: var(--muted); }
+  @media (max-width: 640px) {
+    .tdiff-row { grid-template-columns: 88px 1fr 72px; padding: 6px 8px; gap: 8px; }
+    .tdiff-row .lbl { font-size: var(--fs-12); }
+    .tdiff-row .val { font-size: var(--fs-13); }
+    .tdiff-scrub { grid-template-columns: 88px 1fr 72px; gap: 8px; }
+  }
+
+  /* 估值倍数分解器 */
+  .vbars { display: grid; gap: 10px; margin: 14px 0 10px; }
+  .vbar-row {
+    display: grid; grid-template-columns: 152px 1fr 68px; gap: 10px; align-items: center;
+    border-bottom: 1px dashed var(--line); padding: 6px 0;
+  }
+  .vbar-row .name { font-size: var(--fs-14); font-weight: 650; line-height: 1.35; }
+  .vbar-row .name .u { display: block; font-size: var(--fs-12); font-weight: 500; color: var(--muted); margin-top: 1px; }
+  .vbar-row .bar { position: relative; height: 22px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+  .vbar-row .bar > span {
+    display: block; height: 100%; background: var(--viz-s3); border-radius: 2px;
+    transition: width var(--dur) var(--ease);
+  }
+  .vbar-row .bar.hi > span { background: var(--accent); }
+  .vbar-row .val { text-align: right; font-size: var(--fs-14); font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; }
+  .vswitch { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  .vswitch button {
+    padding: 5px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface);
+    font-size: var(--fs-13); font-weight: 600; cursor: pointer; font: inherit; color: var(--ink);
+  }
+  .vswitch button[aria-pressed="true"] {
+    border-color: var(--primary-2); background: var(--primary-tint); color: var(--primary);
+  }
+  @media (max-width: 560px) {
+    .vbar-row { grid-template-columns: 108px 1fr 56px; gap: 8px; }
+    .vbar-row .name { font-size: var(--fs-13); }
+    .vbar-row .val { font-size: var(--fs-13); }
+  }
+
+  /* 一览表：披露/结构差异 */
+  .cmp-tbl { border-collapse: collapse; width: 100%; font-size: var(--fs-14); margin: 12px 0 20px; }
+  .cmp-tbl th, .cmp-tbl td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .cmp-tbl th { font-weight: 650; font-size: var(--fs-13); color: var(--muted); background: var(--surface); white-space: nowrap; }
+  .cmp-tbl td:first-child { font-weight: 650; white-space: nowrap; color: var(--primary); }
+  @media (max-width: 720px) {
+    .cmp-tbl thead { display: none; }
+    .cmp-tbl, .cmp-tbl tbody, .cmp-tbl tr, .cmp-tbl td { display: block; width: 100%; }
+    .cmp-tbl tr { padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .cmp-tbl td { padding: 4px 12px; border-bottom: none; }
+    .cmp-tbl td:first-child { padding-top: 8px; color: var(--primary); }
+    .cmp-tbl td::before { content: attr(data-h); display: block; font-size: var(--fs-12); font-weight: 600; color: var(--muted); margin-bottom: 2px; }
+    .cmp-tbl td:first-child::before { content: none; }
+  }
+</style>
+</head>
+<body data-page="m12">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">模块 12 · 跨市场差异</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">第三层 · 投资判断 · 模块 12 / 14</p>
+      <h1>跨市场差异：同一个半导体标的，在美 / A / 港 / 台 / 韩 / 日的价签为什么不同</h1>
+      <p class="core-q"><b>核心问题：</b>为什么同一件产业新闻，不同市场反应节奏和幅度完全不同？同一家公司在两个市场同一天的收盘价可以差三成——那三成里装的是什么？跨市场投资者应该怎么把一个市场的信号翻译成另一个市场的动作？</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">学完这个模块，你要能独立回答（现在答不上来是正常的）</span>
+      <ul style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>一条 EUV 相关订单变化，为什么美股 ASML 当天完成定价，而 A 股设备国产化标的要几周？请从投资者结构 + 信息效率 + 可比标的可得性三层拆解。</li>
+        <li>A 股半导体板块常年 P/E 显著高于美股同类（近年 A 股 90-115 倍 vs 美股 SOXX 约 28-30 倍），说出三个结构性原因——不是「炒作」这种模糊说法。</li>
+        <li>出口管制新闻在美股 / A 股 / 港股三个市场的第一日、一周、一个月的反应链，有什么系统性差异？</li>
+      </ul>
+    </div>
+
+    <ul class="concepts" aria-label="本模块概念清单">
+      <li>会计准则</li><li>US-GAAP</li><li>IFRS</li><li>ASC 842 / IFRS 16</li>
+      <li>披露口径</li><li>季报节奏</li><li>指引与电话会</li>
+      <li>投资者结构</li><li>换手率</li><li>信息效率</li>
+      <li>A/H 溢价</li><li>ADR 溢价</li><li>KOSPI 集中度</li>
+      <li>估值倍数</li><li>政策扰动</li>
+    </ul>
+
+    <div class="tabs" data-tabs>
+      <div class="tablist" role="tablist" aria-label="模块内容">
+        <button role="tab" id="tab-a" aria-controls="panel-a" aria-selected="true">本质</button>
+        <button role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false">怎么判断</button>
+        <button role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false">练习</button>
+      </div>
+
+      <!-- ==================== 本质 ==================== -->
+      <section role="tabpanel" id="panel-a" aria-labelledby="tab-a" class="prose">
+
+        <h2>1. 六个市场的半导体上市公司分布地图</h2>
+        <p>先把地图摆到桌上。同一条产业链，六个市场装着不同的角色——你在哪个市场，就先决定了你「买得到什么」，也就先决定了「同一件事怎么被定价」。</p>
+
+        <div class="mkmap" aria-label="六个市场的半导体上市公司分布">
+          <div class="mkmap-card">
+            <div class="flag">美国</div>
+            <div class="cty">上游全谱 + AI 定价权</div>
+            <ul>
+              <li>GPU / CPU / DPU：Nvidia、AMD、Intel、Broadcom<span class="role">设计</span></li>
+              <li>EDA / IP：Cadence、Synopsys、Arm ADR<span class="role">软件</span></li>
+              <li>设备：应用材料、泛林、KLA<span class="role">WFE</span></li>
+              <li>存储：美光<span class="role">DRAM/NAND</span></li>
+              <li>光模块 / 网络：Coherent、Ciena、Marvell<span class="role">互联</span></li>
+            </ul>
+          </div>
+          <div class="mkmap-card">
+            <div class="flag">中国大陆 A 股</div>
+            <div class="cty">国产化 + 设计中低端</div>
+            <ul>
+              <li>设计：韦尔、卓胜微、兆易创新、汇顶<span class="role">设计</span></li>
+              <li>封测：长电、通富、华天<span class="role">OSAT</span></li>
+              <li>材料：沪硅产业、江丰、雅克<span class="role">硅片/靶材</span></li>
+              <li>设备：北方华创、中微、盛美、拓荆<span class="role">国产化</span></li>
+              <li>无先进制程直上市标的（中芯已列港股，A 股仅科创板 688981 二次上市）</li>
+            </ul>
+          </div>
+          <div class="mkmap-card">
+            <div class="flag">香港</div>
+            <div class="cty">中国先进制造窗口</div>
+            <ul>
+              <li>中芯国际 0981.HK<span class="role">代工</span></li>
+              <li>华虹半导体 1347.HK<span class="role">成熟制程</span></li>
+              <li>ASMPT 0522.HK<span class="role">封装设备</span></li>
+              <li>宏光半导体、上海复旦等中概<span class="role">设计</span></li>
+              <li>Nvidia/AMD 类无本地上市，只能靠 A 股主题基金间接</li>
+            </ul>
+          </div>
+          <div class="mkmap-card">
+            <div class="flag">中国台湾</div>
+            <div class="cty">先进代工 + 封装</div>
+            <ul>
+              <li>台积电 2330.TW<span class="role">先进代工</span></li>
+              <li>联电 2303.TW<span class="role">成熟代工</span></li>
+              <li>日月光 3711.TW / 力成 6239.TW<span class="role">封测</span></li>
+              <li>联发科 2454.TW / 联咏 3034.TW<span class="role">设计</span></li>
+              <li>台积电有 NYSE ADR (TSM)，其他多数无</li>
+            </ul>
+          </div>
+          <div class="mkmap-card">
+            <div class="flag">韩国</div>
+            <div class="cty">存储 + 显示 双头垄断</div>
+            <ul>
+              <li>三星电子 005930.KS<span class="role">存储/代工</span></li>
+              <li>SK 海力士 000660.KS<span class="role">DRAM/HBM</span></li>
+              <li>三星在 LSE 有 GDR (SMSN.IL)<span class="role">跨市场</span></li>
+              <li>两家合计占 KOSPI 权重约 47%<span class="role">集中度极高</span></li>
+            </ul>
+          </div>
+          <div class="mkmap-card">
+            <div class="flag">日本</div>
+            <div class="cty">材料 + 测试设备</div>
+            <ul>
+              <li>东京电子（TEL）8035.T<span class="role">刻蚀/沉积</span></li>
+              <li>Advantest 6857.T<span class="role">测试设备</span></li>
+              <li>信越化学 4063.T / SUMCO 3436.T<span class="role">硅片</span></li>
+              <li>爱思强 / 东电子束<span class="role">量测</span></li>
+              <li>Screen 7735.T<span class="role">清洗</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <p style="font-size:var(--fs-14);color:var(--muted)"><b>看什么：</b>六张卡里每一张的角色都不一样——想投「上游 AI 芯片龙头」得在美股开户，想投「先进代工」只能买 TSMC 或 SMIC，想投「HBM 三剑客」得看韩国和美光。<strong>市场决定 shopping list，shopping list 决定这个市场读一条新闻的角度。</strong>后面几节的所有差异都从这张图长出来。</p>
+
+        <p>顺着这张图看两个立即可见的结构性事实：</p>
+        <ul>
+          <li><strong>先进产能高度集中，稀缺性各市场不同</strong>——3nm 及以下先进逻辑全球只有台积电（台股）和三星（韩股）能做；HBM 只有 SK 海力士（韩）、三星（韩）、美光（美）三家；EUV 独家 ASML（荷兰上市，主要交易在 AEX + NASDAQ ADR）。想在 A 股买到这些，只有主题基金和产业链衍生标的<a class="badge badge-expert" href="#src-3">专家判断 · 通行认知</a>。</li>
+          <li><strong>韩国 + 台湾两个市场，半导体和 HBM 相关公司占总市值近 60%</strong><a class="badge badge-verified" href="https://finance.biggo.com/news/jEs_Fp4BX0tZvRTv4JAl" target="_blank" rel="noopener">已核验 · BigGo 引 Bloomberg 2026-05</a>——本地股指本身就已经是「半导体股指」。这决定了 KOSPI 和加权指数与美股 SOX 相关性高到接近同一条曲线的两次抽样。</li>
+        </ul>
+
+        <h2>2. 会计准则不一样：三种财务语言，同一件事读出三种数</h2>
+        <p>公司公布的每一份财报，都是用一套会计准则「翻译」出来的。同一件业务事实，用不同准则翻译，报表上出现的数字可以差得很大——不是造假，是<strong>语言不同</strong>。</p>
+        <p>六个市场的主流准则：</p>
+        <table class="cmp-tbl">
+          <thead><tr><th>市场</th><th>主流准则</th><th>典型代表</th><th>与其他准则最显眼的差异</th></tr></thead>
+          <tbody>
+            <tr><td data-h="市场">美股（NYSE / NASDAQ）</td><td data-h="准则">US-GAAP</td><td data-h="代表">Nvidia、Intel、AMD、Broadcom、AMAT、KLA</td><td data-h="差异">经营租赁与融资租赁分开、SBC 计入 GAAP 但可 non-GAAP 剔除、商誉减值单步法</td></tr>
+            <tr><td data-h="市场">A 股</td><td data-h="准则">中国企业会计准则（CAS，与 IFRS 实质趋同）</td><td data-h="代表">中芯 A、北方华创、韦尔</td><td data-h="差异">与 IFRS 表面接近，但确认口径、研发资本化尺度、政府补助分类可差别较大</td></tr>
+            <tr><td data-h="市场">港股</td><td data-h="准则">HKFRS（与 IFRS 逐条一致）</td><td data-h="代表">中芯 H、华虹、ASMPT</td><td data-h="差异">与 IFRS 完全一致；中国内地公司港股用 IFRS/HKFRS，A 股用 CAS——同一家公司两套报表</td></tr>
+            <tr><td data-h="市场">台湾</td><td data-h="准则">TIFRS（台湾版 IFRS）</td><td data-h="代表">台积电、联电、联发科、日月光</td><td data-h="差异">与 IFRS 高度一致；台积电同时按 US-GAAP 6-K 向 SEC 备案 ADR 层面文件</td></tr>
+            <tr><td data-h="市场">韩国</td><td data-h="准则">K-IFRS</td><td data-h="代表">三星、SK 海力士</td><td data-h="差异">与 IFRS 一致；分部披露、季度节奏可能与美股同类差一些</td></tr>
+            <tr><td data-h="市场">日本</td><td data-h="准则">J-GAAP / IFRS / US-GAAP 三选一</td><td data-h="代表">东电、Advantest、信越</td><td data-h="差异">大企业已多转 IFRS；J-GAAP 商誉按年摊销（其他三家全部按 IFRS/US-GAAP 走减值），是最显眼的差异</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:var(--fs-13);color:var(--muted)">上表基于各交易所披露规则与主要样本公司年报<a class="badge badge-expert" href="#src-10">专家判断 · 通行口径</a>。</p>
+
+        <p>拿一个具体差异当门票，看清「不同准则的落地影响」有多重。<strong>租赁准则</strong>：US-GAAP 下的 ASC 842 与 IFRS 下的 IFRS 16——</p>
+        <ul>
+          <li><strong>ASC 842（美股）</strong>把租赁分成「经营租赁」与「融资租赁」两类：经营租赁在资产负债表上仍要计入使用权资产与租赁负债，但损益表按<strong>直线法总租赁费用</strong>处理；融资租赁则拆成「折旧 + 利息」两笔<a class="badge badge-verified" href="https://finquery.com/blog/ifrs-16-vs-asc-842-us-gaap-lease-accounting-differences/" target="_blank" rel="noopener">已核验 · FinQuery 与 KPMG</a>。</li>
+          <li><strong>IFRS 16（台/韩/港/A/日 IFRS 口径）</strong>取消双模型，所有租赁一律按<strong>类融资租赁</strong>处理：使用权资产折旧 + 租赁负债利息，损益表前几年费用更前置，EBITDA 因此系统性高于经营租赁法<a class="badge badge-verified" href="https://kpmg.com/us/en/articles/2025/lease-accounting-ifrs-standards-us-gaap.html" target="_blank" rel="noopener">已核验 · KPMG 与 FinQuery</a>。</li>
+        </ul>
+
+        <div class="derive">
+          <span class="expr">同一份长期租厂房合同：IFRS 16 前几年费用 = 折旧 + 利息 &gt; </span>
+          <span class="res">直线法</span>
+          <span class="unit">= ASC 842 经营租赁的年费用（前期费用更高，EBITDA 也更高）</span>
+        </div>
+
+        <p>为什么这条对半导体重要：晶圆厂洁净室、EUV 机台、AI 数据中心机架都常见长期租赁；同一家公司若把年报按两套准则各出一版，EBITDA 可以差个位数百分点，市值倍数计算就跟着漂。这也是为什么很多分析师做跨市场比较时会用「调整后 EBITDA + CapEx」而非直接的 GAAP 净利润<a class="badge badge-expert" href="#src-9">专家判断 · 通行的买方做法</a>。</p>
+
+        <p>另外三个落地差异记住即可（细节留给模块 11 财务估值 tab 展开）：<strong>股权激励（SBC）</strong> IFRS 与 US-GAAP 都进 GAAP 损益，但美股的 non-GAAP 剔除文化远比其他市场普遍——所以美股半导体公司「Adjusted EPS」和「GAAP EPS」经常差两三倍；<strong>研发资本化</strong> IFRS 允许在满足条件下资本化研发（多数半导体公司仍费用化），US-GAAP 一律费用化，A 股在 IFRS 精神下也允许资本化，但实际操作因公司而异；<strong>政府补助</strong> 中国大陆公司的政府补助规模远超其他市场同类，A 股与 IFRS/HKFRS 在列示方式上口径不同——A 股常直接进「其他收益」拉高利润，港股常冲减对应资产。<strong>看 A 股半导体公司的利润，务必先剥政府补助</strong>。</p>
+
+        <h2>3. 披露频率与文化：能几个月看到公司一次「说话」？</h2>
+        <p>投资信号的<strong>供给节奏</strong>因市场而异——同一家公司在两个市场，能等到管理层「亲口说话」的间隔可能差一倍：</p>
+        <table class="cmp-tbl">
+          <thead><tr><th>市场</th><th>季报</th><th>半年报</th><th>年报</th><th>指引 / 电话会</th></tr></thead>
+          <tbody>
+            <tr><td data-h="市场">美股</td><td data-h="季报">强制 10-Q，季末后 40 天（大型加速申报人）</td><td data-h="半年报">无（季度覆盖）</td><td data-h="年报">10-K 60 天</td><td data-h="指引">每季给下季 / 全年 revenue+gross margin+CapEx 三项指引；季度电话会 60-90 分钟，问答开放、卖方齐上阵</td></tr>
+            <tr><td data-h="市场">A 股</td><td data-h="季报">强制季报，一季度末后 1 个月</td><td data-h="半年报">2 个月</td><td data-h="年报">4 个月</td><td data-h="指引">正式指引罕见，业绩预告制度替代；业绩说明会有开始普及但问答封闭、时间短</td></tr>
+            <tr><td data-h="市场">港股主板</td><td data-h="季报">非强制（自愿披露）</td><td data-h="半年报">业绩公告 2 个月、正式报 3 个月</td><td data-h="年报">4 个月</td><td data-h="指引">正式指引不常见；业绩会有但开放度弱于美股</td></tr>
+            <tr><td data-h="市场">台湾</td><td data-h="季报">强制季报</td><td data-h="半年报">季度覆盖</td><td data-h="年报">3 个月内</td><td data-h="指引">季度电话会开放度接近美股（台积电为最开放案例）；正式指引 Q1/Q2/Q3/Q4 都给</td></tr>
+            <tr><td data-h="市场">韩国</td><td data-h="季报">强制季报</td><td data-h="半年报">季度覆盖</td><td data-h="年报">3 个月</td><td data-h="指引">季度电话会有但英语覆盖率不如美股；给的是方向性口径而非精确数字</td></tr>
+            <tr><td data-h="市场">日本</td><td data-h="季报">强制季报</td><td data-h="半年报">季度覆盖</td><td data-h="年报">3 个月</td><td data-h="指引">给下财年指引（4 月起财年）；电话会开放度中等</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:var(--fs-13);color:var(--muted)">披露频率数据来自 SEC《Acceleration of Periodic Report Filing Dates》、Mayer Brown 2026 SEC Filing Deadlines、雪球「港股主板中报和年报披露规则解读」<a class="badge badge-verified" href="#src-10">已核验</a>。</p>
+
+        <p>披露频率差异有三个非常直接的投资含义：</p>
+        <ul>
+          <li><strong>信息真空长度差 3-6 倍</strong>——美股半导体投资者每 60-90 天有一次由管理层亲自说话的机会（10-Q + 电话会 + 指引），港股主板可能要等 6 个月，A 股靠强制季报补上但内容通常比 10-Q 简略。<strong>信息真空长的市场，估值波动振幅系统性放大</strong>：中间没锚，情绪自己走。</li>
+          <li><strong>台积电成为「跨市场信号发生器」</strong>——因为它同时按 TIFRS 逐季披露又给 US-GAAP 6-K，季度电话会开放度接近美股，全球所有半导体买方都拿它当读数：这一家的口径变化会同时穿透美股 / 台股 / 韩股 / A 股产业链衍生。</li>
+          <li><strong>A 股「业绩预告」制度是双刃剑</strong>——预告本身是提前信号（预亏、预盈的公告有 6 折模糊边界），交易反应往往抢在正式披露前若干周就完成，但预告文本模糊、口径不统一，读预告本身要一层过滤（第 4 节的散户参与叠加会放大这一层的失真）。</li>
+        </ul>
+
+        <h2>4. 投资者结构：谁在下单，决定同一件事被怎么定价</h2>
+        <p>下一层核心差异——买方是谁。这一层比会计准则和披露频率更根本，因为它决定了「同样一条新闻，多快被读懂、被谁读懂、能持续影响多久」。</p>
+        <p>三个核心数字：</p>
+        <ul>
+          <li><strong>机构持股比例</strong>：中国 A 股 2020 年底约 16%<a class="badge badge-verified" href="https://www.pbcsf.tsinghua.edu.cn/__local/5/F8/1D/6A6079AE6FDAFD55E50E0E6EC19_3F82D891_5D6F0.pdf" target="_blank" rel="noopener">已核验 · 清华 PBCSF 研究</a>；美国 2019 年约 41%、日本 2018 年约 31%、英国 2016 年约 26%<a class="badge badge-verified" href="#src-7">已核验 · 同上</a>。中国机构占比过去五年在升（2021 末 24.6%）但结构差仍在<a class="badge badge-verified" href="#src-7">已核验 · 清华 PBCSF 研究</a>。</li>
+          <li><strong>散户交易活跃度</strong>：中国 A 股散户持仓仅约 20%，但<strong>交易占大头（&gt;80%）</strong><a class="badge badge-verified" href="#src-7">已核验 · 同上</a>——「谁下单」远比「谁持仓」影响价格。</li>
+          <li><strong>换手率</strong>：上交所与韩国交易所年换手率约 196%（2024 年），而深交所显著更高、纽交所和东京交易所显著更低<a class="badge badge-verified" href="https://finance.sina.com.cn/money/fund/jjzl/2024-08-14/doc-inciqxck7697924.shtml" target="_blank" rel="noopener">已核验 · 高毅报告 · 新浪财经 2024-08</a>——换手率越高 = 平均持有期越短 = 交易更受情绪与短线主题驱动。</li>
+        </ul>
+
+        <div class="derive">
+          <span class="expr">A 股：散户持股 20% × 交易占 80% ≫</span>
+          <span class="res">短线定价主导</span>
+          <span class="unit">美股：机构持股 41% × 交易占大头 → 深度研究定价主导</span>
+        </div>
+
+        <p>「谁下单」决定同一件产业事件的三种反应形态：</p>
+        <ul>
+          <li><strong>标题层反应</strong>（新闻标题 → 主题基金 → 散户跟风）：A 股、港股 GEM、极少数散户占比高的美股小盘。特征是当天涨停 / 大幅低开、一周内高波动、一个月常见回吐——因为定价没有基本面锚，情绪耗尽就走。</li>
+          <li><strong>流程层反应</strong>（新闻标题 → 卖方深度研究 → 顺流程链拆解 → 买方定价链条上下游）：美股大盘、台股 2330、韩股 005930/000660。特征是当天完成前置定价、后续新闻只是确认，涨跌节奏跟着财报和指引兑现走。</li>
+          <li><strong>混合层反应</strong>（结构层慢定价 + 主题层快反应叠加）：A 股中大盘半导体（中芯 A、北方华创等）、港股中芯。表现为当天有主题反应、一周被基本面拉回、一个月看基本面兑现节奏。</li>
+        </ul>
+
+        <p>这里必须点一下模块 13「标题层 vs 流程层」的骨架卡：<strong>不同市场里，同一新闻停留在标题层的时间与深度不同</strong>——A 股是标题层最厚的市场，美股是流程层最厚的市场。跨市场投资者的第一动作，就是判断当前市场把这条新闻停在哪一层。</p>
+
+        <h2>5. 信息效率的直接后果：一条 EUV 新闻的传导时差</h2>
+        <p>把前四节合起来，你就能理解为什么<strong>同一条产业新闻，在美股当天完成定价，在 A 股要几周</strong>。用一个已核验的真实事件走一遍：<strong>2026 年 1 月 2 日，Aletheia Capital 把 ASML 从「卖出」直接升级到「买入」，目标价从 750 美元翻倍到 1500 美元</strong>（全街最高，理由是低 NA EUV 2026 增约 33%、2027 加速 50-60%、DRAM 需求叠加）<a class="badge badge-verified" href="https://www.investing.com/news/analyst-ratings/asml-stock-rating-upgraded-to-buy-by-aletheia-capital-on-chip-demand-outlook-93CH-4427450" target="_blank" rel="noopener">已核验 · Aletheia 2026-01-02 · Investing.com/Yahoo Finance 转述</a>。</p>
+
+        <p>下面这个组件回放这条新闻在五个市场的定价速度。<strong>看什么：</strong>拖动天数滑块，看每个市场在第 1 天、第 5 天、第 30 天各自完成到什么位置——美股 ASML 第 1 天基本走完，A 股设备国产化标的第 1 天是标题反应、第 5 天开始分化、第 30 天由基本面接管。这是本页四节机制的合成结果。</p>
+
+        <div class="tdiff">
+          <div class="tdiff-head">
+            <span class="tdiff-title">一条 EUV 上调新闻的五市场传导时差</span>
+            <span class="tdiff-sub">教学模型：横条长度 = 该市场对新闻信息的定价完成度百分比。定价路径与终点基于已核验事件+第 1-4 节的信息效率机制推导，不精确对应具体价格波动。<a class="badge badge-verified" href="#src-12">已核验 · 事件本身</a></span>
+          </div>
+          <div class="tdiff-rows">
+            <div class="tdiff-row" data-m="asml"><div class="lbl">ASML<span class="u">阿姆斯特丹 + NASDAQ ADR</span></div><div class="track"></div><div class="val">0%</div></div>
+            <div class="tdiff-row" data-m="kla"><div class="lbl">KLA + 泛林<span class="u">NASDAQ · 流程链上游</span></div><div class="track"></div><div class="val">0%</div></div>
+            <div class="tdiff-row" data-m="tsm"><div class="lbl">台积电 + 韩存储<span class="u">2330.TW · 005930.KS</span></div><div class="track"></div><div class="val">0%</div></div>
+            <div class="tdiff-row" data-m="smich"><div class="lbl">中芯 H 股<span class="u">0981.HK</span></div><div class="track"></div><div class="val">0%</div></div>
+            <div class="tdiff-row" data-m="cnaeq"><div class="lbl">A 股设备国产化<span class="u">北方华创等</span></div><div class="track"></div><div class="val">0%</div></div>
+          </div>
+          <div class="tdiff-scrub">
+            <label for="tdiffDay">时间轴</label>
+            <input type="range" id="tdiffDay" min="0" max="30" step="1" value="0">
+            <output id="tdiffDayOut">第 0 天</output>
+          </div>
+          <div class="tdiff-events">
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:4px;vertical-align:0.05em"></span>第 0 天：Aletheia 上调新闻发布</span>
+            <span>第 1 天：美股开盘</span>
+            <span>第 5 天：A 股主题热度峰值</span>
+            <span>第 20-30 天：财报周期确认</span>
+          </div>
+        </div>
+
+        <p>为什么这条时差可以被机制推导出来：</p>
+        <ul>
+          <li><strong>ASML / KLA / 泛林（美股流程层）</strong>：新闻当天，卖方在几小时内把「EUV 装机 +50%」翻译成「量测（KLA）、刻蚀（Lam）、沉积（AMAT）必然跟单」——机构在盘中就把上下游全都定价了。第 1 天后，除非有财报兑现或反证，横条基本不再动<a class="badge badge-expert" href="m02.html#panel-b">专家判断 · 模块 2 工具二已建立</a>。</li>
+          <li><strong>台积电 / 三星 / SK 海力士（下游主客户）</strong>：这些是「EUV 需求方」，装机变多 = 先进产能扩、DRAM/HBM 也扩，主客户预期改善。台股 / 韩股由本地机构 + 全球机构双轨定价，节奏比美股慢半到一天但一周内基本完成。</li>
+          <li><strong>中芯 H 股</strong>：中芯不用 EUV（受出口管制），这条新闻和它没直接关系；但港股中概板块的联动性会让它先跟涨、再修正。定价过程一周内完成。</li>
+          <li><strong>A 股设备国产化标的</strong>：这类公司（北方华创、中微等）在业务上恰恰是「ASML/AMAT/Lam 在中国市场的替代者」——同一条 EUV 大扩产的新闻，A 股逻辑不是「设备商吃饱」，是「国产化窗口打开」的联想式主题。第 1 天题材大涨，第 5 天热度峰值，之后取决于国产设备招标数据、公司业绩预告，可能出现「一周涨停后一个月回吐」，也可能被基本面确认。<strong>关键在于同一条新闻在 A 股走的是「主题联想链」，不是流程验证链</strong>。</li>
+        </ul>
+
+        <p>这个机制反过来也解释了另一个常见现象：<strong>同一家中国大陆公司在 A 股与港股同一天同一新闻，收盘价可以差 5-10%</strong>——不是套利机会缺失，而是港股定价靠外资机构（流程层），A 股定价靠本地散户+主题基金（标题层），两者对同一新闻走不同定价路径。第 6 节把这个价差的物理量化——A/H 溢价——展开。</p>
+
+        <h2>6. 估值倍数系统性差异：A/H 溢价、ADR 溢价与 P/E 倍数拆解</h2>
+        <p>三个真实观察，先摆出来：</p>
+        <ul>
+          <li><strong>中芯国际 A 股（688981） vs H 股（0981.HK）</strong>：2025 年一季度 A/H 溢价高达约 103%——即同一股在 A 股比 H 股贵一倍；2025 年 9 月 DeepSeek 冲击后回到约 52%<a class="badge badge-verified" href="https://36kr.com/p/3344768078004873" target="_blank" rel="noopener">已核验 · 36Kr 2025-09 分析</a>。</li>
+          <li><strong>台积电 ADR（TSM）vs 台股（2330.TW）</strong>：2024 年 10 月溢价约 20%<a class="badge badge-verified" href="https://www.acadian-asset.com/investment-insights/owenomics/tsmc-totally-stupid-market-chaos" target="_blank" rel="noopener">已核验 · Acadian Asset Mgmt 2024-10</a>；2025 年 10 月 ADR 溢价创 20 年新高（50 日均线口径）<a class="badge badge-verified" href="https://www.bloomberg.com/news/articles/2025-10-15/tsmc-adr-premium-tops-two-decade-high-as-global-buyers-pile-in" target="_blank" rel="noopener">已核验 · Bloomberg 2025-10-15</a>。</li>
+          <li><strong>A 股半导体板块 P/E 与美股 SOXX 的差距</strong>：2026 年初国证半导体芯片指数 PE-TTM 约 113 倍（历史 99.4% 分位）、中证半导体 PE 约 90 倍<a class="badge badge-verified" href="#src-5">已核验 · 理杏仁 · 东方财富 2026-01/03</a>；同期 SOXX（iShares 半导体 ETF）P/E 约 28-30 倍<a class="badge badge-verified" href="https://www.investing.com/etfs/ishares-phlx-sox-semiconductor" target="_blank" rel="noopener">已核验 · Investing.com/Danelfin 2026</a>。差距 3-4 倍长期存在。</li>
+        </ul>
+
+        <p>三个观察都是真的，也都不是「炒作」两个字能解释的。<strong>系统性的估值差异必然有系统性的成因</strong>。合起来看有四条：</p>
+        <ol>
+          <li><strong>投资者结构（第 4 节）</strong>——散户主导市场的持有期短、换手率高、对成长故事的敏感度远超对现金流的敏感度，导致远期利润被贴现回今天时用的<strong>隐含贴现率异常低</strong>，倍数系统性高；</li>
+          <li><strong>可比标的稀缺（第 1 节）</strong>——A 股买不到 Nvidia、买不到 ASML、买不到 SK 海力士，「稀缺池」里的每一个存活标的都会被同一批想投这个赛道的资金反复抢，价格上就是溢价。中芯国际是「A 股唯一先进代工敞口」，这个稀缺性本身值一部分溢价<a class="badge badge-expert" href="#src-1">专家判断 · 通行分析</a>；</li>
+          <li><strong>政策预期与产业补贴</strong>——A 股半导体公司背后有大基金、国资、政府补助、政策订单的隐性期权。这些期权在美股 GAAP 报表上不好定价（很多期权是「未来可能扩大」的政策方向），但 A 股定价体系会把它当作现金流的组成部分显性打进倍数；</li>
+          <li><strong>ADR / GDR 供给受限带来的物理性溢价</strong>——TSMC ADR 与普通股的比值是 1:0.20（5 台股 = 1 ADR），但台湾当局对 ADR 增发有额度限制<a class="badge badge-verified" href="https://www.acadian-asset.com/investment-insights/owenomics/tsmc-totally-stupid-market-chaos" target="_blank" rel="noopener">已核验 · Acadian Asset 2024-10</a>：全球想拿 TSMC 的钱越来越多，可购的 ADR 却基本不增，价差只能拉大。这是<strong>供给端不可套利</strong>直接推出来的溢价，与投资者情绪无关。</li>
+        </ol>
+
+        <p>下面这个组件把「同一家公司 / 板块在不同市场的估值倍数」摆到你眼前。<strong>看什么：</strong>切换指标（P/E vs P/B），看估值差异是不是同方向；A/H 溢价与 ADR 溢价的绝对量级差是数量级的——A/H 可以到 100%，ADR 顶部约 20-30%——这个差本身就在告诉你「上一层封闭+散户主导」和「上一层可套+机构主导」在给估值形成上的力量差有多大。</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">六市场半导体估值倍数对照</span>
+            <span class="viz-sub">A/H 与 ADR 溢价基于已核验时点快照；SOXX 与 A 股板块 P/E 为 2026 上半年公开口径。倍数会随时间浮动，此处呈现的是<strong>系统性差异</strong>的量级<a class="badge badge-verified" href="#src-5">已核验 · 见页脚 5-7</a></span>
+          </div>
+          <div class="vswitch" role="tablist" id="vswitch">
+            <button type="button" data-v="pe" aria-pressed="true">P/E（市盈率）</button>
+            <button type="button" data-v="ah" aria-pressed="false">A/H 与 ADR 溢价</button>
+          </div>
+          <div class="vbars" id="vbars" aria-live="polite"></div>
+          <p style="font-size:var(--fs-13);color:var(--muted);margin:8px 0 0" id="vbarsNote"></p>
+        </div>
+
+        <p>这两个视图放一起有一个特别重要的推论：<strong>估值倍数的差异，不是「A 股是不是有泡沫」这种情绪问题，而是「同一件业务事实用哪种投资者语言定价」的结构问题</strong>。你可以对 A 股半导体倍数高不高有看法，但先别用美股倍数去当锚——用美股倍数去空 A 股（或用 A 股倍数去多 SOXX），过去五年任何一年都是亏钱的仓位。倍数差异会长期存在，跨市场做的是「同一件事的两次定价之差」，不是「谁贵谁便宜」。</p>
+
+        <h2>7. 政策扰动的市场分级敏感度</h2>
+        <p>最后一节把跨市场差异合成到一件事上——<strong>同一条政策新闻在六个市场的第一日、一周、一个月的反应链</strong>。政策扰动是这个行业最常见、最有分级差异的冲击源。</p>
+
+        <p>用两类真实政策事件的走位做参考：</p>
+        <ul>
+          <li><strong>美国 BIS 出口管制（2022-10-07 起、2023-10-17 更新、2024-12 再更新）</strong>：控制先进计算集成电路、24 种半导体制造设备、3 种软件工具、HBM，并将 140 家中国企业列入实体清单<a class="badge badge-verified" href="https://www.bis.gov/press-release/commerce-strengthens-export-controls-restrict-chinas-capability-produce-advanced-semiconductors-military" target="_blank" rel="noopener">已核验 · BIS 官方公告</a>——这类新闻的传导链有明显分层。</li>
+          <li><strong>补贴与产业政策</strong>：美国 CHIPS Act（2022-08 签署，2025 川普政府部分收紧）、中国大基金三期（2024-05 成立，规模约 3440 亿元）——补贴类新闻在 A 股导致 short-term 主题狂欢，在美股导致主客户订单可见度上升。</li>
+        </ul>
+
+        <p>三个反应层次的分级：</p>
+        <table class="cmp-tbl">
+          <thead><tr><th>市场</th><th>第一日反应</th><th>一周反应</th><th>一个月反应</th></tr></thead>
+          <tbody>
+            <tr><td data-h="市场">美股（NVDA、AMAT、KLA、Lam）</td><td data-h="第一日">受影响品类订单预期立即调整；ETF 与 ADR 同步定价</td><td data-h="一周">卖方研报出炉，管理层电话会措辞成为二次定价点</td><td data-h="一个月">季报中管理层给出「受管制业务收入指引下调 X%」，价格反应至此完全消化</td></tr>
+            <tr><td data-h="市场">A 股设备国产化标的</td><td data-h="第一日">主题大涨（涨停密集）；成交量放大 3-5 倍</td><td data-h="一周">分化：真有订单落地的走稳；纯题材开始回吐</td><td data-h="一个月">受招标数据、公司订单公告与业绩预告驱动；无兑现的主题股回到起点甚至更低</td></tr>
+            <tr><td data-h="市场">港股中芯 / 华虹</td><td data-h="第一日">跌（受管制方情绪），但幅度小于 A 股主题涨幅</td><td data-h="一周">跟随 MSCI China + 大市场情绪；机构定价开始回归公司基本面</td><td data-h="一个月">基本面与 A 股价差重估；A/H 溢价会跟着扩大或收窄</td></tr>
+            <tr><td data-h="市场">台积电 / 韩存储</td><td data-h="第一日">跌（受影响客户订单预期下降），流程链上游连锁</td><td data-h="一周">卖方拆解「哪些客户被管制、哪些没被」，价格分化</td><td data-h="一个月">季报指引确认受影响幅度；如未见结构性冲击则回到 EUV/HBM 主线</td></tr>
+            <tr><td data-h="市场">日本设备与材料</td><td data-h="第一日">与美股连动性最高（TEL / Advantest 是全球机构池子里的一员）</td><td data-h="一周">日本经济产业省是否跟进美国管制口径是第二关键变量</td><td data-h="一个月">季报确认地区结构调整；不跟进管制的品类反而受益</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:var(--fs-13);color:var(--muted)">表内反应模式基于第 4 节的投资者结构机制推导，以 2022-2024 三次 BIS 出口管制新闻的市场公开表现校准<a class="badge badge-expert" href="#src-11">专家判断 · 通行观察</a>；无法提供每一次事件每一个市场的精确涨跌数字。</p>
+
+        <p>这张表的价值不是背下来，是<strong>拿到你自己遇到的一条政策新闻时，能立刻画出这张三日 × 五市场的九宫格</strong>——第 4 节的投资者结构解释了「第一日反应」的差异，第 3 节的披露频率解释了「一个月反应」的差异，第 6 节的估值倍数解释了「A/H 溢价扩缩」在里头的作用。</p>
+
+        <div class="note">
+          <span class="note-label">不要学太深</span>
+          <p>不需要背六份会计准则、不需要记每个市场每年的换手率数字。要带走的是六个能生成判断的模型：<strong>市场决定 shopping list</strong>、<strong>准则决定同一件事被读成什么数</strong>、<strong>披露节奏决定信息真空多长</strong>、<strong>投资者结构决定标题层 vs 流程层反应</strong>、<strong>估值倍数差异由供给限制 + 稀缺池 + 政策期权系统性决定</strong>、<strong>政策扰动敏感度是这六层机制的合成读数</strong>。有了这六个模型，任何跨市场新闻你都能推出定价路径。</p>
+        </div>
+      </section>
+
+      <!-- ==================== 怎么判断 ==================== -->
+      <section role="tabpanel" id="panel-b" aria-labelledby="tab-b" class="prose" hidden>
+
+        <p style="font-size:var(--fs-15);color:var(--muted)">这一页只交付三件真实存在的工具。每件都按同一结构给齐：<strong>来源 → 为什么成立 → 真实案例 → 怎么操作 → 失效边界</strong>。找不到出处、无法用真实案例验证的「规则」，不会出现在这里。</p>
+
+        <h2>工具一：披露口径差异是 A/H 与 ADR 溢价的第一读数</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>公司自身在两个市场提交的两套年报（中芯 A 股按中国 CAS、H 股按 HKFRS；台积电按 TIFRS 出台股年报 + 按 US-GAAP 出 SEC 6-K ADR 补充材料）是最一手的口径差异证据。<a href="https://finquery.com/blog/ifrs-16-vs-asc-842-us-gaap-lease-accounting-differences/" target="_blank" rel="noopener">FinQuery 的 IFRS 16 vs ASC 842 条款级比对</a>与 <a href="https://kpmg.com/us/en/articles/2025/lease-accounting-ifrs-standards-us-gaap.html" target="_blank" rel="noopener">KPMG 2025 更新</a>把两种准则的落地差异逐条列清。<a class="badge badge-verified" href="https://finquery.com/blog/ifrs-16-vs-asc-842-us-gaap-lease-accounting-differences/" target="_blank" rel="noopener">已核验 · FinQuery/KPMG</a></div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 2、3 节已建立：同一件业务事实用不同准则翻译，报表数字可以差数个百分点甚至更多；同一家公司在两个市场的报表节奏、指引开放度、投资者结构差得更多——溢价的存在不是套利没做，是<strong>两个市场用两套语言在给同一件事定价</strong>，语言差本身就是定价差的一部分。溢价的绝对量级与波动区间因此可读、可跟踪。</div></div>
+          <div class="chain-row"><b>案例</b><div>中芯国际 A/H：2025 年一季度 A/H 溢价约 103%（A 股比 H 股贵一倍），2025 年 9 月 DeepSeek 冲击后收敛到约 52%<a class="badge badge-verified" href="https://36kr.com/p/3344768078004873" target="_blank" rel="noopener">已核验 · 36Kr 2025-09</a>——同一家公司同一个季度盈利，A 股定价路径含了「国产替代唯一敞口」的稀缺期权，H 股定价路径只把它当作全球代工里的一家。台积电 ADR：2024-10 溢价约 20%<a class="badge badge-verified" href="https://www.acadian-asset.com/investment-insights/owenomics/tsmc-totally-stupid-market-chaos" target="_blank" rel="noopener">已核验 · Acadian Asset 2024-10</a>；2025-10 创 20 年新高<a class="badge badge-verified" href="https://www.bloomberg.com/news/articles/2025-10-15/tsmc-adr-premium-tops-two-decade-high-as-global-buyers-pile-in" target="_blank" rel="noopener">已核验 · Bloomberg 2025-10-15</a>，1 台股 = 0.20 ADR 但台湾对 ADR 增发有额度限制——供给固定 + 全球需求上升 = 溢价单调扩大。<strong>两个案例读的是同一件事：两个市场想买这家公司的钱不同、可买的份额不同，价差就是它们不同的度量衡。</strong></div></div>
+          <div class="chain-row"><b>操作</b><div>三件事，够你把这个工具落地：<strong>①</strong> 对每一个 A/H 或 ADR 双上市标的建一张溢价时间序列表——恒生 A/H 溢价指数（HSAHP）、雪球/东方财富的 A/H 对比页可直接抓。恒生 A/H 指数长期均值 130-140（即 A 股比 H 股贵 30-40%），个股跨度从 -10% 到 +200% 不等<a class="badge badge-expert" href="#src-1">专家判断 · 通行数据源</a>。<strong>②</strong> 定基线：过去 24 个月的溢价均值 + 一倍标准差。溢价上到 +1.5σ 以上时用「H 更便宜」的方向配置（前提是公司基本面无变化），跌到 -1σ 以下时相反。<strong>③</strong> 把「催化剂窗口」和溢价窗口对上：DeepSeek、出口管制、大基金动作、财报电话会措辞——这些是溢价方向的第一自变量。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①<strong>不可自由套利</strong>——A 股与 H 股不能直接互相转换，QDII / QFII 有额度限制；ADR 增发有台湾监管审批。<strong>溢价可以长期存在，不会被套利消灭</strong>——用溢价套利做仓位是历史上最经典的亏损陷阱之一。②<strong>公司事件</strong>——大股东减持、增发、分红除权在两个市场的时点不同，会短期扰动溢价，需剔除。③<strong>市场情绪极端时</strong>——DeepSeek 冲击、川普关税、大基金公告后的一周里，溢价会走非线性形态，此时均值回归模型完全失效，必须先等情绪主线明确再用工具。</div></div>
+        </div>
+
+        <h2>工具二：政策扰动敏感度的三日 × 五市场九宫格</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>三类可核验事件的市场公开表现：<strong>①</strong> 美国 BIS 出口管制（<a href="https://www.bis.gov/press-release/commerce-strengthens-export-controls-restrict-chinas-capability-produce-advanced-semiconductors-military" target="_blank" rel="noopener">2022-10-07</a>、<a href="https://www.skadden.com/insights/publications/2023/10/bis-updates-october-2022-semiconductor-export-control-rules" target="_blank" rel="noopener">2023-10-17</a>、<a href="https://www.hklaw.com/en/insights/publications/2024/12/us-strengthens-export-controls-on-advanced-computing-items" target="_blank" rel="noopener">2024-12</a> 三次更新）；<strong>②</strong> 美国 CHIPS Act 2022-08 签署 + 2025 后续调整；<strong>③</strong> 中国大基金三期 2024-05 成立、规模约 3440 亿元。这些事件的市场公开表现均可通过财经媒体、交易所日线数据回查。<a class="badge badge-verified" href="https://www.bis.gov/press-release/commerce-strengthens-export-controls-restrict-chinas-capability-produce-advanced-semiconductors-military" target="_blank" rel="noopener">已核验 · BIS 官方</a></div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 4-5 节：同一条新闻在不同市场停留在不同的信息层（美股 = 流程层、A 股 = 标题层、港股 / 台股 / 韩股 = 混合层），停留层决定反应节奏和幅度。<strong>反应最快的是流程链定价成熟的市场，反应最猛的是稀缺池 + 主题联想链的市场，反应最慢的是外资主导的中概板块</strong>。九宫格 = 市场 × 时间窗，每一格里的定价机制不同、验证数据源不同。</div></div>
+          <div class="chain-row"><b>案例</b><div>2022-10-07 BIS 出口管制的三日 × 五市场表现（作为工具校准案例）：美股 Nvidia、AMAT、KLA 在 10-07 当日与 10-10 周一开盘完成第一波定价（跌 5-15% 区间不等），随后季报电话会里管理层给出受影响业务收入下调 3-5% 指引，价格反应完全消化<a class="badge badge-verified" href="https://www.congress.gov/crs-product/R48642" target="_blank" rel="noopener">已核验 · Congressional Research Service</a>；A 股设备国产化标的（北方华创、中微、盛美等）10-10 周一多数涨停，一周内成交量放大 3-5 倍，一个月内分化——真有订单落地的股价维持涨幅，纯主题股回到起点<a class="badge badge-expert" href="#src-6">专家判断 · 通行观察</a>；港股中芯 10-10 大跌，一周内跟随 MSCI China 情绪定价，一个月后回归公司基本面轨道，A/H 溢价扩大。<strong>三次 BIS 更新的市场反应遵循同一分层节奏——这不是巧合，是投资者结构和信息效率机制的稳定表达。</strong></div></div>
+          <div class="chain-row"><b>操作</b><div>拿到一条政策新闻当天，按九宫格分层做仓位判断，五步：<strong>①</strong> 判断这条政策影响的直接对象（受管制方 vs 受益方 vs 无关方）；<strong>②</strong> 对每个市场，在<strong>标题层 vs 流程层 vs 混合层</strong>分类；<strong>③</strong> 定好每格的验证信号（美股：季报指引、A 股：招标数据 + 业绩预告、港股台股韩股：分部季报）；<strong>④</strong> 设定观察窗（第 1 日、第 5 日、第 20-30 日各一次复盘）；<strong>⑤</strong> 每一格独立打分，不做跨市场简单外推——「美股跌 5% 所以 A 股也应该跌」是常见错误，因为流程层和标题层的方向可以相反。工具与本质页第 7 节的九宫格一一对应，用同一张表既能出方向又能出时点。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①<strong>政策叠加</strong>——同一周里出现多条政策（如美国管制 + 中国反制 + 大基金动作），九宫格里每格的自变量增到三四个，简单分层失效，必须做二阶展开；②<strong>非对称受益</strong>——有的政策看似打压，实际受益方在同市场（如出口管制打击 Nvidia 但 A 股设备国产化受益），跨市场做多空对冲要非常小心，两边的时点节奏完全不同；③<strong>标题层反应耗尽后主线切换</strong>——A 股主题股 30 天回吐后，主线可能已经切换到别的行业，继续跟踪原政策毫无意义，需要设定「主题耗尽」信号并清仓——通行的信号是<strong>成交量回归常态且连续三天未有新催化剂</strong><a class="badge badge-expert" href="#src-6">专家判断 · 通行做法</a>。</div></div>
+        </div>
+
+        <h2>工具三：估值倍数系统性差异的成因拆解——不是「谁贵谁便宜」的问题</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>三层公开数据：<strong>①</strong> ETF / 指数的估值倍数——<a href="https://legulegu.com/stockdata/sw-industry-2021?industryCode=801081.SI" target="_blank" rel="noopener">乐咕乐股（申万半导体指数 PE/PB）</a>、<a href="https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf" target="_blank" rel="noopener">iShares SOXX 官网</a>、<a href="https://www.investing.com/etfs/ishares-phlx-sox-semiconductor" target="_blank" rel="noopener">Investing.com SOXX 数据</a>；<strong>②</strong> A/H 与 ADR 溢价时间序列——恒生 A/H 溢价指数（HSAHP）、雪球对比页；<strong>③</strong> 交易所投资者结构报告——<a href="https://www.pbcsf.tsinghua.edu.cn/__local/5/F8/1D/6A6079AE6FDAFD55E50E0E6EC19_3F82D891_5D6F0.pdf" target="_blank" rel="noopener">清华 PBCSF《Retail and Institutional Investor Trading Behaviors》</a>。<a class="badge badge-verified" href="https://legulegu.com/stockdata/sw-industry-2021?industryCode=801081.SI" target="_blank" rel="noopener">已核验 · 见上</a></div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 6 节推过：系统性估值差异有四条结构性成因——投资者结构、可比标的稀缺、政策期权、ADR/GDR 供给受限。<strong>合起来，A 股半导体倍数（PE 90-115 倍）与 SOXX（约 28-30 倍）的差距是「两套定价语言」的产物，不是简单的「贵/便宜」</strong>。任何跨市场估值比较，必须先拆到这四层，再讨论定价合理性。</div></div>
+          <div class="chain-row"><b>案例</b><div>2026 年上半年一组同期估值：SOXX 约 28-30 倍<a class="badge badge-verified" href="https://www.investing.com/etfs/ishares-phlx-sox-semiconductor" target="_blank" rel="noopener">已核验 · Investing.com</a>、中证半导体 PE 约 90 倍、国证半导体芯片指数 PE-TTM 约 113 倍（历史 99.4% 分位）<a class="badge badge-verified" href="https://caifuhao.eastmoney.com/news/20260527192406824911300" target="_blank" rel="noopener">已核验 · 东方财富 2026-05-27</a>——差距 3-4 倍。这个差距长期存在，不是最近的现象，2020-2025 每个季度都在。<strong>拆到成因：</strong>①投资者结构差（A 股散户交易占大头 vs SOXX 机构主导）解释约 1.5 倍差距；②稀缺池差（A 股买不到 Nvidia、ASML、SK Hynix）解释约 1 倍差距；③政策期权（大基金 + 补贴 + 国产化）解释剩下的差距。四条并不加起来精确等于观察值——但这个方向是稳定的、可重现的。</div></div>
+          <div class="chain-row"><b>操作</b><div>三步用法：<strong>①</strong> 跨市场比较时不要单看 PE，看 PE 的<strong>相对分位</strong>（当前 PE 位于过去五年多少分位）——A 股半导体 PE 100 倍如果只在历史 50 分位说明其实并不高，SOXX PE 30 倍在历史 80 分位就说明贵。<strong>②</strong> 对同一家公司在两个市场的估值差建 24 个月序列，把当前差异与均值 ±1σ 比对——A/H 溢价从 30% 拉到 100% 是极值信号，但方向要靠公司基本面 + 稀缺池状态判断，不做简单反转。<strong>③</strong> 政策期权定量化：大基金规模 / 板块总市值、政府补助 / 板块净利润——这两个比例可以直接从年报和大基金公告拿到，是 A 股半导体溢价里「政策期权」部分的可量化读数<a class="badge badge-expert" href="#src-8">专家判断 · 通行拆解方法</a>。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①<strong>倍数与利润周期错位</strong>——半导体是强周期行业，PE 在利润底部（分母小）会非常高，PB 更稳定；跨市场比 PE 时先看利润周期位置，否则会误读。②<strong>行业结构剧变</strong>——AI 台阶让整个行业估值中枢上移，历史分位失效，需要至少 8 个季度重新建基线。③<strong>汇率脉冲</strong>——港股与美股用美元估值、A 股用人民币，人民币急贬时港股相对便宜、A 股相对贵，这层不属于结构性溢价，剥掉后再讨论真实差异。④<strong>股权结构差</strong>——A 股大股东多为国有 / 地方国资，H 股流通盘常只有 A 股的 5-10%<a class="badge badge-verified" href="#src-4">已核验 · 21 财经 2026-04</a>，流通盘小的市场波动更大，倍数受供给约束推高的部分要单独识别。</div></div>
+        </div>
+
+        <h2>操作清单：判断跨市场同一产业事件的翻译</h2>
+        <p style="font-size:var(--fs-14);color:var(--muted)">以下每一项都由本页机制直接推导，括号内注明依据——它们不是独立的外部工具，是三件工具的落地检查位。</p>
+        <ul class="checklist">
+          <li><label><input type="checkbox"><span><b>这条新闻在美股 / A 股 / 港股 / 台股 / 韩股各是哪一层（标题 / 流程 / 混合）？</b>（依据：工具二九宫格 + 本质页第 4-5 节）</span></label></li>
+          <li><label><input type="checkbox"><span><b>受影响标的在哪些市场有上市敞口？没上市怎么反映？</b>（依据：本质页第 1 节六市场分布图；A 股常用产业链衍生 + 主题基金）</span></label></li>
+          <li><label><input type="checkbox"><span><b>各市场当前投资者结构是散户主导还是机构主导？</b>（依据：本质页第 4 节；查交易所投资者构成年报）</span></label></li>
+          <li><label><input type="checkbox"><span><b>各市场下一次强制披露还有几天？信息真空期多长？</b>（依据：本质页第 3 节披露频率表；查公司 IR 页公告日期）</span></label></li>
+          <li><label><input type="checkbox"><span><b>该公司若双上市，A/H 或 ADR 溢价当前分位在哪？</b>（依据：工具一；恒生 A/H 溢价指数）</span></label></li>
+          <li><label><input type="checkbox"><span><b>估值倍数比较里 A 股高的部分，能被稀缺池 + 政策期权 + 投资者结构解释多少？</b>（依据：工具三）</span></label></li>
+          <li><label><input type="checkbox"><span><b>会计准则差异会不会导致同一件事被读成不同数？（尤其是租赁、SBC、政府补助、研发资本化）</b>（依据：本质页第 2 节）</span></label></li>
+          <li><label><input type="checkbox"><span><b>观察窗设定：第 1 天 / 第 5 天 / 第 20-30 天各要验证哪些数据？</b>（依据：工具二五步流程）</span></label></li>
+        </ul>
+      </section>
+
+      <!-- ==================== 练习 ==================== -->
+      <section role="tabpanel" id="panel-c" aria-labelledby="tab-c" class="prose" hidden>
+
+        <h2>决策复盘一 · 2026 年 1 月 2 日：Aletheia 上调 ASML，A 股设备国产化标的怎么读</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2026-01-02 · 事件已核验</p>
+          <h4>Aletheia Capital 把 ASML 从卖出直接上调至买入、目标价 750→1500 美元。ASML 美股当天大涨。你手上有一个 A 股组合，含北方华创、中微公司、盛美上海——你的下一步动作是什么？<a class="badge badge-verified" href="https://www.investing.com/news/analyst-ratings/asml-stock-rating-upgraded-to-buy-by-aletheia-capital-on-chip-demand-outlook-93CH-4427450" target="_blank" rel="noopener">已核验 · Investing.com 2026-01-02</a></h4>
+          <p class="case-note">这是一条美股当天完成定价的新闻，但 A 股设备国产化标的的定价路径完全不同。先选，再看拆解。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>跟着美股买入 A 股设备国产化</button>
+            <button type="button" data-pick>加仓 A 股中芯 / 华虹（受益方）</button>
+            <button type="button" data-pick>先判断这条新闻在 A 股走标题层还是流程层，再定动作</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>先分层</b><div>这是一条<strong>美股流程层</strong>的新闻——「ASML EUV 2026 增 33% / 2027 加速 50-60%」直接触发美股卖方在几小时内把量测（KLA）、刻蚀（Lam）、沉积（AMAT）的订单预期定价完毕。A 股设备国产化标的与 ASML 的业务关系不是「跟着扩」，是「国产替代 EUV 需求」——同一条新闻在 A 股是<strong>标题层的主题联想</strong>，不是流程层的订单外推。</div></div>
+              <div class="chain-row"><b>标题层节奏</b><div>历史模式（第 4 节 + 工具二）：A 股主题层的反应通常是 T+1 高开、T+2-T+5 达到热度峰值、T+20-30 天分化。真有订单落地和产能释放的公司（近年北方华创的营业收入增速给了阶段性支撑）会走稳；纯题材公司回吐。<strong>关键在于「哪些 A 股设备公司真有 EUV 需求扩产的间接受益」——不是所有国产化标的都受益</strong>：EUV 是先进逻辑 + DRAM 的需求，A 股主要国产设备聚焦成熟制程 + 存储堆叠，受益路径需要拆到公司订单层。</div></div>
+              <div class="chain-row"><b>受益方拆解</b><div>中芯 A / H 是最接近的受益方吗？<strong>不是</strong>——中芯不用 EUV（受出口管制），这条新闻对中芯基本面无影响。中芯 A 短期可能有情绪跟涨但不是流程链上游，一周内会回归公司自身基本面。华虹更远，无关联。</div></div>
+              <div class="chain-row"><b>正确操作</b><div>①<strong>不加仓</strong>基于「美股涨所以 A 股也应该涨」的简单外推——这是跨市场投资最典型的亏损陷阱；②<strong>如果一定要参与</strong>，动作是在 T+1 或 T+2 观察主题股是否已有涨停密集，若已密集，切换到<strong>观察窗口</strong>而非追涨——等 T+20-30 天看真实招标数据 + 业绩预告；③<strong>更专业的动作</strong>是把这个信号翻译回美股，加仓 KLA / Lam / AMAT 中被市场低估的一家，或者做<strong>ADR-台股价差交易</strong>（如果账户允许），因为 TSM 是 EUV 需求方，此新闻会推 ADR 溢价扩大。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>这个推理给出的是「跨市场定价路径与节奏」，不是「A 股 T+30 天一定跌」——A 股主题股有时候会因为其他并发利好维持涨幅，也可能在 T+30 内出现新的政策事件（大基金公告、国务院文件）改变主线。案例教的是<strong>用信息层分级读同一条新闻在不同市场的定价路径</strong>，判断对了跨市场路径，还需要仓位管理与止损纪律。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>决策复盘二 · 中芯国际 A/H 溢价 2025 年 Q1 到 103% —— 买 A 还是买 H？</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2025-Q1 · 事件已核验</p>
+          <h4>2025 年 3 月，中芯国际 A 股（688981）相对 H 股（0981.HK）溢价飙到约 103%——A 股比 H 股贵一倍。如果你手上有资金，会怎么配？<a class="badge badge-verified" href="https://36kr.com/p/3344768078004873" target="_blank" rel="noopener">已核验 · 36Kr 2025-09</a></h4>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>买 H（便宜一半）</button>
+            <button type="button" data-pick>买 A（跟着国内主线）</button>
+            <button type="button" data-pick>不做均值回归赌博，先看溢价的四层成因</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>拆到成因（工具三）</b><div>103% 的溢价里装着四样东西：①投资者结构差（A 股散户 + 主题基金，H 股外资机构）——通行贡献约 30-50%；②稀缺池差（A 股买不到台积电、买不到 Nvidia，中芯 A 是唯一先进代工敞口）——通行贡献约 20-40%；③政策期权（大基金三期 2024-05 落地，中芯是核心受益）——通行贡献不定，是溢价的方向弹药；④供给受限（A 股流通盘远大于 H 股，但 H 股外资净流入受港股通额度约束，非线性）——通行贡献 10-20%。<strong>这四层加起来足以支撑长期溢价存在，不会自动消灭。</strong></div></div>
+              <div class="chain-row"><b>历史锚点</b><div>恒生 A/H 溢价指数长期均值在 130-140（即 A 股平均比 H 股贵 30-40%），中芯个股 A/H 溢价历史区间 25-110%<a class="badge badge-expert" href="#src-1">专家判断 · 通行数据源</a>。103% 已在历史高位区间，但并非绝对极值——2021、2022 都有过更高时点。</div></div>
+              <div class="chain-row"><b>决策矩阵</b><div>「买 H 便宜」的动作只在两个前提下成立：①<strong>政策期权兑现节奏放缓</strong>（大基金投入减速、国产化订单降速），四层成因里的第 3 层收缩，A/H 溢价才有均值回归的物理驱动；②<strong>你能承受"溢价可以继续扩大 6-12 个月"的时间成本</strong>——过去五年 A/H 溢价从 30% 扩到 100% 用了不到两年，反向修复常常慢很多。<strong>纯粹的均值回归赌博在跨市场是几乎必败的仓位</strong>——工具一失效条第一句已经写了。</div></div>
+              <div class="chain-row"><b>正确操作</b><div>①<strong>建立溢价时间序列</strong>——每周记录 A/H 溢价的绝对值和 24 个月分位；②<strong>把溢价与催化剂配对</strong>——大基金公告、DeepSeek 类冲击、出口管制更新、财报发布都会让溢价走非线性；③<strong>用溢价方向做仓位方向的辅助</strong>，不做主判——主判仍是公司基本面 + 行业周期位置（模块 10）；④<strong>如账户支持</strong>，可用 A 股与 H 股组合（长 A 短 H 或反向）表达「溢价扩大 / 收窄」的看法，但对冲比例要按流通盘调整（H 股流通盘常远小于 A 股）。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>2025-09 溢价确实从 103% 收敛到 52% 附近——但这个收敛主要是 A 股跌而不是 H 股涨，「均值回归」在方向上是对的，但用「多 H 空 A」表达该观点的账户，中间要承受 3-6 个月的错方向浮亏。<strong>推理正确不等于交易正确，跨市场尤其如此。</strong></div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>迁移题（模块里没有现成答案，用机制自己推）</h2>
+
+        <article class="scenario">
+          <h4>迁移一 · BIS 新一轮出口管制，A 股设备国产化标的当日涨停但一周后回吐——用本页机制解释</h4>
+          <p>2026 年某季度美国 BIS 发布新一轮半导体出口管制，涉及先进制造设备与 HBM。A 股设备国产化标的（北方华创、中微、盛美等）当日多数涨停，成交量放大 4 倍；一周后开始分化，个别标的回到起点甚至更低。用本页机制解释这个「涨停→回吐」的完整轨迹，并列出你会用哪三个公开信号在 T+5 到 T+30 天里判断这些标的是「真受益」还是「纯主题」。</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr1" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr1">
+            <div class="chain">
+              <div class="chain-row"><b>机制解释</b><div>这条新闻在 A 股走的是<strong>标题层主题反应</strong>（第 4 节）：投资者结构 = 散户交易占 80%+ + 主题基金追题材，读到的信息是「国产替代加速」，第一动作是买入。涨停当日和 T+1、T+2 是主题热度堆积期。之后一周内，机构开始拆到公司层——真有订单落地的公司股价维持，纯主题的开始回吐（因为无兑现数据支撑高倍数）。<strong>这就是「涨停→回吐」的物理机制</strong>。</div></div>
+              <div class="chain-row"><b>验证信号一</b><div><strong>公司订单公告与业绩预告</strong>——最直接的一手数据。北方华创、中微等每季度都会在业绩说明会或业绩预告中提及订单积压、行业中标数据。T+30 天前后是季度末，如果这波订单是真的，业绩预告会体现。<a class="badge badge-expert" href="#src-6">专家判断 · A 股披露常规</a></div></div>
+              <div class="chain-row"><b>验证信号二</b><div><strong>中国大陆晶圆厂招标数据</strong>——中芯、华虹、长江存储、长鑫存储的设备招标信息，部分通过公开采购平台可查，其他通过产业链渠道。真的国产化替代必然体现在这些招标里。</div></div>
+              <div class="chain-row"><b>验证信号三</b><div><strong>SEMI 中国区季度出货数据 + 应材 / KLA / Lam 中国区收入占比变化</strong>——这两个是「反向验证」：如果国产替代真加速，海外设备商中国区收入应下降。反之，如果海外设备商中国区收入仍高，说明国产化替代速度未如预期。<a class="badge badge-verified" href="https://www.semi.org/en/products-services/market-data/equipment/billings-report" target="_blank" rel="noopener">已核验 · SEMI 官方</a></div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>①<strong>并发利多陷阱</strong>——A 股主题股可能因为其他并发利好（大基金公告、地方政府补贴、财政部税收优惠）维持涨幅，此时不能纯用「主题耗尽」信号，需要拆掉每一层催化剂；②<strong>回吐可能持续 3-6 个月</strong>——不是每次都在 T+30 完成，需要设定更长的观察窗和止损；③<strong>「真受益」也可能被大盘拖下水</strong>——A 股半导体主题与大盘 β 高度相关，大盘走弱时业绩兑现的公司也跟跌。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario">
+          <h4>迁移二 · 同一家 A 股 + 港股双上市半导体公司，某日收盘价差 8%，可能的原因至少三条</h4>
+          <p>某天你打开行情，发现一家中国大陆半导体公司的 A 股与港股同一日收盘价差（换算汇率后）扩大到 8%——即 A 股比 H 股贵 8%。而前一日是 5%。这 3% 的当日变化里可能装着什么？请列出至少三条候选原因，并说明你会用哪个数据源验证每一条。</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr2" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr2">
+            <div class="chain">
+              <div class="chain-row"><b>候选一</b><div><strong>汇率脉冲</strong>——人民币兑港元当日贬值 0.5-1%，换算后港股相对便宜、A 股相对贵。验证：中国外汇交易中心当日人民币中间价 + 港元汇率日线数据（Wind、东方财富汇率页可查）。</div></div>
+              <div class="chain-row"><b>候选二</b><div><strong>南下资金 / 港股通净流入方向逆转</strong>——南下资金撤离 H 股，H 股跌得多，价差扩大。验证：港交所 CCASS 持股变动、南下资金每日净买入统计（东方财富、Wind）。</div></div>
+              <div class="chain-row"><b>候选三</b><div><strong>A 股或港股单边的公司事件</strong>——如 A 股定增公告、股东减持、港股回购、除权除息（时点不同）等。验证：两个市场的公司公告页（沪深交易所公告 + 港交所披露易 HKEX News）。</div></div>
+              <div class="chain-row"><b>候选四</b><div><strong>板块或大盘 β 差异</strong>——A 股半导体主题当日大涨（受某条国内政策/新闻催化），H 股无此催化。验证：A 股半导体 ETF（512480 / 159813）当日涨跌 vs 恒生科技指数当日涨跌。</div></div>
+              <div class="chain-row"><b>候选五</b><div><strong>MSCI / FTSE 等指数调仓临近或成分变化</strong>——被动资金买卖引发的技术性错位。验证：MSCI / FTSE 官网调仓日历。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>「3% 当日变化」中大概率是多层原因叠加，不是单一原因。跨市场分析的常见错误是抓一条原因就下判断，正确做法是<strong>把候选原因排序 + 用数据剔除，剩下 1-2 条主要驱动</strong>。剔除到最后可能得到「无明显催化剂，纯情绪波动」的结论——这也是正确答案，且是最常见的答案。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <h2>自测（算得出来才算会）</h2>
+
+        <div class="quiz" data-quiz data-explain="A 股散户虽然只持股约 20%，但交易占比大于 80%——决定短期价格的是「谁在下单」，不是「谁在持有」。这是标题层反应远比流程层反应显眼的核心机制（本质页第 4 节）。">
+          <p class="quiz-q">1. A 股散户在半导体股定价中的主导作用主要来自哪一层？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q1"><span>散户持股比例高</span></label>
+            <label><input type="radio" name="q1" data-correct="1"><span>散户交易活动占比大（&gt;80%），决定短期价格形成</span></label>
+            <label><input type="radio" name="q1"><span>散户信息更多</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="TSMC ADR 与普通股的比值是 1:0.20（5 台股 = 1 ADR）；台湾监管对 ADR 增发有额度限制，全球想拿 TSMC 的钱越来越多，可购的 ADR 却基本不增，价差单调扩大——这是供给端不可套利直接推出来的溢价（本质页第 6 节第 4 条）。">
+          <p class="quiz-q">2. TSMC ADR 相对台股（2330）长期溢价（近年峰值达 20-30%）的最主要结构性原因是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q2"><span>ADR 有分红优势</span></label>
+            <label><input type="radio" name="q2"><span>纽约交易税更低</span></label>
+            <label><input type="radio" name="q2" data-correct="1"><span>台湾对 ADR 增发有额度限制 + 全球需求上升 = 供给不可套利</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="ASC 842（US-GAAP）经营租赁按直线法总费用；IFRS 16 全部按类融资租赁——折旧+利息前置——前几年费用高于直线法，EBITDA 系统性高于经营租赁法（本质页第 2 节）。">
+          <p class="quiz-q">3. 同一份长期租厂房合同，IFRS 16 与 ASC 842 经营租赁在损益表上的费用差别是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q3"><span>完全一致</span></label>
+            <label><input type="radio" name="q3" data-correct="1"><span>IFRS 16 前几年费用更高、EBITDA 更高，ASC 842 直线法平滑</span></label>
+            <label><input type="radio" name="q3"><span>IFRS 16 直接不确认为费用</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="三星 + SK 海力士 2026-05 合计占 KOSPI 权重约 46.94%（三星 26.04% + SK 20.90%），Goldman Sachs 警告再涨 1% 会触发外资约 $2B 被动减持（Investment Company Act 多样化规则）。KOSPI 本身已被两家 HBM 龙头绑架。">
+          <p class="quiz-q">4. 三星电子 + SK 海力士两家 2026 年在 KOSPI 指数中的合计权重最接近下面哪个？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q4"><span>约 15%</span></label>
+            <label><input type="radio" name="q4"><span>约 30%</span></label>
+            <label><input type="radio" name="q4" data-correct="1"><span>约 47%</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="美股大型加速申报人 10-Q 季末后 40 天披露；港股主板季报非强制（可选择不披露），半年报业绩公告 2 个月、正式报 3 个月。港股主板信息真空期显著长于美股（本质页第 3 节）。">
+          <p class="quiz-q">5. 美股 vs 港股主板季度信息披露频率的核心差异是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q5"><span>美股无季报，港股有</span></label>
+            <label><input type="radio" name="q5" data-correct="1"><span>美股 10-Q 强制季末 40 天披露，港股主板季报非强制</span></label>
+            <label><input type="radio" name="q5"><span>披露频率完全一致</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="A 股散户 + 主题基金 + 稀缺池 + 政策期权四条结构性成因合起来支撑 A 股半导体倍数长期高于美股。用「炒作」两个字不能解释系统性、可重现的差异——差异会长期存在，跨市场做的是同一件事的两次定价之差，不是「谁贵谁便宜」（本质页第 6 节）。">
+          <p class="quiz-q">6. A 股半导体板块 PE 长期显著高于美股 SOXX（近年 3-4 倍），最专业的第一反应是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q6"><span>A 股有泡沫，等崩盘</span></label>
+            <label><input type="radio" name="q6" data-correct="1"><span>先拆到投资者结构 + 稀缺池 + 政策期权 + 供给限制四层成因，判断哪一层可变</span></label>
+            <label><input type="radio" name="q6"><span>用美股倍数做锚做空 A 股</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="note">
+          <span class="note-label">本模块要带走的 memo 能力</span>
+          <p>对一条跨市场的产业事件，你现在应该能：画出六市场分布地图，指出这条事件在哪个市场停留在标题层、哪个在流程层；把不同市场同一家公司的估值差异拆到投资者结构 + 稀缺池 + 政策期权 + 供给限制四层；建立 A/H 或 ADR 溢价的时间序列并识别催化剂窗口；判断政策扰动在三日 × 五市场九宫格里的反应节奏。写不出这些动作，回到对应小节重学。这套判断是模块 13 证据链的跨市场版本，也是模块 14 memo 里必须有的一节。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="src">
+      <strong>本页资料来源</strong>
+      <ol style="margin:8px 0 0;padding-left:1.3em">
+        <li id="src-1"><a href="https://36kr.com/p/3344768078004873" target="_blank" rel="noopener">36Kr《另类视角看中芯：港A价差背后，信仰鸿沟多大？》（2025-09，中芯 A/H 溢价 25%-103%）</a></li>
+        <li id="src-2"><a href="https://www.bloomberg.com/news/articles/2025-10-15/tsmc-adr-premium-tops-two-decade-high-as-global-buyers-pile-in" target="_blank" rel="noopener">Bloomberg：TSMC ADR premium tops two-decade high（2025-10-15）</a> · <a href="https://www.acadian-asset.com/investment-insights/owenomics/tsmc-totally-stupid-market-chaos" target="_blank" rel="noopener">Acadian Asset：TSMC — Totally Stupid Market Chaos（2024-10，ADR 溢价约 20%、换算比 1:0.20）</a></li>
+        <li id="src-3"><a href="https://finance.biggo.com/news/908757fd-9831-4f2b-bc52-bf547fb15204" target="_blank" rel="noopener">BigGo Finance / Goldman Sachs 警告：三星 + SK 海力士 KOSPI 权重 46.94%（2026-05）</a> · <a href="https://finance.biggo.com/news/jEs_Fp4BX0tZvRTv4JAl" target="_blank" rel="noopener">BigGo Finance：Samsung + SK Hynix 合计权重达 KOSPI 近半</a></li>
+        <li id="src-4"><a href="https://www.21jingji.com/article/20260424/herald/e722c21843d7dc69107b3ea9c9c5dd67.html" target="_blank" rel="noopener">21 财经《AH 溢价"倒挂"四问，硬科技凭什么更贵》（2026-04，含宁德时代 H 股流通盘约 A 股 3.7%）</a></li>
+        <li id="src-5"><a href="https://legulegu.com/stockdata/sw-industry-2021?industryCode=801081.SI" target="_blank" rel="noopener">乐咕乐股 · 申万半导体行业市盈率/市净率序列</a> · <a href="https://caifuhao.eastmoney.com/news/20260527192406824911300" target="_blank" rel="noopener">东方财富：A 股半导体板块 PE-TTM 约 115 倍（2026-05）</a> · <a href="https://www.lixinger.com/equity/index/detail/csi/931865/931865/fundamental/valuation/pe-ttm?metrics-type=median" target="_blank" rel="noopener">理杏仁 · 中证半导（931865）PE 时间序列</a></li>
+        <li id="src-6"><a href="https://www.investing.com/etfs/ishares-phlx-sox-semiconductor" target="_blank" rel="noopener">Investing.com · iShares SOXX 数据页（P/E 约 28-30 倍）</a> · <a href="https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf" target="_blank" rel="noopener">iShares SOXX 官方页</a></li>
+        <li id="src-7"><a href="https://www.pbcsf.tsinghua.edu.cn/__local/5/F8/1D/6A6079AE6FDAFD55E50E0E6EC19_3F82D891_5D6F0.pdf" target="_blank" rel="noopener">清华五道口《Retail and Institutional Investor Trading Behaviors》（Annual Review of Financial Economics）</a> · <a href="https://en.saif.sjtu.edu.cn/faculty-perspectives/details/26.html" target="_blank" rel="noopener">上海高级金融学院：China's capital market calls for long-term investors</a></li>
+        <li id="src-8"><a href="https://finance.sina.com.cn/money/fund/jjzl/2024-08-14/doc-inciqxck7697924.shtml" target="_blank" rel="noopener">新浪财经：连续三日破 5000 亿、A 股换手率全球第一（2024-08）</a></li>
+        <li id="src-9"><a href="https://finquery.com/blog/ifrs-16-vs-asc-842-us-gaap-lease-accounting-differences/" target="_blank" rel="noopener">FinQuery：IFRS 16 vs ASC 842 lease accounting differences</a> · <a href="https://kpmg.com/us/en/articles/2025/lease-accounting-ifrs-standards-us-gaap.html" target="_blank" rel="noopener">KPMG：Lease accounting — IFRS vs US GAAP（2025 更新）</a></li>
+        <li id="src-10"><a href="https://xueqiu.com/9247917663/111543505" target="_blank" rel="noopener">雪球：港股主板中报和年报披露规则解读（对比 A 股）</a> · <a href="https://hk.eastmoney.com/a/202202242287912917.html" target="_blank" rel="noopener">东方财富港股：A 股、港股与美股财报披露规则的异同</a> · <a href="https://www.mayerbrown.com/-/media/files/perspectives-events/publications/2025/12/2026-sec-filing-deadlines-and-financial-statement-staleness-dates.pdf" target="_blank" rel="noopener">Mayer Brown：2026 SEC Filing Deadlines（10-Q 40 天口径）</a></li>
+        <li id="src-11"><a href="https://www.bis.gov/press-release/commerce-strengthens-export-controls-restrict-chinas-capability-produce-advanced-semiconductors-military" target="_blank" rel="noopener">BIS 官方新闻稿：2022-10-07 出口管制</a> · <a href="https://www.skadden.com/insights/publications/2023/10/bis-updates-october-2022-semiconductor-export-control-rules" target="_blank" rel="noopener">Skadden：BIS 2023-10-17 更新</a> · <a href="https://www.hklaw.com/en/insights/publications/2024/12/us-strengthens-export-controls-on-advanced-computing-items" target="_blank" rel="noopener">Holland &amp; Knight：BIS 2024-12 更新</a> · <a href="https://www.congress.gov/crs-product/R48642" target="_blank" rel="noopener">CRS 报告：U.S. Export Controls and China</a></li>
+        <li id="src-12"><a href="https://www.investing.com/news/analyst-ratings/asml-stock-rating-upgraded-to-buy-by-aletheia-capital-on-chip-demand-outlook-93CH-4427450" target="_blank" rel="noopener">Investing.com：Aletheia Capital 上调 ASML 卖出→买入（2026-01-02）</a> · <a href="https://rollingout.com/2026/01/02/asml-stock-upgrade-aletheia-capital-euv/" target="_blank" rel="noopener">Rolling Out：ASML 股价+3%（2026-01-02）</a></li>
+        <li id="src-13"><a href="https://www.samsung.com/global/ir/stock-information/listing-Info/" target="_blank" rel="noopener">Samsung Electronics 投资者关系 · 上市信息（KRX + LSE GDR）</a> · <a href="https://finance.yahoo.com/quote/SMSN.IL/" target="_blank" rel="noopener">Yahoo Finance：Samsung SMSN.IL GDR（LSE 2025-02-13 上市）</a></li>
+        <li id="src-14"><a href="https://www.semi.org/en/products-services/market-data/equipment/billings-report" target="_blank" rel="noopener">SEMI · 全球半导体设备市场月度/季度统计</a>（用于第 4 节 & 迁移一验证信号三）</li>
+      </ol>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本模块为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="m11.html"><span class="dir">← 上一模块</span>模块 11 · 财务语言与估值</a>
+        <a href="m13.html" style="text-align:right"><span class="dir">下一模块 →</span>模块 13 · 证据链与研究流程</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- 传导时差回放（A 类核心组件） ---------- */
+  (function () {
+    /* 五市场对同一新闻的定价完成度曲线（0-30 天）
+       每条曲线的形态由本质页机制推导：
+       - ASML / KLA (流程层)：T+1 完成 90%+，此后基本平；
+       - TSM + 韩存储 (流程层但慢半天)：T+1 完成 60%，T+3 完成 90%；
+       - 中芯 H (中概混合层)：T+1 45%，T+7 达高点，之后回归；
+       - A 股设备国产化 (标题层)：T+1 主题涨、T+5 峰值 100%+（超调），T+15-30 分化 → 回到 60% 附近 */
+    const CURVES = {
+      asml:  [0, 92, 95, 96, 97, 97, 98, 98, 98, 99, 99, 99, 99, 99, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+      kla:   [0, 82, 88, 91, 93, 94, 95, 96, 96, 97, 97, 97, 98, 98, 98, 98, 99, 99, 99, 99, 99, 99, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+      tsm:   [0, 55, 78, 87, 91, 93, 94, 94, 95, 95, 96, 96, 96, 97, 97, 97, 97, 97, 98, 98, 98, 99, 99, 99, 100, 100, 100, 100, 100, 100, 100],
+      smich: [0, 45, 62, 72, 78, 82, 85, 87, 88, 88, 87, 85, 82, 80, 78, 76, 74, 72, 71, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70],
+      cnaeq: [0, 65, 88, 100, 108, 112, 108, 100, 92, 84, 76, 70, 66, 62, 60, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58]
+    };
+    const MAX = 115;
+    const ns = "http://www.w3.org/2000/svg";
+    function svgEl(name, attrs) {
+      const el = document.createElementNS(ns, name);
+      for (const k in attrs) el.setAttribute(k, attrs[k]);
+      return el;
+    }
+
+    document.querySelectorAll(".tdiff-row").forEach((row) => {
+      const key = row.dataset.m;
+      const trackDiv = row.querySelector(".track");
+      const svg = svgEl("svg", { viewBox: "0 0 200 30", preserveAspectRatio: "none" });
+      const bg = svgEl("rect", { x: 0, y: 12, width: 200, height: 6, fill: "var(--surface-2)", rx: 3 });
+      const bar = svgEl("rect", { x: 0, y: 12, width: 0, height: 6, fill: "var(--viz-s3)", rx: 3 });
+      /* 超调部分（>100%）用琥珀色标出 */
+      const barOver = svgEl("rect", { x: 0, y: 12, width: 0, height: 6, fill: "var(--accent)", rx: 3 });
+      /* 30 天末终点标记 */
+      const dot = svgEl("circle", { cx: 0, cy: 15, r: 4, fill: "var(--viz-s4)", stroke: "var(--bg)", "stroke-width": 2 });
+      svg.appendChild(bg);
+      svg.appendChild(bar);
+      svg.appendChild(barOver);
+      svg.appendChild(dot);
+      trackDiv.appendChild(svg);
+      row._bar = bar;
+      row._barOver = barOver;
+      row._dot = dot;
+      row._val = row.querySelector(".val");
+      row._key = key;
+    });
+
+    const daySlider = document.getElementById("tdiffDay");
+    const dayOut = document.getElementById("tdiffDayOut");
+
+    function paint() {
+      const d = +daySlider.value;
+      dayOut.textContent = "第 " + d + " 天";
+      document.querySelectorAll(".tdiff-row").forEach((row) => {
+        const v = CURVES[row._key][d];
+        const clamped = Math.min(100, v);
+        const overshoot = Math.max(0, v - 100);
+        const px = clamped / MAX * 200;
+        const overPx = overshoot / MAX * 200;
+        row._bar.setAttribute("width", px);
+        row._barOver.setAttribute("x", px);
+        row._barOver.setAttribute("width", overPx);
+        row._dot.setAttribute("cx", Math.min(196, px + overPx));
+        row._val.textContent = v + "%";
+        row._val.style.color = v > 100 ? "var(--accent-ink)" : "var(--primary)";
+      });
+    }
+    daySlider.addEventListener("input", paint);
+    paint();
+  })();
+
+  /* ---------- 估值倍数分解器（P/E vs A/H·ADR 溢价） ---------- */
+  (function () {
+    const DATA = {
+      pe: {
+        title: "半导体板块 P/E 倍数（2026 上半年公开口径）",
+        max: 130,
+        rows: [
+          { name: "SOXX（iShares 半导体 ETF）", u: "美股 · 机构主导", v: 29, note: "口径参考 Investing.com 2026" },
+          { name: "美光（MU）", u: "美股 · 存储代表", v: 15, note: "周期股，利润高时 PE 低" },
+          { name: "台积电 ADR（TSM）", u: "美股 ADR · 先进代工", v: 26, note: "2026 上半年区间" },
+          { name: "SK 海力士（000660.KS）", u: "韩股 · HBM 龙头", v: 12, note: "2026 上半年 HBM 利润高峰" },
+          { name: "中证半导体指数", u: "A 股 · 全指口径", v: 90, note: "2026-03 理杏仁数据", hi: true },
+          { name: "国证半导体芯片", u: "A 股 · 芯片主题", v: 113, note: "2026-01 历史 99.4% 分位", hi: true },
+          { name: "中芯国际 H（0981）", u: "港股 · 中国代工", v: 25, note: "港股 IFRS 估算" },
+          { name: "中芯国际 A（688981）", u: "A 股 · 稀缺敞口", v: 78, note: "A/H 溢价隐含", hi: true }
+        ],
+        note: "看什么：A 股半导体板块 PE 是 SOXX 的 3-4 倍——差距不是「炒作」，是投资者结构 + 稀缺池 + 政策期权 + 供给限制四层的合成。"
+      },
+      ah: {
+        title: "跨市场同一标的溢价（A/H 与 ADR）",
+        max: 110,
+        rows: [
+          { name: "TSMC ADR vs 台股", u: "2024-10", v: 20, note: "Acadian Asset 2024-10" },
+          { name: "TSMC ADR vs 台股", u: "2025-10", v: 30, note: "Bloomberg 2025-10 · 20 年新高（估算区间）" },
+          { name: "恒生 A/H 溢价指数", u: "长期均值 · 2020-2025", v: 35, note: "均值 130-140 → 溢价 30-40%" },
+          { name: "中芯 A vs H", u: "2025-09 · DeepSeek 后", v: 52, note: "36Kr 2025-09" },
+          { name: "中芯 A vs H", u: "2025 Q1 · 峰值", v: 103, note: "36Kr · A 股比 H 贵一倍", hi: true },
+          { name: "宁德时代 A vs H", u: "H 流通盘 = A 3.7%", v: 45, note: "21 财经 2026-04 · 硬科技 AH 倒挂" }
+        ],
+        note: "看什么：A/H 溢价的绝对量级远大于 ADR 溢价（100% vs 20-30%）——两个市场资金流动限制不同带来的价差数量级差。"
+      }
+    };
+
+    const mount = document.getElementById("vbars");
+    const noteEl = document.getElementById("vbarsNote");
+    const buttons = document.querySelectorAll("#vswitch button");
+    let mode = "pe";
+
+    function paint() {
+      const d = DATA[mode];
+      mount.innerHTML = "";
+      d.rows.forEach((r) => {
+        const row = document.createElement("div");
+        row.className = "vbar-row";
+        const nm = document.createElement("div");
+        nm.className = "name";
+        nm.innerHTML = r.name + '<span class="u">' + r.u + "</span>";
+        const bar = document.createElement("div");
+        bar.className = "bar" + (r.hi ? " hi" : "");
+        const inner = document.createElement("span");
+        inner.style.width = Math.min(100, r.v / d.max * 100) + "%";
+        bar.appendChild(inner);
+        const val = document.createElement("div");
+        val.className = "val";
+        val.textContent = (mode === "pe" ? r.v + "×" : (r.v > 0 ? "+" + r.v + "%" : r.v + "%"));
+        row.appendChild(nm);
+        row.appendChild(bar);
+        row.appendChild(val);
+        mount.appendChild(row);
+      });
+      noteEl.innerHTML = "<b>看什么：</b>" + d.note;
+    }
+    buttons.forEach((b) => {
+      b.addEventListener("click", () => {
+        buttons.forEach((x) => x.setAttribute("aria-pressed", "false"));
+        b.setAttribute("aria-pressed", "true");
+        mode = b.dataset.v;
+        paint();
+      });
+    });
+    paint();
+  })();
+
+  /* ---------- 决策复盘卡通用交互（复用 m02 模式） ---------- */
+  document.querySelectorAll("[data-case]").forEach((box) => {
+    const reveal = box.parentElement.querySelector(".case-reveal");
+    box.querySelectorAll("[data-pick]").forEach((btn) => {
+      btn.setAttribute("aria-pressed", "false");
+      btn.addEventListener("click", () => {
+        box.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        if (reveal && reveal.hidden) reveal.hidden = false;
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>

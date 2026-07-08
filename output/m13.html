@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模块 13 · 证据链与研究流程</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* 证据金字塔 SVG 图示专用样式 */
+  .pyramid-wrap { display: grid; grid-template-columns: 260px 1fr; gap: 22px; align-items: center; }
+  @media (max-width: 700px) { .pyramid-wrap { grid-template-columns: 1fr; } }
+  .pyramid-legend { font-size: var(--fs-14); color: var(--muted); }
+  .pyramid-legend b { color: var(--ink); display: block; font-size: var(--fs-13); margin-top: 8px; }
+
+  /* 时间戳漏斗 SVG 图示专用样式 */
+  .funnel-svg { max-width: 720px; margin: 0 auto; display: block; }
+  .funnel-node { cursor: pointer; transition: filter var(--dur) var(--ease); }
+  .funnel-node:hover { filter: brightness(0.94); }
+  .funnel-node.is-active rect,
+  .funnel-node.is-active circle { stroke: var(--primary-2); stroke-width: 2.5; }
+  .funnel-detail {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 14px 16px;
+    margin-top: 12px;
+    font-size: var(--fs-14);
+  }
+  .funnel-detail dl { display: grid; grid-template-columns: 5em 1fr; gap: 4px 12px; margin: 0; }
+  .funnel-detail dt { font-weight: 650; color: var(--muted); font-size: var(--fs-13); }
+  .funnel-detail dd { margin: 0; }
+
+  /* 五问自查小卡：三要素记录法示范 */
+  .three-tag {
+    display: grid;
+    grid-template-columns: 5em 1fr;
+    gap: 4px 12px;
+    background: var(--surface);
+    border-left: 3px solid var(--primary-2);
+    border-radius: var(--radius-s);
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: var(--fs-14);
+  }
+  .three-tag dt { font-weight: 650; color: var(--muted); font-size: var(--fs-13); }
+  .three-tag dd { margin: 0; }
+  .three-tag.bad { border-left-color: var(--accent); }
+  .three-tag.bad dd em { color: var(--accent-ink); font-style: normal; font-weight: 600; }
+</style>
+</head>
+<body data-page="m13">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">模块 13 · 证据链与研究流程</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">第四层 · 研究输出 · 模块 13 / 14</p>
+      <h1>证据链与研究流程</h1>
+      <p class="core-q"><b>核心问题：</b>一条消息，从「读到」到「验证并归档」要走几步？怎么把媒体转述升级为可信证据？怎么避免被单一来源误导？</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">学完这个模块，你要能独立回答（现在答不上来是正常的）</span>
+      <ul style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>「彭博报道 Aletheia Capital 把 ASML 目标价从 $750 上调到 $1,500」——这是几手信息？请说出把它升级为二手、再升级为一手的具体动作。</li>
+        <li>你在电话会转录里读到「翻倍仍不够」（台积电魏哲家 2024-04-18），而某投研报告转述为「CoWoS 需求超预期」——两条口径不一致，你怎么处理？</li>
+        <li>你写了一份假说「HBM3E 2026 涨价 20%」，市场当周股价反向走了 -5%——你怎么判断是假说错还是市场错？</li>
+      </ul>
+    </div>
+
+    <ul class="concepts" aria-label="本模块概念清单">
+      <li>证据分级</li><li>一手来源</li><li>交叉验证</li><li>时间戳</li><li>反例训练</li><li>口径混淆</li><li>确认偏差</li><li>幸存者偏差</li><li>外推陷阱</li><li>锚定效应</li><li>归档与检索</li>
+    </ul>
+
+    <div class="tabs" data-tabs>
+      <div class="tablist" role="tablist" aria-label="模块内容">
+        <button role="tab" id="tab-a" aria-controls="panel-a" aria-selected="true">本质</button>
+        <button role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false">怎么判断</button>
+        <button role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false">练习</button>
+      </div>
+
+      <!-- ==================== 本质 ==================== -->
+      <section role="tabpanel" id="panel-a" aria-labelledby="tab-a" class="prose">
+
+        <h2>1. 证据分级：四层金字塔</h2>
+        <p>研究的第一动作不是「相信」或「怀疑」这条消息，是先问：<strong>这是几手信息？</strong>越靠近事件当事人的原话，被加工、压缩、翻译过的次数越少；越往外传，失真越大。把你读到的每一条都放进四层金字塔里，能不能用取决于放在哪一层。</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">证据金字塔 · 从当事人原话到社交媒体</span>
+            <span class="viz-sub">看什么：越往下层，信息量越大、噪声也越大；越靠顶层，越干净越难得——点击每一层看真实例子。</span>
+          </div>
+          <div class="pyramid-wrap">
+            <div id="pyramidSvg" aria-hidden="true"></div>
+            <div class="pyramid-legend">
+              <b>信息保真度 ↑</b>越靠顶层，被加工的次数越少
+              <b>信息量 / 噪声 ↑</b>越靠底层，条目越多、也越可能失真
+              <b>你的动作</b>把每条读到的信息标一个「手数」，再决定要不要用它下判断
+            </div>
+          </div>
+          <div class="stackup" style="max-width:100%;margin-top:14px">
+            <button class="stackup-layer" data-reveal data-reveal-group="pyr" aria-controls="pyr1" aria-expanded="false">
+              <span class="t">一手 · Primary</span><span class="d">当事人原话 / 官方财务文件 / 原始数据</span>
+            </button>
+            <div class="stackup-panel" id="pyr1" hidden>
+              <p style="margin:0 0 6px"><strong>什么算一手：</strong>当事人自己嘴里说出的话（财报电话会转录、法庭证词、监管备案）；公司提交给监管机构的原件（<a href="https://www.sec.gov/cgi-bin/browse-edgar" target="_blank" rel="noopener">SEC EDGAR</a> 上的 10-K/10-Q/8-K、香港披露易 HKEX、台湾 MOPS 公开资讯观测站、韩国 DART、日本 EDINET）；原始统计发布方的数据本身（<a href="https://www.semi.org/en/products-services/market-data/equipment" target="_blank" rel="noopener">SEMI 设备统计</a>、<a href="https://www.iea.org/reports/electricity-2024" target="_blank" rel="noopener">IEA 官方报告</a>）。</p>
+              <p style="margin:0"><strong>真实例：</strong>台积电魏哲家 2024-04-18 电话会原话「we still cannot get enough CoWoS wafers」——见 <a href="https://www.fool.com/earnings/call-transcripts/2024/04/18/taiwan-semiconductor-manufacturing-tsm-q1-2024-ear/" target="_blank" rel="noopener">Motley Fool 转录</a>与 <a href="https://investor.tsmc.com/chinese/encrypt/files/encrypt_file/reports/2024-04/34ff75e23e53246302ce3a8d90d0423c57c6b120/TSMC%201Q24%20Transcript.pdf" target="_blank" rel="noopener">TSMC 官方 1Q24 Transcript PDF</a>。<a class="badge badge-verified" href="https://www.fool.com/earnings/call-transcripts/2024/04/18/taiwan-semiconductor-manufacturing-tsm-q1-2024-ear/" target="_blank" rel="noopener">已核验 · TSMC 电话会 2024-04-18</a></p>
+            </div>
+            <button class="stackup-layer" data-reveal data-reveal-group="pyr" aria-controls="pyr2" aria-expanded="false">
+              <span class="t">二手 · Secondary</span><span class="d">具名专业机构基于一手数据的加工分析</span>
+            </button>
+            <div class="stackup-panel" id="pyr2" hidden>
+              <p style="margin:0 0 6px"><strong>什么算二手：</strong>具名投研机构自建模型、自己跑访谈得出的结论——Bernstein、SemiAnalysis、TechInsights、<a href="https://www.trendforce.com/news" target="_blank" rel="noopener">TrendForce</a>、<a href="https://www.lightcounting.com/" target="_blank" rel="noopener">LightCounting</a>、CSET、Yole 等。作者可查、方法可读、你能追问「这个数字怎么算出来的」。</p>
+              <p style="margin:0"><strong>真实例：</strong><a href="https://www.trendforce.com/news/2024/10/21/news-cowos-capacity-doubles-for-two-years-still-insufficient-positive-outlook-for-suppliers/" target="_blank" rel="noopener">TrendForce 2024-10「CoWoS 连续两年翻倍仍不足」</a>——这是 TrendForce 独立跑访谈加自建模型的结论，跟一手（魏哲家原话）来自不同的信息链路，构成有效的独立佐证。<a class="badge badge-verified" href="https://www.trendforce.com/news/2024/10/21/news-cowos-capacity-doubles-for-two-years-still-insufficient-positive-outlook-for-suppliers/" target="_blank" rel="noopener">已核验 · TrendForce 2024-10</a></p>
+            </div>
+            <button class="stackup-layer" data-reveal data-reveal-group="pyr" aria-controls="pyr3" aria-expanded="false">
+              <span class="t">三手 · Tertiary</span><span class="d">财经媒体转述二手或一手</span>
+            </button>
+            <div class="stackup-panel" id="pyr3" hidden>
+              <p style="margin:0 0 6px"><strong>什么算三手：</strong>财经媒体（Bloomberg、Reuters、CNBC、Wall Street Journal、Investing.com）转述某某分析师报告 / 某某电话会 / 某某数据发布——媒体自己不做原始研究，做的是加工、翻译、择要。你读到的多数「行业新闻」都在这一层。</p>
+              <p style="margin:0"><strong>真实例：</strong>「彭博 / Investing.com 报道 Aletheia Capital 把 ASML 目标价从 750 美元翻倍到 1,500 美元」（2026-01-02）——媒体转述具名投研的动作，你从这里读到的是<em>被加工过的二手</em>：真正的二手（Aletheia 报告原文）里的推导过程、假设、失效情景，媒体的短篇里大多留不下来。<a class="badge badge-verified" href="https://www.investing.com/news/analyst-ratings/asml-stock-rating-upgraded-to-buy-by-aletheia-capital-on-chip-demand-outlook-93CH-4427450" target="_blank" rel="noopener">已核验 · Investing.com 2026-01-02</a></p>
+            </div>
+            <button class="stackup-layer" data-reveal data-reveal-group="pyr" aria-controls="pyr4" aria-expanded="false">
+              <span class="t">四手 · Anecdotal</span><span class="d">社交媒体、群聊、口口相传</span>
+            </button>
+            <div class="stackup-panel" id="pyr4" hidden>
+              <p style="margin:0 0 6px"><strong>什么算四手：</strong>X（推特）网友转述、微信群截图、Discord/Reddit 的匿名爆料、公众号加工的加工——来源不可追、时间戳可能造假、口径可能被裁剪。这一层里绝大多数东西<strong>不能用于下判断</strong>，但可以作为「值得追一下」的信号触发。</p>
+              <p style="margin:0"><strong>真实例：</strong>DeepSeek 2025-01-27 一开始就是从社交媒体上传出的「训练成本 $5.6M、性能比肩 GPT-4o」抓走市场注意力——但这个 $5.6M 是「最后一轮预训练的算力成本」的口径，不含实验、失败、前几代基础模型和基础设施投入；社交媒体传播时几乎全部把这层口径丢掉了。真正的一手（DeepSeek V3 论文）里写得很清楚，见后续复盘。<a class="badge badge-expert" href="#src-31" target="_self">专家判断 · 口径压缩案例</a></p>
+            </div>
+          </div>
+        </div>
+
+        <p>为什么金字塔的形状不平——顶层窄、底层宽？因为一句一手原话向外传，每传一次就产生 N 条二手、N 条三手、N × M 条社交媒体条目，噪声按乘法长。这也是为什么<strong>信号在顶层最贵、在底层最便宜</strong>；专业研究要做的事，是把三手四手当索引、逼自己回到一手。</p>
+
+        <h2>2. 一手来源在哪找：点名清单</h2>
+        <p>「查一手来源」不是口号，是可执行动作。下面这份清单是本页作者亲自用过的入口——不做具体软件推荐，只点名可公开访问的原始文件所在的地方。</p>
+
+        <div class="tbl-wrap">
+        <table class="tbl">
+          <caption>一手来源分类清单——点开就能查到原件</caption>
+          <thead>
+            <tr><th>类别</th><th>入口（可直接打开）</th><th>看什么</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>美股财务原件</td>
+              <td><a href="https://www.sec.gov/cgi-bin/browse-edgar" target="_blank" rel="noopener">SEC EDGAR</a></td>
+              <td>10-K（年报）· 10-Q（季报）· 8-K（临时公告）· S-1（招股书）· 13-F（机构持仓）· DEF 14A（股东会）· PDF/HTML 原件</td>
+            </tr>
+            <tr>
+              <td>台股原件</td>
+              <td><a href="https://mops.twse.com.tw/mops/web/index" target="_blank" rel="noopener">MOPS 公开资讯观测站</a> · <a href="https://investor.tsmc.com" target="_blank" rel="noopener">公司 IR 页</a></td>
+              <td>年报（中英）· 财报电话会官方 Transcript PDF · 重大讯息</td>
+            </tr>
+            <tr>
+              <td>港股原件</td>
+              <td><a href="https://www.hkexnews.hk/" target="_blank" rel="noopener">HKEX 披露易</a></td>
+              <td>公告 · 年报 · 中期报告 · 通函</td>
+            </tr>
+            <tr>
+              <td>财报电话会转录</td>
+              <td><a href="https://www.fool.com/earnings/call-transcripts/" target="_blank" rel="noopener">Motley Fool</a> · <a href="https://seekingalpha.com/earnings/earnings-call-transcripts" target="_blank" rel="noopener">Seeking Alpha</a> · <a href="https://news.alphastreet.com/category/transcripts/" target="_blank" rel="noopener">AlphaStreet</a> · 公司 IR 官方 PDF</td>
+              <td>管理层原话（比新闻的引用更完整）· 分析师问答（信号最密集）· 官方 PDF 是绝对真值</td>
+            </tr>
+            <tr>
+              <td>设备与产业统计</td>
+              <td><a href="https://www.semi.org/en/products-services/market-data/equipment" target="_blank" rel="noopener">SEMI 设备市场数据</a> · <a href="https://www.trendforce.com/news" target="_blank" rel="noopener">TrendForce</a> · <a href="https://www.lightcounting.com/" target="_blank" rel="noopener">LightCounting</a></td>
+              <td>设备销售额季度 / 年度统计 · 存储价格与份额 · 光模块出货</td>
+            </tr>
+            <tr>
+              <td>能源与基础设施</td>
+              <td><a href="https://www.iea.org/reports/electricity-2024" target="_blank" rel="noopener">IEA 能源报告</a> · 各国能源部 · 电网公司披露</td>
+              <td>数据中心用电量估算 · 全球用电占比走势</td>
+            </tr>
+            <tr>
+              <td>技术白皮书</td>
+              <td>公司 developer / product 页（如 <a href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/" target="_blank" rel="noopener">Nvidia developer blog</a>）</td>
+              <td>芯片架构 · 面积 · 晶体管数 · 官方规格（比媒体转述精确得多）</td>
+            </tr>
+            <tr>
+              <td>行业协会与统计机构</td>
+              <td>SEMI · IEA · BIS · World Semiconductor Trade Statistics · Coughlin Associates</td>
+              <td>宏观 / 全球口径的产量、销售、份额、投资</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <p>这张表要背下来吗？不用。要做的是<strong>下次读到「据某某报道」时，先问「原件在哪」，再点开这里对应的入口去查</strong>——两个月坚持下来，习惯就长在手上了。</p>
+
+        <h2>3. 交叉验证：什么才叫「独立」</h2>
+        <p>「多个来源同时说 X」不等于「X 已被验证」。真正独立的两条来源，要来自不同的信息链路——不同当事人、不同数据集、不同方法。如果两家投研都在引同一位 CFO 的电话会原话，那也<strong>只有一条来源</strong>，只是被讲了两次。</p>
+
+        <p>用一个已核验的样本走一遍。<strong>假说：CoWoS（GPU 高端封装）产能长期紧张</strong>。如果你只读到魏哲家 2024-04-18 电话会「CoWoS wafers 不够」<a class="badge badge-verified" href="https://www.fool.com/earnings/call-transcripts/2024/04/18/taiwan-semiconductor-manufacturing-tsm-q1-2024-ear/" target="_blank" rel="noopener">已核验 · Motley Fool 2024-04-18</a>——这只是<strong>一条来源</strong>（当事人自己讲的话，可能是真、也可能是管理层修辞）。要变成有说服力的交叉验证，至少还要有以下三条<em>来自不同环节</em>的独立佐证：</p>
+
+        <ul>
+          <li><strong>HBM 侧独立佐证</strong>——美光 FY26 Q3 披露 16 份 take-or-pay 长约、金额 $100B、覆盖 2026-2030<a class="badge badge-verified" href="#src-19" target="_self">已核验 · TrendForce/HBM 长约</a>：需求端的长期锁定合同和 CoWoS 电话会来自完全不同的信息链路（一个是台积电，一个是存储厂）。</li>
+          <li><strong>基板独立佐证</strong>——味之素宣布投 250 亿日元扩 ABF 载板产能 50%、CPU/GPU 基板占 &gt;95%<a class="badge badge-verified" href="https://www.trendforce.com/news/2025/04/01/news-japanese-firm-ajinomoto-to-invest-jpy-25-billion-by-2030-to-expand-abf-production-for-advanced-packaging/" target="_blank" rel="noopener">已核验 · 味之素 2025-04</a>：基板是 CoWoS 下游的独立环节，扩产额和 CoWoS 电话会没有信息重合。</li>
+          <li><strong>光模块下游佐证</strong>——中际旭创 2024 收入 238.6 亿元 +122.6%、光模块出货 977→2088 万只<a class="badge badge-verified" href="#src-28" target="_self">已核验 · 中际旭创年报</a>：AI 集群规模是 CoWoS 产能的镜像，光模块出货翻倍是不同细分市场的独立信号。</li>
+        </ul>
+
+        <p>三条来自不同环节、不同当事人、不同数据集的信号都指向同一结论——这时候才叫「三点定位」，主假说才算被真正交叉验证过。<strong>反面案例</strong>：如果你读到的三条信息其实都是某财经媒体转述 TrendForce 那一份报告，那就还是一条来源，只是被讲了三次。</p>
+
+        <h2>4. 时间戳三要素：来源 · 日期 · 口径</h2>
+        <p>每条证据都要能回答三个问题：<strong>谁说的、什么时候说的、原话是什么</strong>。缺任何一个，这条证据在你手上就不能后续使用——因为没法在下季度回头对账。</p>
+
+        <p>把魏哲家「翻倍仍不够」这一条按三要素写下来，长这样：</p>
+
+        <dl class="three-tag">
+          <dt>来源</dt><dd>台积电魏哲家（CEO）· 1Q24 电话会转录（Motley Fool + TSMC 官方 PDF 均可交叉核对）</dd>
+          <dt>日期</dt><dd>2024-04-18（美东时间，会议当日）</dd>
+          <dt>口径</dt><dd>原话「we still cannot get enough CoWoS wafers」；中文可信译法「CoWoS 产能翻倍仍不足」；<em>不能</em>翻译成「CoWoS 需求超预期」（后者是分析师的加工转述，丢失了「产能」这个关键词）</dd>
+        </dl>
+
+        <p>对照一个反例——某份投研短评写「CoWoS 需求超预期」：</p>
+
+        <dl class="three-tag bad">
+          <dt>来源</dt><dd><em>缺失</em>：「某券商」是谁？分析师姓名？公司名？</dd>
+          <dt>日期</dt><dd><em>缺失</em>：是电话会前、当日还是之后？半年后的转述已经不能代表当前口径</dd>
+          <dt>口径</dt><dd><em>失真</em>：「需求超预期」和「产能不足」是两件不同的事。产能不足可能来自 CoWoS 扩产受设备/材料限制、也可能来自需求真的超预期——原话被压缩成结果表述，机制层信息全丢</dd>
+        </dl>
+
+        <p>三要素齐全的证据，六个月后你回头看还能验证；三要素残缺的转述，六个月后你自己都不知道当时读了什么。<strong>研究日记里的每一条都要按三要素写</strong>——这不是格式主义，是给自己留兑现追溯用的证据链。</p>
+
+        <h2>5. 反例训练：主动搜寻反面证据</h2>
+        <p>科学哲学里有一个不方便的事实（Karl Popper 1934 提出<a class="badge badge-expert" href="#src-29" target="_self">专家判断 · Popper 1934</a>）：一个假说的价值，不在于你能找出多少支持它的证据，而在于<strong>它能不能被杀死的方式是否明确</strong>。找 100 条支持自己的新闻很容易，找 1 条能证伪的公开线索才是研究的核心动作。</p>
+
+        <p>投资里同一件事的通俗版是 Charlie Munger 反复讲的「invert, always invert」<a class="badge badge-expert" href="#src-30" target="_self">专家判断 · Munger 通行引用</a>——把假说翻过来问，比正着问信息量大得多。</p>
+
+        <p>用一个已核验的样本走一遍。<strong>主假说：Intel 18A 2026 下半年会拿到多家代工客户承诺</strong><a class="badge badge-verified" href="https://www.dailypolitical.com/2026/02/03/intel-conference-lip-bu-tan-talks-foundry-turnaround-18a-yield-gains-and-14a-roadmap-push.html" target="_blank" rel="noopener">已核验 · 陈立武 2026-02 会议</a>。反面证据搜寻的动作不是「找相反的新闻」，是<strong>主动列出「如果这个假说要错，最可能怎么错」的三条公开线索</strong>：</p>
+
+        <ol>
+          <li><strong>良率斜率是否维持</strong>——CEO 说「每月 7-8% 良率改善是行业最佳实践」<a class="badge badge-verified" href="https://www.dailypolitical.com/2026/02/03/intel-conference-lip-bu-tan-talks-foundry-turnaround-18a-yield-gains-and-14a-roadmap-push.html" target="_blank" rel="noopener">已核验</a>——但月复利在良率逼近九成时必然放缓。如果下季度不再提这个数字（口径消失比口径恶化更危险），主假说就在被削。</li>
+          <li><strong>客户是否真下单</strong>——「客户承诺」有可能是意向而不是承付。要看具体客户名、订单额、有没有 8-K 披露的实质合同。没有硬件订单，只有口头承诺，就是主假说的薄弱点。</li>
+          <li><strong>Intel Foundry 分部亏损收窄斜率</strong>——2024 全年 Foundry 分部亏损 $13.408B<a class="badge badge-verified" href="#src-13" target="_self">已核验 · Intel FY24 财报</a>。良率上来了，成本曲线应该在报表上留痕；如果报表连续两个季度没有明显改善，「良率改善」的口径就有可能是修辞。</li>
+        </ol>
+
+        <p>写下这三条以后，每季度对表——哪些出现了、哪些没有、哪些出现但方向反了。做够两三次，你会发现自己第一次写下的主假说往往漏了两三个前提条件。<strong>这就是反例训练的直接产出：不是「证明我错了」，是逼自己把假说写得更精确。</strong></p>
+
+        <h2>6. 常见陷阱：五种最容易上当的方式</h2>
+        <p>下面每一条都配一个真实反面案例——用来提醒自己「我下次可能也会这么错」。</p>
+
+        <h3>确认偏差 · Confirmation bias</h3>
+        <p>只搜自己观点被支持的证据。表现：看多某标的时，把利空新闻自动过滤成「短期扰动」。<strong>反面案例</strong>：2021 年汽车芯片缺货潮，市场普遍把它读成「结构性长期紧缺」，只搜支持这个论点的库存和交期数据；结果 2022 下半年到 2023 年汽车芯片跌回过剩<a class="badge badge-verified" href="#src-32" target="_self">已核验 · 见 m04</a>。<strong>解药：</strong>每次买入 / 卖出前强制写下 3 条能证伪自己的公开线索（工具三）。</p>
+
+        <h3>幸存者偏差 · Survivorship bias</h3>
+        <p>只看走到今天还在的公司，忽略同期倒下的。表现：拿英伟达 2016-2024 的曲线证明「押注 AI 的一定赢」，忘了 3dfx、Icera、SGI 等同期押错方向的公司都消失了。<strong>反面案例</strong>：2018-2020 关注 GPU 赛道时，把英伟达、AMD 都读成「必然崛起」，忽略同期存储厂经历 -50% 深跌（三星 2023-04-07 官方宣布减产<a class="badge badge-verified" href="https://techcrunch.com/2023/04/06/samsung-cuts-memory-chip-production-as-it-hits-worst-quarterly-profit-since-2009/" target="_blank" rel="noopener">已核验 · TechCrunch 2023-04-07</a>）。<strong>解药：</strong>做行业地图时，把同期消失 / 大幅回撤的公司也列上，看看它们当时的故事是什么。</p>
+
+        <h3>口径混淆 · Metric confusion</h3>
+        <p>同一个词在不同来源里指不同的东西。表现：存储行业「bit」（比特）和「GB」不是一件事、代工厂「出货片数」和「收入」不是一件事、公司「财年」和「日历年」不重叠。<strong>反面案例</strong>：读英伟达数据中心 FY24 $47.5B、FY25 $115.2B——这里的 FY25 结束于 2025-01-26，是 <em>2024 日历年</em>的收入，不是 2025 日历年<a class="badge badge-verified" href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2024" target="_blank" rel="noopener">已核验 · Nvidia FY24 财报</a>。跨市场对比时一天错年，全部结论错。<strong>解药：</strong>每个数字后面标口径（币种、单位、财年 / 日历年、bit vs byte）。</p>
+
+        <h3>外推陷阱 · Naive extrapolation</h3>
+        <p>把过去 X 个季度的斜率直接延长到未来 X 个季度。表现：拿 2022-2024 CoWoS 需求翻倍两年推出「未来五年每年翻倍」。<strong>反面案例</strong>：2020-07-23 Bob Swan 承认 Intel 7nm 延期<a class="badge badge-verified" href="https://www.tomshardware.com/news/intel-announces-delay-to-7nm-processors-now-one-year-behind-expectations" target="_blank" rel="noopener">已核验 · Tom's Hardware 2020-07-23</a>——之前市场按 Intel「制程每两年一代」的历史斜率外推，忽略了 EUV 路径抉择和内部良率问题；当日股价 -16%<a class="badge badge-verified" href="https://fortune.com/2020/07/24/what-the-hell-just-happened-to-intel/" target="_blank" rel="noopener">已核验 · Fortune 2020-07-24</a>。<strong>解药：</strong>外推超过两年的判断，必须至少配一条「什么条件下这条趋势会拐」的机制说明。</p>
+
+        <h3>锚定效应 · Anchoring</h3>
+        <p>被第一个看到的数字或价格锚住，之后所有判断围着这个锚偏移。表现：ASML 目标价 $750 你觉得贵，Aletheia 上调到 $1,500 你自动觉得便宜——但两个数字都是别人给的，你自己的估值没做过<a class="badge badge-verified" href="https://www.investing.com/news/analyst-ratings/asml-stock-rating-upgraded-to-buy-by-aletheia-capital-on-chip-demand-outlook-93CH-4427450" target="_blank" rel="noopener">已核验 · Investing.com 2026-01-02</a>。<strong>解药：</strong>看到目标价 / 估值锚点前，先自己算一遍量级（回模块 11 的 PB/PE/DCF），再拿别人的数字对表，而不是反过来。</p>
+
+        <h2>7. 归档与检索：建一份个人研究日记</h2>
+        <p>证据链是一种可积累的资产。今天记一条魏哲家 2024-04-18，明天记一条陈立武 2026-02——一年下来会长出一份索引化的私人证据库，回头做复盘时能快速拉出「当时我看到了什么、我判断了什么、结果发生了什么」。工具本身不重要，结构重要。三种卡片就够用了：</p>
+
+        <ul>
+          <li><strong>事件卡（一条一卡）</strong>：三要素（来源 / 日期 / 口径）+ 分级（几手）+ 涉及标的 + 关联主假说 + 你的第一反应。原文关键句用引号照抄，不要复述。</li>
+          <li><strong>主假说卡</strong>：主假说（一句话）+ 3 条支持证据（各带三要素）+ 3 条反面证据 / 证伪线索 + 到期兑现条件 + 建立日期。每季度回头对表更新。</li>
+          <li><strong>复盘卡</strong>：结果发生后，回头对照预判 vs 实际——判断链条上哪一步对、哪一步错、哪一步是运气。用「诚实边界」把「推理质量」和「结果运气」拆开（模块 2 决策复盘用过这个格式）。</li>
+        </ul>
+
+        <p>软件选什么其实不重要——Notion、Obsidian、纯 Markdown 文件夹、甚至一本纸笔都行。<strong>关键是每条都按三要素写、按分级标、按主假说挂钩</strong>。半年后你会发现自己下一次读到类似情境时，能直接调出上一次的推理，不用从头开始猜。</p>
+
+        <div class="note">
+          <span class="note-label">看什么 · 时间戳漏斗</span>
+          <p style="margin:0">下面是 <strong>DeepSeek 2025-01-27 事件</strong>沿证据链传播的时间线，点每个节点看当时的具体口径。看什么：<strong>一手信号最早出现在论文里（安静无人问津），传到社交媒体后引发市场暴跌，传到黄仁勋回应节点已经是一个月后</strong>——市场恐慌本身就是证据链断裂的物理产出。</p>
+        </div>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">时间戳漏斗 · 一条 AI 事件的传播路径</span>
+            <span class="viz-sub">案例：DeepSeek R1 冲击 Nvidia · 2025-01-27。点击每个节点看该层的原始信息与失真程度。</span>
+          </div>
+          <div id="funnelSvg"></div>
+          <div class="funnel-detail" id="funnelDetail" aria-live="polite">
+            <p style="margin:0;color:var(--muted);font-size:var(--fs-14)">点击上方任一节点看该层的原始信息与失真程度。</p>
+          </div>
+        </div>
+
+        <h2>8. 不要学太深</h2>
+        <div class="note">
+          <span class="note-label">要带走的模型</span>
+          <p>不需要背诵「六种偏差全名」、不需要读完 Popper 原著、不需要建复杂的知识管理系统。要带走的是五个能生成动作的模型：<strong>读到一条信息先分级</strong>、<strong>关键证据必须三要素齐</strong>、<strong>两条来源要来自不同链路才算交叉验证</strong>、<strong>写下主假说后立刻列 3 条证伪线索</strong>、<strong>每条证据都归档，一年后长成私人证据库</strong>。这五件事各自只多花几十秒，但复利效应是——同样的市场事件，别人半年后忘光了，你手上还有原始三要素可查。这一页的机制在模块 14 会直接被拿去写 memo，也是「怎么判断」页三件工具的基本功。</p>
+        </div>
+      </section>
+
+      <!-- ==================== 怎么判断 ==================== -->
+      <section role="tabpanel" id="panel-b" aria-labelledby="tab-b" class="prose" hidden>
+
+        <p style="font-size:var(--fs-15);color:var(--muted)">这一页只交付三件真实存在的工具。每件都按同一结构给齐：<strong>来源 → 为什么成立 → 真实案例 → 怎么操作 → 失效边界</strong>。找不到出处、无法用真实案例验证的「规则」，不会出现在这里。</p>
+
+        <h2>工具一：证据分级 + 交叉验证工作流</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>买方尽调的通行框架——CFA Institute 的实证研究方法（primary vs secondary sources）与专业机构内部的 Investment Memo 模板都要求每条证据标注分级和交叉验证状态<a class="badge badge-expert" href="#src-31" target="_self">专家判断 · 通行的买方尽调框架</a>。这不是一份可以点链接就打开的官方标准，它是几十年买方研究行内共识的沉淀。</div></div>
+          <div class="chain-row"><b>机制</b><div>本质页 §1 已推导：越接近事件当事人的原话，被加工、压缩、翻译过的次数越少；两条独立来源同时说 X，比一条来源说 X 十次都强——因为独立性把「单一源头故意误导 / 记错」的可能性乘出去了。这个工作流的本质是「把不确定性显式化」——你不是为了证明自己对，你是为了不知道时能承认不知道。</div></div>
+          <div class="chain-row"><b>案例</b><div>2026-01-02 你打开 Investing.com 看到「Aletheia Capital 把 ASML 从卖出上调到买入、目标价 $750 → $1,500」<a class="badge badge-verified" href="https://www.investing.com/news/analyst-ratings/asml-stock-rating-upgraded-to-buy-by-aletheia-capital-on-chip-demand-outlook-93CH-4427450" target="_blank" rel="noopener">已核验 · Investing.com 2026-01-02</a>。分级：<strong>三手</strong>（媒体转述 Aletheia 报告）。升级二手要做的动作——找到 Aletheia 报告原文（订阅渠道 / 复述得更完整的第二家媒体）或找第二家独立投研对 ASML 的评估（有没有另一家买方机构给出类似的量化模型）；升级一手要做的动作——读 ASML 财报里 EUV 出货、订单积压和 2N 相关的客户构成，读 TSMC 关于 2N 产能规划的电话会原话，找 TrendForce 关于 EUV 交期的独立统计。<strong>这个工具的正确用途</strong>：不是「找到一手就下判断」，是「知道自己手上是几手，凭这个分辨『别人的观点』和『我自己验证过的东西』」。用它的可以复用到练习页的 DeepSeek 复盘。</div></div>
+          <div class="chain-row"><b>操作</b><div>每条重要 note 强制标一个「分级标签」（一 / 二 / 三 / 四手），再写下「升级到二手 / 一手需要什么动作」；两条来源标注为独立时，先自己问「它们的原始信息链路是不是同一个」——如果两家媒体都在引某某分析师的原话，那还是一条来源。在研究日记里给每条主假说预留「独立佐证 ≥ 3 条」的位置——三条来自不同环节、不同当事人、不同数据集的信号都指向同一结论，才算成立。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①<strong>一手不一定对</strong>——管理层可能撒谎、粉饰、犯错；SEC 备案里的分类和口径也可能错（后续 8-K/A 修正）。「一手」是最靠近事件的口径，不是「真值」。②<strong>假独立</strong>——两家媒体、两家投研看起来独立，但可能都源自同一原始 quote 或同一份 sell-side 报告。识别方法：追问每条来源的「原始信息链路」是哪。③<strong>过度分级瘫痪</strong>——把每条日常读物都硬拉去查一手，会消耗全部精力。分级纪律只对「打算下决策的证据」严格执行，日常浏览的行业新闻可以留在三手层作为触发信号。</div></div>
+        </div>
+
+        <h2>工具二：三要素记录法（来源 · 日期 · 口径）</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>每一条卖方 sell-side note 都要 tag「source / date / quote」；买方 investment memo 的证据段落也要求「引用来源 + 日期 + 原文」——这是机构常识，不是某一份公开权威文档给的规定<a class="badge badge-expert" href="#src-31" target="_self">专家判断 · 通行的买方尽调框架</a>。合规角度上，机构对分析师做记录留痕的要求也是这三样。</div></div>
+          <div class="chain-row"><b>机制</b><div>三要素齐才能做后续验证。没有<strong>来源</strong>就不知道谁的信誉在背书；没有<strong>日期</strong>就不知道口径当时对不对（半年前的产能指引到今天可能已经改了三次）；没有<strong>原话</strong>就无法辨别转述失真——「产能不足」和「需求超预期」是两件不同的事，翻译时经常搞混。三要素是研究日记的原子单位，缺一就是可疑证据。</div></div>
+          <div class="chain-row"><b>案例</b><div>魏哲家 2024-04-18 电话会「翻倍仍不够」的正确写法（三要素齐）见本质页 §4 的第一张卡：来源 = 台积电魏哲家 / TSMC 1Q24 电话会转录（Motley Fool + 官方 PDF）<a class="badge badge-verified" href="https://www.fool.com/earnings/call-transcripts/2024/04/18/taiwan-semiconductor-manufacturing-tsm-q1-2024-ear/" target="_blank" rel="noopener">已核验</a>；日期 = 2024-04-18；口径 = 原话「we still cannot get enough CoWoS wafers」/ 中文「CoWoS 产能翻倍仍不足」。对比一份写「某券商称 CoWoS 需求超预期」的转述——三要素全缺，六个月后你自己都不知道当时读了什么。<strong>正确用途：</strong>不是所有信息都要三要素齐，而是<strong>打算写进 memo、打算下决策、打算跟人辩论的每一条，都必须齐</strong>；日常浏览的行业新闻可以只做「一句话摘要 + 链接」。</div></div>
+          <div class="chain-row"><b>操作</b><div>研究日记里每条正式 note 强制格式【来源｜日期｜原话/口径】三行；日期精确到日、来源精确到人名或文件名、口径优先用原话（配可信译法）；跨口径引用时先统一到原话再翻译；管理层措辞的沿革（哪次电话会开始用「售罄 sold-out」代替「紧张 tight」）单独记录——沿革本身就是信号（工具二的失效③）。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①<strong>三要素齐不代表内容对</strong>——原话可以是当事人自己的错、自己的谎；三要素只保证「可后续验证」，不保证「真值」。②<strong>口径被翻译扭曲</strong>——中英文之间「产能」「良率」「订单」「backlog」等词的对应不完全一致，正式引用尽量保留原文再附中文。③<strong>口径消失比口径恶化更危险</strong>——之前给过的标尺突然不再提，往往是兑现不了，比明说「变差了」更值得警惕（本页反例训练里已经点过）。</div></div>
+        </div>
+
+        <h2>工具三：反面证据主动搜寻（Popper 式）</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>Karl Popper 1934 年在《The Logic of Scientific Discovery》里立下的科学方法论核心：假说的价值不在能被多少证据支持，而在能被什么公开事实证伪<a class="badge badge-expert" href="#src-29" target="_self">专家判断 · Popper 1934</a>。投资应用里 Charlie Munger 反复讲「invert, always invert」<a class="badge badge-expert" href="#src-30" target="_self">专家判断 · Munger 通行引用</a>——把假说翻过来问，比正着问信息量大得多。买方内部演练里对应「kill the trade」——每笔重大仓位在建立时都要问「什么公开事件会让我立刻退出」。</div></div>
+          <div class="chain-row"><b>机制</b><div>找 100 条支持自己的新闻很容易——确认偏差保证你能找到；找 1 条明确的证伪线索反而是硬功夫——反面证据不会自动跳到面前。主动列出反面证据，好处是<strong>提前发现自己漏了什么假设</strong>——列到第三条时，你会发现自己第一次写下的主假说其实漏了两三个前提条件；这时候把假说重写，比坚持原来的版本便宜得多。</div></div>
+          <div class="chain-row"><b>案例</b><div>Intel 18A 2H26 客户承诺是主假说<a class="badge badge-verified" href="https://www.dailypolitical.com/2026/02/03/intel-conference-lip-bu-tan-talks-foundry-turnaround-18a-yield-gains-and-14a-roadmap-push.html" target="_blank" rel="noopener">已核验 · 陈立武 2026-02</a>。反面证据搜寻列出（本质页 §5 已完整走过）：①良率斜率是否维持——月复利在良率逼近九成时必然放缓，下季度口径消失是明确的证伪信号；②客户是否真下单——「承诺」若无 8-K 披露的实质合同，就是薄弱点；③Intel Foundry 分部亏损收窄斜率——2024 全年亏损 $13.408B<a class="badge badge-verified" href="#src-13" target="_self">已核验 · Intel FY24</a>，良率上来必须在报表上留痕。<strong>正确用途：</strong>这三条不是「反对主假说」，是「主假说要不出问题必须同时满足的条件」——写下来以后每季度回来对账，比不写强 5 倍。</div></div>
+          <div class="chain-row"><b>操作</b><div>写下主假说的当日，同一页写「若假说错，最可能怎么错？」的 3 条公开线索——每条要能对应到<strong>一个可查的公开数据源或事件</strong>（财报电话会里管理层不提某个数字、SEC 8-K 里公告什么、竞争对手财报里说什么）；每季度对账时逐条更新——出现了 / 没出现 / 出现但方向反了；三条里出现两条以上时，主假说必须重写而不是硬顶。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①<strong>反面证据可能永远不出现</strong>——幸存者偏差反向版：主假说错了却没被公开事件证伪（如公司内部选择推迟披露），这时候光靠反面搜寻不够，还要看时间——超过预设兑现窗口就是软性证伪。②<strong>稻草人证伪</strong>——只找容易反驳的反面（如「万一 AI 泡沫破了」这种宏观口径），不找有针对性的（「良率月改 7-8% 下季度不再提」这种具体口径）。要主动挑最难反驳的反面写。③<strong>过度反面搜寻</strong>——每天推翻自己一次，仓位无法建立。反面证据用于「重大仓位」和「跨季度持仓」，不用于每天的短线动作。</div></div>
+        </div>
+
+        <h2>操作清单：读一条产业新闻的十条动作</h2>
+        <p style="font-size:var(--fs-14);color:var(--muted)">以下每一项都由本页机制直接推导——它们不是独立的外部工具，是三件工具的落地检查位。括号内注明依据。</p>
+        <ul class="checklist">
+          <li><label><input type="checkbox"><span><b>谁在说？（来源等级 · 一 / 二 / 三 / 四手）</b>（依据：工具一分级）</span></label></li>
+          <li><label><input type="checkbox"><span><b>什么时候说的？（精确日期，不是「近期」）</b>（依据：工具二时间戳）</span></label></li>
+          <li><label><input type="checkbox"><span><b>原话 / 口径是什么？（原文关键句照抄，不复述）</b>（依据：工具二口径）</span></label></li>
+          <li><label><input type="checkbox"><span><b>有没有独立第二来源？（来自不同当事人 / 数据集 / 方法）</b>（依据：工具一交叉验证）</span></label></li>
+          <li><label><input type="checkbox"><span><b>这个信号是领先还是滞后指标？（回到骨架卡 11-12）</b>（依据：跨模块——领先 vs 滞后决定信息价值）</span></label></li>
+          <li><label><input type="checkbox"><span><b>与我的主假说一致还是相反？</b>（依据：工具三反面证据搜寻）</span></label></li>
+          <li><label><input type="checkbox"><span><b>反过来一击：如果它错，我怎么会发现？</b>（依据：工具三 Popper 式）</span></label></li>
+          <li><label><input type="checkbox"><span><b>这条属于标题层还是流程层？（骨架卡 13）</b>（依据：跨模块——市场定价在标题层，超额认知在流程层）</span></label></li>
+          <li><label><input type="checkbox"><span><b>记进研究日记（三要素 + 归档标签 + 分级）</b>（依据：工具二 + 本质页 §7 归档）</span></label></li>
+          <li><label><input type="checkbox"><span><b>下一步验证动作：什么时候？看哪个公开源？</b>（依据：把当下的证据链闭合成后续可对账的兑现条件）</span></label></li>
+        </ul>
+      </section>
+
+      <!-- ==================== 练习 ==================== -->
+      <section role="tabpanel" id="panel-c" aria-labelledby="tab-c" class="prose" hidden>
+
+        <h2>决策复盘一 · 2025 年 1 月 27 日：DeepSeek 冲击 Nvidia</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2025-01-27 · 事件已核验</p>
+          <h4>周一美股开盘，DeepSeek R1 发布消息在社交媒体炸开——传得最快的是「$5.6M 训练成本、性能比肩 GPT-4o」这一句。<strong>Nvidia 单日 -17%、市值单日蒸发约 $589B（美股史上单日最大市值蒸发）</strong><a class="badge badge-verified" href="https://www.cnbc.com/2025/01/27/nvidia-sheds-almost-600-billion-in-market-cap-biggest-drop-ever.html" target="_blank" rel="noopener">已核验 · CNBC 2025-01-27</a>。市场读的是「更少芯片也能训 AI，Nvidia 需求要塌」。这条信息按证据链纪律应该怎么走？</h4>
+          <p class="case-note">你的动作是什么？先选，再看拆解。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>跟着抛售 Nvidia</button>
+            <button type="button" data-pick>逆向加仓 Nvidia</button>
+            <button type="button" data-pick>先分级 · 交叉验证 · 找反面证据，再决定</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>第一步 · 分级</b><div>「$5.6M 训练成本」这个数字，你在推特 / 财经媒体上读到的时候是<strong>三手/四手</strong>——媒体转述二手（分析师加工）、二手可能引用 DeepSeek V3 论文一手<a class="badge badge-verified" href="https://www.forbes.com/sites/dereksaul/2025/01/27/biggest-market-loss-in-history-nvidia-stock-sheds-nearly-600-billion-as-deepseek-shakes-ai-darling/" target="_blank" rel="noopener">已核验 · Forbes 2025-01-27</a>。升级一手要做的第一件事：去读 DeepSeek 官方论文本身。</div></div>
+              <div class="chain-row"><b>第二步 · 三要素回原文</b><div>论文里的口径是「<em>最后一轮预训练</em>的 GPU-小时成本」——不含实验、失败、前几代模型的 R&amp;D、基础设施、数据准备、后训练。社交媒体传播时几乎全部把这个口径压缩成「训练成本 $5.6M」——<strong>口径混淆的教科书案例</strong>。这一步是本页工具二直接对上：三要素齐才能对话，口径失真是最典型的证据链断裂。</div></div>
+              <div class="chain-row"><b>第三步 · 反面证据主动搜寻</b><div>假说「更少芯片也能训 AI」的反面是什么？<strong>如果模型开源、推理需求爆发怎么办？</strong>——同一天纳德拉在 X 上引用杰文斯悖论回应<a class="badge badge-verified" href="https://x.com/satyanadella/status/1883753899255046301" target="_blank" rel="noopener">已核验 · 纳德拉 2025-01-27</a>：训练效率提升会拉低使用门槛，反而推高总算力需求（推理端）。这个反面在事件当日就已经出现在公开信号里——只是没被抛售的人读到。</div></div>
+              <div class="chain-row"><b>第四步 · 交叉验证</b><div>另外两条独立来源同样指向「不构成结构性利空」：①黄仁勋 2025-02-21 公开回应「投资者理解反了」<a class="badge badge-verified" href="https://fortune.com/2025/02/21/jensen-huang-deepseek-stock-sell-nvidia-value/" target="_blank" rel="noopener">已核验 · Fortune 2025-02-21</a>；②Nvidia 一个月内基本收复所有跌幅<a class="badge badge-verified" href="https://sherwood.news/markets/nvidia-has-almost-recovered-all-of-its-deepseek-losses/" target="_blank" rel="noopener">已核验 · Sherwood 2025-02</a>。三条独立来源（纳德拉 + 黄仁勋 + 市场自身走势）都在反面。</div></div>
+              <div class="chain-row"><b>第五步 · 标题层 vs 流程层</b><div>市场读的是<strong>标题层</strong>（「更少芯片」+「$5.6M 成本」），跳过了<strong>流程层</strong>——训练需求要按长文本 / 长上下文 / 多模态推理拆分，每类硬件需求不同；推理端需求增长的斜率与训练端并非同步；模型能力提升是否等价于硬件需求下降完全取决于应用侧使用量。这是骨架卡 13「标题层 vs 流程层」的经典案例：<em>市场定价在标题层，超额认知在流程层</em>。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>本页复盘教的是「读证据的动作」，不是「Nvidia 一定会涨」。判断正确 ≠ 结果正确——如果 2025-01-27 那天你按证据链纪律没有恐慌抛售，即使 Nvidia 之后进一步下跌，你的推理质量也没错。反过来，如果你抛售了但结果 Nvidia 涨回来，你运气对了但推理错了。<strong>把「推理质量」和「结果运气」拆开是本页与模块 14 memo 的共同基本功</strong>；也不是每次「市场恐慌」都会收复——本页只交付「面对信息噪声时的动作纪律」，不承诺任何具体结果。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>决策复盘二 · 2024 年 4 月 18 日：「翻倍仍不够」 vs 「需求超预期」</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2024-04-18 · 事件已核验</p>
+          <h4>你在电话会转录里读到魏哲家原话「we still cannot get enough CoWoS wafers」<a class="badge badge-verified" href="https://www.fool.com/earnings/call-transcripts/2024/04/18/taiwan-semiconductor-manufacturing-tsm-q1-2024-ear/" target="_blank" rel="noopener">已核验 · TSMC 电话会 2024-04-18</a>。同一时点另一份投研短评写「某券商称 CoWoS 需求超预期」（无来源人名、无日期、无原话）。两条口径不一致，你怎么处理？</h4>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>采信投研短评（更贴近投资视角）</button>
+            <button type="button" data-pick>忽略投研短评，只用电话会原话</button>
+            <button type="button" data-pick>先做三要素比对，再交叉验证</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>第一步 · 三要素比对</b><div>电话会原话：来源（魏哲家 / TSMC 官方转录）齐、日期（2024-04-18）齐、口径（原话+中文可信译法）齐——<strong>可用</strong>。投研短评：来源（「某券商」是谁？）缺、日期缺、口径（「需求超预期」是转述结果，丢失了「产能」这个关键词）失真——<strong>不能单独用</strong>。这一步就已经把两者放到不同置信度上。</div></div>
+              <div class="chain-row"><b>第二步 · 口径追根</b><div>「产能翻倍仍不足」和「需求超预期」<strong>可能是</strong>同一件事的两个说法（供给受限时需求相对高就等价于供给端产能不够）——但也<strong>可能不是</strong>：产能不足可能来自 CoWoS 扩产受设备 / 材料 / 人员限制、而非需求真的超预期。原话把因果框在<strong>供给侧</strong>；投研转述把因果框在<strong>需求侧</strong>；两种框架下推出的投资含义不同——供给侧含义指向设备 / 上游材料受益，需求侧含义指向下游需求持续性。<strong>口径不一致时，服从最靠近事件当事人的原话</strong>——魏哲家 CEO 说的是供给侧，那就是供给侧。</div></div>
+              <div class="chain-row"><b>第三步 · 交叉验证</b><div>用本质页 §3 的三条独立佐证走一遍：①美光 2024 电话会 HBM 售罄（需求侧确实强）；②味之素 ABF 扩产 50%（下游基板也在紧张——供给侧受限可以传导）；③中际旭创光模块出货翻倍（AI 集群规模同步增长）。<strong>三个独立环节都紧张——这时你可以断言「供给受限」和「需求强劲」是同一件事的两面</strong>；但如果只有 CoWoS 紧张而 HBM 有过剩、ABF 有过剩，那就是纯供给侧问题，含义完全不同。</div></div>
+              <div class="chain-row"><b>带走规则</b><div>口径不一致时的默认动作是<strong>回原文</strong>——三要素齐的原文赢过三要素缺的转述；同一事件两种口径若都成立，用交叉验证确定它们指的是不是同一件事。<strong>永远不要在两个转述之间选一个信</strong>——回一手，再交叉。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>这个复盘教的是「口径不一致时的动作纪律」，不承诺你的最终结论一定对。有可能你回到一手原文、也做了交叉验证，最后判断仍然与市场不同——判断可以是对的，结果也可能因为其他外生因素（宏观、板块轮动）暂时没兑现。把「读证据的动作对不对」和「仓位赚不赚钱」分开评估——前者是每一次都能对，后者永远只是概率。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>迁移题（模块里没有现成答案，用机制自己推）</h2>
+
+        <article class="scenario">
+          <h4>迁移一 · 一条推特截图声称「某芯片厂商内部会议材料泄露、下月缺货 30%」</h4>
+          <p>凌晨你在 X 上看到一张截图，据说是某上市芯片厂商内部会议 PPT 泄露，写着「下月缺货 30%」。截图作者账号是近期新注册、无历史信誉。你的判断和下一步动作是什么？</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr1" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr1">
+            <div class="chain">
+              <div class="chain-row"><b>分级</b><div>四手信息（推特截图 = 匿名转述加工过的可能一手 PPT）。原始 PPT 是否存在无法验证；账号无信誉——不能单独下判断。</div></div>
+              <div class="chain-row"><b>三要素评估</b><div>来源匿名（无当事人姓名）、日期无法验证（截图 EXIF 可能已被剥离）、口径可能被裁剪（「缺货 30%」是指某产品线还是整体？某月还是长期？和谁比较？）。三要素残缺严重。</div></div>
+              <div class="chain-row"><b>交叉验证</b><div>用三条<strong>独立</strong>渠道追根：①该公司近期财报电话会指引里有没有类似措辞（供不应求 / 产能紧张 / 交期拉长）；②主要客户的长约动态（长约谈判加速、预付款上升是需求真紧张的独立信号）；③独立分销商 / 交期数据（Susquehanna 之类的行业统计里该品类是否出现异常延长）。三条都能对上，可考虑该假说；一条对不上，多半是造谣或过度加工。</div></div>
+              <div class="chain-row"><b>反面证据</b><div>如果是真的「内部会议材料泄露」，为什么当事公司还没跳出来澄清或披露？监管有没有反应？这类信息若真属实，通常在 24-72 小时内会有正式回应（澄清声明 / 停牌 / 8-K）——没有回应就是很强的证伪信号。</div></div>
+              <div class="chain-row"><b>归档</b><div>即便看起来吸引，先归档为「未验证 · 低置信度」，不做仓位动作。设一个 48 小时的观察窗——期间监测公司公告、其他媒体独立报道、行业统计变化。48 小时后视验证情况升 / 降级或删除。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>这类信号常被用来推高短期股价再出货（pump-and-dump）；也可能是散户诱多——先动仓再验证等于让别人牵着走。另一层警惕：即使消息真属实，也要问「市场是否已经定价」（可能股价当天已经反应完，你追进去接盘）。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario">
+          <h4>迁移二 · 假说「HBM3E 2026 涨价 20%」市场当周走反 -5%——假说错还是市场错？</h4>
+          <p>你 2026 年初写了一份主假说：「HBM3E 2026 全年涨价 20%」（依据 TrendForce 4Q25 报告 + SK 海力士 2026 供应全部签约的 3Q25 电话会）。假说写好当周该板块股价<em>反向</em>走了 -5%。这是假说错还是市场错？你怎么区分？</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr2" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr2">
+            <div class="chain">
+              <div class="chain-row"><b>不要立刻反转</b><div>一周股价方向≠假说被证伪。证据链的价值恰恰在这里——如果一周涨跌就能推翻你的假说，说明你原来的假说本身就没什么内容。先把主假说的<strong>兑现条件</strong>写清楚（涨价从哪里读？TrendForce 月度报告 / 存储厂季度电话会 / 长约价格披露？）——这些兑现条件当前发生了什么？</div></div>
+              <div class="chain-row"><b>第一动作 · 反面证据主动搜寻</b><div>假说当天写下时，工具三要求同时列 3 条证伪线索。此时逐条对账：①TrendForce 后续月度报告是否修改了原来的涨价指引？②存储厂的最新电话会有没有变口径（例如从「售罄」变成「一部分未签约」）？③下游云厂 CapEx 有没有下调？这三条都没变，只是股价短周期波动，就还是市场噪声。三条里出现一条明显变了，就要更新假说。</div></div>
+              <div class="chain-row"><b>第二动作 · 标题层 vs 流程层</b><div>市场当周走 -5% 的<strong>标题层</strong>原因是什么（宏观利率变化 / 板块轮动 / 大盘走弱）？如果是外生冲击（不是 HBM 本身的需求 / 供给消息），那市场走反是标题层噪声，与流程层（HBM 定价机制）无关。骨架卡 13 讲的正是这个：<em>短期价格反映标题层，认知差在流程层</em>——不要用标题层的短期反向来推翻流程层假说。</div></div>
+              <div class="chain-row"><b>第三动作 · 兑现窗口</b><div>「2026 全年涨价 20%」是年度口径，一周股价走反根本不在兑现窗口里。假说需要给自己留 3-6 个月的兑现窗口——期间市场可能反复波动。如果 6 个月后 TrendForce 依然给出涨价指引、存储厂电话会依然维持售罄口径、但股价还是走反——那时候才需要认真考虑「是不是市场已经定价过、我读到的信号已经不再是超额认知」（骨架卡 14 「产业刚开始 ≠ 股价便宜」）。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>「市场错、我对」是所有主动投资者的心理陷阱之一（自我服务偏差）。防范方法是把兑现窗口和证伪条件<strong>写在假说建立当日</strong>——事后再解释「市场当时短期错了」几乎总是假的。真正的分辨发生在窗口到期时的对账，而不是一周内。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <h2>自测（算得出来才算会）</h2>
+
+        <div class="quiz" data-quiz data-explain="X（推特）网友转述、匿名帖、无来源截图——都属于四手：来源不可追、时间戳可能造假、口径可能被裁剪。这一层的信号只能触发『去查一手』的动作，不能单独用于下判断。">
+          <p class="quiz-q">1. 一位匿名网友在 X 上发文：「据说某芯片厂下季度供不应求。」这条信息是几手？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q1"><span>一手</span></label>
+            <label><input type="radio" name="q1"><span>二手</span></label>
+            <label><input type="radio" name="q1"><span>三手</span></label>
+            <label><input type="radio" name="q1" data-correct="1"><span>四手</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="具名投研机构自建模型 / 自己跑访谈得出的结论算二手——作者可查、方法可读、你能追问「这个数字怎么算出来的」。属于 Bernstein、SemiAnalysis、TrendForce、LightCounting、CSET 那一类。">
+          <p class="quiz-q">2. TrendForce 具名报告：「基于自建产能模型，2026 年 CoWoS 缺口约 15%。」这条信息是几手？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q2"><span>一手</span></label>
+            <label><input type="radio" name="q2" data-correct="1"><span>二手</span></label>
+            <label><input type="radio" name="q2"><span>三手</span></label>
+            <label><input type="radio" name="q2"><span>四手</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="财报电话会转录里的当事人（CEO / CFO）原话属于一手——当事人自己嘴里说出来的话；官方 PDF 转录是真值来源。第三方转录站（Motley Fool / Seeking Alpha）是可信入口，但同一原话的公司官方 PDF 才是最终真值。">
+          <p class="quiz-q">3. Nvidia CFO 在 FY25 Q4 财报电话会上原话：「Blackwell 需求超预期，全年产能已被预订。」这条信息是几手？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q3" data-correct="1"><span>一手</span></label>
+            <label><input type="radio" name="q3"><span>二手</span></label>
+            <label><input type="radio" name="q3"><span>三手</span></label>
+            <label><input type="radio" name="q3"><span>四手</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="两家媒体引同一位 CFO 的原话——原始信息链路是同一个（那位 CFO 说过的一句话）。这只是一条来源，被讲了两次。真正的独立要求：来自不同当事人 / 不同数据集 / 不同方法。判断方法：追问每条来源的『原始信息链路』是哪一条。">
+          <p class="quiz-q">4. 你在两家不同媒体（Bloomberg 和 Reuters）都看到「某 CFO 说供应紧张」。这算是「两条独立来源交叉验证」吗？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q4"><span>算——两家媒体独立报道</span></label>
+            <label><input type="radio" name="q4" data-correct="1"><span>不算——原始信息链路仍是同一位 CFO 的原话</span></label>
+            <label><input type="radio" name="q4"><span>算——媒体信誉不同，风险已经分散</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="工具三 · 反面证据主动搜寻。找 100 条支持自己的新闻很容易（确认偏差保证你能找到），关键动作是写下主假说时同步列出 3 条最有可能证伪的公开线索，每季度对账。这不是为了证明自己错，是为了在错的时候能提前发现。">
+          <p class="quiz-q">5. 你刚写下一份主假说，下一步的最专业动作是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q5"><span>找 5 条支持这个假说的新闻</span></label>
+            <label><input type="radio" name="q5"><span>建立仓位，等待兑现</span></label>
+            <label><input type="radio" name="q5" data-correct="1"><span>同时列 3 条最可能证伪的公开线索，写下兑现窗口</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="note">
+          <span class="note-label">本模块要带走的 memo 能力</span>
+          <p>对每一条打算写进 memo 的证据，你现在应该能：一秒标出它是几手；用三要素（来源 · 日期 · 口径）写下能六个月后回查的完整版本；判断另外一条来源是否<strong>真独立</strong>；写下主假说的当日同步列出 3 条证伪线索；把当下读到的信息挂钩到已有的主假说卡里。做不到的，回本页对应小节重学。这一页是模块 14 memo 写作的直接前置。</p>
+        </div>
+      </section>
+    </div>
+
+    <section class="src">
+      <strong>本页资料来源</strong>
+      <ol style="margin:8px 0 0;padding-left:1.6em">
+        <li id="src-1"><a href="https://www.investing.com/news/analyst-ratings/asml-stock-rating-upgraded-to-buy-by-aletheia-capital-on-chip-demand-outlook-93CH-4427450" target="_blank" rel="noopener">Aletheia Capital 上调 ASML 评级至买入、目标价 $750 → $1,500（Investing.com 2026-01-02）</a></li>
+        <li id="src-2"><a href="https://www.fool.com/earnings/call-transcripts/2024/04/18/taiwan-semiconductor-manufacturing-tsm-q1-2024-ear/" target="_blank" rel="noopener">TSMC 1Q24 电话会转录（Motley Fool 2024-04-18，魏哲家「we still cannot get enough CoWoS wafers」原文）</a></li>
+        <li id="src-3"><a href="https://investor.tsmc.com/chinese/encrypt/files/encrypt_file/reports/2024-04/34ff75e23e53246302ce3a8d90d0423c57c6b120/TSMC%201Q24%20Transcript.pdf" target="_blank" rel="noopener">TSMC 官方 1Q24 Transcript PDF（作为原话真值来源）</a></li>
+        <li id="src-4"><a href="https://www.dailypolitical.com/2026/02/03/intel-conference-lip-bu-tan-talks-foundry-turnaround-18a-yield-gains-and-14a-roadmap-push.html" target="_blank" rel="noopener">Intel 陈立武 2026-02 会议 · 18A 每月 7-8% 良率改善、2H26 客户承诺</a></li>
+        <li id="src-5"><a href="https://www.cnbc.com/2025/01/27/nvidia-sheds-almost-600-billion-in-market-cap-biggest-drop-ever.html" target="_blank" rel="noopener">CNBC：英伟达单日市值蒸发近 $600B（2025-01-27）</a></li>
+        <li id="src-6"><a href="https://www.forbes.com/sites/dereksaul/2025/01/27/biggest-market-loss-in-history-nvidia-stock-sheds-nearly-600-billion-as-deepseek-shakes-ai-darling/" target="_blank" rel="noopener">Forbes：DeepSeek 冲击 Nvidia · $589B 单日蒸发（2025-01-27）</a></li>
+        <li id="src-7"><a href="https://x.com/satyanadella/status/1883753899255046301" target="_blank" rel="noopener">纳德拉引用杰文斯悖论回应（X · 2025-01-27）</a></li>
+        <li id="src-8"><a href="https://sherwood.news/markets/nvidia-has-almost-recovered-all-of-its-deepseek-losses/" target="_blank" rel="noopener">Sherwood：Nvidia 一个月内基本收复 DeepSeek 跌幅（2025-02）</a></li>
+        <li id="src-9"><a href="https://fortune.com/2025/02/21/jensen-huang-deepseek-stock-sell-nvidia-value/" target="_blank" rel="noopener">Fortune：黄仁勋回应「投资者理解反了」（2025-02-21）</a></li>
+        <li id="src-10"><a href="https://www.tomshardware.com/news/intel-announces-delay-to-7nm-processors-now-one-year-behind-expectations" target="_blank" rel="noopener">Tom's Hardware：Bob Swan 宣布 Intel 7nm 延期（2020-07-23）</a></li>
+        <li id="src-11"><a href="https://fortune.com/2020/07/24/what-the-hell-just-happened-to-intel/" target="_blank" rel="noopener">Fortune：Intel 当日 -16%（2020-07-24）</a></li>
+        <li id="src-12"><a href="https://www.fool.com/earnings/call-transcripts/2024/01/18/taiwan-semiconductor-manufacturing-tsm-q4-2023-ear/" target="_blank" rel="noopener">TSMC 2023Q4 电话会转录（Motley Fool 2024-01-18，N3 稀释 3-4 个点原话）</a></li>
+        <li id="src-13"><a href="https://download.intel.com/newsroom/2025/c8e6h3a2/intel-q4-2024y-earnings.pdf" target="_blank" rel="noopener">Intel FY2024 全年财报（Intel Foundry 分部亏损 $13.408B）</a></li>
+        <li id="src-14"><a href="https://www.sec.gov/cgi-bin/browse-edgar" target="_blank" rel="noopener">SEC EDGAR · 美股财务原件搜索入口（10-K / 10-Q / 8-K / S-1）</a></li>
+        <li id="src-15"><a href="https://www.fool.com/earnings/call-transcripts/" target="_blank" rel="noopener">Motley Fool 财报电话会转录集</a></li>
+        <li id="src-16"><a href="https://seekingalpha.com/earnings/earnings-call-transcripts" target="_blank" rel="noopener">Seeking Alpha 财报电话会转录集</a></li>
+        <li id="src-17"><a href="https://news.alphastreet.com/category/transcripts/" target="_blank" rel="noopener">AlphaStreet 财报电话会转录集</a></li>
+        <li id="src-18"><a href="https://www.semi.org/en/products-services/market-data/equipment" target="_blank" rel="noopener">SEMI · 全球设备市场数据发布页</a></li>
+        <li id="src-19"><a href="https://www.trendforce.com/news" target="_blank" rel="noopener">TrendForce 新闻站 · 存储 / 面板 / 半导体产业数据</a></li>
+        <li id="src-20"><a href="https://www.lightcounting.com/" target="_blank" rel="noopener">LightCounting · 光模块与数据中心互联统计</a></li>
+        <li id="src-21"><a href="https://www.iea.org/reports/electricity-2024" target="_blank" rel="noopener">IEA · Electricity 2024（含数据中心用电量）</a></li>
+        <li id="src-22"><a href="https://mops.twse.com.tw/mops/web/index" target="_blank" rel="noopener">台湾公开资讯观测站 MOPS · 台股财务原件</a></li>
+        <li id="src-23"><a href="https://www.hkexnews.hk/" target="_blank" rel="noopener">HKEX 披露易 · 港股公告与年报原件</a></li>
+        <li id="src-24"><a href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing" target="_blank" rel="noopener">Bloomberg：芯片交期缩短 · Susquehanna 数据（2022-10-17）</a></li>
+        <li id="src-25"><a href="https://www.trendforce.com/news/2024/10/21/news-cowos-capacity-doubles-for-two-years-still-insufficient-positive-outlook-for-suppliers/" target="_blank" rel="noopener">TrendForce：TSMC CoWoS 连续两年翻倍仍不够（2024-10）</a></li>
+        <li id="src-26"><a href="https://techcrunch.com/2023/04/06/samsung-cuts-memory-chip-production-as-it-hits-worst-quarterly-profit-since-2009/" target="_blank" rel="noopener">TechCrunch：三星 2023-04-07 官方宣布 meaningful level 减产</a></li>
+        <li id="src-27"><a href="https://www.trendforce.com/news/2025/04/01/news-japanese-firm-ajinomoto-to-invest-jpy-25-billion-by-2030-to-expand-abf-production-for-advanced-packaging/" target="_blank" rel="noopener">TrendForce：味之素投 250 亿日元扩 ABF 载板产能 50%（2025-04）</a></li>
+        <li id="src-28"><a href="https://news.futunn.com/en/post/56042696/zhongji-innolight-300308-profitability-continues-to-improve-high-speed-optical" target="_blank" rel="noopener">中际旭创 2024 收入 238.6 亿元 +122.6% · 光模块出货 977→2088 万只</a></li>
+        <li id="src-29">Karl Popper《The Logic of Scientific Discovery》（1934 德文原版 <em>Logik der Forschung</em>；1959 英译版）——「可证伪性」作为科学假说合格性检验的基石文献（引用性哲学文献，无单一权威公开 URL；<a href="https://en.wikipedia.org/wiki/The_Logic_of_Scientific_Discovery" target="_blank" rel="noopener">Wikipedia 简介</a>）</li>
+        <li id="src-30">Charlie Munger 关于「invert, always invert」的通行引用——见《Poor Charlie's Almanack》（Peter Kaufman ed.）多篇演讲集与巴菲特股东会问答记录（引用性文献，无单一权威公开 URL）</li>
+        <li id="src-31">通行的买方尽调框架 · Investment Memo 的 primary/secondary source 分级与 source·date·quote 三要素记录法——机构内部使用规范的沉淀，无单一权威公开文档；CFA Institute 的 <a href="https://www.cfainstitute.org/en/ethics-standards/codes/code-of-ethics-standards-of-conduct-guidance" target="_blank" rel="noopener">Standards of Professional Conduct</a> 关于「合理与充分依据」（Standard V(A)）的要求为最接近的公开对照</li>
+        <li id="src-32">汽车芯片 2021 缺货潮误读为「结构性长期紧缺」（见本站 <a href="m04.html">模块 4 · 半导体行业前史</a>反面例子章节）</li>
+        <li id="src-33"><a href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2024" target="_blank" rel="noopener">Nvidia FY2024 财报（FY24 数据中心收入 $47.5B，说明「财年」口径）</a></li>
+      </ol>
+    </section>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本模块为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="m12.html"><span class="dir">← 上一模块</span>模块 12 · 美股 / A 股 / 港股 / 台韩日市场差异</a>
+        <a href="m14.html" style="text-align:right"><span class="dir">下一模块 →</span>模块 14 · 投资 Memo 与个人系统</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- 组件 1 · 证据金字塔 SVG（视觉图示） ---------- */
+  (function () {
+    const W = 260, H = 220;
+    const root = document.getElementById("pyramidSvg");
+    if (!root) return;
+    const svg = APP.svgEl("svg", {
+      viewBox: "0 0 " + W + " " + H, role: "img",
+      "aria-label": "证据金字塔示意：从上到下依次为一手、二手、三手、四手，四层堆叠，颜色由深到浅表示信息保真度递减"
+    });
+    /* 从顶部到底部：一手（窄，深色）→ 四手（宽，浅色） */
+    const LAYERS = [
+      { top: 20,  bot: 60,  w1: 44, w2: 78,  fill: "#1c5cab", label: "一手", sub: "当事人 · 原件", stroke: "#0f3d80" },
+      { top: 60,  bot: 110, w1: 78, w2: 128, fill: "#2a78d6", label: "二手", sub: "具名投研",     stroke: "#1c5cab" },
+      { top: 110, bot: 160, w1: 128,w2: 180, fill: "#5598e7", label: "三手", sub: "财经媒体",     stroke: "#2a78d6" },
+      { top: 160, bot: 210, w1: 180,w2: 236, fill: "#86b6ef", label: "四手", sub: "社交媒体",     stroke: "#5598e7" }
+    ];
+    const cx = W / 2;
+    LAYERS.forEach((L) => {
+      const p =
+        (cx - L.w1/2) + "," + L.top + " " +
+        (cx + L.w1/2) + "," + L.top + " " +
+        (cx + L.w2/2) + "," + L.bot + " " +
+        (cx - L.w2/2) + "," + L.bot;
+      svg.appendChild(APP.svgEl("polygon", { points: p, fill: L.fill, stroke: L.stroke, "stroke-width": 1 }));
+      const t = APP.svgEl("text", { x: cx, y: (L.top + L.bot) / 2 + 4, "text-anchor": "middle", fill: "#fff", "font-size": "12", "font-weight": "650" });
+      t.textContent = L.label + " · " + L.sub;
+      svg.appendChild(t);
+    });
+    /* 右侧箭头：信息保真度递减 */
+    const arrow = APP.svgEl("g", {});
+    const ax = W - 20;
+    arrow.appendChild(APP.svgEl("line", { x1: ax, y1: 30, x2: ax, y2: 200, stroke: "var(--muted)", "stroke-width": 1 }));
+    arrow.appendChild(APP.svgEl("polygon", { points: (ax-4) + ",196 " + (ax+4) + ",196 " + ax + ",204", fill: "var(--muted)" }));
+    const at = APP.svgEl("text", { x: ax - 10, y: 116, "text-anchor": "end", fill: "var(--muted)", "font-size": "10", transform: "rotate(-90 " + (ax-10) + " 116)" });
+    at.textContent = "信息保真度递减";
+    arrow.appendChild(at);
+    svg.appendChild(arrow);
+    root.appendChild(svg);
+  })();
+
+  /* ---------- 组件 2 · 时间戳漏斗 SVG（DeepSeek 走一遍） ---------- */
+  (function () {
+    const W = 720, H = 220;
+    const root = document.getElementById("funnelSvg");
+    if (!root) return;
+    const svg = APP.svgEl("svg", {
+      viewBox: "0 0 " + W + " " + H, role: "img", class: "funnel-svg",
+      "aria-label": "时间戳漏斗示意：一条 AI 事件从当事人原话到社交媒体的传播时间线，横向五个节点"
+    });
+
+    const NODES = [
+      {
+        key: "n1", label: "一手 · 论文",       t: "T0",       time: "2024-12-27 (V3)/2025-01-20 (R1)",
+        source: "DeepSeek 官方 GitHub / arXiv 论文",
+        content: "论文披露最后一轮预训练 GPU-小时成本约 $5.6M（不含实验、失败、前几代模型的 R&amp;D、基础设施、数据准备、后训练）",
+        distort: "口径完整，但只有很少人在阅读",
+        x: 60,  r: 22, fill: "#1c5cab"
+      },
+      {
+        key: "n2", label: "二手 · 投研",      t: "T+2d",     time: "2025-01-24 前后",
+        source: "SemiAnalysis、Morgan Stanley、GS 等具名投研",
+        content: "把 $5.6M 与全生命周期成本作对比，分析模型效率提升对总算力需求的影响（大多得出「短期利空、长期利多推理」的结论）",
+        distort: "开始有加工，但保留了「最后一轮预训练」的口径限定",
+        x: 220, r: 22, fill: "#2a78d6"
+      },
+      {
+        key: "n3", label: "三手 · 媒体",      t: "T+6d",     time: "2025-01-26 至 27",
+        source: "CNBC / Forbes / Bloomberg 等财经媒体",
+        content: "转述二手分析师观点为「DeepSeek 训练成本仅 $5.6M、性能比肩 GPT-4o」——标题为求传播压缩掉口径限定",
+        distort: "「最后一轮预训练」被压缩成「训练成本」——机制层信息丢失",
+        x: 380, r: 22, fill: "#5598e7"
+      },
+      {
+        key: "n4", label: "四手 · 社交",      t: "T+7d",     time: "2025-01-27 (亚洲盘 → 美股开盘)",
+        source: "X / Reddit / 微信群 / 短视频",
+        content: "被进一步压缩成「更少芯片也能训 AI，Nvidia 需求要塌」——从供给侧论述变成结果性判断",
+        distort: "口径完全消失，只剩情绪性标题；开盘瞬间 Nvidia -17%、市值蒸发 $589B",
+        x: 540, r: 22, fill: "#86b6ef"
+      },
+      {
+        key: "n5", label: "回响 · 修正",      t: "T+25d",    time: "2025-02-21",
+        source: "黄仁勋公开回应 + 一个月股价基本收复",
+        content: "黄仁勋 Fortune 访谈：投资者读反了；Sherwood 记录 Nvidia 一个月内基本收复全部跌幅——证据链在事后被市场自己纠正",
+        distort: "标题层的错误被流程层的兑现纠回，代价是一个月的错误定价",
+        x: 680, r: 22, fill: "#1c5cab"
+      }
+    ];
+
+    /* 画连接线（斜漏斗形）：底部逐渐扩宽，代表噪声在增加 */
+    const cy = 88;
+    for (let i = 0; i < NODES.length - 1; i++) {
+      const a = NODES[i], b = NODES[i+1];
+      svg.appendChild(APP.svgEl("line", {
+        x1: a.x + a.r, y1: cy, x2: b.x - b.r, y2: cy,
+        stroke: "var(--viz-axis)", "stroke-width": 1, "stroke-dasharray": "5 3"
+      }));
+    }
+
+    /* 画节点 */
+    NODES.forEach((n, i) => {
+      const g = APP.svgEl("g", { class: "funnel-node", "data-key": n.key, tabindex: "0", role: "button", "aria-label": n.label + " · " + n.time });
+      g.appendChild(APP.svgEl("circle", { cx: n.x, cy: cy, r: n.r, fill: n.fill, stroke: "#fff", "stroke-width": 2 }));
+      const num = APP.svgEl("text", { x: n.x, y: cy + 5, "text-anchor": "middle", fill: "#fff", "font-size": "13", "font-weight": "700" });
+      num.textContent = (i + 1) + "";
+      g.appendChild(num);
+      const lbl = APP.svgEl("text", { x: n.x, y: cy - 34, "text-anchor": "middle", fill: "var(--ink)", "font-size": "12", "font-weight": "650" });
+      lbl.textContent = n.label;
+      g.appendChild(lbl);
+      const tm = APP.svgEl("text", { x: n.x, y: cy + 44, "text-anchor": "middle", fill: "var(--muted)", "font-size": "11" });
+      tm.textContent = n.t;
+      g.appendChild(tm);
+      svg.appendChild(g);
+    });
+
+    /* 底部说明轴 */
+    svg.appendChild(APP.svgEl("line", { x1: 40, y1: 175, x2: W - 20, y2: 175, stroke: "var(--viz-axis)", "stroke-width": 1 }));
+    const at1 = APP.svgEl("text", { x: 40, y: 195, fill: "var(--muted)", "font-size": "11" });
+    at1.textContent = "时间流向 →";
+    svg.appendChild(at1);
+    const at2 = APP.svgEl("text", { x: W - 20, y: 195, "text-anchor": "end", fill: "var(--muted)", "font-size": "11" });
+    at2.textContent = "信息经压缩、失真、放大后到达最广泛受众";
+    svg.appendChild(at2);
+
+    root.appendChild(svg);
+
+    const detail = document.getElementById("funnelDetail");
+    function paintDetail(node) {
+      detail.innerHTML =
+        "<dl>" +
+        "<dt>层级</dt><dd><b>" + node.label + "</b> · " + node.t + "（" + node.time + "）</dd>" +
+        "<dt>来源</dt><dd>" + node.source + "</dd>" +
+        "<dt>内容</dt><dd>" + node.content + "</dd>" +
+        "<dt>失真</dt><dd style='color:var(--accent-ink)'>" + node.distort + "</dd>" +
+        "</dl>";
+    }
+    svg.querySelectorAll(".funnel-node").forEach((el) => {
+      const key = el.dataset.key;
+      const node = NODES.find((n) => n.key === key);
+      el.addEventListener("click", () => {
+        svg.querySelectorAll(".funnel-node").forEach((x) => x.classList.remove("is-active"));
+        el.classList.add("is-active");
+        paintDetail(node);
+      });
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); el.click(); }
+      });
+    });
+    /* 默认高亮第一个节点 */
+    svg.querySelector('.funnel-node[data-key="n1"]').click();
+  })();
+
+  /* ---------- 决策复盘卡通用交互（复用 m02 的写法） ---------- */
+  document.querySelectorAll("[data-case]").forEach((box) => {
+    const reveal = box.parentElement.querySelector(".case-reveal");
+    box.querySelectorAll("[data-pick]").forEach((btn) => {
+      btn.setAttribute("aria-pressed", "false");
+      btn.addEventListener("click", () => {
+        box.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        if (reveal && reveal.hidden) reveal.hidden = false;
+      });
+    });
+  });
+
+});
+</script>
+</body>
+</html>

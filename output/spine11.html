@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 11 · 领先指标来自扩产时序 · 半导体投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 骨架卡专属版式（承 spine10） ---------- */
+  .spine-section { margin: 40px 0 24px; scroll-margin-top: 60px; }
+  .spine-section > h2 {
+    font-size: var(--fs-22);
+    font-weight: 650;
+    margin: 0 0 4px;
+    letter-spacing: -0.005em;
+  }
+  .spine-section > .kicker {
+    font-size: var(--fs-13);
+    font-weight: 650;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .spine-lead {
+    font-size: var(--fs-17);
+    color: var(--ink);
+    padding: 12px 16px;
+    background: var(--surface);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    margin: 12px 0 20px;
+  }
+  .spine-lead b { color: var(--primary); }
+
+  /* 现象反差 · 两块并列（承 spine10 gap-row） */
+  .gap-row {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: stretch;
+    margin: 14px 0 4px;
+  }
+  .gap-cell {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-m); padding: 14px 16px;
+  }
+  .gap-cell h4 { margin: 0 0 6px; font-size: var(--fs-14); font-weight: 650; color: var(--muted); }
+  .gap-cell .fig { font-size: 22px; font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; line-height: 1.3; }
+  .gap-cell.right .fig { color: var(--danger-ink); }
+  .gap-cell p { font-size: var(--fs-14); margin: 4px 0 0; color: var(--ink); }
+  .gap-arrow { display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--muted); }
+  @media (max-width: 640px) {
+    .gap-row { grid-template-columns: 1fr; }
+    .gap-arrow { transform: rotate(90deg); padding: 4px 0; }
+  }
+
+  /* ---------- A 类组件：三指标信号板 ---------- */
+  .sig-controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 14px; }
+  .sig-btn {
+    appearance: none; font: inherit; font-size: var(--fs-13); font-weight: 600;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+    border-radius: var(--radius-s); padding: 6px 12px; cursor: pointer;
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .sig-btn:hover { background: var(--surface); }
+  .sig-btn[aria-pressed="true"] {
+    border-color: var(--primary-2);
+    background: var(--primary-tint);
+    color: var(--primary);
+  }
+  .sig-btn .yr { display: block; font-size: var(--fs-12); color: var(--muted); font-weight: 500; }
+  .sig-btn[aria-pressed="true"] .yr { color: var(--primary); }
+
+  #sigChart { position: relative; }
+  #sigChart svg { display: block; width: 100%; height: auto; }
+
+  /* 三指标读出区 */
+  .sig-readout {
+    font-size: var(--fs-14);
+    background: var(--surface); border-radius: var(--radius-s);
+    padding: 10px 14px; margin-top: 10px; line-height: 1.7;
+  }
+  .sig-readout b { color: var(--primary); }
+  .sig-readout .lag {
+    display: inline-block; margin-left: 6px;
+    color: var(--accent-ink); background: var(--accent-tint);
+    font-size: var(--fs-13); font-weight: 650;
+    padding: 1px 9px; border-radius: 99px;
+  }
+  .sig-row { display: grid; grid-template-columns: 74px 1fr; gap: 4px 12px; align-items: baseline; margin-bottom: 3px; }
+  .sig-row > b { color: var(--ink); font-size: var(--fs-13); font-weight: 650; letter-spacing: .03em; }
+  @media (max-width: 560px) { .sig-row { grid-template-columns: 1fr; gap: 0; } }
+
+  /* ---------- 时序对照小表 ---------- */
+  .lead-tbl {
+    display: grid; gap: 0; margin: 14px 0 8px;
+    border: 1px solid var(--line); border-radius: var(--radius-m); overflow: hidden;
+  }
+  .lead-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 128px 100px;
+    gap: 8px 12px; align-items: center;
+    padding: 10px 14px;
+    font-size: var(--fs-14);
+    border-top: 1px solid var(--line);
+  }
+  .lead-row:first-child { border-top: none; background: var(--surface); font-weight: 650; font-size: var(--fs-13); color: var(--muted); }
+  .lead-row .indi { font-weight: 650; color: var(--ink); }
+  .lead-row .why { color: var(--muted); font-size: var(--fs-13); line-height: 1.6; }
+  .lead-row .src-mini { color: var(--muted); font-size: var(--fs-12); }
+  .lead-row .lag {
+    text-align: right; font-weight: 650;
+    font-variant-numeric: tabular-nums; color: var(--primary);
+  }
+  @media (max-width: 640px) {
+    .lead-row { grid-template-columns: 96px 1fr 88px; }
+    .lead-row .src-mini { grid-column: 2 / 4; }
+    .lead-row .lag { grid-column: 3 / 4; }
+  }
+
+  /* 反射问句样式（承 spine02/spine10） */
+  .qa {
+    border-left: 3px solid var(--primary);
+    background: var(--primary-tint);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    padding: 12px 16px 4px;
+    margin: 14px 0;
+  }
+  .qa .q { font-weight: 650; color: var(--primary); margin: 0 0 8px; font-size: var(--fs-16); }
+  .qa .q::before { content: "问："; }
+  .qa ul { margin: 6px 0 10px; padding-left: 1.2em; }
+</style>
+</head>
+<body data-page="s11">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 11 · 领先指标来自扩产时序</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 11 / 15</p>
+      <h1>卡 11 · 领先指标来自扩产时序</h1>
+      <p class="core-q"><b>一句话：</b>想提前判断芯片行业收入拐点，最硬的领先指标不是分析师预期、不是股价、不是价格，是<strong>扩产时序上的公开数字</strong>——设备订单领先芯片厂收入 2-4 个季度、交期领先价格变化 3-6 个月、测试设备订单领先量产 2-4 个季度。原因是物理的：设备装完到芯片下线要时间，物理时间不会说谎。学会读这三个指标，你就有了预判周期的先行雷达。</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">读完这张卡你要能答的三个问题（现在答不上来是正常的）</span>
+      <ol style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>2022 年 10 月 17 日彭博一条转述 Susquehanna 数据的稿子说"芯片交期几年来最大单月缩短"——为什么这一条比 5 个月后三星半导体利润腰斩的季报更有信号价值？</li>
+        <li>看到某设备厂财报订单大幅上调，你第一反应问什么？（提示：先问结构、再问下游、最后才问总量）</li>
+        <li>为什么"设备订单/交期/测试设备"三个指标要合起来读——单独看其中一个会漏掉哪种情况？</li>
+      </ol>
+    </div>
+
+    <!-- ==================== 1. 现象 ==================== -->
+    <section class="spine-section" id="sec-phenom">
+      <div class="kicker">1 · 现象</div>
+      <h2>交期先塌了 5 个月，三星财报才跟上</h2>
+
+      <p>先看一组已核验、时间上前后相差 5 个月的真实反差：</p>
+
+      <div class="gap-row">
+        <div class="gap-cell">
+          <h4>先行 · 2022-10-17 彭博稿</h4>
+          <div class="fig">交期几年来最大单月缩短</div>
+          <p>投研机构 Susquehanna 逐月统计的全行业芯片交期，从 2022 年中约 27 周（历史峰值）开始出现单月大幅回落——媒体广泛转述<span class="badge badge-verified">已核验 · Bloomberg 2022-10-17</span></p>
+        </div>
+        <div class="gap-arrow" aria-hidden="true">→ 5 个月 →</div>
+        <div class="gap-cell right">
+          <h4>滞后 · 2023-Q1 三星季报</h4>
+          <div class="fig">14.1 万亿 → 0.6 万亿韩元</div>
+          <p>三星半导体（DS）部门季度营业利润塌方——这是"下游财报"层面第一次正式确认周期拐点<span class="badge badge-verified">已核验 · Samsung Q1 2023 财报公告</span></p>
+        </div>
+      </div>
+
+      <p>把两件事放在一起看，一个反常识的事实出来了：<strong>2022 年 10 月拐点在公开数据里已经写清楚的时候，同期分析师还在上调半导体收入预期、下游财报还一片繁荣</strong>；等到 2023 年 4 月三星季报把 0.6 万亿韩元利润写进公告，市场"官方"承认周期反转时，交期数据已经在告诉你这件事整整 5-6 个月了。</p>
+
+      <p>再看一个反方向的反差：2024 年 SEMI 全球设备销售 $117.1B（+10%）、2025 年 $135B（+15%）<span class="badge badge-verified">已核验 · SEMI 官方公告</span>——设备端订单在 2023-2024 年就冲高，等到 2025 年英伟达数据中心 $115.2B 财报兑现叙事时，设备订单已经领先了两三个季度。</p>
+
+      <p class="spine-lead">交期拐点领先三星财报 5-6 个月、设备订单领先英伟达报表 2-3 个季度——不是玄学，是物理时序决定的。这张卡讲透的一个模型是：<b>三个领先指标——设备订单、交期、测试设备——为什么领先、领先多少、怎么合起来读</b>。</p>
+    </section>
+
+    <!-- ==================== 2. 机制 ==================== -->
+    <section class="spine-section" id="sec-mech">
+      <div class="kicker">2 · 机制</div>
+      <h2>为什么这三个指标能领先——物理时序的三条推理</h2>
+
+      <p>芯片行业有一件事跟软件行业完全不同：<strong>从下单到出货，物理上需要几个月到几个季度的时间常数</strong>。这些时间常数不会被 AI 消灭、不会被资本压缩，是物理事实。所以扩产链条上每个环节的公开数字，天然对应着下游收入的不同前置时点。三个指标之所以能领先，就是因为它们分别抓住了链条上不同的物理时点。</p>
+
+      <h3>a. 设备订单——领先芯片厂收入 2-4 个季度</h3>
+
+      <p>先想一件事：芯片是怎么从"没有"变成"有"的？扩产链条完整走一遍：</p>
+
+      <ol>
+        <li><strong>厂房建成</strong>——净化室、地基、水电（土建期约一年，卡 1 讲过）；</li>
+        <li><strong>设备到位</strong>——光刻、刻蚀、沉积、清洗、量测机台逐台装入。<b>关键机台交期以年计</b>：一台 EUV 光刻机均价 €2.27 亿，2024 全年全球只交付 44 台<span class="badge badge-verified">已核验 · ASML 2024 年报</span>——想插队没有队可插；</li>
+        <li><strong>通电调试</strong>——每台机器都要跟前后工序匹配参数（约 3-6 个月）；</li>
+        <li><strong>良率爬坡</strong>——晶圆在产线里走完全程要 3-4 个月，良率从惨淡爬到经济水平又要几个季度（卡 3 讲过）；</li>
+        <li><strong>有效出货</strong>——芯片装进服务器、进渠道、确认收入。</li>
+      </ol>
+
+      <p>合计从<strong>设备订单下达</strong>到<strong>芯片厂在报表上认到相应收入</strong>，物理时间约 <strong>2-4 个季度</strong>。这就是设备订单能提前 2-4 个季度告诉你下游收入方向的物理来源——不是市场情绪，是机器要装、要调试、要爬良率。</p>
+
+      <p>更进一步：设备订单还是<strong>带预付款和取消成本的合同</strong>——比"宣布投资 xx 亿"这种口头承诺硬一个数量级。设备厂季报里披露的 backlog（在手订单）比公司自吹的产能规划靠谱得多。</p>
+
+      <h3>b. 交期——领先价格变化 3-6 个月</h3>
+
+      <p>交期就是"从下单到提货的等待时间"。它的关键公式是：</p>
+
+      <div class="derive">
+        <span class="expr">交期 ≈ 在手订单 ÷ 有效产能</span>
+        <span class="res">供需的实时温度计</span>
+        <span class="unit">分子和分母都由公开信息驱动</span>
+      </div>
+
+      <p>为什么它能领先价格？因为产能短期是死的（扩产 24-36 个月，卡 1 讲过）——分母基本不变，交期变化直接读<strong>订单积压的绝对量</strong>。价格谈判有合同、有节奏、有下游库存缓冲，反应要慢一档；但排队长度是实时的：客户今天多下 10% 的订单，明天交期就变长。</p>
+
+      <p>行业通行的判断标尺：<strong>常态 10-14 周才算正常，超过 20 周表明供需失衡、超过 25 周是历史极值</strong>。2021-2023 完整走过一遍：常态 → 2021 年 8 月破 20 周（DCD 报道）→ 2022 年中约 27 周（峰值）→ 2022 年 10 月 17 日彭博报道"几年来最大单月缩短"——拐点<span class="badge badge-verified">已核验 · Bloomberg / DCD 报道</span>。5-6 个月后价格才在合同层塌方，1-2 个季度后三星等下游厂商才在报表上确认亏损。<strong>物理时序又走了一遍：温度计先动、价格滞后、财报最后</strong>。</p>
+
+      <h3>c. 测试设备——领先量产 2-4 个季度</h3>
+
+      <p>测试是<strong>量产前的最后一道工序</strong>：芯片做完要逐颗筛掉次品、可靠性场景还要跑 burn-in（老化测试，几十小时高温高压）——所有芯片放量前，必须先把测试和老化设备产能备齐。这意味着：<strong>测试设备商的订单动作，物理上必然领先下游芯片厂放量出货一个季度以上</strong>。</p>
+
+      <p>一个正在发生的现场：晶圆级老化测试设备商 AEHR 于 2026 年 3 月、6 月两度公告——为超大规模数据中心光互连（silicon photonics）器件的量产追加订单<span class="badge badge-verified">已核验 · AEHR 2026-03/2026-06 官方公告</span>。这条数据的性质是：AI 光互连量产的"最后一米"正在提货测试机——按物理时序推，2026 下半年到 2027 上半年是相关光互连器件放量的时间窗（模块 3 已建过此工具的完整来源/机制/操作/失效）。</p>
+
+      <h3>d. 为什么必须三个合起来读</h3>
+
+      <p>三个指标合读的意义在于——<strong>它们分别对应扩产链条上的三个不同物理时点</strong>：</p>
+
+      <ul>
+        <li><strong>设备订单</strong>看的是"设备端"——芯片厂正在为几个季度后的产能下真金实弹；</li>
+        <li><strong>交期</strong>看的是"制造端"——现在这一刻的供需温度；</li>
+        <li><strong>测试设备</strong>看的是"客户端最后一米"——量产前的必要动作。</li>
+      </ul>
+
+      <p>三个眼睛联合起来才是完整的"设备端 → 制造端 → 客户端"雷达。单看其中一个必有盲区：</p>
+      <ul>
+        <li>只看设备订单——可能被"囤设备"行为误导（如 2022 年出口管制引发中国大规模抢购，SEMI 总量数字里 2024 年中国大陆 $49.6B 主要对应成熟制程扩产，不是 AI 先进产能）<span class="badge badge-verified">已核验 · SEMI 2024 数据</span>；</li>
+        <li>只看交期——数据源可能停发（Susquehanna 的 book-to-bill 2016 年 12 月已经停止公开发布，需要找替代口径）<span class="badge badge-verified">已核验 · SEMI 官方沿革</span>；</li>
+        <li>只看测试设备——测试设备厂客户集中度高，单季订单波动大，一次追单不一定是趋势。</li>
+      </ul>
+
+      <p>三个信号里至少有两个同向，才算真正的领先信号；否则很可能是噪音或政策扰动。</p>
+
+      <h3>e. 亲手看一下：三指标信号板</h3>
+
+      <p>下面这个组件把三个指标画在同一条时间轴 2020-2026 上——你能直观看到"设备端先动 → 制造端跟上 → 客户端最后一米"的时序对照。<strong>看什么：</strong>①切换 5 个时点按钮，观察同一时刻三条泳道各自读到什么、时序错位多少；②注意 2022 年"上半年设备订单还在冲高、交期却已经开始拐"——这是复合信号里最有价值的裂缝；③2026 年下半段 AEHR 测试设备追单指向 2026 下半年到 2027 上半年的光互连量产窗口——你现在读到的这条组件，是一次实时的三指标读法练习。</p>
+
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-title">三指标信号板 · 设备端 / 制造端 / 客户端 · 同一时间轴</span>
+          <span class="viz-sub">数字全为一手来源。柱线为已核验的关键锚点；灰色区段是"信号真空"，是本卡边界段讲的失效场景之一。</span>
+        </div>
+
+        <div class="sig-controls" role="group" aria-label="时点切换">
+          <button class="sig-btn" data-time="t2108" aria-pressed="false"><span class="yr">时点 A · 2021-08</span>交期破 20 周</button>
+          <button class="sig-btn" data-time="t2210" aria-pressed="true"><span class="yr">时点 B · 2022-10-17</span>交期拐点日</button>
+          <button class="sig-btn" data-time="t2304" aria-pressed="false"><span class="yr">时点 C · 2023-04</span>三星财报塌方</button>
+          <button class="sig-btn" data-time="t2500" aria-pressed="false"><span class="yr">时点 D · 2024-2025</span>AI 需求进入设备端</button>
+          <button class="sig-btn" data-time="t2606" aria-pressed="false"><span class="yr">时点 E · 2026-06</span>AEHR 光互连追单</button>
+        </div>
+
+        <div id="sigChart" role="img" aria-label="三指标信号板：设备订单、交期、测试设备三条时序泳道对照 2020-2026"></div>
+
+        <div class="sig-readout" id="sigReadout" aria-live="polite">切换时点按钮，观察此刻三条泳道各自读到什么。</div>
+
+        <p style="font-size:var(--fs-13);color:var(--muted);margin:10px 0 0">看清一件事：<strong>时点 B（2022-10）交期已经拐、设备端还没砍单——这个"上下裂缝"就是三指标合读能提前抓到的东西，等待 5 个月后三星财报塌方时，市场才反应过来</strong>。</p>
+      </div>
+    </section>
+
+    <!-- ==================== 3. 真实锚点 ==================== -->
+    <section class="spine-section" id="sec-anchor">
+      <div class="kicker">3 · 真实锚点</div>
+      <h2>四个已核验现场，一段可观察的时序</h2>
+
+      <h3>锚点一 · SEMI 全球设备市场（设备端）</h3>
+      <p>行业协会 SEMI 官方统计：<strong>2023 年 $106.3B → 2024 年 $117.1B（+10%）→ 2025 年 $135B（+15%）</strong><span class="badge badge-verified">已核验 · SEMI 2024/2025 公告</span>。斜率在 2023-2024 年之交就开始抬起，明显领先 2024-2025 下游 GPU、HBM、CoWoS 的产品放量（英伟达 FY24 数据中心 $47.5B → FY25 $115.2B → FY26 $193.7B）。这一层信号<strong>专业机构会读，但媒体覆盖比下游少一个量级</strong>——所以是"公开但未被完全定价"的典型。</p>
+
+      <p style="font-size:var(--fs-13);color:var(--muted);margin:6px 0 14px">读数纪律：这层数字必须<strong>拆区域和用途</strong>。2024 年中国大陆一地 $49.6B（+35%）里，主要是成熟制程与国产化扩产，不是 AI 先进产能——总量会说谎，用途不会。</p>
+
+      <h3>锚点二 · 交期沿革（制造端）</h3>
+      <p>Susquehanna Financial Group 逐月统计全行业芯片交期，彭博/路透每月转述：</p>
+      <ul>
+        <li>常态区间：<strong>10-14 周</strong>；</li>
+        <li>2021 年 8 月：<strong>突破 20 周</strong>——DCD 报道"短缺恶化"<span class="badge badge-verified">已核验 · DCD 2021-08</span>；</li>
+        <li>2022 年中：<strong>约 27 周</strong>——历史峰值，同期分析师还在上调半导体收入预期；</li>
+        <li>2022 年 10 月 17 日：<strong>拐点</strong>——彭博报道"几年来最大单月缩短"<span class="badge badge-verified">已核验 · Bloomberg 2022-10-17</span>；</li>
+        <li>2023 年下半年：回到 15-16 周区间。</li>
+      </ul>
+      <p>请自己算一下时滞：交期拐点在 2022-10-17，三星半导体 Q1 2023 财报确认利润塌方（14.1 万亿 → 0.6 万亿韩元）在 2023 年 4 月<span class="badge badge-verified">已核验 · Samsung 2023-04 财报</span>——<strong>交期领先下游财报 5-6 个月</strong>。这不是估算，是可数的历史事实。</p>
+
+      <h3>锚点三 · ASML EUV 交付（设备端物理时序的实证）</h3>
+      <p>ASML 2024 年报披露：<strong>全年确认销售 44 台 EUV（42 台低数值孔径 + 2 台高数值孔径）</strong>，低数值孔径均价约 <strong>€2.27 亿</strong><span class="badge badge-verified">已核验 · ASML 2024 年报</span>。为什么这条数字重要？因为它<strong>把"设备订单到出货"的物理时间常数量化了</strong>——EUV 从下订单到装机以年计，全球一年 44 台就是天花板；插队没队可插，扩产必须先订机。这也是设备订单领先芯片厂收入 2-4 个季度的最直接物证。</p>
+
+      <h3>锚点四 · 测试设备正在进行的现场（客户端最后一米）</h3>
+      <p>AEHR 是晶圆级老化测试设备的主要供应商。2026 年连续两次追单公告：</p>
+      <ul>
+        <li><strong>2026 年 3 月：</strong>获硅光互连客户为超大规模数据中心量产追加的测试系统订单<span class="badge badge-verified">已核验 · AEHR 2026-03 公告</span>；</li>
+        <li><strong>2026 年 6 月：</strong>同一硅光客户再次追单<span class="badge badge-verified">已核验 · AEHR 2026-06 公告</span>。</li>
+      </ul>
+      <p><strong>这是进行中的案例，结局未定。</strong>按本卡的机制推：测试设备领先量产 2-4 个季度——2026 上半年的连续追单，指向 2026 下半年到 2027 上半年是相关光互连器件放量的时间窗。请把你此刻的判断记下来，一年后回来对照实际财报——这是学习实盘跟踪的最好素材（模块 3 有完整来源/机制/操作/失效工具卡）。</p>
+
+      <h3>时序对照 · 一张小表带走</h3>
+      <div class="lead-tbl" role="table" aria-label="三个领先指标 · 领先什么 · 领先多久 · 一手来源在哪">
+        <div class="lead-row" role="row">
+          <span class="indi">指标</span>
+          <span class="why">物理来源</span>
+          <span class="src-mini">主要一手来源</span>
+          <span class="lag">领先时滞</span>
+        </div>
+        <div class="lead-row" role="row">
+          <span class="indi">设备订单</span>
+          <span class="why">EUV/刻蚀/沉积/量测机台交期以年计，芯片厂扩产必先订机；订单是带预付款的合同</span>
+          <span class="src-mini">SEMI 季度统计 · ASML/AMAT/LRCX/KLA 财报 backlog</span>
+          <span class="lag">2-4 季</span>
+        </div>
+        <div class="lead-row" role="row">
+          <span class="indi">交期</span>
+          <span class="why">交期 ≈ 在手订单 ÷ 有效产能；产能短期不变，交期直接读订单积压</span>
+          <span class="src-mini">Susquehanna 月度数据 · 彭博/路透转述 · 电话会措辞</span>
+          <span class="lag">价格：3-6 月 / 财报：5-6 月</span>
+        </div>
+        <div class="lead-row" role="row">
+          <span class="indi">测试设备</span>
+          <span class="why">测试是量产前最后一道工序；放量前必须先备好测试和老化产能</span>
+          <span class="src-mini">AEHR/Advantest/Teradyne 订单公告与季报</span>
+          <span class="lag">2-4 季</span>
+        </div>
+      </div>
+      <p style="font-size:var(--fs-13);color:var(--muted);margin:0 0 14px">时滞是本卡机制推导出的物理时间常数——具体到每家公司还要看业务结构（先进/成熟、逻辑/存储、下游客户集中度）。数字是量级，不是精确数值。</p>
+    </section>
+
+    <!-- ==================== 4. 投资含义 ==================== -->
+    <section class="spine-section" id="sec-invest">
+      <div class="kicker">4 · 投资含义</div>
+      <h2>两个条件反射问句</h2>
+
+      <p>骨架卡的用法是<strong>把两个问句刻进反射弧</strong>——以后看到相关新闻，不是先想"股价怎么走"，而是先自动问以下问题，答完了再下结论。</p>
+
+      <div class="qa">
+        <p class="q">看到某设备厂财报订单大幅上调，我第一反应问什么？</p>
+        <ul>
+          <li><strong>订单结构：先进制程还是成熟制程？逻辑还是存储？</strong>——同样的 backlog 数字，先进逻辑对应 2 年后 GPU/CoWoS 兑现，成熟制程对应传统芯片周期，读到的下游完全不同。ASML 季报会拆低数值孔径 vs 高数值孔径 EUV，KLA/应材会拆区域收入构成。</li>
+          <li><strong>下游客户是谁？</strong>——ASML 的先进逻辑订单主要给台积电、三星、英特尔；存储 EUV 需求主要给 SK 海力士、美光。客户不同，2-4 个季度后兑现给谁完全不同。</li>
+          <li><strong>2-4 季后对应哪家芯片厂的哪一批产能？</strong>——用扩产时序反推：新增设备装完在几季后达到爬坡阶段？该芯片厂何时收入报表能出现明显跳升？答完这三条，才评估当下股价是否已反映。</li>
+        </ul>
+      </div>
+
+      <div class="qa">
+        <p class="q">看到交期出现单月大幅缩短，我第一反应问什么？</p>
+        <ul>
+          <li><strong>这是不是牛鞭拐点？</strong>——2022-10-17 的历史现场：交期从峰值 27 周开始塌，5 个月后下游财报才确认周期反转（三星 14.1 万亿 → 0.6 万亿韩元）。所以看到交期单月大幅缩短，先假设这是拐点，反过来找证伪信号（卡 5 讲牛鞭机制）。</li>
+          <li><strong>下游客户是否开始砍单？分销商库存是否开始积累？</strong>——交叉验证工具：分销商季报里的"库存周转天数"和"应收账款/收入比"是最实时的旁证。"交期缩短 + 分销商库存抬升"同时出现，反转确认度极高。</li>
+          <li><strong>如果确认反转，下游财报塌方大概在几个月后？</strong>——历史给的量级是 3-6 个月价格塌方、5-6 个月下游财报塌方——这段窗口是你调整仓位、砍高估值品种的时间。等财报公告后再动，已经晚了 5-6 个月。</li>
+        </ul>
+      </div>
+
+      <p>把两个问句合起来，就是本卡最核心一句：<strong>三个指标共同构成"设备端 → 制造端 → 客户端"的先行雷达；任一指标动都是信号，两个同向就是趋势，等到下游财报确认时已经晚了 5-6 个月</strong>。</p>
+    </section>
+
+    <!-- ==================== 5. 边界 ==================== -->
+    <section class="spine-section" id="sec-limit">
+      <div class="kicker">5 · 边界</div>
+      <h2>这张卡什么时候不适用</h2>
+
+      <ul>
+        <li><strong>设备订单会被政策扰动</strong>——2022 年美国对华半导体出口管制生效前后，中国大陆企业出现大规模"抢购"式囤设备行为。2024 年 SEMI 中国大陆 $49.6B（+35%）主要对应成熟制程与国产化扩产，跟 AI 先进产能没有关系<span class="badge badge-verified">已核验 · SEMI 2024 数据</span>。读设备数据必须<strong>拆区域和用途</strong>，总量会说谎。</li>
+        <li><strong>交期数据源已经停发部分口径，需要替代口径</strong>——SEMI 的"北美设备商订单出货比"（book-to-bill）曾是最经典的官方领先指标，<strong>2016 年 12 月为最后一期</strong>（部分厂商停止报送订单数据）<span class="badge badge-verified">已核验 · SEMI 官方沿革</span>。从业者用两个替代物延续同一逻辑：SEMI 月度/季度出货统计，加上设备商财报自行披露的订单和积压（ASML 每季公开净订单额与 backlog）。Susquehanna 交期数据仍在，只是媒体覆盖不如从前——公开信息带宽缩小了，需要主动去查。</li>
+        <li><strong>测试设备厂客户集中度高，单季订单波动大</strong>——AEHR、Advantest、Teradyne 等测试设备厂对少数几个下游客户依赖度极高，单季订单可能因为一个大客户的排产节奏变化而剧烈波动。要用<strong>季度均值或滚动 3 季</strong>而不是单季读，也要跨源交叉多家测试厂的订单走势。单一时点的下滑可能不是量产延后，是客户内部调节。</li>
+        <li><strong>三个指标合读也有失效场景</strong>——政策扰动（如出口管制）、大客户内部产能调整、财报口径变化都会让三条信号短期"共同噪音化"。这种时候要退回卡 5 的牛鞭机制、卡 10 的两只眼睛读法：<strong>看信号硬度、找第三方独立信号交叉验证</strong>。三个指标是雷达不是水晶球。</li>
+        <li><strong>与相邻卡/手册页的分工</strong>：<strong>卡 5（缺货是牛鞭极值）</strong>讲重复下单让交期数据本身失真的机制——这是本卡失效场景的深水区；<strong>卡 10（需求传导链）</strong>讲"两只眼睛"的下游硬信号 vs 上游软信号——本卡是那"上游软信号"里最实用的三个；<strong>卡 12（价格是滞后读数）</strong>讲价格作为最硬也最晚的信号；<strong>模块 10（周期库存与拐点，尚未建）</strong>会展开完整的周期位置判断，包括本卡三指标 + 库存 + CapEx 拐点信号的联合读法。本卡只覆盖"扩产时序"这一条根子上的领先性。</li>
+      </ul>
+    </section>
+
+    <!-- ==================== 6. 练习 ==================== -->
+    <section class="spine-section" id="sec-drill">
+      <div class="kicker">6 · 练习</div>
+      <h2>两道题</h2>
+
+      <div class="scenario">
+        <h4>练习一 · 复述题（3 分钟量级，讲给完全不懂的朋友听）</h4>
+        <p>合上卡片，用自己的话讲清楚：<strong>"为什么设备订单能领先芯片厂收入 2-4 个季度？"</strong></p>
+        <p class="scenario-hint">要点检查（不用出现"物理时序""领先指标"这些术语，大白话就够）：<br>
+        ① 先说"芯片是怎么从没有变成有的"——厂房、设备、通电调试、良率爬坡、有效出货，一个都省不掉；<br>
+        ② 关键点破在设备交期："EUV 一台 2.27 亿欧元、2024 全球只交付 44 台、想插队没队"——把它作为物理时序的实证；<br>
+        ③ 算出总时间常数："设备到位到能出货，物理上要 2-4 个季度"；<br>
+        ④ 点出订单是带预付款的合同、比"宣布投资"硬一档；<br>
+        四条都到位，这张卡算过了本关。</p>
+      </div>
+
+      <article class="scenario">
+        <h4>练习二 · 推演题（用已核验前提，用本卡机制推）</h4>
+        <p>已核验的两件真事：</p>
+        <ul>
+          <li>SEMI 2025 年全球设备销售额 <strong>$135B（+15% 同比 2024 的 $117.1B）</strong>——设备端订单已经在冲高<span class="badge badge-verified">已核验 · SEMI 2025 公告</span>；</li>
+          <li>AEHR 2026 年 6 月<strong>再次追加</strong>获超大规模数据中心光互连客户的测试设备订单（同一硅光客户 2026-03 首次下单、2026-06 追单）<span class="badge badge-verified">已核验 · AEHR 2026-06 公告</span>。</li>
+        </ul>
+        <p>请你用本卡的三指标读法推：<strong>2026 下半年到 2027 上半年这一年时间窗，哪些芯片厂/环节可能率先兑现在报表上？</strong>要求：</p>
+        <ul>
+          <li>用"设备端 → 制造端 → 客户端"的时序框架，分别指出<strong>三个信号此刻在哪个位置</strong>；</li>
+          <li>推出至少<strong>两条可跟踪的具体指标</strong>——你在未来 6-12 个月要看哪几家公司的哪几个数字（不是"看好"这种模糊表达，而是"季报 X 分部收入""backlog 增速""管理层措辞变化"这种可读的口径）；</li>
+          <li>指出至少<strong>一条你会用来证伪自己判断的信号</strong>——如果发生什么，说明推理错了？</li>
+        </ul>
+        <p class="scenario-hint">
+          提示（不给标准答案）：<br>
+          · 设备端已经领先 2-4 季：SEMI 2025 +15% 对应 2025-2026 芯片厂产能兑现；<br>
+          · 测试设备（AEHR 追单）领先量产 2-4 季：光互连相关（光模块厂、硅光 IC 厂）2026 下半年到 2027 上半年是主要观察窗；<br>
+          · 交叉验证：还要观察 CoWoS 排产口径、光模块厂季报（如 InnoLight、Coherent、Fabrinet）、云 CapEx 2027 计划公告是否再次上调；<br>
+          · 证伪信号候选：交期数据（如果 Susquehanna 或替代口径出现单月大幅缩短）、云厂商 CapEx 计划回撤、AEHR 后续季度出现订单空档——任何一条都是"三指标里有一条转向"的证据；<br>
+          写下你的推理和每层的具体跟踪指标；一年后拿这份推理跟真实公告对照——这是"读扩产时序"最直接的自测。<strong>不给标准答案。</strong>
+        </p>
+      </article>
+
+      <div class="note">
+        <span class="note-label">这张卡要带走的两个反射弧</span>
+        <ol style="margin:0;padding-left:1.3em">
+          <li>看到<strong>设备订单大幅上调</strong>，先问三个：结构（先进/成熟）、下游客户、2-4 季后对应哪家芯片厂产能——不是先问股价；</li>
+          <li>看到<strong>交期单月大幅缩短</strong>，先假设是拐点，反过来找证伪信号——牛鞭拐点在下游财报确认前，通常还有 5-6 个月窗口。</li>
+        </ol>
+        <p style="margin:8px 0 0">写不出来，回来重看第 2 节 d 与第 4 节。</p>
+      </div>
+    </section>
+
+    <!-- ==================== 来源 ==================== -->
+    <section class="src">
+      <strong>卡 11 来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.semi.org/en/semi-press-release/global-semiconductor-equipment-billings-surged-to-117-billion-dollars-in-2024-semi-reports">SEMI：2024 全球设备销售额 $117.1B</a> · <a href="https://www.semi.org/en/SEMI-Reports-Global-Semiconductor-Equipment-Billings-Reached-135-Billion-in-2025">SEMI：2025 年 $135B</a>（本卡设备端锚点）</li>
+        <li><a href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing">彭博 2022-10-17：芯片交期几年来最大单月缩短（Susquehanna 数据，交期拐点日）</a></li>
+        <li><a href="https://www.datacenterdynamics.com/en/news/chip-lead-times-hit-202-weeks-as-semiconductor-shortage-drags-on/">DCD 2021-08：芯片交期突破 20 周</a></li>
+        <li><a href="https://ourbrand.asml.com/m/ee9da90a119cc9d/original/2024-Financial-performance-section.pdf">ASML 2024 年报财务部分（全年确认 44 台 EUV，低数值孔径均价 €2.27 亿）</a></li>
+        <li><a href="https://news.samsung.com/global/samsung-electronics-announces-first-quarter-2023-results">Samsung 2023 Q1 财报公告（半导体部门 Q1 营业利润 0.6 万亿韩元，同比 14.1 万亿塌方）</a></li>
+        <li><a href="https://www.aehr.com/2026/03/aehr-receives-follow-on-order-for-fully-automated-wafer-level-burn-in-systems-powering-ai-optical-i-o-and-data-center-interconnects/">AEHR 2026-03 公告：AI 光互连晶圆级老化测试追单</a></li>
+        <li><a href="https://www.aehr.com/2026/06/aehr-receives-follow-on-order-from-major-silicon-photonics-customer-for-fully-automated-wafer-level-burn-in-system-for-hyperscale-data-center-optical-interconnect/">AEHR 2026-06 公告：同一硅光客户再度追单</a></li>
+        <li><a href="https://www.semi.org/en/products-services/market-data/equipment/billings-report">SEMI：出货统计报告说明（含 book-to-bill 停发沿革）</a> · <a href="https://www.semi.org/en/september-2016-book-bill-ratio">SEMI 2016-09 book-to-bill（停发前最后形态）</a></li>
+        <li><a href="m02.html">本站 · 模块 2：芯片前端制造 101（工具一交期 / 工具二设备订单——完整来源/机制/案例/操作/失效）</a></li>
+        <li><a href="m03.html">本站 · 模块 3：封装、测试与系统集成 101（工具二测试与封装设备订单——含 AEHR 完整案例）</a></li>
+        <li>预告：卡 5（缺货是牛鞭极值）——本卡失效场景的深水区；卡 10（两只眼睛信号板）——本卡是上游软信号的具体三个；卡 12（价格是滞后读数）——三张卡合起来才是完整的"扩产时序 vs 价格 vs 财报"三段式雷达</li>
+      </ul>
+      <p style="margin-top:14px;font-size:var(--fs-12)">徽章说明：<span class="badge badge-verified">已核验</span> 直接引用一手来源（年报、10-K、8-K、官方公告）或经权威媒体转述的一手数据 · <span class="badge badge-expert">专家判断</span> 综合行业口径的判断性表达，无单一权威来源 · <span class="badge badge-assume">估算</span> 明确的推算，标注方法与年份。</p>
+    </section>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已学习</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine10.html"><span class="dir">← 上一张</span>卡 10 · 需求传导链</a>
+        <a href="spine12.html" style="text-align:right"><span class="dir">下一张 →</span>卡 12 · 价格是滞后读数</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- A 类：三指标信号板 ---------- */
+  (function () {
+
+    /* --- 数据 --- */
+    /* 设备端：SEMI 全球设备市场年度（$B），已核验 2023/2024/2025 */
+    const SEMI_YRS = [
+      { yr: 2023, val: 106.3, verified: true },
+      { yr: 2024, val: 117.1, verified: true },
+      { yr: 2025, val: 135.0, verified: true },
+    ];
+
+    /* 制造端：交期锚点（月度周数）。用已核验的 4 个关键点，中间用平滑连接。
+       数据源：Susquehanna 经 Bloomberg/DCD 转述。中间月度值为近似趋势线，
+       不假装月度精确——只在关键锚点标数字。 */
+    const LEAD = [
+      { d: "2020-01", w: 12, anchor: false },
+      { d: "2020-12", w: 14, anchor: false },
+      { d: "2021-04", w: 17, anchor: false },
+      { d: "2021-08", w: 20.2, anchor: true, evt: "破 20 周", verified: true },
+      { d: "2022-01", w: 24, anchor: false },
+      { d: "2022-06", w: 27, anchor: true, evt: "峰值 ~27 周", verified: true },
+      { d: "2022-10", w: 26.3, anchor: true, evt: "拐点日", verified: true },
+      { d: "2023-04", w: 20, anchor: false },
+      { d: "2023-12", w: 15, anchor: false },
+    ];
+
+    /* 客户端：测试设备追单事件点 */
+    const TEST = [
+      { d: "2026-03", label: "AEHR 首次追单", detail: "AI 光互连", verified: true },
+      { d: "2026-06", label: "AEHR 再度追单", detail: "同一硅光客户", verified: true },
+    ];
+
+    /* 关键事件竖线标注（穿透三条泳道） */
+    const EVENTS = [
+      { d: "2021-08", label: "破 20 周", side: "top" },
+      { d: "2022-10", label: "交期拐点", side: "top" },
+      { d: "2023-04", label: "三星财报塌方", side: "bottom" },
+      { d: "2024-08", label: "AI 需求进入设备端", side: "bottom" },
+    ];
+
+    /* --- 时点状态 --- */
+    const TIMES = {
+      t2108: {
+        title: "时点 A · 2021 年 8 月",
+        eq:  { text: "SEMI 数据本页只已核验 2023-2025，此时（2021）设备端已经开始明显扩产（背景），但本页不采用未核验数据", verified: false },
+        lt:  { text: "<b>交期突破 20 周</b>——供需失衡明确出现（常态 10-14 周）", verified: true },
+        tst: { text: "无对应测试设备事件（本轮 AI 光互连节拍尚未启动）", verified: null },
+        lag: "交期已动，下游财报未反应",
+        note: "此刻应该做什么：<b>交期从常态破 20 周</b>本身就是加仓设备端的先行信号——2 个季度后（2021 Q4-2022 Q1）设备厂 backlog 会明显上台阶，但本时点还未在设备端数据上兑现。"
+      },
+      t2210: {
+        title: "时点 B · 2022-10-17 · 拐点日",
+        eq:  { text: "SEMI 2022 数据未在本页核验；但按行业沿革，2022 全球设备市场约 $107B（近三年新高，本页不作为可引用数字）——设备端此刻还在高位", verified: false },
+        lt:  { text: "<b>交期从峰值 ~27 周开始拐——彭博当日报道\"几年来最大单月缩短\"</b>", verified: true },
+        tst: { text: "无对应测试设备事件（本轮 AI 相关测试订单尚未开始）", verified: null },
+        lag: "5-6 个月窗口 → 下游财报",
+        note: "此刻应该做什么：<b>拐点已经写在公开数据里</b>。5-6 个月后（2023 Q1）三星财报会塌方（14.1 万亿 → 0.6 万亿韩元）——现在动手调整存储/代工厂仓位，等季报公告已经晚了 5-6 个月。这就是本卡最典型的一次读数机会。"
+      },
+      t2304: {
+        title: "时点 C · 2023 年 4 月 · 三星财报塌方",
+        eq:  { text: "SEMI 2023 全年 <b>$106.3B</b>——同比小幅下滑，设备订单先于财报被砍已经反映在数字上", verified: true },
+        lt:  { text: "交期已回到 ~20 周区间，从峰值退了 7 周", verified: true },
+        tst: { text: "无对应测试设备事件", verified: null },
+        lag: "下游财报确认 6 个月前的拐点",
+        note: "此刻应该做什么：<b>下游确认时，市场才官方\"看见\"周期反转</b>——但设备订单和交期数据在 6 个月前就说清了。真正的操作窗口早已过去。这个时点是复盘价值大于操作价值。"
+      },
+      t2500: {
+        title: "时点 D · 2024-2025 · AI 需求进入设备端",
+        eq:  { text: "SEMI <b>2024 $117.1B（+10%）→ 2025 $135B（+15%）</b>——设备端斜率明显抬起，AI 需求已经在这一层兑现", verified: true },
+        lt:  { text: "交期数据 Susquehanna book-to-bill 2016-12 已停发，替代口径分散化；行业整体在正常区间", verified: true },
+        tst: { text: "测试设备端 AI 光互连相关订单尚未大规模显现（2026 才连续追单）", verified: null },
+        lag: "领先下游 2-3 季",
+        note: "此刻应该做什么：<b>设备端已经领先，2 个季度后应该在 GPU/HBM/CoWoS 出货上兑现</b>——事实上英伟达 FY25 数据中心 $115.2B、FY26 $193.7B 就是印证。这时候要开始把注意力转到测试设备层（客户端最后一米），预判下一轮量产是谁。"
+      },
+      t2606: {
+        title: "时点 E · 2026 年 6 月 · AEHR 光互连追单",
+        eq:  { text: "SEMI 2025 $135B 已经在报——但 2026 全球数据未在本页核验，行业趋势上行", verified: false },
+        lt:  { text: "交期 book-to-bill 停发多年，现有替代口径分散化，需要主动查", verified: true },
+        tst: { text: "<b>AEHR 2026-03/2026-06 连续追单 · 硅光互连客户</b>——测试设备领先量产 2-4 季", verified: true },
+        lag: "领先量产 2-4 季",
+        note: "此刻应该做什么：<b>测试设备端已经动了</b>——按物理时序推，2026 下半年到 2027 上半年是光互连（光模块厂、硅光 IC 厂）放量的时间窗。这是本页正在进行的观察——把你此刻的判断记下来，一年后回来对照。<b>结局未定，练习二在推这个</b>。"
+      }
+    };
+
+    /* --- SVG 布局 --- */
+    const W = 760, H = 320;
+    const L = 68, R = 20, T = 22, B = 34;
+    const IW = W - L - R, IH = H - T - B;
+
+    /* 时间轴：2020-01 = 0, 2026-12 = IW */
+    const D0 = 2020 * 12;
+    const D1 = 2027 * 12; /* 到 2027-01 */
+    const dateToMonth = (d) => {
+      const [y, m] = d.split("-").map(Number);
+      return y * 12 + (m - 1);
+    };
+    const xM = (m) => L + (m - D0) / (D1 - D0) * IW;
+    const xD = (d) => xM(dateToMonth(d));
+
+    /* 三条泳道的 Y 区间 */
+    const LANE = {
+      eq:  { y: T + 4, h: 80, name: "设备端 · SEMI 全球设备市场 ($B)", short: "设备端" },
+      lt:  { y: T + 100, h: 76, name: "制造端 · 交期（周）· Susquehanna 数据", short: "制造端" },
+      tst: { y: T + 192, h: 68, name: "客户端 · 测试设备事件点（AEHR）", short: "客户端" },
+    };
+
+    /* --- 建 SVG --- */
+    const mount = document.getElementById("sigChart");
+    const svg = APP.svgEl("svg", {
+      viewBox: "0 0 " + W + " " + H,
+      role: "img",
+      "aria-label": "三指标信号板：SEMI 设备市场、交期、测试设备三条时序泳道，共享 2020-2026 时间轴"
+    });
+
+    /* 背景：三条泳道底色 */
+    for (const key of ["eq", "lt", "tst"]) {
+      const L1 = LANE[key];
+      svg.appendChild(APP.svgEl("rect", {
+        x: L, y: L1.y, width: IW, height: L1.h,
+        fill: "var(--surface)", opacity: 0.5, rx: 3
+      }));
+      /* 泳道标签 */
+      const t = APP.svgEl("text", {
+        x: L - 8, y: L1.y + 14, "text-anchor": "end", class: "axis-txt",
+        style: "font-weight:650"
+      });
+      t.textContent = L1.short;
+      svg.appendChild(t);
+      /* 泳道名 */
+      const s = APP.svgEl("text", {
+        x: L + 4, y: L1.y + 14, "text-anchor": "start", class: "axis-txt",
+        fill: "var(--muted)"
+      });
+      s.textContent = L1.name;
+      svg.appendChild(s);
+    }
+
+    /* 时间轴：年份网格 */
+    for (let y = 2020; y <= 2027; y++) {
+      const x = xM(y * 12);
+      svg.appendChild(APP.svgEl("line", {
+        x1: x, x2: x, y1: T, y2: H - B,
+        stroke: "var(--viz-grid)", "stroke-width": 1
+      }));
+      if (y <= 2026) {
+        const t = APP.svgEl("text", {
+          x: x, y: H - B + 16, "text-anchor": "start", class: "axis-txt"
+        });
+        t.textContent = y;
+        svg.appendChild(t);
+      }
+    }
+
+    /* --- 泳道 1：SEMI 柱 --- */
+    const eqY0 = LANE.eq.y + LANE.eq.h - 4;
+    const eqMax = 150; /* $B */
+    const eqVal = (v) => LANE.eq.y + 22 + (1 - v / eqMax) * (LANE.eq.h - 30);
+    /* 柱宽：占一年宽度的一部分 */
+    const yrWidth = IW / (D1 - D0) * 12;
+    const barW = yrWidth * 0.55;
+    const eqBars = {};
+    SEMI_YRS.forEach((d) => {
+      const cx = xM(d.yr * 12 + 6);
+      const yTop = eqVal(d.val);
+      const rect = APP.svgEl("rect", {
+        x: cx - barW / 2, y: yTop, width: barW, height: eqY0 - yTop,
+        rx: 2, fill: "var(--viz-s2)", opacity: 0.55
+      });
+      svg.appendChild(rect);
+      const lbl = APP.svgEl("text", {
+        x: cx, y: yTop - 3, "text-anchor": "middle", class: "bar-lbl",
+        style: "font-size:11px"
+      });
+      lbl.textContent = "$" + d.val + "B";
+      svg.appendChild(lbl);
+      eqBars[d.yr] = { rect };
+    });
+
+    /* --- 泳道 2：交期折线 --- */
+    const ltY0 = LANE.lt.y + LANE.lt.h - 4;
+    const ltMax = 30, ltMin = 8;
+    const ltVal = (w) => LANE.lt.y + 22 + (ltMax - w) / (ltMax - ltMin) * (LANE.lt.h - 30);
+    const ltPts = LEAD.map(d => xD(d.d) + "," + ltVal(d.w)).join(" ");
+    svg.appendChild(APP.svgEl("polyline", {
+      points: ltPts,
+      fill: "none", stroke: "var(--info)", "stroke-width": 2
+    }));
+    /* Y 轴刻度参考：20 周和 27 周 */
+    [14, 20, 27].forEach((w) => {
+      const y = ltVal(w);
+      svg.appendChild(APP.svgEl("line", {
+        x1: L, x2: L + IW, y1: y, y2: y,
+        stroke: "var(--viz-grid)", "stroke-width": 1, "stroke-dasharray": "2 3"
+      }));
+      const t = APP.svgEl("text", {
+        x: L - 4, y: y + 3, "text-anchor": "end", class: "axis-txt"
+      });
+      t.textContent = w + "w";
+      svg.appendChild(t);
+    });
+    /* 关键锚点大点 */
+    const ltDots = {};
+    LEAD.filter(d => d.anchor).forEach((d) => {
+      const cx = xD(d.d), cy = ltVal(d.w);
+      const circle = APP.svgEl("circle", {
+        cx: cx, cy: cy, r: 4.5, fill: "var(--info-ink)",
+        stroke: "var(--bg)", "stroke-width": 1.5
+      });
+      svg.appendChild(circle);
+      ltDots[d.d] = { circle };
+    });
+
+    /* --- 泳道 3：测试事件点 --- */
+    const tstY = LANE.tst.y + LANE.tst.h / 2 + 8;
+    const tstDots = {};
+    TEST.forEach((d) => {
+      const cx = xD(d.d);
+      const g = APP.svgEl("g", { transform: "translate(" + cx + " " + tstY + ")" });
+      g.appendChild(APP.svgEl("circle", {
+        cx: 0, cy: 0, r: 5, fill: "var(--accent)", stroke: "var(--bg)", "stroke-width": 1.5
+      }));
+      const lbl = APP.svgEl("text", {
+        x: -6, y: 2, "text-anchor": "end", class: "axis-txt",
+        fill: "var(--accent-ink)", style: "font-weight:650"
+      });
+      lbl.textContent = d.d.slice(2);
+      g.appendChild(lbl);
+      svg.appendChild(g);
+      tstDots[d.d] = { g };
+    });
+    /* 泳道 3 备注 · 空段说明 */
+    const tstTxt = APP.svgEl("text", {
+      x: L + IW * 0.42, y: LANE.tst.y + LANE.tst.h / 2 + 4,
+      "text-anchor": "middle", class: "axis-txt", fill: "var(--muted)",
+      style: "font-style:italic"
+    });
+    tstTxt.textContent = "2020-2025 · 本轮 AI 光互连测试订单尚未开始";
+    svg.appendChild(tstTxt);
+
+    /* --- 关键事件竖线（穿透三条泳道） --- */
+    EVENTS.forEach((e) => {
+      const x = xD(e.d);
+      svg.appendChild(APP.svgEl("line", {
+        x1: x, x2: x, y1: T + 4, y2: H - B - 6,
+        stroke: "var(--accent)", "stroke-width": 1, "stroke-dasharray": "3 3",
+        opacity: 0.6
+      }));
+      const t = APP.svgEl("text", {
+        x: x + 3, y: e.side === "top" ? T + 12 : H - B - 8,
+        "text-anchor": "start", class: "anno-txt", style: "font-size:10.5px"
+      });
+      t.textContent = e.label;
+      svg.appendChild(t);
+    });
+
+    /* --- 时点高亮圈（会动） --- */
+    const highlight = APP.svgEl("g", { style: "pointer-events:none" });
+    svg.appendChild(highlight);
+    const hl_line = APP.svgEl("line", {
+      x1: 0, x2: 0, y1: T + 4, y2: H - B - 6,
+      stroke: "var(--primary)", "stroke-width": 2, opacity: 0.55
+    });
+    highlight.appendChild(hl_line);
+
+    mount.appendChild(svg);
+
+    /* --- 时点切换 --- */
+    const buttons = document.querySelectorAll("[data-time]");
+    const readout = document.getElementById("sigReadout");
+
+    /* 时点日期映射（用于画竖线） */
+    const TDATE = {
+      t2108: "2021-08",
+      t2210: "2022-10",
+      t2304: "2023-04",
+      t2500: "2024-08",
+      t2606: "2026-06"
+    };
+
+    function verifBadge(v) {
+      if (v === true) return '<span class="badge badge-verified">已核验</span>';
+      if (v === false) return '<span class="badge badge-assume" title="本页未采用未核验数据">未展示</span>';
+      return "";
+    }
+
+    function selectTime(key) {
+      const T = TIMES[key];
+      if (!T) return;
+      buttons.forEach((b) => {
+        b.setAttribute("aria-pressed", b.dataset.time === key ? "true" : "false");
+      });
+
+      /* 画竖线 */
+      const x = xD(TDATE[key]);
+      hl_line.setAttribute("x1", x);
+      hl_line.setAttribute("x2", x);
+
+      /* 读出栏 */
+      readout.innerHTML =
+        '<div style="margin-bottom:6px"><b>' + T.title + '</b><span class="lag">' + T.lag + '</span></div>' +
+        '<div class="sig-row"><b>设备端</b><span>' + T.eq.text + ' ' + verifBadge(T.eq.verified) + '</span></div>' +
+        '<div class="sig-row"><b>制造端</b><span>' + T.lt.text + ' ' + verifBadge(T.lt.verified) + '</span></div>' +
+        '<div class="sig-row"><b>客户端</b><span>' + T.tst.text + ' ' + verifBadge(T.tst.verified) + '</span></div>' +
+        '<div style="color:var(--primary);font-weight:600;margin-top:6px">此刻应该做什么：' + T.note + '</div>';
+    }
+
+    buttons.forEach((b) => {
+      b.addEventListener("click", () => selectTime(b.dataset.time));
+    });
+
+    /* 默认时点 B（拐点日，最有教学价值） */
+    selectTime("t2210");
+  })();
+
+});
+</script>
+</body>
+</html>

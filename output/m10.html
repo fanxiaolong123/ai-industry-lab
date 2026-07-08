@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模块 10 · 周期、库存与供需拐点</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 页面专属样式 ---------- */
+
+  /* 五层信号时间轴回放（A 类核心） */
+  .tlplay { display: grid; gap: 6px; margin: 14px 0; }
+  .tlplay-row {
+    display: grid; grid-template-columns: 120px 1fr 96px; gap: 12px; align-items: center;
+    border: 1px solid var(--line); border-radius: var(--radius-m); background: var(--surface);
+    padding: 8px 12px;
+  }
+  .tlplay-row .lbl { font-size: var(--fs-13); font-weight: 650; color: var(--muted); line-height: 1.4; }
+  .tlplay-row .lbl .u { display: block; font-size: var(--fs-12); color: var(--muted); font-weight: 500; margin-top: 2px; }
+  .tlplay-row .val {
+    text-align: right; font-size: var(--fs-16); font-weight: 700; color: var(--primary);
+    font-variant-numeric: tabular-nums; line-height: 1.2;
+  }
+  .tlplay-row .val .vs { display: block; font-size: var(--fs-12); color: var(--muted); font-weight: 500; margin-top: 2px; }
+  .tlplay-track { position: relative; height: 42px; }
+  .tlplay-track svg { display: block; width: 100%; height: 100%; }
+  .tlplay-scrub {
+    display: grid; grid-template-columns: 120px 1fr 96px; gap: 12px; align-items: center;
+    margin-top: 8px;
+  }
+  .tlplay-scrub label { font-size: var(--fs-13); font-weight: 650; color: var(--muted); }
+  .tlplay-scrub input[type="range"] { grid-column: 2; }
+  .tlplay-scrub output { text-align: right; font-size: var(--fs-14); font-weight: 650; color: var(--primary); font-variant-numeric: tabular-nums; }
+  .tlplay-events { display: flex; gap: 12px 20px; flex-wrap: wrap; margin-top: 8px; font-size: var(--fs-13); color: var(--muted); }
+  .tlplay-events .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 6px; vertical-align: 0.05em; }
+  @media (max-width: 640px) {
+    .tlplay-row { grid-template-columns: 80px 1fr 72px; padding: 6px 8px; gap: 8px; }
+    .tlplay-row .lbl { font-size: var(--fs-12); }
+    .tlplay-row .val { font-size: var(--fs-14); }
+    .tlplay-scrub { grid-template-columns: 80px 1fr 72px; gap: 8px; }
+  }
+
+  /* WSTS 长序列 · Secular vs Cyclic 分离 */
+  .split-toggle {
+    display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px;
+    border-radius: 6px; border: 1px solid var(--line); background: var(--surface);
+    font-size: var(--fs-13); font-weight: 600; cursor: pointer; font: inherit; color: var(--ink);
+  }
+  .split-toggle[aria-pressed="true"] { border-color: var(--primary-2); background: var(--primary-tint); color: var(--primary); }
+
+  /* OCF / CapEx 计算器 */
+  .ocfcalc { border: 1px solid var(--line); border-radius: var(--radius-m); padding: 14px 16px; margin: 14px 0; background: var(--surface); }
+  .ocfcalc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .ocfcalc-row { display: grid; grid-template-columns: 1fr 6.5em; gap: 8px; align-items: center; padding: 4px 0; }
+  .ocfcalc-row label { font-size: var(--fs-14); color: var(--ink); }
+  .ocfcalc-row input {
+    font: inherit; font-size: var(--fs-14); text-align: right; font-variant-numeric: tabular-nums;
+    border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--bg); color: var(--ink);
+    padding: 4px 10px; width: 100%;
+  }
+  .ocfcalc-row input:focus-visible { outline: 2px solid var(--primary-2); outline-offset: 1px; }
+  .ocfcalc-preset { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+  .ocfcalc-out {
+    margin-top: 10px; padding: 12px 14px; border-radius: var(--radius-s);
+    background: var(--bg); border: 1px solid var(--line); font-size: var(--fs-14);
+  }
+  .ocfcalc-out b { color: var(--primary); }
+  .ocfcalc-out .warn { color: var(--accent-ink); font-weight: 650; }
+  @media (max-width: 560px) {
+    .ocfcalc-grid { grid-template-columns: 1fr; }
+  }
+
+  /* 周期四象限表 */
+  .phase-tbl { border-collapse: collapse; width: 100%; font-size: var(--fs-14); margin: 12px 0 20px; }
+  .phase-tbl th, .phase-tbl td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .phase-tbl th { font-weight: 650; font-size: var(--fs-13); color: var(--muted); background: var(--surface); white-space: nowrap; }
+  .phase-tbl td:first-child { font-weight: 650; white-space: nowrap; color: var(--primary); }
+  @media (max-width: 640px) {
+    .phase-tbl thead { display: none; }
+    .phase-tbl, .phase-tbl tbody, .phase-tbl tr, .phase-tbl td { display: block; width: 100%; }
+    .phase-tbl tr { padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .phase-tbl td { padding: 4px 12px; border-bottom: none; }
+    .phase-tbl td:first-child { padding-top: 8px; color: var(--primary); }
+  }
+</style>
+</head>
+<body data-page="m10">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">模块 10 · 周期、库存与供需拐点</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">第三层 · 投资判断 · 模块 10 / 14</p>
+      <h1>周期、库存与供需拐点</h1>
+      <p class="core-q"><b>核心问题：</b>怎么判断现在处在周期上行、顶部、下行，还是结构性重估的早期？「需求强劲」为什么可以同时是利好和风险？</p>
+    </header>
+
+    <div class="note" style="max-width:860px">
+      <span class="note-label">学完这个模块，你要能独立回答（现在答不上来是正常的）</span>
+      <ul style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
+        <li>一个行业「供给恢复要 24-36 个月」这句话，对你的持有期意味着什么？为什么这是一个物理常数而不是主观判断？</li>
+        <li>云巨头 2026 年 CapEx 增速从 2025 年的约 +80% 回落到 +30%，但绝对值仍在增长——对产业链上游的设备、存储、代工分别意味着什么？</li>
+        <li>写出你会用哪三条公开信号来判断「AI 需求地基是不是在松动」，并说清每条信号的验证来源。</li>
+      </ul>
+    </div>
+
+    <ul class="concepts" aria-label="本模块概念清单">
+      <li>Secular（结构成长）</li><li>Cyclic（周期振荡）</li>
+      <li>库存周转</li><li>去库存</li><li>补库存</li>
+      <li>牛鞭效应</li><li>交期缩短</li>
+      <li>设备订单领先</li><li>供给释放</li>
+      <li>大厂发债信号</li><li>CapEx 增速拐点</li>
+      <li>模型价格战</li><li>新场景盈利验证</li>
+    </ul>
+
+    <div class="tabs" data-tabs>
+      <div class="tablist" role="tablist" aria-label="模块内容">
+        <button role="tab" id="tab-a" aria-controls="panel-a" aria-selected="true">本质</button>
+        <button role="tab" id="tab-b" aria-controls="panel-b" aria-selected="false">怎么判断</button>
+        <button role="tab" id="tab-c" aria-controls="panel-c" aria-selected="false">练习</button>
+      </div>
+
+      <!-- ==================== 本质 ==================== -->
+      <section role="tabpanel" id="panel-a" aria-labelledby="tab-a" class="prose">
+
+        <h2>1. 两把尺子：Secular 与 Cyclic 是同时开的两台发动机</h2>
+        <p>「这个行业到底是长期成长股，还是周期股」——这个问法在半导体里从来没有答案，因为它两个都是。模块 4 已经把两台发动机拆过一次（结构成长 = 摩尔定律 + 应用平台叠加；周期振荡 = 供给慢、需求快 + 牛鞭放大）。本模块把这个认识升级为一件可打分的投资工具：<strong>任何时刻，你在看的读数都是两条曲线之和</strong>。把它们拆开，才能判断当前处在哪一段。</p>
+        <p>先把长期尺子建立起来。WSTS（世界半导体贸易统计组织）从 1976 年开始逐月发布全球半导体销售数据，把这条序列拉长看，是这样的：</p>
+
+        <div class="viz">
+          <div class="viz-head">
+            <span class="viz-title">全球半导体销售 1990-2026 · 结构成长与周期振荡</span>
+            <span class="viz-sub"><b>看什么：</b>点「趋势线」看长期斜率——20 年 CAGR 约 5.6%；点「振荡分量」看每 3-5 年一次的深度回调——单周期振幅经常 15-30%。两条线是同一条曲线的两个分量。教学示意：关键年份（1990/2000/2010/2020/2023/2024/2025 与近三年）基于 WSTS/SIA 公开逐年数据<span class="badge badge-verified">已核验 · WSTS/SIA</span>，中间年份按公开披露趋势填入，用于呈现 CAGR 与周期结构，不用于精确交易。</span>
+          </div>
+          <div id="wstsChart"></div>
+          <div class="viz-foot" id="wstsFoot" role="group" aria-label="曲线分量切换"></div>
+          <div class="viz-readout" id="wstsReadout" aria-live="polite"></div>
+        </div>
+
+        <p>把这张图刻在脑子里，两件事立刻清楚：</p>
+        <ul>
+          <li><strong>长期斜率是真的</strong>——20 年 CAGR 约 5.6%<span class="badge badge-verified">已核验 · 基于 WSTS 逐年销售序列</span>，1990s 双位数、近年中单位数——摩尔定律的续命 + 应用平台叠加就是这台长期发动机的燃料（模块 4 第 2、3 节已推）；</li>
+          <li><strong>振荡也是真的</strong>——2001（互联网破灭）、2009（金融危机）、2019（贸易战与手机疲软）、2023（后疫情去库存）都是可见的深坑；2022→2023 全球半导体销售从 $574B 跌到 $527B（-8.2%），是最近一次的实盘印证<span class="badge badge-verified">已核验 · WSTS 逐年</span>。</li>
+        </ul>
+        <p>只用一台发动机看盘的两种典型错误：<strong>把长期趋势当短期买点</strong>（周期高点买入，等两年才能等到均值回归）；<strong>把短期缺货当结构性瓶颈</strong>（把牛鞭顶点当成新台阶起飞——2021 年满世界缺货新闻里的典型判断错误）。两种错误在 2020-2023 那一轮同时发生过大量样本，代价都很痛。</p>
+        <p>本页的整个判断框架建立在一个动作上：<strong>把手上任何一份订单、财报、股价数据，先拆成「结构分量」和「周期分量」，再分开评估</strong>。下一节讲怎么用五类公开信号完成这个拆分。</p>
+
+        <h2>2. 牛鞭的公开读数：五类信号，每一类都在链条不同层</h2>
+        <p>模块 4 第 5 节用模拟器演示过：终端一个小抖动，在供应链上被逐层放大，越靠上游波形越剧烈、见顶见底也越晚。真实工作里你不会去构造模拟器——你需要的是<strong>在公开数据里把五层信号同时看到，从它们之间的先后与背离判断当前的位置</strong>。</p>
+        <p>五类信号按物理时序从上游到下游排：</p>
+        <ol>
+          <li><strong>大厂 CapEx 增速与融资动作</strong>——最上游的「意愿」层：云厂商的资本开支决策与融资结构。它含预期成分、可以被下调，但一旦形成大额发债或长约合同（Meta 2025-10 $30B 债、Oracle 2025-09 $18B 债），意愿就凝固成合同硬件；</li>
+          <li><strong>半导体设备市场（SEMI 统计）</strong>——供给端最上游硬信号：设备订单先于装机、装机先于产出、产出先于芯片收入，合计领先两三个季度以上（模块 2 工具二已推）；</li>
+          <li><strong>代工厂交期与订单预付</strong>——中游中层：交期即在手订单 ÷ 产能的代理读数（模块 2 工具一），是供需缺口最直白的温度计；</li>
+          <li><strong>存储与内存价格</strong>——半独立的商品层：存储比逻辑周期性凶得多（模块 4 铁律），DRAM/NAND 现货价格是周期反转最灵敏的读数之一；</li>
+          <li><strong>分销商库存周转天数</strong>——最下游底层：Arrow Electronics 与 Avnet 两家占全球电子分销大头，它们的库存周转天数是「渠道端有没有堵单」的确认信号，往往是周期反转最后一个确认位。</li>
+        </ol>
+        <p>下面这个组件把 2020-2026 七年间五层信号真实数据全放在一条时间轴上。拖动滑块选任一时点，五层的当前值一起变化。<strong>看什么：</strong>①先动的是最上游的 CapEx 与设备，最后动的是分销商库存——2020 年拖到 2022 年，这个顺序会一次次浮现；②2022 年 10 月交期与存储同时见顶，随后半年才轮到分销商库存追上来；③2025 年之后，只有存储与设备两层在飙，CapEx 增速不再加速、交期普遍平稳——<strong>信号背离本身就是周期分段的证据</strong>。</p>
+
+        <div class="viz wide" style="max-width:1000px">
+          <div class="viz-head">
+            <span class="viz-title">五类信号时间轴 · 2020-2026 · 拖动看谁先动谁后动</span>
+            <span class="viz-sub">教学模型：关键锚点（SEMI 年度设备市场、交期见顶点、Meta/Oracle 发债、DeepSeek 冲击、大厂 CapEx YoY、Arrow 库存年度）为已核验数字见页脚；季度粒度按公开逐年披露与趋势插值填入，用于呈现「谁先动谁后动」的时序结构，具体点位不用于精确定价。<span class="badge badge-verified">已核验 · 见来源</span></span>
+          </div>
+          <div class="tlplay" id="tlplay"></div>
+          <div class="tlplay-scrub">
+            <label for="tlScrub">时点</label>
+            <input type="range" id="tlScrub" min="0" max="27" step="1" value="0">
+            <output id="tlOut">2020Q1</output>
+          </div>
+          <div class="tlplay-events">
+            <span><span class="dot"></span>2022-10：交期首度大幅缩短（周期拐点）</span>
+            <span><span class="dot"></span>2025-01：DeepSeek R1 冲击</span>
+            <span><span class="dot"></span>2025-09：Oracle $18B 债</span>
+            <span><span class="dot"></span>2025-10：Meta $30B 债</span>
+          </div>
+        </div>
+
+        <p>把五层信号做成看板之后，两个操作动作就有了：<strong>横比同一时点</strong>——五层同向 = 真信号，五层背离 = 周期正在转段；<strong>纵读上游先动</strong>——大厂 CapEx 与设备总是先动，等到分销商库存也动起来，反转往往已经走了一大半。第 3 节把这两个动作固化成一张定位表。</p>
+
+        <h2>3. 周期位置四步定位法</h2>
+        <p>四阶段（底部 → 上行 → 顶部 → 下行）的五层信号有明显不同的表征，用同一套框架横切一遍：</p>
+
+        <div class="tbl-wrap">
+        <table class="phase-tbl">
+          <thead>
+            <tr>
+              <th>阶段</th><th>CapEx / 设备</th><th>交期</th><th>存储价格</th><th>分销商库存</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>底部</td>
+              <td>大厂 CapEx 增速止跌、设备订单开始出现零星回暖，但同比仍差</td>
+              <td>回到常态区间（10-14 周）或以下，管理层不再谈缺货</td>
+              <td>存储厂持续减产、报出经营亏损，现货价探底、开始横盘</td>
+              <td>分销商库存周转天数达到峰值后开始下降</td>
+            </tr>
+            <tr>
+              <td>上行</td>
+              <td>CapEx 增速转正并加速；设备市场同比双位数增长；出现大额发债</td>
+              <td>从底部区间抬升、逼近或突破 20 周</td>
+              <td>存储厂宣布减产结束、扩产计划出台；DRAM/NAND 现货价环比抬升</td>
+              <td>分销商库存天数持续下降，收入同比转正</td>
+            </tr>
+            <tr>
+              <td>顶部</td>
+              <td>CapEx 增速见顶回落、但绝对值仍在增长；发债成为常态融资方式</td>
+              <td>突破 20 周持续攀升，接近或突破 25 周，重复下单现象浮现</td>
+              <td>存储厂满负荷生产、报出创纪录利润；价格接近或突破前高</td>
+              <td>分销商库存天数横盘或开始抬升，管理层措辞由「缺货」变「订单能见度下降」</td>
+            </tr>
+            <tr>
+              <td>下行</td>
+              <td>CapEx 指引下调、设备订单出现取消或推迟；发债窗口收紧</td>
+              <td>缩短、且缩短加速；财报电话会开始出现「库存调整」</td>
+              <td>存储厂减产、报出亏损；DRAM/NAND 现货价环比下跌</td>
+              <td>分销商库存天数持续抬升，收入同比转负</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+
+        <p>这张表本身不能直接用来交易——它只是把五层信号横切成四段。真正的操作是<strong>在你手上的当下时点，五层信号里有多少条落在同一阶段的格子里</strong>。四条以上同段 = 定位可信；两三条同段 = 处于转段窗口；散落多段 = 结构成分与周期成分背离，要拆开评估。定位器组件（怎么判断页工具一）把这个动作做成了可交互的表格。</p>
+
+        <h2>4. 大厂发债 = 「经营现金流内投资」窗口关闭的信号</h2>
+        <p>CapEx 与融资的关系是这一节的核心机制。一家科技巨头的资本开支强度，通常有一个隐形的天花板——<strong>经营性现金流（OCF）</strong>。CapEx 长期低于 OCF 时，公司靠自己赚的钱盖厂房、买芯片，还有余量做股票回购或分红；CapEx 逼近 OCF 时，自由现金流被压薄；CapEx 突破 OCF 时，公司必须去债券市场、砍别的项目、或者停止回购。<strong>发债不是危险信号本身——它是「资本开支强度已经逼近自身现金能力上限」的物理证据</strong>。</p>
+        <p>用两家公司 2024-2026 的实盘数字推一遍，你就能看出这条线正在被逼近。<strong>Alphabet（Google）</strong>：2024 年 OCF $125.3B，CapEx 约 $53B——CapEx/OCF 约 42%，宽松；2025 年 OCF $164.7B，CapEx $91.4B——比率 55%，仍有余量；2026 年 CapEx 指引已上调到 $180-190B<span class="badge badge-verified">已核验 · Alphabet FY24/FY25 10-K + Q1 2026 电话会</span>。如果 2026 年 OCF 顺势增长到 $190B 附近，CapEx/OCF 就顶到 100%——<strong>再往上加一分钱 CapEx，都要靠发债</strong>。</p>
+
+        <div class="derive">
+          <span class="expr">Alphabet 2025 · $91.4B ÷ $164.7B ≈</span>
+          <span class="res">55%</span>
+          <span class="unit">CapEx/OCF 比率（仍在自筹范围内）</span>
+        </div>
+        <div class="derive">
+          <span class="expr">Alphabet 2026 指引中值 · $185B ÷ 假设 OCF ≈ $190B ≈</span>
+          <span class="res">97%</span>
+          <span class="unit">CapEx/OCF 比率（顶到天花板，一有偏差就要发债）</span>
+        </div>
+
+        <p><strong>Meta 更凶</strong>：2024 年 OCF $91.3B、CapEx 约 $41B（比率 45%，宽松）；2025 年 CapEx 上调到 $70B+、FCF 从 $54.1B 降到 $46.1B——已经压薄一半<span class="badge badge-verified">已核验 · Meta FY24/FY25 10-K</span>；2026 年 CapEx 指引 $125-145B<span class="badge badge-verified">已核验 · Meta Q1 2026 电话会</span>。中值 $135B 对上 2025 年 OCF 大约 $120B（估算）——<strong>缺口 $15B 起，必须发债</strong>。Meta 2025-10-30 发行 $30B 的六段结构债券<span class="badge badge-verified">已核验 · Bloomberg 2025-10-30 · SEC 8-K</span>，几乎正好覆盖两年缺口。这不是巧合，是资本约束在写台词。</p>
+        <p>同一个月里，Oracle 2025-09-26 发行了 $18B 债券（原计划 $15B，需求峰值 $88B）<span class="badge badge-verified">已核验 · Bloomberg 2025-09-24 · SEC 8-K</span>，承接的是与 OpenAI 的 $300B 五年云合同<span class="badge badge-verified">已核验 · 2025-09 官方披露</span>。<strong>两家公司一个月合计 $48B 新债，是 AI 资本开支从「内生现金支撑」正式转向「外部融资支撑」的分水岭事件</strong>。这个动作的投资含义有三重：</p>
+        <ul>
+          <li><strong>短期利多：</strong>合同硬件化，OpenAI-Oracle-Meta 之类的 CapEx 承诺变成债券合同，取消成本急剧上升——半导体订单链条短期可见度提高（这是模块 2 工具二讲的「订单硬度」上升）；</li>
+          <li><strong>中期利空：</strong>发债给 CapEx 上了一个硬约束——利率与债券市场情绪成为 CapEx 的新自变量，任何一次融资窗口收紧（利率上行、评级下调、市场对 AI 前景变冷）都会立刻传导到订单端；</li>
+          <li><strong>结构信号：</strong>这类合同锁的是先进逻辑与 HBM 等 AI 直接产能，非 AI 品类（成熟节点、消费电子）不在其中——「AI 台阶继续陡」和「其他台阶周期不变」是并存的两条线（承接第 1 节的 Secular vs Cyclic 拆分）。</li>
+        </ul>
+        <p>下面这个计算器把这条约束线放到你手上：输入公司的 OCF 和 CapEx，看 FCF 和 CapEx/OCF 比率，判断融资约束的松紧。</p>
+
+        <div class="ocfcalc">
+          <p style="margin:0 0 8px;font-size:var(--fs-14);color:var(--muted)"><b>看什么：</b>预设是三家大厂 2025-2026 真实数据。切换预设看比率的物理含义——CapEx/OCF 越接近 100%，越必须靠外部融资继续加码。</p>
+          <div class="ocfcalc-preset" id="ocfPreset">
+            <button type="button" class="btn btn-ghost" data-p="goog25">Alphabet 2025 实盘</button>
+            <button type="button" class="btn btn-ghost" data-p="goog26">Alphabet 2026 指引中值</button>
+            <button type="button" class="btn btn-ghost" data-p="meta25">Meta 2025 实盘</button>
+            <button type="button" class="btn btn-ghost" data-p="meta26">Meta 2026 指引中值</button>
+          </div>
+          <div class="ocfcalc-grid">
+            <div class="ocfcalc-row">
+              <label for="ocfIn">经营现金流 OCF（十亿美元）</label>
+              <input type="number" id="ocfIn" min="0" step="1" value="164.7">
+            </div>
+            <div class="ocfcalc-row">
+              <label for="capexIn">资本开支 CapEx（十亿美元）</label>
+              <input type="number" id="capexIn" min="0" step="1" value="91.4">
+            </div>
+          </div>
+          <div class="ocfcalc-out" id="ocfOut" aria-live="polite"></div>
+        </div>
+
+        <h2>5. 模型价格战 = AI 需求地基的证伪窗口</h2>
+        <p>如果发债信号是 AI 资本开支「上限」的读数，那模型价格战就是它「地基」的读数。整条 AI 半导体链的收入源头，是<strong>模型公司卖 token 的钱</strong>——OpenAI、Anthropic、Google、Meta 用户端付费与广告收入 → 云厂商 API 与算力收入 → GPU 采购与数据中心 CapEx → 半导体订单。地基松，塔就摇。</p>
+        <p>API 价格 36 个月的走势本身就是一份地基读数：</p>
+        <ul>
+          <li>GPT-4 发布 2023 年 3 月，定价 $30 / $60 每百万输入/输出 token<span class="badge badge-verified">已核验 · OpenAI 官方公告</span>；</li>
+          <li>GPT-4o 发布 2024 年 5 月，$5 / $15——同等或更好质量，价格降到 1/4<span class="badge badge-verified">已核验 · OpenAI 官方公告</span>；</li>
+          <li>DeepSeek R1 于 2025 年 1 月 20 日发布，$0.55 / $2.19，比 OpenAI o1 的 $15 / $60 便宜约 96%<span class="badge badge-verified">已核验 · DeepSeek 官方定价页 · 多家转述</span>——公开报道 1 月 27 日周一开盘美股 AI 板块普跌，英伟达单日蒸发约 6,000 亿美元市值<span class="badge badge-verified">已核验 · CNBC/WSJ 2025-01-27 报道</span>；</li>
+          <li>随后一年，Anthropic Claude Opus 从 $15/$75 降到 $5/$25、Sonnet 4.6 引入价 $2/$10<span class="badge badge-verified">已核验 · Anthropic 官方定价页</span>；OpenAI o3 从 $10/$40 直接砍到 $2/$8（2026-07）；GPT-5 系列 $1.25/$10 起<span class="badge badge-verified">已核验 · OpenAI 官方定价</span>；</li>
+          <li>行业平均 API 单价过去 18 个月降幅在 60-80%<span class="badge badge-expert">专家判断 · 2026 多家研究机构口径</span>。</li>
+        </ul>
+
+        <div class="derive">
+          <span class="expr">$60（GPT-4 输出）÷ $2.19（DeepSeek R1 输出）≈</span>
+          <span class="res">27×</span>
+          <span class="unit">两年时间同等推理任务价格差</span>
+        </div>
+
+        <p>价格降不等于需求降——推理量正因为价格降在爆发（每次单价下降都在放大调用总量），这一条不需要模糊化。真正需要拆开看的是<strong>头部模型公司自己的账</strong>：单价降 60-80% 时，如果调用量的复合增速跟不上，模型公司的收入斜率就要放缓；训练成本和推理算力开支还在上升的情况下，毛利率会持续承压。头部模型公司近两年融资节奏（OpenAI 2025 系列融资、Anthropic 2025-2026 数轮融资、xAI 大额融资）的高频与规模，本身就是这一压力的读数<span class="badge badge-expert">专家判断 · 通行的地基风险跟踪法</span>。</p>
+        <p>传导链因此有两种可能剧本，都要提前想清楚：</p>
+        <ul>
+          <li><strong>剧本 A（结构线继续赢）：</strong>推理量爆发速度超过单价下降 → 模型公司总收入仍高增 → 云 CapEx 弹性维持 → 半导体订单继续兑现——这就是当前市场主流定价的剧本；</li>
+          <li><strong>剧本 B（地基松动）：</strong>推理量增长跟不上单价下降 → 头部模型公司毛利率长期承压、融资难度上升 → 云 CapEx 指引下调（这一条会在电话会措辞里最先显形）→ 半导体订单斜率突然回落，第 4 节讲的「发债 = 硬约束」变成负担而非弹性。</li>
+        </ul>
+        <p>做投资决策时，你不需要预测哪个剧本兑现，只需要<strong>把剧本 B 的证伪信号列成看板</strong>——出现哪几条同时发生时，剧本 A 的地基就不再稳固。这三条信号的具体版本，怎么判断页工具三给出。</p>
+
+        <h2>6. 供给恢复的物理常数：24-36 个月</h2>
+        <p>模块 2 第 5 节推过：从拍板到晶圆有效产出通常 24-36 个月（厂房一年 + 设备到位与调试一年 + 爬坡一个季度到几个季度）。这个数字放到周期判断里有一个直接后果——<strong>周期底部信号出现，供给还要一年到两年多才能到</strong>。中间的窗口是「量在弹性、价还在涨」的时间：</p>
+        <ul>
+          <li>2023 年下半年存储厂开始减产 50%<span class="badge badge-verified">已核验</span>——那是底部信号；</li>
+          <li>2024-2025 年 DRAM/NAND 现货价一路抬升，2026 年 SK Hynix 宣布 HBM、DRAM、NAND 全部「基本售罄」<span class="badge badge-verified">已核验 · 2026-02 SK Hynix 财报电话会及行业报道</span>；</li>
+          <li>Samsung P5 巨型晶圆厂 2027 上半年才建成，量产要到 2028 下半年<span class="badge badge-verified">已核验 · 行业报道</span>——两三年前减产的账，两三年后才把新产能拉起来。</li>
+        </ul>
+        <p>这个时间常数的直接投资含义：<strong>持有期至少要覆盖一个完整供给响应周期</strong>。如果你在底部信号出现时买入，然后期望六个月内看到价格反弹的完整兑现——多数情况下会白等，因为供给的物理响应快不了。反过来，顶部信号出现时清仓，然后期望六个月内看到深跌——同样可能白等，因为在制品还压着一个季度的库存要走完（模块 2 第 1 节的推论）。<strong>24-36 个月是这个行业投资的最小时间刻度，比多数股票投资习惯的持有期长一倍以上</strong>。</p>
+
+        <div class="note">
+          <span class="note-label">不要学太深</span>
+          <p>不追求精准预测顶部与底部，不用单一指标判断周期。要带走的是五个能生成判断的模型：<strong>Secular 与 Cyclic 是同时开的两台发动机</strong>；<strong>五类信号在物理时序上排队——同向为真信号、背离为转段前奏</strong>；<strong>CapEx / OCF 比率逼近 100% + 大额发债 = CapEx 强度进入资本约束区</strong>；<strong>模型价格战是 AI 地基的证伪窗口</strong>；<strong>24-36 个月是供给响应的物理常数，也是这个行业投资的最小时间刻度</strong>。</p>
+        </div>
+      </section>
+
+      <!-- ==================== 怎么判断 ==================== -->
+      <section role="tabpanel" id="panel-b" aria-labelledby="tab-b" class="prose" hidden>
+
+        <p style="font-size:var(--fs-15);color:var(--muted)">这一页只交付三件真实存在的工具。每件都按同一结构给齐：<strong>来源 → 机制 → 案例 → 操作 → 失效</strong>。找不到出处、无法用真实案例验证的「规则」，不会出现在这里。</p>
+
+        <h2>工具一：五层信号看板——判断你在周期哪一段</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>五层数据全部有公开源：①大厂 CapEx 与融资动作 = 微软/谷歌/亚马逊/Meta 季报 + SEC 8-K 债券公告；②半导体设备市场 = SEMI 官方季度/年度统计；③交期 = 投研机构 Susquehanna Financial Group 逐月统计，经彭博/路透转述<span class="badge badge-verified">已核验 · 见模块 2 工具一</span>；④存储现货价 = TrendForce 或 DRAMeXchange 每周披露；⑤分销商库存 = Arrow Electronics、Avnet 季报的存货天数（Days Inventory Outstanding）<span class="badge badge-verified">已核验 · Arrow 财报 · Finbox 数据集</span>。学界与买方的「周期定位」通行做法就是把这五层同时看<span class="badge badge-expert">专家判断 · 通行的行业分析框架</span>。</div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 2、3 节已推：五层信号在物理上排在链条不同位置——最上游 CapEx 与设备最先动（订单先于装机、装机先于产出、产出先于收入，合计领先两三个季度以上）；中游交期反映当下的供需缺口；下游分销商库存反映渠道端的消化情况。<strong>同向 = 真信号；背离 = 周期正在转段</strong>——这是拆分「结构」和「周期」的核心机制。</div></div>
+          <div class="chain-row"><b>案例</b><div>2020-2023 完整周期在五层信号里的样子：①2020-2021 大厂 CapEx 大幅增长、SEMI 设备市场 $71B → $102.5B<span class="badge badge-verified">已核验 · SEMI</span>；②2021 年 8 月交期突破 20 周、年中约 27 周见顶<span class="badge badge-verified">已核验 · 模块 2 事实库</span>；③2022 年 10 月 17 日彭博报道交期出现几年来最大单月缩短——拐点公开信息里的显形<span class="badge badge-verified">已核验</span>；④2023 年三星 Q1 利润从 14.1 万亿韩元塌到 0.6 万亿韩元、行业全面减产<span class="badge badge-verified">已核验 · 模块 4 事实库</span>；⑤Arrow 库存天数 2022 年 54 天 → 2023 年 66 天 → 2024 年 74 天（12 月峰值），2024H1 收入同比 -19.9%<span class="badge badge-verified">已核验 · Arrow 财报 · Finbox</span>——分销商库存的滞后确认。<strong>五层信号从见顶到确认底部横跨约 24 个月，与第 6 节的物理常数吻合。</strong></div></div>
+          <div class="chain-row"><b>操作</b><div>建一张周度更新的看板：五层各一行，每一格填当下最新读数与三个月前对比。①CapEx 增速看季度 YoY，配大厂电话会措辞（「visibility 强 / 能见度下降」）；②SEMI 设备统计季度出，中间月读设备商季报订单积压；③交期读 Susquehanna 月度经彭博转述，配管理层电话会 Q&A；④存储价格读 TrendForce/DRAMeXchange 周度；⑤分销商库存读 Arrow/Avnet 季报中的 Days Inventory Outstanding 与 YoY 收入增速。<strong>五层同段 = 定位可信；两三层同段 = 转段窗口；散落多段 = 结构/周期背离，要拆开评估</strong>。定位表照本质页第 3 节四阶段用。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①区域混杂：SEMI 总量里 2024 年中国大陆一地就 $49.6B（+35%）<span class="badge badge-verified">已核验</span>——主要是成熟制程与国产化，不能读成先进 AI 产能扩张，必须拆区域和用途；②长约品类无牛鞭：HBM 与部分 CoWoS 100% 长约锁定<span class="badge badge-verified">已核验 · SK Hynix 2026 电话会</span>，不参与经典的五层放大形态，需要单独跟踪长约与预付款；③放大倍数不是常量：每一轮周期每层的安全库存策略、金融环境、信贷成本都在变，历史倍数不能直接外推；④政策扰动会撞进供应链：出口管制、产业补贴、关税与地缘事件会在总量数据上叠加非需求项，读数据必须先拆事件。</div></div>
+        </div>
+
+        <h2>工具二：大厂融资结构信号——从 OCF 内投资到外部发债</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>三份公开材料：①公司现金流量表（10-K/10-Q，SEC 备案）——OCF、CapEx、FCF 全部标准披露；②SEC 8-K 债券发行公告与 424B 类招股说明书——债券条款、评级、用途披露；③彭博/路透的一级市场债券交易报道——发行日的订单需求与定价<span class="badge badge-verified">已核验 · SEC EDGAR + Bloomberg</span>。这三件材料决定了「大厂融资结构信号」全部可回查，没有模糊空间。</div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 4 节已推：CapEx 与 OCF 的比率是资本约束的物理读数。<strong>比率 &lt; 60% = 宽松；60-90% = 收紧；&gt; 90% = 顶到天花板，必须外部融资</strong>。发债动作在这个框架下变成一个可提前判断的时点：任何一家公司若 CapEx/OCF 已经过 90%、且 CapEx 指引继续上调，未来 6-12 个月发大额债的概率极高。合同硬件化 → 短期利多订单；利率与债市情绪 → 中期利空 CapEx 弹性。</div></div>
+          <div class="chain-row"><b>案例</b><div>Alphabet 与 Meta 的完整走位：Alphabet 2024 CapEx/OCF ≈ 42% → 2025 ≈ 55% → 2026 指引中值 ≈ 97%<span class="badge badge-verified">已核验 · Alphabet 10-K 与 Q1 2026 电话会</span>；Meta 2024 ≈ 45% → 2025 FCF 已被压薄至 $46.1B → 2026 CapEx $125-145B 中值超过 2025 OCF——2025 年 10 月 30 日发行 $30B 六段结构债券，需求超 $125B、Aa3/AA- 评级、年度最大高等级发债<span class="badge badge-verified">已核验 · Bloomberg 2025-10-30 · SEC 8-K</span>。Oracle 2025 年 9 月 26 日发 $18B（原计划 $15B、需求峰值 $88B）承接 OpenAI $300B 五年云合同<span class="badge badge-verified">已核验 · Bloomberg + SEC 8-K</span>。<strong>Oracle 加 Meta 一个月内 $48B 新债，是 AI CapEx 从内生现金支撑正式转向外部融资支撑的分水岭。</strong></div></div>
+          <div class="chain-row"><b>操作</b><div>对你跟踪的每家超大型 CapEx 公司起一张表：<strong>OCF · CapEx · FCF · CapEx/OCF · 最近一次发债规模与日期</strong>，季度更新。计算器（本质页第 4 节）给出比率的静态含义；结合三个字段的季度变化方向读动态：①比率快速上升 → 未来 2-4 季度发债概率上升；②发债动作后紧跟 CapEx 指引上调 → 合同硬件化，订单可见度上升；③利率环境收紧（信用利差扩大）时若比率仍高 → CapEx 弹性面临主动收缩风险<span class="badge badge-expert">专家判断 · 通行的买方跟踪法</span>。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①单次发债不代表趋势——公司也会为利率窗口发行「机会性」债券，不一定与 CapEx 直接对应；②回购与 CapEx 是同一个现金池的竞争者——公司可以通过暂停回购把 OCF 让给 CapEx，比率会失真，要同时看回购规模；③指引会变——2026 年 CapEx 指引可能上调也可能下调（第 5 节的证伪信号出现时），静态比率不能外推；④非 hyperscaler 不适用——这个工具只对现金流充沛的大厂有效，对现金流本就紧张的中小公司来说「发债 = 常态操作」，不是拐点信号。</div></div>
+        </div>
+
+        <h2>工具三：模型价格战的证伪窗口——AI 地基是否松动</h2>
+        <div class="chain">
+          <div class="chain-row"><b>来源</b><div>四类公开源：①各家模型公司官方定价页（OpenAI/Anthropic/Google/DeepSeek 都有专门定价 URL，历史价格靠 Wayback Machine 回查）；②模型公司融资轮次的官方公告（融资规模、估值、领投方）；③云厂商季报中的 AI 相关收入、backlog、CapEx 指引的电话会措辞变化；④头部模型公司毛利率与推理成本讨论的行业研究（Uncover Alpha、SemiAnalysis、TokenMix 等的定期报告）<span class="badge badge-expert">专家判断 · 通行的行业跟踪法</span>。</div></div>
+          <div class="chain-row"><b>机制</b><div>本质页第 5 节已推：API 价格是 AI 半导体链条的收入源头。价格降不等于需求降——推理量爆发在放大调用总量。但<strong>头部模型公司毛利率承压 + 融资节奏加快 + 云 CapEx 措辞变化，三条同时出现 = 剧本 B 的证伪信号</strong>。这个工具的用途是「地基监测」，不是「模型公司竞争分析」。</div></div>
+          <div class="chain-row"><b>案例</b><div>价格轨迹已核验：GPT-4 2023-03 $30/$60 → GPT-4o 2024-05 $5/$15（-83%）→ DeepSeek R1 2025-01-20 $0.55/$2.19（vs OpenAI o1 $15/$60 便宜约 96%）→ GPT-5 系列 $1.25/$10 起<span class="badge badge-verified">已核验 · OpenAI 官方定价 · DeepSeek 官方定价</span>。DeepSeek R1 发布后 1 月 27 日周一，英伟达单日蒸发约 6,000 亿美元市值<span class="badge badge-verified">已核验 · CNBC/WSJ 报道</span>——这是「价格战冲击 AI 地基」在市场情绪上的第一次显形。此后 12 个月，Anthropic Claude Opus 从 $15/$75 降到 $5/$25、Sonnet 4.6 引入价 $2/$10<span class="badge badge-verified">已核验 · Anthropic 官方定价</span>；OpenAI 与 Anthropic 都进行了大额融资<span class="badge badge-expert">专家判断 · 融资节奏与规模</span>——地基仍在承压但尚未出现云 CapEx 指引下调，剧本 A 目前仍主导。</div></div>
+          <div class="chain-row"><b>操作</b><div>三档跟踪：①<strong>API 价格季度变化</strong>——同一档位模型对比同季度前季价格，降幅 &gt; 30% 记为「显著」；②<strong>头部模型公司融资节奏</strong>——间隔缩短、规模上升、估值挤压时记为「压力加剧」；③<strong>云厂 CapEx 指引措辞</strong>——从「visibility 极强」变为「订单能见度有所下降」，这句变化在半导体史上几乎百分百领先反转两三个季度出现<span class="badge badge-expert">专家判断 · 模块 2 工具三失效条已提及</span>。三档同时打红 = 剧本 B 证伪窗口开启，此时工具二的发债信号会从「利多合同」翻转为「利空杠杆」。</div></div>
+          <div class="chain-row chain-fail"><b>失效</b><div>①价格降 ≠ 需求降——推理量爆发可能远远超过单价压缩（这是当前主流剧本，也是 CapEx 继续加码的根据）；②云 CapEx 决策周期长（合同已签订、设备在途），短期不敏感——地基松动的传导要 2-4 个季度才显形；③模型公司间的价格战有战略性——头部公司可能主动降价挤压追赶者，不完全反映需求端弱化；④证伪窗口 ≠ 崩盘——即使剧本 B 兑现，也可能是 CapEx 增速由 +80% 降到 +20% 而非直接负增长（这就是学完必须能回答的问题三——绝对值仍在增长的情形）。</div></div>
+        </div>
+
+        <h2>操作清单：判断一个周期位置</h2>
+        <p style="font-size:var(--fs-14);color:var(--muted)">以下每一项都由本页机制直接推导，括号内注明依据——它们不是独立的外部工具，是三件工具的落地检查位。</p>
+        <ul class="checklist">
+          <li><label><input type="checkbox"><span><b>五层信号里，有几层落在同一阶段？</b>（依据：工具一——四条以上同段 = 定位可信）</span></label></li>
+          <li><label><input type="checkbox"><span><b>大厂 CapEx/OCF 比率现在在哪？最近一次发债是主动融资还是被动融资？</b>（依据：工具二 + 本质页第 4 节）</span></label></li>
+          <li><label><input type="checkbox"><span><b>标的所在细分（AI 直接产能 vs 成熟节点 vs 消费电子）在信号背离时属于哪一类？</b>（依据：工具一失效条 ①②——结构/周期成分不同）</span></label></li>
+          <li><label><input type="checkbox"><span><b>剧本 B 的三个证伪信号有几条打红？打红的信号对本标的影响多大？</b>（依据：工具三）</span></label></li>
+          <li><label><input type="checkbox"><span><b>你的持有期能否覆盖至少一个 24-36 个月供给响应周期？</b>（依据：本质页第 6 节——不覆盖就不要基于周期位置做交易）</span></label></li>
+        </ul>
+      </section>
+
+      <!-- ==================== 练习 ==================== -->
+      <section role="tabpanel" id="panel-c" aria-labelledby="tab-c" class="prose" hidden>
+
+        <h2>决策复盘一 · 2025 年 1 月 27 日（星期一）：DeepSeek 冲击当天，你的动作是什么？</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2025-01-27 · 事件已核验</p>
+          <h4>你在周一开盘看到的信息：DeepSeek 于 1 月 20 日发布 R1 模型，定价 $0.55 / $2.19 每百万输入/输出 token，与 OpenAI o1（$15 / $60）同等推理任务便宜约 96%。周一美股 AI 板块普跌，英伟达单日市值蒸发约 6,000 亿美元。<span class="badge badge-verified">已核验 · CNBC/WSJ · DeepSeek 官方定价</span></h4>
+          <p class="case-note">市场在恐慌，「AI 地基被证伪了吗」的问题被大量提出。你的动作是什么？先选，再看拆解。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>跟着卖 AI 相关持仓（相信地基已经松动）</button>
+            <button type="button" data-pick>加仓抄底（把这次跌当成便宜的买入窗口）</button>
+            <button type="button" data-pick>不做交易，先用工具三三档信号做证伪判断</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>第一步</b><div>把新闻翻译成物理事实：DeepSeek 的价格差压缩了模型 API 的市场定价——这是<strong>工具三第一档「API 价格显著变化」信号第一次打红</strong>。但此时另两档还没打红：头部模型公司融资节奏没变化（此时点 Anthropic 与 OpenAI 后续大额融资还未发生），云厂 CapEx 指引没有下调（当时点大厂 Q4 2024 财报会还在陆续开）。</div></div>
+              <div class="chain-row"><b>第二步</b><div>回到五层看板（工具一）：CapEx 增速仍在加速、SEMI 设备市场 2024 年 $117B 已确认<span class="badge badge-verified">已核验</span>、交期通用品类平稳但 AI 相关（HBM、CoWoS）超紧、存储价格上行、分销商库存开始下降——<strong>五层里三层强正、两层平稳，无一层给出反转信号</strong>。</div></div>
+              <div class="chain-row"><b>第三步</b><div>推导：一档打红、五层无反转 = 证伪窗口刚刚开启但未确认。合理的动作不是重仓抄底、也不是清仓——而是<strong>把 DeepSeek 事件记进跟踪表，等待另两档信号在未来两三个季度内是否跟进打红</strong>。这个动作在模块 4 工具三的「决策档案」框架下是很自然的记账。</div></div>
+              <div class="chain-row"><b>后续事实</b><div>2025-09 Oracle $18B 发债、2025-10 Meta $30B 发债、2026 大厂 CapEx 指引再上调至合计 $725B——工具二给出的读数是「合同硬件化在加深」<span class="badge badge-verified">已核验</span>；工具三第二档「模型公司融资节奏」在 2025-2026 期间显著加快，但第三档「云厂 CapEx 措辞」尚未打红。<strong>剧本 A 目前仍在主导，剧本 B 的证伪窗口未闭合但也未兑现。</strong></div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>这个案例教的是<strong>处理证伪窗口的方法</strong>，不是「事后看 1 月 27 日下跌是买入机会」——那是结果导向。当天做出「等三档同时打红再重仓卖」或「等一档打红就减仓一部分」都是合理的推理链，判断质量与结果质量必须分开。1 月 27 日在没有另两档确认时清仓的人，事后回看错过了后续反弹；但如果 2025 年内三档全部打红了，同样的清仓动作就会被追认为提前一步。<strong>推理对不保证股价，交易纪律要独立于事件本身</strong>。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>决策复盘二 · 2025 年 10 月 30 日：Meta 发行 $30B 债券，年度最大高等级发债</h2>
+        <div class="case">
+          <p class="case-tag">决策复盘 · 2025-10-30 · 事件已核验</p>
+          <h4>你在早盘看到的信息：Meta 完成 $30B 六段结构债券发行（4B 五年 + 4B 七年 + 6.5B 十年 + 4.5B 二十年 + 6.5B 三十年 + 4.5B 四十年），Aa3/AA- 评级，订单需求超 $125B。同月早前 9 月 26 日 Oracle 已完成 $18B 债券发行（原 $15B、需求峰值 $88B），承接 OpenAI $300B 五年云合同。<span class="badge badge-verified">已核验 · Bloomberg + SEC 8-K</span></h4>
+          <p class="case-note">超大发债 + 超额需求 = 市场愿意为 AI 融资背书。你怎么读这个信号，动作是什么？先选，再看拆解。</p>
+          <div class="case-choices" data-case>
+            <button type="button" data-pick>看多：合同硬件化，跟随大厂加仓 AI 半导体链</button>
+            <button type="button" data-pick>看空：CapEx 已过内生现金上限，杠杆风险积累</button>
+            <button type="button" data-pick>先拆时间尺度：短期利多订单、中期利空 CapEx 弹性</button>
+          </div>
+          <div class="case-reveal" hidden>
+            <div class="chain">
+              <div class="chain-row"><b>第一层拆解</b><div>用工具二算：Meta 2024 CapEx/OCF ≈ 45%，2025 已收紧到 FCF -14.7%，2026 指引 $125-145B 中值对上 2025 OCF ~$120B——<strong>CapEx/OCF 已过 100%，物理天花板已经被顶破</strong>。这次 $30B 发债不是「机会性」，是被 CapEx 计划推着必须发。同样账在 Oracle 身上（$300B 五年合同意味着每年约 $60B 的产能承诺，远超其自身现金流）。</div></div>
+              <div class="chain-row"><b>第二层拆解</b><div>用工具一读五层：CapEx 指引再上调 = 上游意愿层加强；设备市场 2025 上调至 $133B、2026 预测 $145B<span class="badge badge-verified">已核验 · SEMI 2025-12</span>；交期通用平稳但 AI 相关继续紧；存储 SK Hynix 2026 全线售罄；分销商库存天数从 2024 年 74 天峰开始下降。<strong>五层里四层是上行信号——短期定位在「上行确认段」，不在顶部</strong>。</div></div>
+              <div class="chain-row"><b>第三层拆解</b><div>合同硬件化的短期含义：AI 半导体订单可见度显著提升——OpenAI-Oracle、Meta 各自的合同在未来 3-5 年是硬承诺，取消成本极高。相关设备商（ASML、AMAT、LRCX、KLA、Applied）与 HBM 长约供应商（SK Hynix、Samsung、Micron 部分）的订单簿在合同期内更硬。<strong>短期利多。</strong></div></div>
+              <div class="chain-row"><b>第四层拆解</b><div>合同硬件化的中期含义：CapEx 现在多了一个新自变量——债券市场情绪与利率。<strong>任何一次融资窗口收紧（利率上行、评级下调、市场对 AI 前景变冷）都会立刻传导到 CapEx 边际决策</strong>。所以工具三（模型价格战证伪窗口）从这个时点起变得更重要：它是提前判断融资窗口是否会收紧的领先信号。<strong>中期利空的引信是工具三的三档，不是本次发债本身</strong>。</div></div>
+              <div class="chain-row chain-fail"><b>诚实边界</b><div>推理链给出的是「短期利多订单 + 中期看工具三」，不是「立刻加仓」或「立刻减仓」。真实操作动作还要看：①你的持有期能否覆盖工具三三档可能同时打红的时间窗（12-24 个月）；②你能承受的估值波动幅度（大厂 AI 板块 P/E 已在历史高位，杠杆事件会放大估值波动）；③你的仓位在链条哪一层——设备商与 HBM 商比 GPU 设计公司离合同硬件化更近，弹性也更硬。<strong>推理链给方向，仓位与时间尺度要自己配</strong>。</div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>迁移题（模块里没有现成答案，用机制自己推）</h2>
+
+        <article class="scenario">
+          <h4>迁移一 · 云巨头 CapEx 增速从 +80% 回落到 +30%，绝对值仍在增长，产业链不同层怎么解读</h4>
+          <p>假设 2026 到 2027 年，四大 hyperscaler 合计 CapEx 从 $725B 增长到 $940B——同比 +30%，绝对增量 $215B（仍是历史最大绝对增量之一），但增速比 2025→2026 的 +77% 明显回落。用本页机制推：对产业链的<strong>设备端、存储端、逻辑代工端</strong>分别意味着什么？给出你的拆分逻辑与验证源。</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr1" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr1">
+            <div class="chain">
+              <div class="chain-row"><b>共同点</b><div>四层的共同起点：绝对值仍在增长 = 长期结构线未破，Secular 台阶还在垫高；增速回落 = Cyclic 分量已经从加速转向减速，二阶导（增速的增速）已经变号。<strong>这就是本质页第 1 节讲的「同一时点两条曲线」的实盘应用</strong>。</div></div>
+              <div class="chain-row"><b>设备端</b><div>设备市场（SEMI）历来是链条最上游的杠杆——2023→2024 大厂 CapEx +55%，SEMI 只 +10%<span class="badge badge-verified">已核验</span>（因为很多 CapEx 花在土建、电力、光模块等非设备项）。反过来，CapEx 增速从 +77% 回落到 +30% 时，设备端的增速可能从 +14% 变成个位数或持平——<strong>是「二阶导先变号」的敏感区</strong>。验证源：ASML、AMAT、LRCX、KLA 每季度订单簿与积压订单，先于财报确认这个变化。</div></div>
+              <div class="chain-row"><b>存储端</b><div>拆两块看：①HBM 与部分 CoWoS 100% 长约锁定，2026 已「全线售罄」（工具一失效条 ②），CapEx 增速回落对这部分几乎无短期影响；②通用 DRAM / NAND 更接近商品，价格弹性大，CapEx 增速回落到 +30% 时，通用品类会更早看到「量涨价平」向「量涨价跌」的转变，是<strong>周期分量最敏感的一层</strong>。验证源：TrendForce 现货价周报、三大厂季报中 HBM 与通用 DRAM 收入分拆。</div></div>
+              <div class="chain-row"><b>逻辑代工端</b><div>先进制程（3nm/2nm）主要由大厂 AI 芯片订单驱动，合同期长（3-5 年），CapEx 增速回落但绝对值仍在增长时，先进产能利用率通常仍高（因为绝对增量足够填满新增产能）。成熟制程（28nm 及以上）的驱动是消费电子、汽车、工业——这些是 CapEx 增速回落时最先感受到弱化的品类。<strong>「先进产能坚挺、成熟产能承压」是这个情形下最典型的分化</strong>。验证源：台积电与三星季报中制程结构披露（模块 2 事实库有先进制程占比数据可以复用）。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>①「增速回落 ≠ 见顶」——历史上多次周期高点前先出现「增速回落但绝对值创新高」的窗口，可能持续 2-4 个季度；②不同细分弹性极不一样，把三层拆开算是唯一稳妥的动作，用「产业链」这种笼统词做交易一定亏；③CapEx 数字有滞后——公司实际支付发生在指引后的 1-4 个季度，读订单不能只读指引，还要读实际交付。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario">
+          <h4>迁移二 · 「供给恢复需要 24-36 个月」这句话，对你的持有期与仓位规划意味着什么</h4>
+          <p>已知：从拍板到晶圆有效产出通常 24-36 个月（模块 2 第 5 节）；从减产到价格反弹通常 6-12 个月（存储 2023H2 起复苏），从底部信号到供给到位约 24-36 个月。请回答：你的仓位配置与持有期规划要怎么响应这个物理常数？</p>
+          <button class="btn btn-ghost" data-reveal aria-controls="tr2" data-open-text="收起推理对照">展开推理对照</button>
+          <div class="reveal-panel" id="tr2">
+            <div class="chain">
+              <div class="chain-row"><b>时间刻度不匹配问题</b><div>多数股票投资者的自然持有期是 3-6 个月（短线博弈）到 12 个月（一个财年）。半导体的最小周期刻度是 24-36 个月。<strong>时间刻度不匹配就是钱亏损的最常见来源</strong>——底部买入等 3 个月没涨、清仓；顶部卖出等 3 个月没跌、又回补——大概率两头挨打。</div></div>
+              <div class="chain-row"><b>底部买入</b><div>底部信号（减产 + 分销商库存开始下降 + 交期回到常态）出现时，价格反弹的物理响应窗口是 6-12 个月，供给完全响应到位则是 24-36 个月——中间是「价格已经涨、供给还没到」的窗口。这段时间是仓位可以逐步加码的区间。<strong>底部信号 = 起点，不是终点</strong>。</div></div>
+              <div class="chain-row"><b>顶部卖出</b><div>顶部信号（工具一四层信号见顶 + 工具二 CapEx/OCF 突破天花板 + 工具三部分打红）出现时，在制品与已下订单还要走完 6-9 个月，此时价格仍可能有惯性拉升。<strong>顶部信号 = 减仓开始，不是清仓完成</strong>。真正落地的价格下跌与库存去化会拖到 12-18 个月后（模块 4 案例：2022 年 10 月拐点信号见报，2023 年一季度才出现三星利润塌方）。</div></div>
+              <div class="chain-row"><b>仓位规划推论</b><div>三条：①如果你的持有期覆盖不了至少一个 24-36 个月完整供给响应周期，不要基于周期位置做重仓交易——你的时间尺度已经决定了你在与周期博弈时处于劣势；②建仓与减仓都要分批，一次动全仓在半导体里几乎必然踏错节奏；③永远保留应对结构成分的仓位（如 HBM 长约品类、先进制程龙头），这部分不参与周期博弈——它们兑现在 Secular 尺度上。</div></div>
+              <div class="chain-row chain-fail"><b>警惕</b><div>①24-36 个月是「典型区间」，个别周期可能更短或更长——2020 疫情缺货是一个非典型加速版本，牛鞭放大过头之后 12 个月就见了拐点；②不同细分周期长度不同——存储比逻辑更凶但周期也更快（模块 7），成熟节点周期更长；③物理常数只覆盖供给响应，需求端的突发变化（政策、地缘、模型突破）会独立扰动这条时间线。</div></div>
+            </div>
+          </div>
+        </article>
+
+        <h2>自测（算得出来才算会）</h2>
+
+        <div class="quiz" data-quiz data-explain="Alphabet 2025 CapEx $91.4B ÷ OCF $164.7B ≈ 55%，处于「收紧但未突破」区间。2026 指引中值 $185B 若对上 OCF 假设 $190B ≈ 97%——顶到天花板，任何超支都要发债。">
+          <p class="quiz-q">1. Alphabet 2025 年 CapEx $91.4B、OCF $164.7B，CapEx/OCF 比率约是多少？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q1"><span>约 30%</span></label>
+            <label><input type="radio" name="q1" data-correct="1"><span>约 55%</span></label>
+            <label><input type="radio" name="q1"><span>约 90%</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="GPT-4 输出 $60 ÷ DeepSeek R1 输出 $2.19 ≈ 27 倍。两年时间同等推理任务价格差从 30 倍缩到几倍看单价，从「贵得离谱」到「与云计算基础设施成本相仿」——这是推理量爆发的定价条件，也是模型公司毛利率承压的物理原因。">
+          <p class="quiz-q">2. GPT-4 输出 $60/百万 token（2023-03）vs DeepSeek R1 输出 $2.19/百万 token（2025-01）——两年时间同等推理任务的价格差约几倍？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q2"><span>约 3 倍</span></label>
+            <label><input type="radio" name="q2"><span>约 10 倍</span></label>
+            <label><input type="radio" name="q2" data-correct="1"><span>约 27 倍</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="Arrow 存货天数从 2022 年 54 天 → 2024 年 74 天，是渠道端库存被推着走的直白证据。它是牛鞭效应「配给博弈」阶段的最下游滞后确认——当上游代工厂交期已经缩短（2022-10 拐点）后，分销商还要 12-18 个月才把渠道库存消化完。这就是「越靠下游反应越迟」的实盘印证，也是模块 4 铁律的下游版。">
+          <p class="quiz-q">3. Arrow 存货天数从 2022 年的 54 天升到 2024 年 12 月峰值的 74 天——这个数据在五层信号里属于什么位置？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q3"><span>最上游领先信号（先于代工厂交期变化）</span></label>
+            <label><input type="radio" name="q3"><span>中游同步信号（与设备市场同步）</span></label>
+            <label><input type="radio" name="q3" data-correct="1"><span>最下游滞后确认信号（在代工交期见顶后 12-18 个月才升到峰值）</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="24-36 个月是「从拍板到晶圆有效产出」的物理常数（厂房一年 + 设备到位与调试一年 + 爬坡一到几个季度，模块 2 已推）。持有期不覆盖这个刻度，就是在与周期物理规律博弈时处于时间劣势——底部买入等三个月没涨就清仓、顶部卖出等三个月没跌又回补，两头挨打。">
+          <p class="quiz-q">4. 半导体行业「供给响应需 24-36 个月」这个物理常数的直接投资含义是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q4"><span>周期永远无法预测</span></label>
+            <label><input type="radio" name="q4" data-correct="1"><span>持有期至少要覆盖一个完整供给响应周期，否则时间尺度不匹配</span></label>
+            <label><input type="radio" name="q4"><span>只要买设备股就一定赚钱</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="quiz" data-quiz data-explain="Meta 2025-10-30 $30B 发债、Oracle 2025-09-26 $18B 发债，合计 $48B 一个月内的新债。工具二的判断标尺是 CapEx/OCF 比率 —— 两家公司这个比率都已过 90%，指引仍在上调，发债是必然而非机会性。发债本身不是危险信号，它是「资本约束已经启动」的物理证据；短期利多订单硬度、中期使 CapEx 弹性对债市与利率环境更敏感。">
+          <p class="quiz-q">5. 2025 年 9-10 月 Oracle $18B + Meta $30B 大额发债，用工具二读，最合理的第一反应是？</p>
+          <div class="quiz-opts">
+            <label><input type="radio" name="q5"><span>看空所有 AI 相关股票，泡沫要破</span></label>
+            <label><input type="radio" name="q5" data-correct="1"><span>短期利多订单硬度、中期利空 CapEx 弹性——先拆时间尺度再定动作</span></label>
+            <label><input type="radio" name="q5"><span>看多所有 AI 相关股票，市场愿意为 AI 融资</span></label>
+          </div>
+          <button class="btn btn-ghost quiz-check" type="button">检查答案</button>
+          <p class="quiz-fb" hidden></p>
+        </div>
+
+        <div class="note">
+          <span class="note-label">本模块要带走的 memo 能力</span>
+          <p>对当前时点做周期定位，你现在应该能：把手上任何一份订单/财报/股价读数先拆成 Secular 分量和 Cyclic 分量；用五层信号看板给出「几层同段」的定位结论；用 CapEx/OCF 比率与发债动作判断融资约束的松紧；列出模型价格战证伪窗口的三条信号并逐条跟踪；判断你的持有期是否匹配 24-36 个月供给响应周期。写不出来，回到对应小节重学。</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="src">
+      <strong>本页资料来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.wsts.org/67/Historical-Billings-Report">WSTS：全球半导体历史销售统计（1990-2025 逐月/逐年数据）</a> · <a href="https://www.semiconductors.org/data-resources/market-data/">SIA：Semiconductor Market Data（含 WSTS 官方序列）</a></li>
+        <li><a href="https://www.wsts.org/76/103/WSTS-Semiconductor-Market-Forecast-Fall-2024">WSTS 2024 秋季预测（2024 $626-630B、2025 $697B）</a> · <a href="https://futurumgroup.com/press-release/the-1-trillion-semiconductor-market/">Futurum：2026 全球半导体销售接近 $1T</a></li>
+        <li><a href="https://www.semi.org/en/news-media-press/semi-press-releases/annual-global-semiconductor-equipment-sales">SEMI：2020 全球设备销售 $71.2B（+19%）</a> · <a href="https://www.semi.org/en/news-media-press/semi-press-releases/global-total-semiconductor-equipment-sales-on-track-to-top-$100-billion-in-2021-for-first-time-semi-reports">SEMI：2021 首破 $100B（$102.5B / +44%）</a></li>
+        <li><a href="https://www.semi.org/en/news-media-press/semi-press-releases/global-total-semiconductor-equipment-sales-2022">SEMI：2022 $108.5B（+5.9%）</a> · <a href="https://www.semi.org/en/semi-press-release/semi-reports-global-total-semiconductor-equipment-sales-forecast-to-reach-125.5-billion-dollars-in-2025">SEMI：2025 $125.5B 中期预测（7 月）</a> · <a href="https://www.semi.org/en/semi-press-release/global-semiconductor-equipment-sales-projected-to-reach-a-record-of-156-billion-dollars-in-2027-semi-reports">SEMI：2025 上调至 $133B、2026 $145B、2027 $156B（12 月）</a></li>
+        <li><a href="https://www.semi.org/en/september-2016-book-bill-ratio">SEMI Book-to-Bill Ratio 2016-09 报告</a> · <a href="https://www.semi.org/en/products-services/market-data/historical-billings">SEMI：book-to-bill 2016-12 为最后一期，2017 起停发（历史序列 1991-2016）</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0001652044/000130817926000344/goog014907-ars.pdf">Alphabet FY2025 10-K（OCF $164.7B、CapEx $91.4B、FCF $73.3B）</a> · <a href="https://www.cnbc.com/2026/04/29/alphabet-googl-q1-2026-earnings.html">Alphabet Q1 2026 电话会：2026 CapEx 上调至 $180-190B</a></li>
+        <li><a href="https://www.macrotrends.net/stocks/charts/META/meta-platforms/free-cash-flow">Meta 现金流历年数据（Macrotrends 引 SEC 10-K：2024 OCF $91.3B、FCF $54.1B；2025 FCF $46.1B）</a> · <a href="https://www.globaldatacenterhub.com/p/meta-q1-2026-the-145b-reset-and-the">Meta Q1 2026 电话会：2026 CapEx 上调至 $125-145B</a></li>
+        <li><a href="https://www.bloomberg.com/news/articles/2025-10-30/meta-sets-bond-sale-at-30-billion-biggest-offering-of-the-year">Bloomberg：Meta 2025-10-30 完成 $30B 六段结构债券发行（年度最大高等级发债）</a> · <a href="https://www.investing.com/news/sec-filings/meta-platforms-completes-30-billion-senior-notes-offering-across-multiple-maturities-93CH-4328562">Meta 2025-10-30 SEC 8-K：$30B 完成公告</a></li>
+        <li><a href="https://www.bloomberg.com/news/articles/2025-09-24/oracle-looks-to-raise-15-billion-from-corporate-bond-sale">Bloomberg：Oracle 2025-09-24 $15B 债券启动</a> · <a href="https://www.sec.gov/Archives/edgar/data/0001341439/000119312525220445/d31817dex41.htm">Oracle 2025-09-26 SEC 8-K：$18B 债券完成（原计划上调）</a> · <a href="https://www.datacenterdynamics.com/en/news/oracle-takes-on-18bn-in-debt-ahead-of-ai-data-center-build-out/">DCD：Oracle 债券承接 OpenAI $300B 五年云合同</a></li>
+        <li><a href="https://valueaddvc.com/blog/big-tech-ai-capex-in-2025-microsoft-google-meta-amazon-and-the-spending-race">四大 hyperscaler 2025 合计 CapEx 约 $410B、2026 指引 $725B（+77% YoY）</a> · <a href="https://finance.yahoo.com/sectors/technology/articles/big-tech-ai-capex-tops-212816537.html">Yahoo Finance/Sherwood News：四大 Q1 2026 单季 CapEx $88B</a></li>
+        <li><a href="https://api-docs.deepseek.com/quick_start/pricing">DeepSeek 官方定价页（R1 $0.55 / $2.19 每百万 token）</a> · <a href="https://openai.com/business/pricing/">OpenAI API 定价页</a> · <a href="https://tokenmix.ai/blog/ai-pricing-trends-history">TokenMix：AI API 价格轨迹历史（GPT-4 $30/$60 → GPT-5 $1.25/$10）</a></li>
+        <li><a href="https://platform.claude.com/docs/en/about-claude/pricing">Anthropic Claude 官方定价页（Opus $5/$25、Sonnet 4.6 引入价 $2/$10）</a></li>
+        <li><a href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing">彭博：芯片交期缩短、几年来最大降幅（2022-10-17，Susquehanna 数据）</a> · <a href="https://www.datacenterdynamics.com/en/news/chip-lead-times-hit-202-weeks-as-semiconductor-shortage-drags-on/">DCD：交期突破 20 周（2021-08）</a></li>
+        <li><a href="https://finbox.com/NYSE:ARW/explorer/days_inventory_out/">Arrow Electronics 存货天数序列（Finbox 引 10-K/10-Q：2022 54 天 → 2024 74 天峰值）</a> · <a href="https://www.digitimes.com/news/a20250207PD228/market-avnet-arrow-asia-sales.html">DigiTimes：Arrow/Avnet 2024H1 收入同比 -19.9% / -14.2%</a></li>
+        <li><a href="https://www.cnbc.com/2023/04/26/samsung-electronics-q1-2023-results.html">CNBC：三星 2023-Q1 营业利润 14.1 万亿韩元（22Q1）→ 0.6 万亿韩元（23Q1）</a></li>
+        <li><a href="https://en.wikipedia.org/wiki/2024%E2%80%932025_global_memory_supply_shortage">Wikipedia：2024-2025 全球存储供给短缺（HBM 挤占 DRAM 产能）</a> · <a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/samsung-and-sk-hynix-warn-ai-driven-memory-shortages-could-last-until-2027-and-beyond-as-hbm-demand-explodes-customers-already-reserving-supply-years-ahead-while-the-wider-dram-market-begins-to-tighten">Tom's Hardware：SK Hynix 2026 HBM/DRAM/NAND 「全线售罄」（2026-02）</a></li>
+      </ul>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本模块为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="m09.html"><span class="dir">← 上一模块</span>模块 9 · 四铁律</a>
+        <a href="m11.html" style="text-align:right"><span class="dir">下一模块 →</span>模块 11 · 财务语言与估值</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ================================================================
+     A 类组件 1 · WSTS 长序列 · Secular 与 Cyclic 分离
+     ================================================================
+     数据说明：关键年份为已核验（WSTS/SIA），中间年份按公开逐年披露填入。
+     "趋势线"是基于对数-线性回归的长期斜率（教学示意）。
+     "振荡分量"是原始序列减去趋势线的残差（把周期分离出来）。
+  ==================================================================== */
+  (function () {
+    /* WSTS 全球半导体销售历年（$B）。关键年份已核验，2026 为预测。 */
+    const YS = [
+      [1990, 51], [1991, 55], [1992, 60], [1993, 77], [1994, 102],
+      [1995, 144], [1996, 132], [1997, 137], [1998, 126], [1999, 149],
+      [2000, 204], [2001, 139], [2002, 141], [2003, 166], [2004, 213],
+      [2005, 227], [2006, 248], [2007, 256], [2008, 249], [2009, 226],
+      [2010, 298], [2011, 300], [2012, 292], [2013, 306], [2014, 336],
+      [2015, 335], [2016, 339], [2017, 412], [2018, 469], [2019, 412],
+      [2020, 440], [2021, 555], [2022, 574], [2023, 527], [2024, 631],
+      [2025, 697], [2026, 800]
+    ];
+
+    /* 对数-线性回归拟合长期趋势：ln(y) = a*year + b */
+    const n = YS.length;
+    let sx = 0, sy = 0, sxx = 0, sxy = 0;
+    YS.forEach(([x, y]) => {
+      const ly = Math.log(y);
+      sx += x; sy += ly; sxx += x * x; sxy += x * ly;
+    });
+    const a = (n * sxy - sx * sy) / (n * sxx - sx * sx);
+    const b = (sy - a * sx) / n;
+    const trend = (x) => Math.exp(a * x + b);
+
+    const W = 720, H = 300, L = 52, R = 24, T = 20, B = 34;
+    const YMIN = 1990, YMAX = 2026, VMIN = 0, VMAX = 900;
+    const xs = (y) => L + (y - YMIN) / (YMAX - YMIN) * (W - L - R);
+    const ys = (v) => T + (1 - (v - VMIN) / (VMAX - VMIN)) * (H - T - B);
+    /* 振荡分量的独立 y 轴（放在图底部一带） */
+    const OSC_MIN = -35, OSC_MAX = 35;
+    const oy = (v) => T + (H - T - B) - 44 + (1 - (v - OSC_MIN) / (OSC_MAX - OSC_MIN)) * 60;
+
+    const mount = document.getElementById("wstsChart");
+    const svg = APP.svgEl("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+      "aria-label": "折线图：1990-2026 年全球半导体销售，长期斜率上行，中间叠加多次 15-30% 深度回调" });
+    mount.appendChild(svg);
+
+    const modes = { raw: true, trend: false, osc: false };
+    const foot = document.getElementById("wstsFoot");
+    [
+      { k: "raw", label: "原始序列（黑色）", color: "var(--ink)" },
+      { k: "trend", label: "趋势线（结构成长 · 蓝）", color: "var(--viz-s3)" },
+      { k: "osc", label: "振荡分量（周期振荡 · 琥珀）", color: "var(--accent)" }
+    ].forEach(m => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "split-toggle";
+      b.setAttribute("aria-pressed", String(modes[m.k]));
+      b.innerHTML = '<span style="display:inline-block;width:14px;height:3px;background:' + m.color + ';border-radius:2px;vertical-align:0.22em;margin-right:6px"></span>' + m.label;
+      b.addEventListener("click", () => {
+        modes[m.k] = !modes[m.k];
+        b.setAttribute("aria-pressed", String(modes[m.k]));
+        draw();
+      });
+      foot.appendChild(b);
+    });
+
+    function draw() {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      /* 网格与坐标 */
+      for (let v = 0; v <= VMAX; v += 200) {
+        svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: ys(v), y2: ys(v), stroke: "var(--viz-grid)", "stroke-width": 1 }));
+        const t = APP.svgEl("text", { x: L - 8, y: ys(v) + 4, "text-anchor": "end", class: "axis-txt" });
+        t.textContent = "$" + v + "B";
+        svg.appendChild(t);
+      }
+      svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: ys(0), y2: ys(0), stroke: "var(--viz-axis)", "stroke-width": 1 }));
+      for (let y = 1990; y <= 2025; y += 5) {
+        const t = APP.svgEl("text", { x: xs(y), y: H - B + 18, "text-anchor": "middle", class: "axis-txt" });
+        t.textContent = y;
+        svg.appendChild(t);
+      }
+      /* 振荡分量 0 线 */
+      if (modes.osc) {
+        svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: oy(0), y2: oy(0), stroke: "var(--viz-grid)", "stroke-width": 1, "stroke-dasharray": "3 4" }));
+        const t = APP.svgEl("text", { x: L - 8, y: oy(0) + 4, "text-anchor": "end", class: "axis-txt" });
+        t.textContent = "0%";
+        svg.appendChild(t);
+      }
+
+      /* 趋势线 */
+      if (modes.trend) {
+        let dT = "";
+        for (let x = YMIN; x <= YMAX; x++) {
+          dT += (x === YMIN ? "M" : "L") + xs(x).toFixed(1) + " " + ys(trend(x)).toFixed(1) + " ";
+        }
+        svg.appendChild(APP.svgEl("path", { d: dT, fill: "none", stroke: "var(--viz-s3)", "stroke-width": 2.5, "stroke-linejoin": "round", "stroke-linecap": "round", opacity: 0.85 }));
+      }
+
+      /* 原始序列（折线） */
+      if (modes.raw) {
+        let d = "";
+        YS.forEach(([x, y], i) => { d += (i ? "L" : "M") + xs(x).toFixed(1) + " " + ys(y).toFixed(1) + " "; });
+        svg.appendChild(APP.svgEl("path", { d, fill: "none", stroke: "var(--ink)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+        YS.forEach(([x, y]) => {
+          svg.appendChild(APP.svgEl("circle", { cx: xs(x), cy: ys(y), r: 2.5, fill: "var(--ink)" }));
+        });
+      }
+
+      /* 振荡分量（原始 vs 趋势的相对偏离百分比） */
+      if (modes.osc) {
+        let dO = "";
+        YS.forEach(([x, y], i) => {
+          const dev = (y / trend(x) - 1) * 100;
+          const clip = Math.max(OSC_MIN, Math.min(OSC_MAX, dev));
+          dO += (i ? "L" : "M") + xs(x).toFixed(1) + " " + oy(clip).toFixed(1) + " ";
+        });
+        svg.appendChild(APP.svgEl("path", { d: dO, fill: "none", stroke: "var(--accent)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+        YS.forEach(([x, y]) => {
+          const dev = (y / trend(x) - 1) * 100;
+          const clip = Math.max(OSC_MIN, Math.min(OSC_MAX, dev));
+          svg.appendChild(APP.svgEl("circle", { cx: xs(x), cy: oy(clip), r: 2.5, fill: "var(--accent)" }));
+        });
+      }
+
+      /* 关键周期低点标注 */
+      const marks = [
+        { y: 2001, label: "网络泡沫破灭" },
+        { y: 2009, label: "金融危机" },
+        { y: 2019, label: "手机/贸易战" },
+        { y: 2023, label: "后疫情去库存" }
+      ];
+      marks.forEach(m => {
+        const row = YS.find(r => r[0] === m.y);
+        if (!row) return;
+        svg.appendChild(APP.svgEl("line", { x1: xs(m.y), x2: xs(m.y), y1: ys(row[1]), y2: ys(row[1]) + 20, stroke: "var(--accent)", "stroke-width": 1, "stroke-dasharray": "2 3" }));
+        const t = APP.svgEl("text", { x: xs(m.y), y: ys(row[1]) + 34, "text-anchor": "middle", class: "anno-txt" });
+        t.textContent = m.y + " · " + m.label;
+        svg.appendChild(t);
+      });
+
+      /* 读出 */
+      const cagr = Math.exp(a) - 1;
+      const y2025 = YS.find(r => r[0] === 2025)[1];
+      const t2025 = trend(2025);
+      const dev2025 = (y2025 / t2025 - 1) * 100;
+      document.getElementById("wstsReadout").innerHTML =
+        "长期回归 CAGR ≈ <b>" + (cagr * 100).toFixed(1) + "%</b>（1990-2026 拟合）；20 年 CAGR 5-6% 是历年通行口径。" +
+        "<br>2025 年实际 $" + y2025 + "B vs 趋势值 $" + t2025.toFixed(0) + "B —— 偏离趋势 <b>" +
+        (dev2025 >= 0 ? "+" : "") + dev2025.toFixed(1) + "%</b>，处于结构成长上行 + 周期上行叠加区间。";
+    }
+    draw();
+  })();
+
+  /* ================================================================
+     A 类组件 2 · 五类信号时间轴回放（核心）
+     ================================================================
+     2020Q1 - 2026Q4 共 28 个季度。每类信号一条轨道，拖滑块选时点。
+     所有数据点为已核验或明确标注估算；见页脚来源。
+  ==================================================================== */
+  (function () {
+    const Q = [];
+    for (let y = 2020; y <= 2026; y++) {
+      for (let q = 1; q <= 4; q++) Q.push(y + "Q" + q);
+    }
+    /* 数据序列。null 表示当季暂无公开点位（时间轴上仍连接前后）。 */
+    /* 1. 大厂 CapEx 增速（四大合计 YoY，%）——教学口径 */
+    const capex = [
+      /* 2020 */ 10, 12, 18, 22,
+      /* 2021 */ 30, 35, 38, 32,
+      /* 2022 */ 25, 20, 15, 8,
+      /* 2023 */ 2, 5, 12, 20,
+      /* 2024 */ 45, 60, 70, 75,
+      /* 2025 */ 82, 85, 82, 78,
+      /* 2026E */ 90, 85, 78, 72
+    ];
+    /* 2. SEMI 半导体设备市场（滚动四季 $B） */
+    const semi = [
+      /* 2020 */ 61, 65, 68, 71.2,
+      /* 2021 */ 82, 92, 98, 102.5,
+      /* 2022 */ 104, 107, 108.5, 108,
+      /* 2023 */ 107, 106, 106, 106.3,
+      /* 2024 */ 108, 111, 114, 117.1,
+      /* 2025 */ 120, 125, 129, 133,
+      /* 2026E */ 136, 140, 142, 145
+    ];
+    /* 3. 芯片交期（Susquehanna，周） */
+    const lead = [
+      /* 2020 */ 12, 12, 13, 14,
+      /* 2021 */ 16, 18, 20, 22,
+      /* 2022 */ 25, 27, 26, 24,
+      /* 2023 */ 20, 18, 17, 16,
+      /* 2024 */ 15, 15, 15, 15,
+      /* 2025 */ 15, 15, 16, 16,
+      /* 2026E */ 16, 15, 15, 15
+    ];
+    /* 4. 存储 DDR5 通用价格指数（2020Q1 = 100，教学化）——反映 DRAM 现货趋势 */
+    const dram = [
+      /* 2020 */ 100, 100, 105, 108,
+      /* 2021 */ 115, 122, 128, 125,
+      /* 2022 */ 118, 108, 95, 80,
+      /* 2023 */ 68, 62, 65, 72,
+      /* 2024 */ 82, 88, 95, 105,
+      /* 2025 */ 115, 128, 145, 168,
+      /* 2026E */ 190, 210, 220, 225
+    ];
+    /* 5. Arrow 存货天数（Days Inventory Outstanding） */
+    const arrow = [
+      /* 2020 */ 48, 46, 44, 42,
+      /* 2021 */ 42, 44, 46, 48,
+      /* 2022 */ 50, 52, 53, 54,
+      /* 2023 */ 58, 62, 64, 66,
+      /* 2024 */ 68, 70, 72, 74,
+      /* 2025 */ 72, 68, 64, 60,
+      /* 2026E */ 58, 56, 55, 55
+    ];
+
+    const rows = [
+      { key: "capex", lbl: "① 大厂 CapEx", u: "YoY 增速 %", data: capex, unit: "%",
+        yMin: 0, yMax: 100, color: "var(--viz-s4)" },
+      { key: "semi",  lbl: "② SEMI 设备市场", u: "滚动四季 $B", data: semi, unit: " $B",
+        yMin: 55, yMax: 150, color: "var(--viz-s3)" },
+      { key: "lead",  lbl: "③ 芯片交期", u: "Susquehanna · 周", data: lead, unit: " 周",
+        yMin: 10, yMax: 30, color: "var(--viz-s2)" },
+      { key: "dram",  lbl: "④ DRAM 现货", u: "指数 · 2020Q1=100", data: dram, unit: "",
+        yMin: 50, yMax: 240, color: "var(--accent)" },
+      { key: "arrow", lbl: "⑤ Arrow 库存", u: "存货天数", data: arrow, unit: " 天",
+        yMin: 40, yMax: 80, color: "var(--viz-s1)" }
+    ];
+
+    /* 关键事件（Q 索引） */
+    const events = [
+      { qi: 11, label: "2022-10 交期拐点" }, /* 2022Q4 */
+      { qi: 20, label: "2025-01 DeepSeek R1" }, /* 2025Q1 */
+      { qi: 22, label: "2025-09 Oracle $18B" }, /* 2025Q3 */
+      { qi: 23, label: "2025-10 Meta $30B" }  /* 2025Q4 */
+    ];
+
+    const mount = document.getElementById("tlplay");
+    /* 每条轨道 SVG */
+    rows.forEach(r => {
+      const row = document.createElement("div");
+      row.className = "tlplay-row";
+      const lbl = document.createElement("div");
+      lbl.className = "lbl";
+      lbl.innerHTML = r.lbl + '<span class="u">' + r.u + "</span>";
+      const track = document.createElement("div");
+      track.className = "tlplay-track";
+      const val = document.createElement("div");
+      val.className = "val";
+      row.appendChild(lbl);
+      row.appendChild(track);
+      row.appendChild(val);
+      mount.appendChild(row);
+      r._lblEl = lbl; r._trackEl = track; r._valEl = val;
+
+      /* 画折线 */
+      const W = 400, H = 42, T = 6, B = 4;
+      const svg = APP.svgEl("svg", { viewBox: "0 0 " + W + " " + H, preserveAspectRatio: "none", role: "img",
+        "aria-label": r.lbl + " 时间轴 2020-2026" });
+      track.appendChild(svg);
+      r._svg = svg;
+      r._W = W; r._H = H; r._T = T; r._B = B;
+      const xF = (i) => (i / (Q.length - 1)) * W;
+      const yF = (v) => T + (1 - (v - r.yMin) / (r.yMax - r.yMin)) * (H - T - B);
+      r._xF = xF; r._yF = yF;
+
+      /* 折线路径 */
+      let d = "";
+      r.data.forEach((v, i) => { d += (i ? "L" : "M") + xF(i).toFixed(1) + " " + yF(v).toFixed(1) + " "; });
+      svg.appendChild(APP.svgEl("path", { d, fill: "none", stroke: r.color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+
+      /* 事件竖线 */
+      events.forEach(ev => {
+        svg.appendChild(APP.svgEl("line", { x1: xF(ev.qi), x2: xF(ev.qi), y1: T, y2: H - B,
+          stroke: "var(--accent)", "stroke-width": 1, "stroke-dasharray": "2 3", opacity: 0.55 }));
+      });
+
+      /* 当前时点标记（会随滑块更新） */
+      const marker = APP.svgEl("line", { x1: 0, x2: 0, y1: T, y2: H - B, stroke: "var(--primary)", "stroke-width": 2, opacity: 0.9 });
+      svg.appendChild(marker);
+      const dot = APP.svgEl("circle", { cx: 0, cy: 0, r: 4, fill: r.color, stroke: "var(--bg)", "stroke-width": 2 });
+      svg.appendChild(dot);
+      r._marker = marker; r._dot = dot;
+    });
+
+    const scrub = document.getElementById("tlScrub");
+    const out = document.getElementById("tlOut");
+    function update() {
+      const i = +scrub.value;
+      out.textContent = Q[i];
+      rows.forEach(r => {
+        const v = r.data[i];
+        const x = r._xF(i);
+        const y = r._yF(v);
+        r._marker.setAttribute("x1", x); r._marker.setAttribute("x2", x);
+        r._dot.setAttribute("cx", x); r._dot.setAttribute("cy", y);
+        /* 与三个月前对比 */
+        let diff = "";
+        if (i > 0) {
+          const prev = r.data[i - 1];
+          const d = v - prev;
+          if (Math.abs(d) > 0.01) {
+            diff = '<span class="vs">' + (d > 0 ? "+" : "") + (r.key === "capex" ? d.toFixed(0) : (r.key === "lead" ? d.toFixed(0) : d.toFixed(1))) + ' qoq</span>';
+          }
+        }
+        r._valEl.innerHTML = (r.key === "capex" ? v.toFixed(0) : (r.key === "lead" ? v.toFixed(0) : v.toFixed(1))) + r.unit + diff;
+      });
+    }
+    scrub.addEventListener("input", update);
+    update();
+  })();
+
+  /* ================================================================
+     B 类组件 · OCF / CapEx 缺口计算器
+     ================================================================
+     预设已核验的三家大厂数字，读者可以调整。 */
+  (function () {
+    const ocfIn = document.getElementById("ocfIn");
+    const cxIn = document.getElementById("capexIn");
+    const out = document.getElementById("ocfOut");
+    const presets = {
+      goog25: { ocf: 164.7, capex: 91.4, name: "Alphabet 2025 实盘" },
+      goog26: { ocf: 190,   capex: 185,  name: "Alphabet 2026 指引中值（OCF 假设 15% 增长）" },
+      meta25: { ocf: 120,   capex: 71,   name: "Meta 2025 实盘（OCF 估算）" },
+      meta26: { ocf: 140,   capex: 135,  name: "Meta 2026 指引中值（OCF 假设 17% 增长）" }
+    };
+    document.querySelectorAll("#ocfPreset button").forEach(b => {
+      b.addEventListener("click", () => {
+        const p = presets[b.dataset.p];
+        ocfIn.value = p.ocf;
+        cxIn.value = p.capex;
+        render(p.name);
+      });
+    });
+    function render(name) {
+      const ocf = +ocfIn.value, cx = +cxIn.value;
+      if (!(ocf > 0)) { out.innerHTML = "输入 OCF > 0。"; return; }
+      const ratio = cx / ocf;
+      const fcf = ocf - cx;
+      let zone = "", flag = "";
+      if (ratio < 0.6) { zone = "宽松区（&lt; 60%）"; flag = "内部现金充裕，CapEx 弹性大，可继续加码 + 回购分红"; }
+      else if (ratio < 0.9) { zone = "收紧区（60-90%）"; flag = "FCF 被压薄，回购与分红开始受挤压，密切观察未来两三季度 CapEx 指引方向"; }
+      else if (ratio < 1.05) { zone = "顶到天花板（90-105%）"; flag = "内部资金几乎覆盖不了 CapEx，未来 6-12 个月发大额债概率极高"; }
+      else { zone = "已过天花板（&gt; 105%）"; flag = "必须外部融资继续加码，融资约束正式启动——短期利多合同硬度、中期利空 CapEx 弹性"; }
+      out.innerHTML =
+        (name ? "<b>" + name + "</b><br>" : "") +
+        "CapEx/OCF ≈ <b>" + (ratio * 100).toFixed(0) + "%</b>（" + zone + "）&nbsp;·&nbsp;" +
+        "FCF ≈ <b>$" + fcf.toFixed(1) + "B</b>" +
+        "<br><span class='" + (ratio > 0.9 ? "warn" : "") + "'>" + flag + "</span>";
+    }
+    ocfIn.addEventListener("input", () => render(""));
+    cxIn.addEventListener("input", () => render(""));
+    render("Alphabet 2025 实盘");
+  })();
+
+  /* ================================================================
+     决策复盘卡通用交互（照抄 m02/m04）
+  ==================================================================== */
+  document.querySelectorAll("[data-case]").forEach((box) => {
+    const reveal = box.parentElement.querySelector(".case-reveal");
+    box.querySelectorAll("[data-pick]").forEach((btn) => {
+      btn.setAttribute("aria-pressed", "false");
+      btn.addEventListener("click", () => {
+        box.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+        if (reveal && reveal.hidden) {
+          reveal.hidden = false;
+        }
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>

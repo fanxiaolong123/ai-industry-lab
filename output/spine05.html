@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卡 5 · 渠道逐层放大订单波动</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 卡 5 专属样式 ---------- */
+
+  /* 骨架卡的一句话钩子：正文顶部的横条 */
+  .oneliner {
+    background: var(--primary-tint);
+    border-left: 3px solid var(--primary);
+    padding: 14px 18px;
+    margin: 0 0 24px;
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    font-size: var(--fs-16);
+  }
+  .oneliner b { color: var(--primary); }
+
+  /* 牛鞭拐点信号板 · 五阶段步进器 */
+  .whip-panel {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin: 6px 0 14px;
+  }
+  .whip-step {
+    appearance: none;
+    font: inherit;
+    text-align: left;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+    padding: 8px 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--ink);
+    transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
+  }
+  .whip-step:hover { background: var(--surface-2); }
+  .whip-step .idx { font-size: var(--fs-12); color: var(--muted); font-weight: 600; letter-spacing: .04em; }
+  .whip-step .name { font-size: var(--fs-13); font-weight: 650; line-height: 1.35; }
+  .whip-step[aria-pressed="true"] {
+    border-color: var(--primary-2);
+    background: var(--primary-tint);
+  }
+  .whip-step[aria-pressed="true"] .idx { color: var(--primary); }
+  .whip-step[aria-pressed="true"] .name { color: var(--primary); }
+  @media (max-width: 640px) {
+    .whip-panel { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* 信号板"读什么/常见误读"两栏 */
+  .whip-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .whip-two > div {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+    padding: 12px 14px;
+    font-size: var(--fs-14);
+    line-height: 1.7;
+  }
+  .whip-two > div b {
+    display: block;
+    font-size: var(--fs-12);
+    font-weight: 650;
+    color: var(--muted);
+    margin-bottom: 4px;
+    letter-spacing: .04em;
+  }
+  .whip-two .whip-read b { color: var(--primary); }
+  .whip-two .whip-miss b { color: var(--accent-ink); }
+  .whip-two .whip-miss { background: var(--accent-tint); border-color: oklch(0.88 0.05 75); }
+  @media (max-width: 640px) { .whip-two { grid-template-columns: 1fr; } }
+
+  /* 卡片脚注：来源一行 */
+  .card-src {
+    background: var(--surface);
+    border-left: 3px solid var(--muted);
+    padding: 12px 16px;
+    margin: 32px 0 20px;
+    font-size: var(--fs-13);
+    color: var(--muted);
+    border-radius: 0 var(--radius-s) var(--radius-s) 0;
+    line-height: 1.75;
+  }
+  .card-src b { color: var(--ink); font-weight: 650; margin-right: 4px; }
+
+  /* 练习卡 */
+  .card-drill {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 18px 22px;
+    margin: 14px 0;
+    background: var(--bg);
+  }
+  .card-drill h4 { font-size: var(--fs-16); font-weight: 650; margin-bottom: 8px; }
+  .card-drill .tag {
+    font-size: var(--fs-12);
+    font-weight: 650;
+    color: var(--primary);
+    letter-spacing: .04em;
+    margin-right: 8px;
+  }
+  .card-drill p { font-size: var(--fs-15); margin: 0 0 6px; }
+  .card-drill .hint {
+    font-size: var(--fs-13);
+    color: var(--muted);
+    background: var(--surface);
+    border-radius: var(--radius-s);
+    padding: 8px 12px;
+    margin-top: 10px;
+  }
+
+  /* 徽章之间的分隔小圆点 */
+  .dot { color: var(--muted); margin: 0 6px; }
+</style>
+</head>
+<body data-page="s05">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">卡 5 · 渠道逐层放大订单波动</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">骨架层 · 卡 5 / 15</p>
+      <h1>渠道逐层放大订单波动</h1>
+      <p class="core-q"><b>一张卡讲一个模型：</b>缺货本身诱发订单虚增——链条上重复下单堆到极致时，反转就在眼前。</p>
+    </header>
+
+    <section class="prose">
+
+      <div class="oneliner">
+        <b>本卡教你识别的信号：</b>当"全行业哪里都没货、越缺越抢"出现时，链条上已经积压了大量重复下单和恐慌性预定，表观需求远高于真实需求。所以"全行业缺货"这个信号，除了看多，更重要的是看它是不是<strong>牛鞭已被拉到极致</strong>——反转常在此后几个月内到来。
+      </div>
+
+      <h2>1. 现象：从"货卖爆"到 Q1 蒸发 95% 利润的半年</h2>
+      <p>2022 年 5 月，芯片行业还处在缺货的最高潮：全行业交期（下单到提货的等待时间）约 27 周，是常态 10-14 周的两倍，创历史峰值。那个季度所有半导体公司的电话会都用同一种语言：<strong>「订单能见度极强」「几年长约在手」「货就是钱」</strong>。到了 10 月 17 日，彭博援引投研机构 Susquehanna Financial Group 的月度统计：交期上一个月缩短了几天，是<strong>「几年来最大的单月降幅」</strong>——拐点第一次在公开信息里显形<span class="badge badge-verified">已核验 · Bloomberg 2022-10-17</span>。那天没有一家半导体公司股价暴跌，分析师报告还在给"买入"。</p>
+      <p>半年后，2023 年 Q1，三星电子的营业利润从上年同期的 <strong>14.1 万亿韩元</strong>塌到 <strong>0.6 万亿韩元</strong>——单季度差不多蒸发 96%<span class="badge badge-verified">已核验 · 三星 2023-Q1 财报，CNBC 报道</span>。SK 海力士、美光同期亏损，全行业几乎停止产能投资。同一批公司、同一批客户，短短半年，从"抢单"到"砍单"。</p>
+      <p>表面上看是需求突然转弱。实际上，早在 2022 年 5 月弦被拉到 27 周的那一刻，反转就已经在链条上被埋下了。<strong>这条弦本身就是自己反转的原因——需要一个模型才能看清。</strong></p>
+
+      <h2>2. 机制：为什么"缺货"等于"牛鞭已被拉到极致"</h2>
+      <p>牛鞭效应（Bullwhip Effect）1997 年被 Lee、Padmanabhan、Whang 三位学者在《Management Science》讲清楚了：<strong>需求波在供应链上被逐层放大，越靠上游波形越剧烈</strong><span class="badge badge-verified">已核验 · Management Science 43(4), 546-558, 1997（Stanford GSB 存档）</span>。他们拆出四条放大机制：①<strong>需求信号加工</strong>（每层修正对未来的预期）；②<strong>配给博弈</strong>（缺货时买家怕拿不到、故意向多家下单）；③<strong>批量下单</strong>（每层攒一段时间再下）；④<strong>价格预期</strong>（涨价前囤货、跌价前拖延）。完整机制拆解与四层参数化模拟器见<a href="m04.html#panel-a">模块 4「牛鞭效应」节</a>——本卡不重复，专管一件事：这四条机制里的第 ②「配给博弈」，为什么让"缺货本身"成为最硬的反转前兆信号。</p>
+
+      <p>三步推导，讲透"缺货 = 牛鞭已被拉到极致"这一句话：</p>
+
+      <p><strong>第一步：表观需求 ≠ 真实需求。</strong>缺货时，链条上每一层客户都在做同一件事——向多家供应商同时下单（怕独家断货）、按更高预期抬高安全库存（防再拉长交期）、赶在涨价前囤货（涨价预期）。终端真实需求可能只是抬了一档（比如 +10%），但中间几层每层都在成倍地重复下单——传到最上游的代工厂和设备厂时，订单簿看起来涨了三五倍。这时候公司电话会上"订单能见度极强、几年长约在手"这句话，一部分是真需求、一大部分是链条上的重复下单和恐慌性预定叠加出来的表观放大。缺得越猛，重复下单越浓——<strong>缺货最凶的时刻，就是表观需求虚高最多的时刻</strong>。</p>
+
+      <p><strong>第二步：交期是"弦被拉到多紧"的可读数。</strong>交期约等于「在手订单 ÷ 产能」的代理读数。产能短期是死的（扩产 24-36 个月，卡 1 讲过），所以交期涨多长，直接对应链条上重复下单堆得多高。常态 10-14 周对应"没有牛鞭"；越过 20 周并继续拉长，意味着链条每一层都在抢——弦越拉越紧。<strong>交期既是紧缺读数，也是牛鞭虚火的温度计</strong>——它不是外部的观测，它就是这个物理系统的核心状态量。</p>
+
+      <p><strong>第三步：反转比上升更陡。</strong>上升段是逐层加码，需要几个季度把弦拉到位；下降段是全链条同时卸载——终端需求稍冷，中间层立即停下重复下单，同时看到库存堆得太高、开始退掉未来订单；再往上游看到订单簿在缩，一起砍产。<strong>砍单速度远快于订单增速</strong>，所以牛鞭放开的那一下，最上游波谷比波峰还深。设备厂、代工厂、存储厂的业绩下坠曲线，在过去几个周期里都是"一年爬上去、一个季度掉下来"的样子。三星 22Q1 到 23Q1 那 96% 的利润塌方，就是这个物理规律在财报层的显形。</p>
+
+      <div id="whipViz" class="viz">
+        <div class="viz-head">
+          <span class="viz-title">牛鞭拐点信号板 · 2020-2023 芯片交期真实演进</span>
+          <span class="viz-sub">看什么：<b>五个关键节点，教你识别牛鞭正在被拉到极致的信号</b>。四个数据锚点已核验（Susquehanna 月度统计，经 Bloomberg / DCD 转述），中间用示意曲线连接。点击卡片切换到不同阶段——右侧会同时给出「当时该读什么」与「当时市场普遍读的是什么」两栏对照。</span>
+        </div>
+        <div id="whipChart" role="img" aria-label="折线图：2020 年 1 月到 2023 年 6 月芯片交期演进，从常态 12 周升到 2022 年 5 月峰值 27 周，2022 年 10 月拐点开始下行"></div>
+        <div class="whip-panel" role="tablist" aria-label="牛鞭五阶段步进">
+          <button class="whip-step" type="button" data-phase="0" aria-pressed="true" aria-controls="whipReadout">
+            <span class="idx">阶段 0</span><span class="name">常态 · 2020 初</span>
+          </button>
+          <button class="whip-step" type="button" data-phase="1" aria-pressed="false" aria-controls="whipReadout">
+            <span class="idx">阶段 1</span><span class="name">破 20 周 · 2021-08</span>
+          </button>
+          <button class="whip-step" type="button" data-phase="2" aria-pressed="false" aria-controls="whipReadout">
+            <span class="idx">阶段 2</span><span class="name">极值 · 2022-05</span>
+          </button>
+          <button class="whip-step" type="button" data-phase="3" aria-pressed="false" aria-controls="whipReadout">
+            <span class="idx">阶段 3</span><span class="name">拐点显形 · 2022-10-17</span>
+          </button>
+          <button class="whip-step" type="button" data-phase="4" aria-pressed="false" aria-controls="whipReadout">
+            <span class="idx">阶段 4</span><span class="name">反转后果 · 2023-Q1</span>
+          </button>
+        </div>
+        <div id="whipReadout" class="viz-readout" aria-live="polite"></div>
+        <div class="whip-two">
+          <div class="whip-read"><b>当时你应该读到什么</b><span id="whipRead"></span></div>
+          <div class="whip-miss"><b>当时市场普遍读到的是什么</b><span id="whipMiss"></span></div>
+        </div>
+      </div>
+
+      <h2>3. 真实锚点：一次完整的牛鞭周期</h2>
+      <p>本卡三个已核验锚点串在一起就是上面信号板讲的故事。逐条再看一次，把日期和来源钉死：</p>
+      <ul>
+        <li><strong>2021 年 8 月</strong>：Susquehanna Financial Group 月度统计显示，全行业芯片交期<strong>首次突破 20 周</strong>，创当时历史纪录（DCD 转述 Susquehanna 数据<span class="badge badge-verified">已核验 · DataCenterDynamics 2021-08</span>）。这是牛鞭第一次超过临界的信号——常态 10-14 周对应「没牛鞭」，越过 20 周意味着链条每一层都开始抢货。</li>
+        <li><strong>2022 年 5-6 月</strong>：同一系列数据爬到<strong>约 27 周</strong>（转述 Susquehanna，见 Bloomberg 与 DCD 系列报道<span class="badge badge-verified">已核验 · 数据序列亦见于模块 2 页脚清单</span>）。弦拉到极致。同期各家电话会都在讲"订单能见度极强、几年长约在手"——这句话本身就是牛鞭虚火在语言层的显形。</li>
+        <li><strong>2022 年 10 月 17 日</strong>：Bloomberg 发文，援引 Susquehanna：交期上一个月缩短了几天，是<strong>「几年来最大的单月降幅」</strong><span class="badge badge-verified">已核验 · Bloomberg 2022-10-17</span>。这是牛鞭放开的第一次公开显形。那天没有一家半导体公司股价大跌。</li>
+        <li><strong>2023 年 Q1</strong>：三星电子营业利润从 22Q1 的 <strong>14.1 万亿韩元</strong>塌到 <strong>0.6 万亿韩元</strong>（YoY 约 -96%）；SK 海力士、美光同期亏损、全行业几乎停止产能投资<span class="badge badge-verified">已核验 · Samsung 2023-Q1 财报，CNBC / The Register 报道</span>。这是牛鞭放开在财务报表上的最终显形——距离拐点第一次在公开信息里出现，隔了半年。</li>
+      </ul>
+      <p>四个锚点的意义不在于记住数字，而在于把它们钉成一张时间地图：<strong>市场需要六个月才把 2022-05 的极值消化成 2023-Q1 的报表数字。这六个月的时间差，就是这张卡在投资上的可用性所在</strong>。</p>
+
+      <h2>4. 投资含义：两个条件反射</h2>
+
+      <p><strong>反射一 · 听到"全行业哪里都没货"时，我第一反应问什么？</strong></p>
+      <p>问三个问题：</p>
+      <ul>
+        <li><strong>交期在什么位置？</strong>——查 Susquehanna 月度数据（Bloomberg / Reuters 免费转述可得）、或直接看公司电话会里管理层给的交期口径。20 周是重要临界，27 周是历史极值参照。</li>
+        <li><strong>它还在扩张还是开始缩短？</strong>——扩张段是紧缺红利、缩短段是反转开始。<strong>第一次单月缩短出现的月份</strong>，就是最硬的拐点信号，比价格拐点早两三个月、比财报确认早一到两个季度。</li>
+        <li><strong>过去半年有没有单月缩短出现？</strong>——只要有过一次，反转序幕就已经在拉开。之后每个月都要重新校准。</li>
+      </ul>
+      <p>三个问题回答完，你才决定"缺货"这条新闻读成看多还是看空。听到"全行业哪里都没货"就跟着兴奋，是过去每一轮周期都在重演的错误。</p>
+
+      <p><strong>反射二 · 看到某厂公告"业绩超预期但库存快速上升"，我第一反应查什么？</strong></p>
+      <p>查四件事，四条同向就是提前减仓信号：</p>
+      <ul>
+        <li><strong>客户端真实拉货情况</strong>——同期分销商、云厂商的采购与库存披露，看订单是不是被真实提走。</li>
+        <li><strong>渠道库存周转天数（DIO）</strong>——分销财报（Arrow、Avnet 等）里的库存周转，是戳穿重复下单虚火最直接的读数。</li>
+        <li><strong>管理层措辞变化</strong>——从"订单能见度极强、几年长约在手"过渡到"订单能见度有所下降"这一句话，历史上几乎百分百领先业绩下修一到两个季度。</li>
+        <li><strong>砍单迹象</strong>——客户是否有推迟交付、重新议价、取消订单的公告；同一 SKU 是否在不同市场出现价格分化。</li>
+      </ul>
+      <p>四条同向指向"表观需求虚火"，就是提前卖出的信号——不用等业绩爆雷。爆雷之后再动，你只能拿到最难看的价位。</p>
+
+      <h2>5. 边界：这张卡什么时候不适用</h2>
+      <ul>
+        <li><strong>只在商品化品类里成立</strong>。DRAM、NAND、成熟制程逻辑、汽车电子、被动件——这类靠现货和多家供应商竞标的品类，牛鞭最凶。<strong>直供长约品类几乎没牛鞭</strong>：HBM 主流由 SK 海力士 / 美光 / 三星与英伟达 / AMD 等客户直接签几年长约、CoWoS 由台积电直供英伟达 / 博通 / AMD——合同结构掐掉了配给博弈（客户不能同时向多家下单，产能提前分配）。这类品类在紧缺期读起来不像"牛鞭虚火"。<strong>库存结构决定波动结构，卡 6 展开</strong>。</li>
+        <li><strong>台阶式需求叠加时读牛鞭要小心</strong>。AI 平台起飞是需求台阶从 0 到 1 的跳变（结构成长），此时上游订单确实成倍上翻，但很大一部分是真需求；只用牛鞭去读，会把结构增量当虚火看空。这时要把"结构线"和"周期线"分开算——<strong>需求分两种：换机式与范式革命，卡 7 展开</strong>。</li>
+        <li><strong>本卡是投资应用侧的信号识别；完整机制推导、四条放大原理、四层参数化模拟器</strong>，见<a href="m04.html#panel-a">模块 4「牛鞭效应」节</a>。</li>
+      </ul>
+
+      <h2>6. 练习两道</h2>
+
+      <div class="card-drill">
+        <h4><span class="tag">复述题</span>为什么全行业缺货有时候是风险信号？</h4>
+        <p>合上卡片，用 2-3 分钟对一个完全不懂芯片的朋友讲清楚这句话。三个要点必须出现：①链条上的重复下单会让表观订单远高于真实需求；②交期是这条链条的温度计，越过 20 周就要警惕；③反转来时下坠比上升还快。</p>
+        <p class="hint">检查你讲得对不对的一个办法：朋友听完如果能反问"那什么时候的缺货不是风险信号？"——你就答对了。（提示：这个反问的答案在"边界"段里。）</p>
+      </div>
+
+      <div class="card-drill">
+        <h4><span class="tag">推演题</span>2021-08 破 20 周，2022-05 到 27 周——哪个月份最像"反转前夜"？</h4>
+        <p>给你两个已核验的真实前提：</p>
+        <ul>
+          <li>①2021 年 8 月，全行业芯片交期<strong>首次突破 20 周</strong>（DCD 引 Susquehanna 数据<span class="badge badge-verified">已核验</span>）；</li>
+          <li>②2022 年 5-6 月，同一系列数据达到<strong>约 27 周</strong>的历史峰值（转述 Susquehanna<span class="badge badge-verified">已核验</span>）。</li>
+        </ul>
+        <p>请在时间线上标出：<strong>从投资读数的角度，哪个月份最像"牛鞭已被拉到极致、反转前夜"？</strong>给出理由。</p>
+        <p class="hint">提示：想两件事——①"链条能容纳多少重复下单"这个物理上限（27 周相当于常态的两倍，链条上的重复下单要堆到什么程度才够填这个数）；②"交期从 22 拉到 27" 与 "从 15 拉到 20" 这两段的信息量哪个更大——一个是"进入危险区"、一个是"已经在极限区"。</p>
+        <p class="hint">本题不给标准答案——2022-10-17 那天彭博的报道可以帮你事后对答案（27 周之后就是拐点），但你要先自己判断：哪个月份就已经足够看到危险了？做完之后回头看看，你的答案和 Bloomberg 见报那一天中间隔了几个月。这个"时间差"就是牛鞭这张卡在投资上的价值刻度。</p>
+      </div>
+
+      <div class="card-src">
+        <b>卡 5 来源：</b>
+        Lee, Padmanabhan, Whang「Information Distortion in a Supply Chain: The Bullwhip Effect」《Management Science》43(4), 546-558, 1997（Stanford GSB 存档）
+        <span class="dot">·</span>
+        Bloomberg 2022-10-17（Susquehanna 数据，交期几年来最大单月降幅）
+        <span class="dot">·</span>
+        DataCenterDynamics 2021-08（交期突破 20 周）
+        <span class="dot">·</span>
+        三星电子 2023-Q1 财报及 CNBC 报道（营业利润 14.1 万亿 → 0.6 万亿韩元）
+        <span class="dot">·</span>
+        The Register 2023 报道（海力士 / 美光同期亏损减产）
+        <span class="dot">·</span>
+        本卡完整机制推导与四层模拟器：<a href="m04.html#panel-a">模块 4「牛鞭效应」节</a>
+      </div>
+
+    </section>
+
+    <div class="src">
+      <strong>本卡引用来源</strong>
+      <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li><a href="https://www.gsb.stanford.edu/faculty-research/publications/information-distortion-supply-chain-bullwhip-effect">Stanford GSB：Lee, Padmanabhan, Whang「Information Distortion in a Supply Chain: The Bullwhip Effect」（Management Science 43(4):546-558, 1997）</a> · <a href="https://courses.ie.bilkent.edu.tr/ie460/wp-content/uploads/sites/12/2019/02/Lee-Padmanabhan-Whang-1997-MS.pdf">论文 PDF 存档</a></li>
+        <li><a href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing">Bloomberg 2022-10-17：芯片交期缩短、几年来最大降幅（Susquehanna 数据）</a></li>
+        <li><a href="https://www.datacenterdynamics.com/en/news/chip-lead-times-hit-202-weeks-as-semiconductor-shortage-drags-on/">DataCenterDynamics 2021-08：芯片交期突破 20 周</a></li>
+        <li><a href="https://www.cnbc.com/2023/04/26/samsung-electronics-q1-2023-results.html">CNBC / Samsung 2023-Q1 财报：营业利润 14.1 万亿韩元（22Q1）→ 0.6 万亿韩元（23Q1）</a></li>
+        <li>本卡机制侧的完整拆解与四层参数化模拟器：<a href="m04.html#panel-a">模块 4 · 半导体行业前史</a>「牛鞭效应」节</li>
+      </ul>
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本卡为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine04.html"><span class="dir">← 上一张</span>卡 4 · 出货 = 最短板</a>
+        <a href="spine06.html" style="text-align:right"><span class="dir">下一张 →</span>卡 6 · 库存结构决定波动结构</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------- 牛鞭拐点信号板（A 类：五阶段步进直观化） ---------- */
+  (function () {
+    /* 已核验的四个数据锚点（月序号从 2020-01 = 0 开始）：
+         mo 0   (2020-01) 12 周   · 常态
+         mo 19  (2021-08) 20.2 周 · 首次破 20（DCD 引 Susquehanna）
+         mo 28  (2022-05) 27.1 周 · 历史峰值（转述 Susquehanna）
+         mo 33  (2022-10) 26.3 周 · 拐点显形（Bloomberg 2022-10-17）
+         mo 39  (2023-04) 17 周   · 反转后果显形（示意，反转已至；三星 Q1 财报期）
+         mo 41  (2023-06) 15 周   · 逐步回到常态附近（示意）
+       为教学示意曲线在锚点之间做平滑连接；只有锚点是精确数据。 */
+    const W = 720, H = 260, L = 56, R = 30, T = 30, B = 40;
+    const YMIN = 8, YMAX = 30;
+    const MO_MIN = 0, MO_MAX = 41;
+
+    const xs = (m) => L + (m - MO_MIN) / (MO_MAX - MO_MIN) * (W - L - R);
+    const ys = (v) => T + (1 - (v - YMIN) / (YMAX - YMIN)) * (H - T - B);
+
+    /* 阶段数据（含教学脚本） */
+    const PHASES = [
+      {
+        mo: 3, week: 12,
+        date: "2020 年初",
+        title: "常态 · 交期 10-14 周",
+        readout: "交期处在多年常态区间（绿色阴影带）。这时没有牛鞭信号可读——你也不会去看交期。",
+        read: "无需操作。交期这个指标此刻的信息量为零。",
+        miss: "没人关心「交期」两个字。行业新闻的口径是「稳步成长」。"
+      },
+      {
+        mo: 19, week: 20.2,
+        date: "2021 年 8 月",
+        title: "破 20 周 · 牛鞭第一次超过临界",
+        readout: "交期首次突破 20 周（已核验：DCD 引 Susquehanna）。链条上的每一层开始向多家供应商同时下单——「怕拿不到」。这是配给博弈第一次显形。",
+        read: "开始把「牛鞭」纳入判断——但还不是马上看空。动作：①把 Susquehanna 交期加入月度关注；②把持有的周期性半导体标的敞口预算写下来（多少是「周期红利」、多少是「结构红利」）。",
+        miss: "媒体口径：「短缺加剧、行业景气」。分析师上调目标价。多数投资者第一次学到「lead time」这个词，读法是「越长越好」。"
+      },
+      {
+        mo: 28, week: 27.1,
+        date: "2022 年 5-6 月",
+        title: "极值 27 周 · 弦被拉到极致",
+        readout: "交期约 27 周——常态的两倍，历史峰值。链条上的表观订单是真实需求的几倍，弦被拉到极致。这里就是「反转前夜」——不是「如果反转」，是「什么时候反转」。",
+        read: "开始减仓周期性半导体持仓（尤其是最上游的存储、设备）。每月盯紧交期变化——单月缩短一出就是拐点。管理层电话会开始出现「订单能见度极强、几年长约在手」这类话时更要警惕：这是牛鞭虚火的语言标签。",
+        miss: "所有电话会都在讲「订单能见度极强、几年长约在手、货就是钱」。存储、代工、设备股股价还在冲高。分析师目标价还在上调。"
+      },
+      {
+        mo: 33, week: 26.3,
+        date: "2022 年 10 月 17 日",
+        title: "拐点显形 · Bloomberg 见报",
+        readout: "Bloomberg 援引 Susquehanna：交期上月缩短了几天，是「几年来最大的单月降幅」（已核验）。牛鞭放开的第一次公开显形。这一天，如果你还没减仓完成，现在是最后的时间窗。",
+        read: "确认反转开始。完成周期性半导体持仓减仓；如果账户支持做空，可考虑对最上游（设备/存储）建立空头对冲。此后每个月，交期继续缩短就是继续下坠的信号。",
+        miss: "当天没有一家半导体公司股价大跌。分析师报告仍在给「买入」评级。多数人对这条新闻的读法是「短缺缓解、供应链改善」——读反了。"
+      },
+      {
+        mo: 39, week: 17,
+        date: "2023 年 Q1",
+        title: "反转后果 · 三星利润塌 96%",
+        readout: "三星 2023 Q1 营业利润 0.6 万亿韩元（22Q1 是 14.1 万亿），YoY 约 -96%；海力士、美光同期亏损、全行业几乎停止产能投资（已核验）。前面阶段 2、3 的信号，在这一步显形为财务数字。",
+        read: "现在动手已经晚了——这一天新闻见报，股价已经在半年前的拐点之后走完了大部分下跌。这条卡在投资上的价值是让你在阶段 2 到 3 之间就动手，而不是等这一步的报表。",
+        miss: "全市场：「原来 2022 年那么火爆是虚的」「早知道就该少买些」。这句话每一轮周期都被说一次，因为每一轮周期都有人没读懂这张卡。"
+      }
+    ];
+
+    /* ---- 画图 ---- */
+    const mount = document.getElementById("whipChart");
+    const svg = APP.svgEl("svg", {
+      viewBox: "0 0 " + W + " " + H,
+      role: "img",
+      "aria-label": "折线图：2020-2023 芯片交期演进，从 12 周升到 27 周再回落到 15 周"
+    });
+    mount.appendChild(svg);
+
+    /* 光滑曲线的数据点：在每个已核验锚点之间做单调插值 */
+    const ANCHORS = [
+      [0, 12],
+      [12, 14.5],   /* 2021-01 示意 */
+      [19, 20.2],   /* 已核验 */
+      [23, 23.5],   /* 2021-12 示意 */
+      [28, 27.1],   /* 已核验 */
+      [30, 27.0],   /* 2022-07 示意（假设峰值持续了两个月） */
+      [33, 26.3],   /* 已核验（拐点）*/
+      [36, 22],     /* 2023-01 示意 */
+      [39, 17],     /* 2023-04 反转后果显形（示意） */
+      [41, 15]      /* 2023-06 示意，接近常态 */
+    ];
+    function sampleCurve() {
+      const out = [];
+      for (let m = MO_MIN; m <= MO_MAX; m++) {
+        /* 找到 m 落在哪两个锚点之间 */
+        let lo = ANCHORS[0], hi = ANCHORS[ANCHORS.length - 1];
+        for (let i = 0; i < ANCHORS.length - 1; i++) {
+          if (m >= ANCHORS[i][0] && m <= ANCHORS[i + 1][0]) {
+            lo = ANCHORS[i]; hi = ANCHORS[i + 1]; break;
+          }
+        }
+        const t = (m - lo[0]) / Math.max(1, hi[0] - lo[0]);
+        /* 用 smoothstep 做视觉上稍柔的插值 */
+        const s = t * t * (3 - 2 * t);
+        out.push([m, lo[1] + (hi[1] - lo[1]) * s]);
+      }
+      return out;
+    }
+
+    function draw(activePhase) {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+      /* 常态区间阴影带 10-14 周 */
+      svg.appendChild(APP.svgEl("rect", {
+        x: L, y: ys(14), width: W - L - R, height: ys(10) - ys(14),
+        fill: "var(--primary-tint)", opacity: 0.6
+      }));
+      const bandLbl = APP.svgEl("text", { x: W - R - 4, y: ys(12) + 4, "text-anchor": "end", class: "axis-txt" });
+      bandLbl.textContent = "常态 10-14 周";
+      bandLbl.setAttribute("fill", "var(--primary)");
+      svg.appendChild(bandLbl);
+
+      /* 20 周红线 */
+      svg.appendChild(APP.svgEl("line", {
+        x1: L, x2: W - R, y1: ys(20), y2: ys(20),
+        stroke: "var(--accent)", "stroke-width": 1, "stroke-dasharray": "3 4", opacity: 0.7
+      }));
+      const redLbl = APP.svgEl("text", { x: L + 4, y: ys(20) - 4, "text-anchor": "start", class: "anno-txt" });
+      redLbl.textContent = "20 周临界";
+      svg.appendChild(redLbl);
+
+      /* 网格：Y */
+      for (let v = 10; v <= 30; v += 5) {
+        svg.appendChild(APP.svgEl("line", { x1: L, x2: W - R, y1: ys(v), y2: ys(v),
+          stroke: "var(--viz-grid)", "stroke-width": 1 }));
+        const t = APP.svgEl("text", { x: L - 8, y: ys(v) + 4, "text-anchor": "end", class: "axis-txt" });
+        t.textContent = v + "周";
+        svg.appendChild(t);
+      }
+      /* 网格：X（年） */
+      const YEAR_TICKS = [[0, "2020"], [12, "2021"], [24, "2022"], [36, "2023"]];
+      YEAR_TICKS.forEach(([m, label]) => {
+        const t = APP.svgEl("text", { x: xs(m), y: H - B + 18, "text-anchor": "middle", class: "axis-txt" });
+        t.textContent = label;
+        svg.appendChild(t);
+      });
+      svg.appendChild(APP.svgEl("line", {
+        x1: L, x2: W - R, y1: ys(YMIN), y2: ys(YMIN),
+        stroke: "var(--viz-axis)", "stroke-width": 1
+      }));
+
+      /* 数据曲线 */
+      const curve = sampleCurve();
+      let d = "";
+      curve.forEach(([m, v], i) => {
+        d += (i ? "L" : "M") + xs(m).toFixed(1) + " " + ys(v).toFixed(1) + " ";
+      });
+      svg.appendChild(APP.svgEl("path", {
+        d, fill: "none", stroke: "var(--viz-s3)", "stroke-width": 2.4,
+        "stroke-linejoin": "round", "stroke-linecap": "round", opacity: 0.85
+      }));
+
+      /* 阶段锚点圆 */
+      PHASES.forEach((p, idx) => {
+        const on = idx === activePhase;
+        svg.appendChild(APP.svgEl("circle", {
+          cx: xs(p.mo), cy: ys(p.week),
+          r: on ? 8 : 5,
+          fill: on ? "var(--accent)" : "var(--viz-s4)",
+          stroke: "var(--bg)", "stroke-width": 2.5
+        }));
+        /* 阶段编号标签 */
+        const lblY = p.week > 22 ? ys(p.week) - 14 : ys(p.week) - 12;
+        const tx = APP.svgEl("text", {
+          x: xs(p.mo),
+          y: lblY,
+          "text-anchor": "middle",
+          class: "end-lbl"
+        });
+        tx.textContent = "阶段 " + idx;
+        if (on) tx.setAttribute("fill", "var(--accent-ink)");
+        svg.appendChild(tx);
+      });
+
+      /* 高亮线：当前阶段的垂直虚线 */
+      const cur = PHASES[activePhase];
+      svg.appendChild(APP.svgEl("line", {
+        x1: xs(cur.mo), x2: xs(cur.mo),
+        y1: T, y2: H - B,
+        stroke: "var(--accent)", "stroke-width": 1.2, "stroke-dasharray": "3 4", opacity: 0.55
+      }));
+
+      /* 顶部指标：日期 · 阶段名 · 交期 */
+      const banner = APP.svgEl("text", { x: L, y: T - 12, "text-anchor": "start" });
+      banner.setAttribute("class", "axis-txt");
+      banner.setAttribute("style", "font-size:12px;font-weight:650;fill:var(--ink)");
+      banner.textContent = "阶段 " + activePhase + " · " + cur.date + " · 交期约 " + cur.week + " 周 · " + cur.title;
+      svg.appendChild(banner);
+
+      /* 更新下方两栏 */
+      document.getElementById("whipReadout").innerHTML = cur.readout;
+      document.getElementById("whipRead").innerHTML = cur.read;
+      document.getElementById("whipMiss").innerHTML = cur.miss;
+
+      /* 更新按钮态 */
+      document.querySelectorAll(".whip-step").forEach((btn) => {
+        const on = +btn.dataset.phase === activePhase;
+        btn.setAttribute("aria-pressed", String(on));
+      });
+    }
+
+    document.querySelectorAll(".whip-step").forEach((btn) => {
+      btn.addEventListener("click", () => draw(+btn.dataset.phase));
+    });
+    draw(0);
+  })();
+});
+</script>
+</body>
+</html>
