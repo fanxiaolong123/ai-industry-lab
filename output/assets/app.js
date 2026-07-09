@@ -1,6 +1,6 @@
 /* ============================================================
    半导体投资学习台 · 公共脚本
-   负责：导航渲染、Tab、展开面板、自测题、学习进度、移动端目录
+   负责：导航渲染、Tab、展开面板、自测题、学习进度、移动端目录、问题暂存
    页面专属的模拟器逻辑写在各页面的内联脚本里。
    ============================================================ */
 
@@ -339,6 +339,455 @@
     paint();
   }
 
+  /* ---------- 问题暂存（localStorage） ---------- */
+
+  const QKEY = "aisemi.questions.v1";
+
+  function getQuestions() {
+    try {
+      const data = JSON.parse(localStorage.getItem(QKEY)) || [];
+      return Array.isArray(data) ? data : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function setQuestions(items) {
+    try { localStorage.setItem(QKEY, JSON.stringify(items)); } catch (e) { /* 隐私模式下忽略 */ }
+  }
+
+  function escapeHTML(text) {
+    return String(text || "").replace(/[&<>"']/g, (ch) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[ch]);
+  }
+
+  function currentPageTitle() {
+    const title = document.querySelector(".topbar-title");
+    return (title ? title.textContent : document.title).trim();
+  }
+
+  function normalizeQuote(text) {
+    return String(text || "").replace(/\s+/g, " ").trim().slice(0, 240);
+  }
+
+  function skippedTextHost(node, options) {
+    const parent = node.parentElement;
+    if (!parent || parent.closest(".question-drawer, script, style, textarea, button, input, select")) return true;
+    return !options?.includeMarks && parent.closest(".question-mark");
+  }
+
+  function textNodesUnder(root, options) {
+    const nodes = [];
+    if (!root) return nodes;
+    const walker = document.createTreeWalker(root, 4, {
+      acceptNode(node) {
+        return skippedTextHost(node, options) ? 2 : 1;
+      },
+    });
+    let node;
+    while ((node = walker.nextNode())) nodes.push(node);
+    return nodes;
+  }
+
+  function selectionOffsets(range) {
+    const main = document.getElementById("main");
+    if (!main || !range) return null;
+    const nodes = textNodesUnder(main, { includeMarks: true });
+    let pos = 0;
+    let start = null;
+    let end = null;
+    nodes.forEach((node) => {
+      if (node === range.startContainer) start = pos + range.startOffset;
+      if (node === range.endContainer) end = pos + range.endOffset;
+      pos += node.nodeValue.length;
+    });
+    if (start === null || end === null || end <= start) return null;
+    return { start, end };
+  }
+
+  function pageQuestions() {
+    const pageId = document.body.dataset.page || location.pathname;
+    return getQuestions().filter((q) => q.pageId === pageId);
+  }
+
+  function questionPageMeta(pageId) {
+    const spine = SPINES.find((it) => it.id === pageId);
+    if (spine) return { file: spine.file, title: "卡 " + spine.num + " · " + spine.title };
+    const module = LAYERS.flatMap((layer) => layer.items).find((it) => it.id === pageId);
+    if (module) return { file: module.file, title: "模块 " + module.num + " · " + module.title };
+    return { file: "", title: pageId || "未知页面" };
+  }
+
+  function unresolved(items) {
+    return items.filter((q) => !q.resolved);
+  }
+
+  function attrSelectorValue(text) {
+    return String(text || "").replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  }
+
+  function removeQuestionMark(id) {
+    document.querySelectorAll('.question-mark[data-question-id="' + attrSelectorValue(id) + '"]').forEach((mark) => {
+      const parent = mark.parentNode;
+      while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+      parent.removeChild(mark);
+      parent.normalize();
+    });
+  }
+
+  function markRangeSegments(startOffset, endOffset, q) {
+    const main = document.getElementById("main");
+    if (!main || typeof startOffset !== "number" || typeof endOffset !== "number" || endOffset <= startOffset) return false;
+    let pos = 0;
+    let painted = false;
+    textNodesUnder(main, { includeMarks: true }).forEach((node) => {
+      const next = pos + node.nodeValue.length;
+      const start = Math.max(startOffset, pos);
+      const end = Math.min(endOffset, next);
+      if (end > start && !node.parentElement.closest(".question-mark")) {
+        const range = document.createRange();
+        range.setStart(node, start - pos);
+        range.setEnd(node, end - pos);
+        const mark = document.createElement("mark");
+        mark.className = "question-mark";
+        if (q.resolved) mark.classList.add("is-resolved");
+        mark.dataset.questionId = q.id;
+        mark.title = q.resolved ? "已处理的问题" : "已暂存问题";
+        try {
+          range.surroundContents(mark);
+          painted = true;
+        } catch (e) {
+          /* 被复杂节点切开时跳过这一段，列表里仍保留问题。 */
+        }
+      }
+      pos = next;
+    });
+    return painted;
+  }
+
+  function quoteOffsets(quote) {
+    const main = document.getElementById("main");
+    if (!main || !quote) return null;
+    let pos = 0;
+    const nodes = textNodesUnder(main, { includeMarks: true });
+    for (const node of nodes) {
+      const i = node.nodeValue.indexOf(quote);
+      if (i >= 0) return { start: pos + i, end: pos + i + quote.length };
+      pos += node.nodeValue.length;
+    }
+    return null;
+  }
+
+  function highlightQuestion(q) {
+    if (!q.id || !q.quote || document.querySelector('.question-mark[data-question-id="' + attrSelectorValue(q.id) + '"]')) return;
+    const anchor = typeof q.start === "number" && typeof q.end === "number"
+      ? { start: q.start, end: q.end }
+      : quoteOffsets(q.quote);
+    if (!anchor) return;
+    markRangeSegments(anchor.start, anchor.end, q);
+  }
+
+  function highlightPageQuestions() {
+    pageQuestions().forEach(highlightQuestion);
+  }
+
+  function scrollToQuestion(q) {
+    highlightQuestion(q);
+    const mark = document.querySelector('.question-mark[data-question-id="' + attrSelectorValue(q.id) + '"]');
+    if (mark) {
+      mark.scrollIntoView({ block: "center", behavior: "smooth" });
+      mark.classList.add("is-pulsing");
+      window.setTimeout(() => mark.classList.remove("is-pulsing"), 900);
+    }
+  }
+
+  function syncQuestionMarks(q) {
+    document.querySelectorAll('.question-mark[data-question-id="' + attrSelectorValue(q.id) + '"]').forEach((mark) => {
+      mark.classList.toggle("is-resolved", !!q.resolved);
+      mark.title = q.resolved ? "已处理的问题" : "已暂存问题";
+    });
+  }
+
+  function initQuestionStash() {
+    const topbar = document.querySelector(".topbar");
+    const main = document.getElementById("main");
+    if (!topbar || !main) return;
+
+    const pageId = document.body.dataset.page || location.pathname;
+    const stashBtn = document.createElement("button");
+    stashBtn.type = "button";
+    stashBtn.className = "btn btn-ghost question-stash-toggle";
+    stashBtn.setAttribute("aria-expanded", "false");
+    topbar.appendChild(stashBtn);
+
+    const selectBtn = document.createElement("button");
+    selectBtn.type = "button";
+    selectBtn.className = "question-select-btn";
+    selectBtn.hidden = true;
+    selectBtn.textContent = "标注问题";
+    document.body.appendChild(selectBtn);
+
+    const drawer = document.createElement("aside");
+    drawer.className = "question-drawer";
+    drawer.setAttribute("aria-label", "问题暂存");
+    drawer.setAttribute("aria-hidden", "true");
+    drawer.innerHTML =
+      '<div class="question-drawer-head">' +
+        '<div><b>问题暂存</b><span>只记录，不打断阅读</span></div>' +
+        '<button class="question-icon-btn" type="button" data-q-close aria-label="关闭问题暂存">×</button>' +
+      '</div>' +
+      '<form class="question-form">' +
+        '<label class="question-form-label" for="questionText">当前标注</label>' +
+        '<blockquote class="question-quote" data-q-quote>先选中正文中的一句话，再点“标注问题”。</blockquote>' +
+        '<textarea id="questionText" rows="3" placeholder="这里哪里没想明白？可以很短，读完再集中处理。"></textarea>' +
+        '<div class="question-form-actions">' +
+          '<button class="btn" type="submit" data-q-submit>保存问题</button>' +
+          '<button class="btn btn-ghost" type="button" data-q-cancel-edit hidden>取消编辑</button>' +
+          '<button class="btn btn-ghost" type="button" data-q-clear>清空</button>' +
+        '</div>' +
+      '</form>' +
+      '<div class="question-scope-tabs" role="tablist" aria-label="问题范围">' +
+        '<button type="button" role="tab" aria-selected="true" data-q-scope="page">当前页 <span data-q-page-count>0</span></button>' +
+        '<button type="button" role="tab" aria-selected="false" data-q-scope="all">全部 <span data-q-all-count>0</span></button>' +
+      '</div>' +
+      '<div class="question-list-head" data-q-list-head>当前页问题</div>' +
+      '<div class="question-list" data-q-list></div>';
+    document.body.appendChild(drawer);
+
+    const quoteEl = drawer.querySelector("[data-q-quote]");
+    const textEl = drawer.querySelector("textarea");
+    const listEl = drawer.querySelector("[data-q-list]");
+    const submitBtn = drawer.querySelector("[data-q-submit]");
+    const cancelEditBtn = drawer.querySelector("[data-q-cancel-edit]");
+    const listHead = drawer.querySelector("[data-q-list-head]");
+    const pageCountEl = drawer.querySelector("[data-q-page-count]");
+    const allCountEl = drawer.querySelector("[data-q-all-count]");
+    let draftQuote = "";
+    let draftAnchor = null;
+    let editingId = "";
+    let activeScope = "page";
+
+    function updateCount() {
+      const count = unresolved(pageQuestions()).length;
+      const allCount = unresolved(getQuestions()).length;
+      stashBtn.textContent = "问题 " + count;
+      stashBtn.classList.toggle("has-items", count > 0);
+      pageCountEl.textContent = String(count);
+      allCountEl.textContent = String(allCount);
+    }
+
+    function openDrawer() {
+      document.body.classList.add("question-open");
+      drawer.setAttribute("aria-hidden", "false");
+      stashBtn.setAttribute("aria-expanded", "true");
+    }
+
+    function closeDrawer() {
+      document.body.classList.remove("question-open");
+      drawer.setAttribute("aria-hidden", "true");
+      stashBtn.setAttribute("aria-expanded", "false");
+    }
+
+    function setDraft(quote, anchor) {
+      editingId = "";
+      draftQuote = normalizeQuote(quote);
+      draftAnchor = anchor || null;
+      quoteEl.textContent = draftQuote || "先选中正文中的一句话，再点“标注问题”。";
+      textEl.value = "";
+      submitBtn.textContent = "保存问题";
+      cancelEditBtn.hidden = true;
+    }
+
+    function setEditing(q) {
+      editingId = q.id;
+      draftQuote = q.quote;
+      draftAnchor = typeof q.start === "number" && typeof q.end === "number" ? { start: q.start, end: q.end } : null;
+      quoteEl.textContent = q.quote;
+      textEl.value = q.question || "";
+      submitBtn.textContent = "保存修改";
+      cancelEditBtn.hidden = false;
+      textEl.focus();
+    }
+
+    function scopedQuestions() {
+      const items = activeScope === "all" ? getQuestions() : pageQuestions();
+      return items.sort((a, b) => Number(!!a.resolved) - Number(!!b.resolved) || b.createdAt - a.createdAt);
+    }
+
+    function paintScopeTabs() {
+      drawer.querySelectorAll("[data-q-scope]").forEach((btn) => {
+        btn.setAttribute("aria-selected", String(btn.dataset.qScope === activeScope));
+      });
+      listHead.textContent = activeScope === "all" ? "全部问题" : "当前页问题";
+    }
+
+    function renderList() {
+      const items = scopedQuestions();
+      paintScopeTabs();
+      if (!items.length) {
+        listEl.innerHTML = '<p class="question-empty">' + (activeScope === "all" ? "还没有暂存过问题。" : "这一页还没有暂存问题。") + '</p>';
+        updateCount();
+        return;
+      }
+      listEl.innerHTML = items.map((q) => {
+        const meta = questionPageMeta(q.pageId);
+        const onThisPage = q.pageId === pageId;
+        const pageLine = activeScope === "all"
+          ? '<div class="question-page-ref">' + escapeHTML(q.pageTitle || meta.title) + '</div>'
+          : "";
+        const jumpAction = onThisPage
+          ? '<button type="button" class="btn btn-ghost" data-q-jump>跳到原文</button>'
+          : (meta.file ? '<a class="btn btn-ghost" href="' + escapeHTML(meta.file) + '">打开页面</a>' : "");
+        return (
+        '<article class="question-item' + (q.resolved ? " is-resolved" : "") + '" data-q-id="' + escapeHTML(q.id) + '">' +
+          pageLine +
+          '<blockquote>' + escapeHTML(q.quote) + '</blockquote>' +
+          '<p>' + escapeHTML(q.question || "这里需要回头看。") + '</p>' +
+          '<div class="question-item-actions">' +
+            jumpAction +
+            '<button type="button" class="btn btn-ghost" data-q-edit>编辑</button>' +
+            '<button type="button" class="btn btn-ghost" data-q-resolve>' + (q.resolved ? "恢复" : "已处理") + '</button>' +
+            '<button type="button" class="btn btn-ghost" data-q-delete>删除</button>' +
+          '</div>' +
+        '</article>'
+      ); }).join("");
+      updateCount();
+    }
+
+    function getReadableSelection() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return null;
+      const range = sel.getRangeAt(0);
+      const host = range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
+        ? range.commonAncestorContainer
+        : range.commonAncestorContainer.parentElement;
+      if (!host || !host.closest("#main") || host.closest(".question-drawer, button, textarea, input")) return null;
+      const quote = normalizeQuote(sel.toString());
+      if (quote.length < 2) return null;
+      const rect = range.getBoundingClientRect();
+      if (!rect.width && !rect.height) return null;
+      return { quote, rect, anchor: selectionOffsets(range) };
+    }
+
+    function showSelectionButton() {
+      const data = getReadableSelection();
+      if (!data) {
+        selectBtn.hidden = true;
+        return;
+      }
+      draftQuote = data.quote;
+      draftAnchor = data.anchor;
+      selectBtn.hidden = false;
+      selectBtn.style.left = Math.min(window.innerWidth - 110, Math.max(8, data.rect.left + data.rect.width / 2 - 45)) + "px";
+      selectBtn.style.top = Math.max(8, data.rect.top - 42) + "px";
+    }
+
+    stashBtn.addEventListener("click", () => {
+      renderList();
+      openDrawer();
+    });
+    drawer.querySelector("[data-q-close]").addEventListener("click", closeDrawer);
+    drawer.querySelector("[data-q-clear]").addEventListener("click", () => setDraft(""));
+    cancelEditBtn.addEventListener("click", () => setDraft(""));
+    drawer.querySelectorAll("[data-q-scope]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activeScope = btn.dataset.qScope;
+        renderList();
+      });
+    });
+    selectBtn.addEventListener("mousedown", (e) => e.preventDefault());
+    selectBtn.addEventListener("click", () => {
+      setDraft(draftQuote, draftAnchor);
+      selectBtn.hidden = true;
+      renderList();
+      openDrawer();
+      textEl.focus();
+    });
+
+    drawer.querySelector("form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!draftQuote) return;
+      const items = getQuestions();
+      if (editingId) {
+        const existing = items.find((it) => it.id === editingId);
+        if (existing) {
+          existing.question = textEl.value.trim() || "这里需要回头看。";
+          existing.updatedAt = Date.now();
+          setQuestions(items);
+        }
+        setDraft("");
+        renderList();
+        return;
+      }
+      const q = {
+        id: "q" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+        pageId,
+        pageTitle: currentPageTitle(),
+        quote: draftQuote,
+        question: textEl.value.trim() || "这里需要回头看。",
+        createdAt: Date.now(),
+        resolved: false,
+      };
+      if (draftAnchor) {
+        q.start = draftAnchor.start;
+        q.end = draftAnchor.end;
+      }
+      items.push(q);
+      setQuestions(items);
+      setDraft("");
+      renderList();
+      highlightQuestion(q);
+    });
+
+    listEl.addEventListener("click", (e) => {
+      const item = e.target.closest(".question-item");
+      if (!item) return;
+      const id = item.dataset.qId;
+      const items = getQuestions();
+      const q = items.find((it) => it.id === id);
+      if (!q) return;
+      if (e.target.closest("[data-q-jump]")) scrollToQuestion(q);
+      if (e.target.closest("[data-q-edit]")) setEditing(q);
+      if (e.target.closest("[data-q-resolve]")) {
+        q.resolved = !q.resolved;
+        q.updatedAt = Date.now();
+        setQuestions(items);
+        syncQuestionMarks(q);
+        renderList();
+      }
+      if (e.target.closest("[data-q-delete]")) {
+        setQuestions(items.filter((it) => it.id !== id));
+        removeQuestionMark(id);
+        if (editingId === id) setDraft("");
+        renderList();
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      const mark = e.target.closest(".question-mark");
+      if (!mark) return;
+      renderList();
+      openDrawer();
+    });
+    document.addEventListener("selectionchange", () => window.setTimeout(showSelectionButton, 40));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        selectBtn.hidden = true;
+        if (document.body.classList.contains("question-open")) closeDrawer();
+      }
+    });
+    window.addEventListener("scroll", () => { selectBtn.hidden = true; }, { passive: true });
+    window.addEventListener("resize", () => { selectBtn.hidden = true; });
+
+    renderList();
+    highlightPageQuestions();
+  }
+
   /* ---------- 工具：SVG 与提示框（供页面脚本用） ---------- */
 
   const SVG_NS = "http://www.w3.org/2000/svg";
@@ -385,6 +834,7 @@
     initReveals();
     initQuiz();
     initComplete();
+    initQuestionStash();
   });
 
   window.APP = { SPINES, LAYERS, EXTRAS, getProgress, setDone, svgEl, showTip, hideTip, fmt, fmt1 };
