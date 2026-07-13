@@ -48,15 +48,25 @@
       <!-- ==================== 本质 ==================== -->
       <section role="tabpanel" id="panel-a" aria-labelledby="tab-a" class="prose">
 
-        <h2>1. 制造是「层层印刷」：先看清那个不断重复的循环</h2>
-        <p>晶圆是直径 300 毫米的单晶硅圆盘，芯片（die）是从它上面切下来的小方块。制造的本质，是在晶圆表面把几十层导线和器件结构一层一层「印」出来。先亲眼看一层是怎么印出来的：</p>
+        <h2>1. 制造是「整片加工、横向复制、纵向叠层」</h2>
+        <p>先把三个容易混在一起的方向分开：<strong>整片晶圆</strong>是进入设备加工的对象；横向看，同一片晶圆上重复排列着许多颗尚未切开的芯片（die）；纵向看，每颗 die 都由对准在同一位置的多层器件和导线共同构成。晶圆完成全部工艺后，才测试、分选并切成一颗颗 die。<a class="badge badge-verified" href="https://newsroom.intel.com/tech101/what-are-semiconductors" target="_blank" rel="noopener">已核验 · Intel Tech 101</a></p>
+        <p>所以，光刻和刻蚀一次形成的不是一颗完整 die，而是<strong>当前图案层</strong>：光刻机把掩膜上的图案缩小后，在晶圆不同曝光区域逐次重复；刻蚀再把这张图案转移到当前材料层。下一张掩膜继续对准原来的 die 位置，向上叠下一层。<a class="badge badge-verified" href="https://www.asml.com/en/en/technology/lithography-principles/mechanics-and-mechatronics" target="_blank" rel="noopener">已核验 · ASML 光刻原理</a></p>
 
-        <div class="viz">
+        <div class="viz spatial-viz">
           <div class="viz-head">
-            <span class="viz-title">晶圆截面 · 一层是怎么「印」出来的</span>
-            <span class="viz-sub">看什么：一层 = 四步；层数在长高——每多一层，就多占一轮设备。截面为教学示意。</span>
+            <span class="viz-title">晶圆空间关系 · 俯视和剖面联动</span>
+            <span class="viz-sub">看什么：左边横向排着许多 die，右边纵向叠起同一颗 die；点击左图任意 die，右图会跟着切换。</span>
           </div>
-          <div id="procAnim"></div>
+          <div class="spatial-grid">
+            <section class="spatial-pane" aria-labelledby="waferTopTitle">
+              <h3 id="waferTopTitle">俯视 · 整片晶圆</h3>
+              <div id="waferTopView"></div>
+            </section>
+            <section class="spatial-pane" aria-labelledby="dieSideTitle">
+              <h3 id="dieSideTitle">剖面 · 选中的同一颗 die</h3>
+              <div id="dieSideView"></div>
+            </section>
+          </div>
           <div class="viz-readout" id="procCaption" aria-live="polite"></div>
           <div class="viz-foot">
             <button class="btn btn-ghost" type="button" id="procPrev">上一步</button>
@@ -65,6 +75,19 @@
             <button class="btn btn-ghost" type="button" id="procReset">重置</button>
             <span style="font-size:var(--fs-14);color:var(--muted);margin-left:auto" id="procLayerCount"></span>
           </div>
+          <div class="viz-foot spatial-defects" aria-label="缺陷影响范围示范">
+            <span>缺陷范围：</span>
+            <button class="btn btn-ghost" type="button" id="defectLocal" aria-pressed="false">局部颗粒</button>
+            <button class="btn btn-ghost" type="button" id="defectSystem" aria-pressed="false">系统偏差</button>
+            <button class="btn btn-ghost" type="button" id="defectClear">清除</button>
+          </div>
+          <p class="viz-caveat">教学简化：曝光框示意一个重复图案区域，真实 reticle field 可能包含一颗或多颗 die；制造一个最终结构层通常需要多道工序，工艺循环次数不等于物理层数。<a class="badge badge-verified" href="https://www.intel.com/content/dam/www/program/education/us/en/documents/the-journery-inside/microprocessor/tji-microprocessors-back.pdf" target="_blank" rel="noopener">已核验 · Intel 制造资料</a></p>
+        </div>
+
+        <p><strong>把成本关系接上：</strong>设备处理的是整片晶圆，大部分加工成本在切割前已经发生；最后能留下多少颗合格 die，才决定这笔成本由多少颗产品分摊。局部随机缺陷通常打坏对应位置的 die，系统性工艺偏差则可能同时伤到多个位置。<a class="badge badge-verified" href="https://www.intel.com/content/dam/www/program/education/us/en/documents/the-journery-inside/microprocessor/tji-microprocessors-back.pdf" target="_blank" rel="noopener">已核验 · Intel 掩膜对准与测试说明</a></p>
+        <div class="derive">
+          <span class="expr">单颗合格 die 分摊成本 = 一片晶圆加工成本 ÷ 合格 die 数量</span>
+          <span class="unit">分母越少，每颗越贵</span>
         </div>
 
         <p>循环里每一步的物理目的、失效模式和设备商格局，点开细看：</p>
@@ -418,6 +441,8 @@
     <div class="src">
       <strong>本页资料来源</strong>
       <ul style="margin:8px 0 0;padding-left:1.3em">
+        <li id="src-intel-wafer-die"><a href="https://newsroom.intel.com/tech101/what-are-semiconductors" target="_blank" rel="noopener">Intel Tech 101：同一片晶圆形成许多相同集成电路，完成后再测试、切割成 die；芯片由多层器件与互连组成</a></li>
+        <li id="src-asml-step-scan"><a href="https://www.asml.com/en/en/technology/lithography-principles/mechanics-and-mechatronics" target="_blank" rel="noopener">ASML 光刻原理：reticle 与 wafer stage 同步扫描，图案逐个曝光区域复制到晶圆</a> · <a href="https://www.intel.com/content/dam/www/program/education/us/en/documents/the-journery-inside/microprocessor/tji-microprocessors-back.pdf" target="_blank" rel="noopener">Intel 制造资料：很多物理层需要多道步骤，掩膜偏差可能影响部分或整片芯片</a></li>
         <li id="src-tsmc-2024-annual"><a href="https://investor.tsmc.com/static/annualReports/2024/english/pdf/2024_tsmc_ar_e_ch2.pdf" target="_blank" rel="noopener">台积电 2024 年报（晶圆出货 1,290 万片、收入 900.8 亿美元、先进制程 2023 年 58% / 2024 年 69%）</a></li>
         <li id="src-tsmc-q4-2023-call"><a href="https://www.fool.com/earnings/call-transcripts/2024/01/18/taiwan-semiconductor-manufacturing-tsm-q4-2023-ear/" target="_blank" rel="noopener">台积电 2023Q4 财报电话会转录（N3 稀释 3-4 个点、N5/N7 8-10 季度、N3 10-12 季度回到公司平均毛利率）</a></li>
         <li id="src-tsmc-4q24"><a href="https://www.sec.gov/Archives/edgar/data/0001046179/000104617925000004/a4q24e_withguidancexfinal.htm" target="_blank" rel="noopener">台积电 4Q24 业绩公告 6-K（季度毛利率序列 53.1% → 59.0%，2024 全年 56.1%）</a>；2025 全年 59.9% 见公司 2025 年报</li>
@@ -463,125 +488,204 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ---------- 四步循环 · 晶圆截面步进动画 ---------- */
+  /* ---------- 晶圆俯视 × 单颗 die 剖面联动 ---------- */
   (function () {
-    const PW = 720, PH = 300, PX = 70, PWD = 580;
-    const baseY = 256, rowH = 15, maxLayers = 8, cell = PWD / 6;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const FILM_A = "oklch(0.86 0.05 250)", FILM_B = "oklch(0.88 0.05 150)",
-          MASK = "oklch(0.35 0.02 145)", SUB = "oklch(0.92 0.008 145)";
-
-    const root = document.getElementById("procAnim");
-    const psvg = APP.svgEl("svg", { viewBox: "0 0 " + PW + " " + PH, role: "img",
-      "aria-label": "晶圆截面示意动画：沉积、光刻、刻蚀、量测四步循环，层数逐层长高" });
-    root.appendChild(psvg);
-
+    const C = {
+      wafer: "oklch(0.945 0.006 145)", die: "oklch(0.90 0.025 145)",
+      selected: "oklch(0.82 0.075 145)", filmA: "oklch(0.86 0.05 250)",
+      filmB: "oklch(0.88 0.05 150)", mask: "oklch(0.35 0.02 145)",
+      bad: "oklch(0.74 0.13 28)", system: "oklch(0.83 0.09 58)"
+    };
     const CAP = [
-      "就绪：硅衬底在下，准备印第一层。点「下一步」或「自动播放」。",
-      "① 沉积：铺上一层均匀薄膜，厚度以纳米计（应用材料、泛林、东京电子的机台）。",
-      "② 光刻：光透过掩膜的缝隙照下来，把电路图案「晒」在这层材料上（ASML 光刻机）。掩膜挡住的地方受保护。",
-      "③ 刻蚀：被晒到、没受保护的部分挖掉——图案从投影变成实体（泛林、东京电子、应用材料）。",
-      "④ 量测：扫描检查线宽和对准，合格这一层才算完工（KLA）——然后回到第①步，盖下一层。"
+      "① 看整片：设备搬运和加工的是整片晶圆；这些方格此时还连在一起，没有切成独立芯片。",
+      "② 选一颗：左边横向每个方格是一颗未来的 die；右边只把你选中的那颗沿纵向放大。",
+      "③ 沉积：材料先覆盖整片晶圆；右边看到的是这颗 die 当前层的一小段剖面。",
+      "④ 光刻：曝光区域在晶圆上逐次移动，把当前图案重复到各个 die 位置；它只定义当前层，不会一次做出完整 die。",
+      "⑤ 刻蚀与量测：当前图案被转移到材料层，并检查线宽和对准；所有 die 都得到各自的这一层图案。",
+      "⑥ 一层完成：下一轮仍对准原来的横向位置继续向上叠；右边所有层合起来，才是这一颗完整 die。"
     ];
+    const topSvg = APP.svgEl("svg", { viewBox: "0 0 320 310", role: "img",
+      "aria-label": "晶圆俯视图：整片晶圆上横向排列许多尚未切开的 die，可点击选择" });
+    const sideSvg = APP.svgEl("svg", { viewBox: "0 0 320 310", role: "img",
+      "aria-label": "选中 die 的剖面图：多层器件与导线纵向叠在同一颗 die 上" });
+    document.getElementById("waferTopView").appendChild(topSvg);
+    document.getElementById("dieSideView").appendChild(sideSvg);
 
-    let layers = 0, step = 0, timer = null, scanRaf = null;
-
-    function patternRow(y, h, fill) {
-      const g = APP.svgEl("g", {});
-      for (let i = 0; i < 6; i++) {
-        g.appendChild(APP.svgEl("rect", { x: PX + i * cell + 8, y, width: cell - 16, height: h, fill, rx: 2 }));
+    const dies = [];
+    const size = 34, cx = 160, cy = 148, radius = 126;
+    for (let row = 0; row < 7; row++) {
+      for (let col = 0; col < 7; col++) {
+        const x = 41 + col * size, y = 29 + row * size;
+        const corners = [[x, y], [x + size, y], [x, y + size], [x + size, y + size]];
+        if (corners.every((p) => Math.hypot(p[0] - cx, p[1] - cy) <= radius)) {
+          dies.push({ id: dies.length, row, col, x, y });
+        }
       }
+    }
+
+    let step = 0, layers = 1, selected = dies[Math.floor(dies.length / 2)].id;
+    let timer = null, exposureRaf = null, defectMode = "none", localBad = null;
+
+    function label(svg, value, x, y, cls, anchor) {
+      const t = APP.svgEl("text", { x, y, class: cls || "axis-txt", "text-anchor": anchor || "start" });
+      t.textContent = value; svg.appendChild(t); return t;
+    }
+
+    function isSystemBad(die) { return defectMode === "system" && (die.row === 3 || die.col === 3); }
+    function isLocalBad(die) { return defectMode === "local" && die.id === localBad; }
+
+    function drawTop() {
+      if (exposureRaf) { cancelAnimationFrame(exposureRaf); exposureRaf = null; }
+      while (topSvg.firstChild) topSvg.removeChild(topSvg.firstChild);
+      topSvg.appendChild(APP.svgEl("circle", { cx, cy, r: radius + 5, fill: C.wafer, stroke: "var(--viz-axis)", "stroke-width": 1.2 }));
+      topSvg.appendChild(APP.svgEl("path", { d: "M145 20 L160 29 L175 20", fill: "var(--bg)", stroke: "var(--viz-axis)", "stroke-width": 1 }));
+
+      dies.forEach((die) => {
+        const bad = isLocalBad(die), sys = isSystemBad(die), active = die.id === selected;
+        const g = APP.svgEl("g", { class: "wafer-die", role: "button", tabindex: "0",
+          "aria-label": "选择第 " + (die.row + 1) + " 行第 " + (die.col + 1) + " 列 die" });
+        const fill = bad ? C.bad : sys ? C.system : active ? C.selected : C.die;
+        g.appendChild(APP.svgEl("rect", { x: die.x + 1, y: die.y + 1, width: size - 2, height: size - 2,
+          fill, stroke: active ? "var(--primary)" : "var(--bg)", "stroke-width": active ? 2.5 : 1, rx: 2 }));
+        if (step >= 4) {
+          for (let k = 0; k < 3; k++) {
+            g.appendChild(APP.svgEl("line", { x1: die.x + 7, x2: die.x + size - 7,
+              y1: die.y + 9 + k * 7, y2: die.y + 9 + k * 7,
+              stroke: bad ? "var(--danger-ink)" : "var(--primary)", "stroke-width": 1.3, opacity: 0.72 }));
+          }
+        }
+        const choose = () => { selected = die.id; draw(); };
+        g.addEventListener("click", choose);
+        g.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choose(); }
+        });
+        topSvg.appendChild(g);
+      });
+
+      if (step === 2) {
+        topSvg.appendChild(APP.svgEl("circle", { cx, cy, r: radius, fill: C.filmA, opacity: 0.28, "pointer-events": "none" }));
+        label(topSvg, "材料覆盖整片晶圆", 160, 295, "anno-txt", "middle");
+      } else if (step === 3) {
+        const scan = APP.svgEl("rect", { x: 51, y: 46, width: size * 2, height: size * 2,
+          fill: "none", stroke: "var(--accent)", "stroke-width": 3, rx: 3, "pointer-events": "none" });
+        topSvg.appendChild(scan);
+        label(topSvg, "曝光区域逐次移动并重复图案", 160, 295, "anno-txt", "middle");
+        if (!reduce) {
+          const fields = dies.filter((d) => d.col % 2 === 1 && d.row % 2 === 1);
+          const start = performance.now();
+          const animate = (now) => {
+            const f = fields[Math.floor((now - start) / 520) % Math.max(1, fields.length)] || dies[0];
+            scan.setAttribute("x", Math.max(31, Math.min(221, f.x - 17)));
+            scan.setAttribute("y", Math.max(19, Math.min(209, f.y - 17)));
+            exposureRaf = requestAnimationFrame(animate);
+          };
+          exposureRaf = requestAnimationFrame(animate);
+        }
+      } else {
+        label(topSvg, step >= 4 ? "当前图案层已出现在所有 die 位置" : "整片加工 · 最后才测试和切割", 160, 295,
+          step >= 4 ? "anno-txt" : "axis-txt", "middle");
+      }
+    }
+
+    function patternLayer(y, color) {
+      const g = APP.svgEl("g", {});
+      const widths = [42, 27, 52, 34, 45];
+      let x = 39;
+      widths.forEach((w, i) => {
+        g.appendChild(APP.svgEl("rect", { x, y, width: w, height: 12, fill: color, rx: 2 }));
+        x += w + (i % 2 ? 12 : 8);
+      });
       return g;
     }
 
-    function draw() {
-      if (scanRaf) { cancelAnimationFrame(scanRaf); scanRaf = null; }
-      while (psvg.firstChild) psvg.removeChild(psvg.firstChild);
-      psvg.appendChild(APP.svgEl("rect", { x: PX, y: baseY, width: PWD, height: 28, fill: SUB, stroke: "var(--line)" }));
-      const st = APP.svgEl("text", { x: PX + PWD / 2, y: baseY + 18, "text-anchor": "middle", class: "axis-txt" });
-      st.textContent = "硅衬底（晶圆截面）";
-      psvg.appendChild(st);
+    function drawSide() {
+      while (sideSvg.firstChild) sideSvg.removeChild(sideSvg.firstChild);
+      const baseY = 257, rowH = 22;
+      sideSvg.appendChild(APP.svgEl("rect", { x: 30, y: baseY, width: 260, height: 27, fill: C.wafer,
+        stroke: "var(--line)", "stroke-width": 1 }));
+      label(sideSvg, "硅衬底 · 这是选中 die 的横向范围", 160, 275, "axis-txt", "middle");
 
       for (let l = 0; l < layers; l++) {
-        psvg.appendChild(patternRow(baseY - (l + 1) * rowH, rowH - 3, l % 2 ? FILM_B : FILM_A));
+        sideSvg.appendChild(patternLayer(baseY - (l + 1) * rowH, l % 2 ? C.filmB : C.filmA));
       }
       const top = baseY - (layers + 1) * rowH;
-      const film = layers % 2 ? FILM_B : FILM_A;
-
-      if (step === 1) {
-        psvg.appendChild(APP.svgEl("rect", { x: PX, y: top, width: PWD, height: rowH - 3, fill: film, rx: 2 }));
-      } else if (step === 2) {
-        psvg.appendChild(APP.svgEl("rect", { x: PX, y: top, width: PWD, height: rowH - 3, fill: film, rx: 2 }));
-        for (let i = 0; i < 6; i++) {
-          psvg.appendChild(APP.svgEl("rect", { x: PX + i * cell + 8, y: top - 48, width: cell - 16, height: 7, fill: MASK, rx: 1 }));
-        }
-        const ml = APP.svgEl("text", { x: PX - 10, y: top - 41, "text-anchor": "end", class: "axis-txt" });
-        ml.textContent = "掩膜";
-        psvg.appendChild(ml);
-        for (let i = 1; i < 6; i++) {
-          psvg.appendChild(APP.svgEl("line", { x1: PX + i * cell, y1: top - 40, x2: PX + i * cell, y2: top, stroke: "var(--accent)", "stroke-width": 2, "stroke-dasharray": "3 4", opacity: 0.85 }));
-          psvg.appendChild(APP.svgEl("rect", { x: PX + i * cell - 8, y: top, width: 16, height: rowH - 3, fill: "var(--accent)", opacity: 0.55 }));
-        }
-      } else if (step >= 3) {
-        psvg.appendChild(patternRow(top, rowH - 3, film));
-        if (step === 4) {
-          const scanLine = APP.svgEl("line", { x1: PX, y1: top - 14, x2: PX, y2: top + rowH, stroke: "var(--info)", "stroke-width": 2.5 });
-          psvg.appendChild(scanLine);
-          const ok = APP.svgEl("text", { x: PX + PWD, y: top - 18, "text-anchor": "end", class: "anno-txt" });
-          ok.textContent = "✓ 线宽 / 套准 合格";
-          psvg.appendChild(ok);
-          if (!reduce) {
-            const t0 = performance.now();
-            const sweep = (t) => {
-              const p = Math.min(1, (t - t0) / 900);
-              const sx = PX + p * PWD;
-              scanLine.setAttribute("x1", sx); scanLine.setAttribute("x2", sx);
-              if (p < 1) scanRaf = requestAnimationFrame(sweep);
-            };
-            scanRaf = requestAnimationFrame(sweep);
-          } else {
-            scanLine.setAttribute("x1", PX + PWD / 2); scanLine.setAttribute("x2", PX + PWD / 2);
-          }
-        }
+      const film = layers % 2 ? C.filmB : C.filmA;
+      if (step === 2 || step === 3) {
+        sideSvg.appendChild(APP.svgEl("rect", { x: 30, y: top, width: 260, height: 12, fill: film, rx: 2 }));
+      }
+      if (step === 3) {
+        sideSvg.appendChild(APP.svgEl("rect", { x: 54, y: top - 50, width: 212, height: 8, fill: C.mask, rx: 2 }));
+        [86, 145, 211].forEach((x) => {
+          sideSvg.appendChild(APP.svgEl("line", { x1: x, x2: x, y1: top - 40, y2: top,
+            stroke: "var(--accent)", "stroke-width": 2, "stroke-dasharray": "3 4" }));
+        });
+        label(sideSvg, "当前层掩膜", 48, top - 44, "axis-txt", "end");
+      } else if (step >= 4) {
+        sideSvg.appendChild(patternLayer(top, film));
       }
 
-      const finished = layers >= maxLayers;
-      document.getElementById("procCaption").innerHTML = finished
-        ? "已示范 " + maxLayers + " 层。真实的先进制程要这样重复 <b>80-120 次</b>、约 90 个掩膜层<span class='badge badge-verified'>已核验</span>——「设备台数随层数增长」就是这么来的。点「重置」再看一遍。"
-        : CAP[step];
-      document.getElementById("procLayerCount").textContent = "已完成 " + layers + " 层（示范上限 " + maxLayers + " 层）";
-      document.getElementById("procNext").disabled = finished;
-      document.getElementById("procPrev").disabled = (layers === 0 && step === 0);
+      const chosen = dies.find((d) => d.id === selected);
+      if (defectMode === "local" && selected === localBad) {
+        sideSvg.appendChild(APP.svgEl("circle", { cx: 176, cy: Math.max(34, top + 6), r: 6, fill: C.bad }));
+        label(sideSvg, "局部缺陷：主要伤到这颗 die", 160, 24, "anno-txt", "middle");
+      } else if (defectMode === "system" && chosen && isSystemBad(chosen)) {
+        sideSvg.appendChild(APP.svgEl("line", { x1: 50, x2: 274, y1: top - 2, y2: top + 11,
+          stroke: "var(--accent)", "stroke-width": 4, opacity: 0.75 }));
+        label(sideSvg, "系统偏差：多个位置可能一起受影响", 160, 24, "anno-txt", "middle");
+      } else {
+        label(sideSvg, "每一横条都是同一颗 die 内的结构，不是另一颗 die", 160, 24, "axis-txt", "middle");
+      }
+      label(sideSvg, "纵向：第 " + (layers + (step >= 5 ? 1 : 0)) + " 层", 160, 304, "end-lbl", "middle");
+    }
+
+    function draw() {
+      drawTop(); drawSide();
+      document.getElementById("procCaption").innerHTML = CAP[step];
+      document.getElementById("procLayerCount").textContent = "教学示范：已叠 " + (layers + (step >= 5 ? 1 : 0)) + " 层";
+      document.getElementById("procPrev").disabled = (step === 0 && layers === 1);
+      document.getElementById("procNext").disabled = (step === 5 && layers >= 4);
     }
 
     function next() {
-      if (layers >= maxLayers) return stopPlay();
-      if (step < 4) step++;
-      else { layers++; step = layers >= maxLayers ? 0 : 1; }
+      if (step < 5) step++;
+      else if (layers < 4) { layers++; step = 2; }
+      else return stopPlay();
       draw();
-      if (layers >= maxLayers) stopPlay();
+      if (step === 5 && layers >= 4) stopPlay();
     }
     function prev() {
-      if (step > 0) step--;
-      else if (layers > 0) { layers--; step = 4; }
+      if (step > 2 || layers === 1) step--;
+      else { layers--; step = 5; }
       draw();
     }
     function stopPlay() {
       if (timer) { clearInterval(timer); timer = null; }
       const b = document.getElementById("procPlay");
-      b.setAttribute("aria-pressed", "false");
-      b.textContent = "自动播放";
+      b.setAttribute("aria-pressed", "false"); b.textContent = "自动播放";
     }
+    function setDefect(mode) {
+      defectMode = mode;
+      if (mode === "local") localBad = selected;
+      document.getElementById("defectLocal").setAttribute("aria-pressed", mode === "local" ? "true" : "false");
+      document.getElementById("defectSystem").setAttribute("aria-pressed", mode === "system" ? "true" : "false");
+      draw();
+    }
+
     document.getElementById("procNext").addEventListener("click", () => { stopPlay(); next(); });
     document.getElementById("procPrev").addEventListener("click", () => { stopPlay(); prev(); });
-    document.getElementById("procReset").addEventListener("click", () => { stopPlay(); layers = 0; step = 0; draw(); });
+    document.getElementById("procReset").addEventListener("click", () => {
+      stopPlay(); step = 0; layers = 1; defectMode = "none"; localBad = null; setDefect("none");
+    });
     document.getElementById("procPlay").addEventListener("click", function () {
       if (timer) return stopPlay();
-      if (layers >= maxLayers) { layers = 0; step = 0; }
-      this.setAttribute("aria-pressed", "true");
-      this.textContent = "暂停";
-      timer = setInterval(next, 1200);
+      if (step === 5 && layers >= 4) { step = 0; layers = 1; }
+      this.setAttribute("aria-pressed", "true"); this.textContent = "暂停";
+      timer = setInterval(next, 1150);
     });
+    document.getElementById("defectLocal").addEventListener("click", () => setDefect("local"));
+    document.getElementById("defectSystem").addEventListener("click", () => setDefect("system"));
+    document.getElementById("defectClear").addEventListener("click", () => setDefect("none"));
     draw();
   })();
 

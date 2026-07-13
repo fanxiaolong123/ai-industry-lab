@@ -950,6 +950,48 @@ input[type="range"]::-moz-range-thumb {
 .viz .anno-txt { font-size: 11px; fill: var(--accent-ink); font-weight: 600; }
 .viz .bar-lbl { font-size: 12px; fill: var(--ink); font-weight: 650; }
 
+/* 模块 2：晶圆俯视 × die 剖面联动 */
+.spatial-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+  margin-top: 12px;
+}
+.spatial-pane {
+  min-width: 0;
+  background: var(--surface);
+  border-radius: var(--radius-s);
+  padding: 10px 12px 8px;
+}
+.spatial-pane h3 {
+  font-size: var(--fs-13);
+  font-weight: 650;
+  color: var(--muted);
+  margin: 0 0 4px;
+}
+.spatial-pane svg { max-height: 320px; }
+.spatial-defects {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+  font-size: var(--fs-13);
+  color: var(--muted);
+}
+.viz-caveat {
+  font-size: var(--fs-13);
+  color: var(--muted);
+  margin: 10px 0 0;
+}
+.wafer-die { cursor: pointer; }
+.wafer-die:focus { outline: none; }
+.wafer-die:focus-visible rect {
+  stroke: var(--info);
+  stroke-width: 3;
+}
+@media (max-width: 700px) {
+  .spatial-grid { grid-template-columns: 1fr; }
+  .spatial-pane svg { max-height: none; }
+}
+
 /* ---------- 步进器 / 传导链 ---------- */
 
 .chainmap { display: grid; gap: 0; margin: 18px 0; }
