@@ -91,7 +91,7 @@
       <ul style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
         <li>一家半导体公司的收入增速有 30%，你从哪几个信号判断这是「结构成长」、「周期反弹」，还是「两者叠加」？</li>
         <li>2021 年缺货新闻满天飞时，为什么老手会说「缺得越猛越要警惕」？——用 1997 年一篇经典论文里的一个词回答。</li>
-        <li>英特尔的 10nm 从「原定 2016」一路推到「2019 才勉强上市」，中间管理层每次都说「按计划推进」——你会去看哪三份公开材料判断技术是不是真的在掉队？</li>
+        <li>英特尔的 10nm 从「原定 2016」一路推到「2019 才勉强上市」，中间管理层每次都用「摩尔定律的自然放缓」、「路线图仍在推进」这类语言淡化——你会去看哪三份公开材料判断技术是不是真的在掉队？</li>
       </ul>
     </div>
 
@@ -275,16 +275,16 @@
             <tr class="pivot-good">
               <td class="dt">2017-03-02</td>
               <td>AMD 发布首代 Ryzen（Zen 架构，14nm FinFET），正面对标英特尔主流 CPU</td>
-              <td>桌面 CPU 市占率从 2017 年约 7%（笔记本+桌面合计），到 2024 年爬到 30%+<span class="badge badge-verified">已核验 · Zen Wikipedia 引 Statista</span>。「换一个懂产品的 CEO + 憋出一代硬产品」两步走对，是 AMD 翻身的完整叙事。</td>
+              <td>x86 CPU 单位市占率从 2016-17 年低谷（客户端合计约 10%）一路爬到 2025Q2 桌面单项 32.2%（笔电较慢，约 21%）<span class="badge badge-verified">已核验 · Mercury Research（TechSpot 转引）</span>。「换一个懂产品的 CEO + 憋出一代硬产品」两步走对，是 AMD 翻身的完整叙事。</td>
             </tr>
             <tr class="pivot-bad">
               <td class="dt">2015-07</td>
               <td>Intel 首次官宣 10nm 延期：Cannon Lake 从 2016 推迟至 2017</td>
-              <td>此时管理层措辞仍是「按计划推进」<span class="badge badge-verified">已核验 · Intel 2015-07 季报电话会</span>。这是第一份可以事后归档的「掉队信号」。</td>
+              <td>科再奇（Brian Krzanich）当场承认延期，但把它定性为「我们的节奏现在接近两年半、而不是两年」的「摩尔定律自然放缓」——承认表象、不承认执行问题<span class="badge badge-verified">已核验 · Intel 2015-07 Q2 电话会</span>。这是第一份可以事后归档的「掉队信号」。</td>
             </tr>
             <tr class="pivot-bad">
-              <td class="dt">2018-04</td>
-              <td>Intel 10nm 首颗产品 Core i3-8121U 出货（Cannon Lake 系列唯一量产品）</td>
+              <td class="dt">2018-05</td>
+              <td>Intel 10nm 首颗产品 Core i3-8121U 出货（Cannon Lake 系列唯一量产芯片，只搭在联想 IdeaPad 330 与 Intel 自家 Crimson Canyon NUC 两款小众产品上）</td>
               <td>为了绕开良率问题，把集成显卡整个关掉才勉强出货<span class="badge badge-verified">已核验 · Tom's Hardware / TechInsights 拆解报道</span>。「量产一颗残缺的芯片」是掉队最直白的公开证据。</td>
             </tr>
             <tr class="pivot-bad">
@@ -295,7 +295,7 @@
             <tr class="pivot-bad">
               <td class="dt">2020-07-23</td>
               <td>Intel 财报电话会宣布 7nm 再延期 6 个月，CEO Bob Swan 承认「良率进度比目标晚了 12 个月」，同时说要考虑外部代工</td>
-              <td>Intel 股价单日下跌约 16%<span class="badge badge-verified">已核验 · Fortune 2020-07-24 报道</span>。「承认要用竞争对手代工」这句话本身，是 IDM 模式动摇的信号。</td>
+              <td>Intel 股价次日（07-24）收盘 -16%<span class="badge badge-verified">已核验 · CNN Business 2020-07-24 报道（Fortune 同日盘前口径 -14%）</span>。「承认要用竞争对手代工」这句话本身，是 IDM 模式动摇的信号。</td>
             </tr>
             <tr class="pivot-good">
               <td class="dt">2021-02-15</td>
@@ -308,7 +308,7 @@
         <p>反例更能说明问题——同一时期还有两家公司在岔口上把命运选错：</p>
         <ul>
           <li><strong>Cyrix</strong>：1990s 上半期与 Intel、AMD 三足鼎立的 x86 兼容 CPU 玩家，1997 年 11 月被 National Semiconductor 收购，1999 年 6 月又被 VIA 以 1.67 亿美元买走，此后作为品牌逐渐消失<span class="badge badge-verified">已核验 · TechSpot / National Semi 8-K</span>。<strong>技术不是致命伤，「一步跟不上」的资本约束是</strong>——当时它跟不上 Intel/AMD 的资本开支节奏，制程节点差一代就摊不平成本。</li>
-          <li><strong>3dfx</strong>：1990s 3D 图形芯片的开创者（Voodoo 系列），2000 年 12 月 15 日核心资产被 Nvidia 以 7,000 万美元现金 + 100 万美元股票买下，2001 年 4 月交割<span class="badge badge-verified">已核验 · 3dfx Wikipedia / PCWorld</span>。<strong>3dfx 的致命错误是自己收购了显卡组装厂 STB（1998），从「卖芯片给板卡厂」变成「自己做板卡」——一夜之间和所有客户变成竞争对手</strong><span class="badge badge-expert">专家判断 · 通行的 3D 图形史归因</span>。技术在，商业模式选错了，一样出局。</li>
+          <li><strong>3dfx</strong>：1990s 3D 图形芯片的开创者（Voodoo 系列），2000 年 12 月 15 日核心资产被 Nvidia 以 7,000 万美元现金 + 100 万股 Nvidia 普通股（当时约值数千万美元）买下，2001 年 4 月交割<span class="badge badge-verified">已核验 · SEC Form 10-Q（3dfx，2000）</span>。<strong>3dfx 的致命错误是自己收购了显卡组装厂 STB（1998），从「卖芯片给板卡厂」变成「自己做板卡」——一夜之间和所有客户变成竞争对手</strong><span class="badge badge-expert">专家判断 · 通行的 3D 图形史归因</span>。技术在，商业模式选错了，一样出局。</li>
         </ul>
 
         <p>把这张档案表看透，两个可复用的判断模型：<strong>技术掉队瞒不住</strong>——延期、跳过节点、承认外部代工，这三种公开语言是最硬的信号，比任何「基本面转好」的分析师报告都硬；<strong>掌门人决定论不是虚词</strong>——CEO 更换、关键产品发布、砍掉长期亏损业务，这三类事件带明确日期、可以事后回查，是判断一家公司走向的 T 型账。这两个模型的落地版本，「怎么判断」页把它做成了工具。</p>
@@ -428,7 +428,7 @@
           <div class="reveal-panel" id="tr2">
             <div class="chain">
               <div class="chain-row"><b>公开材料一</b><div>过去五年的<strong>技术路线图公告</strong>与实际发布对照——每一次节点/产品的原定时间与实际时间。累计滑点超过一年的，标红。（Intel 10nm 就是这么被抓出来的：2015→2016→2017→2018→2019。）</div></div>
-              <div class="chain-row"><b>公开材料二</b><div><strong>财报电话会问答环节的转录</strong>——分析师问技术进度时，管理层用的具体词。「按计划推进」重复出现两个季度以上但没有产品数据的支撑，是常见的技术措辞泡沫。</div></div>
+              <div class="chain-row"><b>公开材料二</b><div><strong>财报电话会问答环节的转录</strong>——分析师问技术进度时，管理层用的具体词。「路线图仍在推进」「按计划」「短暂放缓」这类含糊语言重复出现两个季度以上、没有量化良率或客户名单支撑，是常见的技术措辞泡沫。</div></div>
               <div class="chain-row"><b>公开材料三</b><div><strong>关键工程人才的公开动向</strong>——LinkedIn、公司 8-K/DEF 14A 里的高管变动、被同行公司挖走的核心工艺/架构负责人。「技术掉队」经常在这里最早显形。<span class="badge badge-expert">专家判断 · 买方通行的软信号跟踪</span></div></div>
               <div class="chain-row"><b>官方语言一</b><div>「探索外部代工」——对 IDM 是自我否定级别的信号（Intel 2020-07 就是当天股价 -16% 的直接触发）。</div></div>
               <div class="chain-row"><b>官方语言二</b><div>产品「先阉割后上市」——特定功能被砍以配合良率（Intel Cannon Lake 关核显是教材级别的例子）。</div></div>
@@ -495,11 +495,11 @@
         <li><a href="https://en.wikipedia.org/wiki/Icera">Wikipedia：Icera（Nvidia 2011-05 以 $367M 收购、2015-05-05 关停）</a> · <a href="https://www.theregister.com/2015/05/05/nvidia_to_shutter_icera_modem_business/">The Register：Nvidia 官方声明「聚焦游戏、汽车、云端含深度学习」</a></li>
         <li><a href="https://ir.amd.com/news-events/press-releases/detail/568/amd-appoints-dr-lisa-su-as-president-and-chief-executive-officer">AMD 官方公告：任命苏姿丰为总裁兼 CEO（2014-10-08）</a></li>
         <li><a href="https://en.wikipedia.org/wiki/Zen_(first_generation)">Wikipedia：Zen 架构一代与 Ryzen 首发（2017-03-02）</a> · 2017-2024 AMD 桌面/笔电 CPU 市场份额 7% → 30% 数据来源同上（引 Statista）</li>
-        <li><a href="https://www.tomshardware.com/news/intel-announces-delay-to-7nm-processors-now-one-year-behind-expectations">Tom's Hardware：Intel 2020-07-23 财报电话会 CEO Bob Swan 宣布 7nm 再延期 6 个月、良率晚 12 个月，考虑外部代工</a> · <a href="https://fortune.com/2020/07/24/what-the-hell-just-happened-to-intel/">Fortune：当日 Intel 股价约 -16%</a></li>
+        <li><a href="https://www.tomshardware.com/news/intel-announces-delay-to-7nm-processors-now-one-year-behind-expectations">Tom's Hardware：Intel 2020-07-23 财报电话会 CEO Bob Swan 宣布 7nm 再延期 6 个月、良率晚 12 个月，考虑外部代工</a> · <a href="https://edition.cnn.com/2020/07/24/investing/intel-earnings-stock-selloff/index.html">CNN Business：Intel 股价 07-24 收盘 -16%（$61.15 → $50.59）</a> · <a href="https://fortune.com/2020/07/24/what-the-hell-just-happened-to-intel/">Fortune：同日盘前口径 -14%</a></li>
         <li><a href="https://en.wikichip.org/wiki/intel/core_i3/i3-8121u">WikiChip：Intel Core i3-8121U（Cannon Lake 系列唯一量产品，2018 出货，关闭核显）</a> · <a href="https://www.notebookcheck.net/TechInsight-dissects-and-analyzes-the-Cannon-Lake-Core-i3-8121U.313402.0.html">TechInsight/Notebookcheck 拆解报道</a></li>
         <li><a href="https://www.silicon.co.uk/workspace/components/intel-first-10th-gen-processors-257841">Silicon UK：Intel 10 代酷睿（Ice Lake，10nm）2019 下半年出货</a></li>
         <li><a href="https://www.sec.gov/Archives/edgar/data/0000050863/000119312521009142/d82915dex991.htm">Intel 8-K（2021-01-13 公告 Pat Gelsinger 任 CEO，生效 2021-02-15）</a> · <a href="https://www.cnbc.com/2021/01/13/intel-ceo-bob-swan-to-step-down-in-february.html">CNBC 报道</a></li>
-        <li><a href="https://en.wikipedia.org/wiki/3dfx">Wikipedia：3dfx Interactive（2000-12-15 核心资产被 Nvidia 以 $70M 现金 + $1M 股票收购，2001-04-18 交割；1998 收购 STB 是致命错误公论）</a></li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/0001010026/000109581100005412/f67972e10-q.txt">SEC · 3dfx Form 10-Q（2000）</a>——原文「$70 million cash and 1.0 million shares of registered nVidia common stock」；<a href="https://en.wikipedia.org/wiki/3dfx">Wikipedia：3dfx Interactive</a>（2001-04-18 交割；1998 收购 STB 是致命错误公论）。</li>
         <li><a href="https://www.techspot.com/article/2120-cyrix/">TechSpot：Cyrix 兴衰史</a> · <a href="https://www.sec.gov/Archives/edgar/data/0000070530/000007053097000019/0000070530-97-000019.txt">National Semiconductor 8-K：Cyrix 收购完成（1997-11-17）</a> · <a href="https://www.eetimes.com/update-via-technologies-looks-to-centaur-subsidiary-to-propel-processor-road-map/">EE Times：VIA 1999-06 以 $167M 收购 Cyrix CPU 部门</a></li>
         <li><a href="https://www.sec.gov/Archives/edgar/data/1045810/000104581023000014/q4fy23pr.htm">Nvidia Q4 FY23 财报 8-K（2023-02-22）：FY23 数据中心收入 $15.01B、总收入 $26.97B</a> · <a href="https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-fourth-quarter-and-fiscal-2024">Nvidia FY24 财报：数据中心收入 $47.5B</a></li>
         <li><a href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing">彭博：芯片交期缩短、几年来最大降幅（2022-10-17，Susquehanna 数据）</a> · <a href="https://www.datacenterdynamics.com/en/news/chip-lead-times-hit-202-weeks-as-semiconductor-shortage-drags-on/">DCD：交期突破 20 周（2021-08）</a></li>
