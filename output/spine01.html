@@ -152,12 +152,12 @@
 
         <h3>供给为什么慢（三段时间，一段都省不掉）</h3>
         <ol>
-          <li><strong>盖厂</strong>：晶圆厂车间对空气洁净度的要求比手术室高几个数量级，土建加净化一年以上。真实刻度：台积电亚利桑那工厂 <strong>2020 年 5 月</strong>宣布，<strong>2025 年</strong>首厂才量产<a class="badge badge-verified" href="https://pr.tsmc.com/english/news/2033" target="_blank" rel="noopener">已核验 · 台积电官方公告</a>——海外新建接近五年；行业通行口径下，从拍板到有效产出也要 <strong>24-36 个月</strong><a class="badge badge-expert" href="#src-fab-cycle-expert">专家判断</a>。</li>
-          <li><strong>等设备</strong>：最关键的 EUV 光刻机全球只有 ASML 一家能造，<strong>2024 全年只交付 44 台、单台均价 2.27 亿欧元</strong><a class="badge badge-verified" href="https://ourbrand.asml.com/m/ee9da90a119cc9d/original/2024-Financial-performance-section.pdf" target="_blank" rel="noopener">已核验 · ASML 2024 年报</a>——想插队也没有队可插。</li>
+          <li><strong>盖厂</strong>：晶圆厂车间对空气洁净度的要求比手术室高几个数量级，土建加净化一年以上。真实刻度：台积电亚利桑那工厂 <strong>2020 年 5 月</strong>宣布，<strong>2024 年底</strong>首厂才量产<a class="badge badge-verified" href="#src-tsmc-arizona">已核验 · 台积电官方公告</a>——海外新建约四年半；行业通行口径下，从拍板到有效产出也要 <strong>24-36 个月</strong><a class="badge badge-expert" href="#src-fab-cycle-expert">专家判断</a>。</li>
+          <li><strong>等设备</strong>：最关键的 EUV 光刻机全球只有 ASML 一家能造，<strong>2024 全年只确认销售 44 台、EUV 销售额合计 83 亿欧元</strong>（平均每台约 1.9 亿欧元）<a class="badge badge-verified" href="https://www.sec.gov/Archives/edgar/data/937966/000093796625000003/a2025_01x29presentationi.htm" target="_blank" rel="noopener">已核验 · ASML 2024 Q4 业绩材料</a>——想插队也没有队可插。</li>
           <li><strong>调试爬坡</strong>：设备装好后，一片晶圆在产线上走完全程要 <strong>3-4 个月</strong><a class="badge badge-verified" href="https://semiengineering.com/battling-fab-cycle-times/" target="_blank" rel="noopener">已核验 · SemiEngineering</a>，良品率从惨淡爬到经济水平还要几个季度。</li>
         </ol>
 
-        <p>反方向同样慢：<strong>产能收缩也踩不了急刹车</strong>。工厂建成后设备折旧照提，减产等于单位成本上升，所以过剩时厂商会拖到深度亏损才肯砍产量。2023 年存储行业就是现场：芯片卖价跌破成本，<strong>三星 2023 年一季度利润从上年同期的 14.1 万亿韩元跌到 0.6 万亿</strong>，随后宣布大幅减产，海力士、美光同期亏损减产，全行业几乎停止产能投资<a class="badge badge-verified" href="#src-samsung-2023">已核验 · CNBC / The Register / Motley Fool 2023</a>。供给这台机器，油门和刹车都要踩很久才起作用。</p>
+        <p>反方向同样慢：<strong>产能收缩也踩不了急刹车</strong>。工厂建成后设备折旧照提，减产等于单位成本上升，所以过剩时厂商会拖到深度亏损才肯砍产量。2023 年存储行业就是现场：芯片卖价跌破成本，<strong>三星 2023 年一季度利润从上年同期的 14.1 万亿韩元跌到 0.6 万亿</strong>，随后宣布大幅减产，海力士砍掉 2023 年资本开支的一半以上、美光砍约四成并同步减产（三星维持投资、只减产量）<a class="badge badge-verified" href="#src-samsung-2023">已核验 · CNBC / The Register / Motley Fool 2023</a>。供给这台机器，油门和刹车都要踩很久才起作用。</p>
 
         <h3>需求为什么快，以及为什么永远摆不到「刚刚好」</h3>
         <p>需求可以几个月内改天换地——<strong>ChatGPT 2022 年 11 月上线</strong>，几个月内全世界都在抢算力。更深一层的结构是：今天的扩产决策是对今天的价格和缺口做出的，但产能两三年后才到货，<strong>到货时的世界已经不是下单时的世界</strong>；而且所有厂商看到同一个缺口、同时做出同样的扩产决定，新产能会在同一个时间窗集中涌出。所以系统天然过冲：缺货时涨过头，过剩时跌过头。农产品的猪周期是同一个数学，但芯片建设期更长、单厂投资以百亿美元计，摆得更猛。</p>
@@ -188,23 +188,23 @@
             <div><b>24-36 月 · 爬坡</b>设备装完，晶圆走完全程 3-4 个月，良率再爬几个季度到经济水平。</div>
           </div>
           <div class="viz-readout" id="sdReadout" aria-live="polite"></div>
-          <p style="font-size:var(--fs-13);color:var(--muted);margin:8px 0 0">教学模型；真实每个环节的时间常数会随节点（先进/成熟）、地区（本土/海外）、模式（代工/IDM）差别浮动。三段延迟以卡 1 已核验锚点（24-36 个月周期、亚利桑那 2020-05 到 2025 量产、EUV 交付节奏、3-4 个月产线周期）为参数默认值。</p>
+          <p style="font-size:var(--fs-13);color:var(--muted);margin:8px 0 0">教学模型；真实每个环节的时间常数会随节点（先进/成熟）、地区（本土/海外）、模式（代工/IDM）差别浮动。三段延迟以卡 1 已核验锚点（24-36 个月周期、亚利桑那 2020-05 到 2024 年底量产、EUV 交付节奏、3-4 个月产线周期）为参数默认值。</p>
         </div>
       </section>
 
       <!-- =================== 3. 真实锚点 =================== -->
       <section class="card-sec">
         <h2>3. 真实锚点</h2>
-        <p style="font-size:var(--fs-15);color:var(--muted)">机制段里的推理，全部落在这四个可核验的数字和事件上。每一条都能点开原始来源核对，凭记忆的数字不上卡。</p>
+        <p style="font-size:var(--fs-15);color:var(--muted)">机制段里的推理，全部落在这五个可核验的数字和事件上。每一条都能点开原始来源核对，凭记忆的数字不上卡。</p>
         <ol class="anchor-list">
           <li>
-            <div class="a-head"><span class="a-num">01</span><span class="a-title">台积电亚利桑那：2020-05 宣布 → 2025 量产</span><a class="badge badge-verified" href="https://pr.tsmc.com/english/news/2033" target="_blank" rel="noopener">已核验 · 台积电官方公告</a></div>
-            <div>2020 年 5 月 15 日台积电公告在亚利桑那建 5nm 晶圆厂，规划投资约 <strong>120 亿美元</strong>，计划 2021 年开工、2024 年投产（后延至 2025 年）。<strong>海外新建近五年</strong>，是「盖厂以年计」最硬的现场刻度。</div>
+            <div class="a-head"><span class="a-num">01</span><span class="a-title">台积电亚利桑那：2020-05 宣布 → 2024 年底量产</span><a class="badge badge-verified" href="#src-tsmc-arizona">已核验 · 台积电官方公告</a></div>
+            <div>2020 年 5 月 15 日台积电公告在亚利桑那建 5nm 晶圆厂，规划投资约 <strong>120 亿美元</strong>，计划 2021 年开工、2024 年投产；中途因熟练工短缺一度宣布延至 2025，最终 <strong>2024 年第四季度实现量产</strong>（台积电 2025-03 公告原文：「量产始于 2024 年底」）。<strong>海外新建约四年半</strong>，是「盖厂以年计」的现场刻度。</div>
             <div class="a-note">这个日期是本卡投资含义段「加 24-36 个月」条件反射的原始参照点之一。</div>
           </li>
           <li>
-            <div class="a-head"><span class="a-num">02</span><span class="a-title">ASML 2024：全年 44 台 EUV，单台均价 2.27 亿欧元</span><a class="badge badge-verified" href="https://ourbrand.asml.com/m/ee9da90a119cc9d/original/2024-Financial-performance-section.pdf" target="_blank" rel="noopener">已核验 · ASML 2024 年报</a></div>
-            <div>EUV 光刻机全球独家供应，<strong>2024 年全球一共交付 44 台（低数值孔径 42 台 + 高数值孔径 2 台），低数值孔径机型均价约 €2.27 亿</strong>。这是「等设备」这一段时间常数的物理来源——想插队没有队可插，扩产先在 ASML 排队。</div>
+            <div class="a-head"><span class="a-num">02</span><span class="a-title">ASML 2024：全年 44 台 EUV，销售额 €83 亿</span><a class="badge badge-verified" href="https://ourbrand.asml.com/m/ee9da90a119cc9d/original/2024-Financial-performance-section.pdf" target="_blank" rel="noopener">已核验 · ASML 2024 年报</a></div>
+            <div>EUV 光刻机全球独家供应，<strong>2024 年全年确认销售 44 台（低数值孔径 42 台 + 高数值孔径 2 台）、EUV 销售额 €83 亿</strong><a class="badge badge-verified" href="https://www.sec.gov/Archives/edgar/data/937966/000093796625000003/a2025_01x29presentationi.htm" target="_blank" rel="noopener">已核验 · ASML 2024 Q4 业绩材料</a>——混合均价约 €1.9 亿，低数值孔径单台约 €1.7-1.8 亿（由官方披露推导）。这是「等设备」这一段时间常数的物理来源——想插队没有队可插，扩产先在 ASML 排队。</div>
           </li>
           <li>
             <div class="a-head"><span class="a-num">03</span><span class="a-title">产线周期：一片晶圆走完全程 3-4 个月</span><a class="badge badge-verified" href="https://semiengineering.com/battling-fab-cycle-times/" target="_blank" rel="noopener">已核验 · SemiEngineering</a></div>
@@ -212,7 +212,7 @@
           </li>
           <li>
             <div class="a-head"><span class="a-num">04</span><span class="a-title">2023 存储：三星 Q1 利润 14.1 万亿韩元 → 0.6 万亿韩元</span><a class="badge badge-verified" href="#src-samsung-2023">已核验 · CNBC / The Register / Motley Fool 2023</a></div>
-            <div>2023 年一季度三星营业利润从 <strong>2022 Q1 的 14.1 万亿韩元</strong>跌到 <strong>0.6 万亿</strong>（同比 -95%），半导体分部录得约 <strong>4.58 万亿韩元亏损</strong>；4 月宣布大幅减产，海力士（Q1 亏损 3.4 万亿韩元）、美光同期减产、砍资本开支。全行业几乎停止产能投资——「产能收缩也踩不了急刹车」的现场，同时也是 2024 年之后紧缺的种子。</div>
+            <div>2023 年一季度三星营业利润从 <strong>2022 Q1 的 14.1 万亿韩元</strong>跌到 <strong>0.6 万亿</strong>（同比 -95%），半导体分部录得约 <strong>4.58 万亿韩元亏损</strong>；4 月宣布大幅减产，海力士（Q1 亏损 3.4 万亿韩元）、美光同期减产、大幅削减资本开支（分别约砍半、砍四成）；三星维持资本开支不减、只减产量。行业供给收缩靠的是减产而不是停止投资——「产能收缩也踩不了急刹车」的现场，同时也是 2024 年之后紧缺的种子。</div>
           </li>
           <li>
             <div class="a-head"><span class="a-num">05</span><span class="a-title">2022-10-17：彭博报道交期几年来最大单月缩短</span><a class="badge badge-verified" href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing" target="_blank" rel="noopener">已核验 · 彭博 / Susquehanna 数据</a></div>
@@ -259,7 +259,7 @@
 
         <div class="drill">
           <h4>练习二 · 推演题</h4>
-          <p>已知两件已核验的真事：<strong>①</strong> 2023 年存储芯片全行业深度亏损，三星、海力士、美光先后大幅减产，几乎停止产能投资；<strong>②</strong> 2024-2025 年 AI 需求爆发，AI 服务器需要大量存储。</p>
+          <p>已知两件已核验的真事：<strong>①</strong> 2023 年存储芯片全行业深度亏损，三星、海力士、美光先后大幅减产，海力士与美光并大幅削减资本开支；<strong>②</strong> 2024-2025 年 AI 需求爆发，AI 服务器需要大量存储。</p>
           <p>用这张卡推：<strong>2026 年存储市场大概率处于什么状态？厂商和买家分别会有什么行为？</strong></p>
           <button class="btn btn-ghost" data-reveal aria-controls="drill2-hint" data-open-text="收起推演提示">展开推演提示（不含标准答案）</button>
           <div id="drill2-hint" hidden>
@@ -279,7 +279,7 @@
       <strong>卡 1 来源</strong>
       <ol style="margin:8px 0 0;padding-left:1.3em">
         <li id="src-tsmc-arizona"><a href="https://pr.tsmc.com/english/news/2033" rel="noopener noreferrer">台积电官方公告：Intention to Build and Operate an Advanced Semiconductor Fab in the United States（2020-05-15）</a> · <a href="https://pr.tsmc.com/english/news/3210" rel="noopener noreferrer">台积电官方公告：亚利桑那投资扩至 1,650 亿美元、多座厂陆续量产（2025-03）</a></li>
-        <li id="src-asml-2024"><a href="https://ourbrand.asml.com/m/ee9da90a119cc9d/original/2024-Financial-performance-section.pdf" rel="noopener noreferrer">ASML 2024 年报财务部分：44 台 EUV、低数值孔径均价 €2.27 亿</a></li>
+        <li id="src-asml-2024"><a href="https://ourbrand.asml.com/m/ee9da90a119cc9d/original/2024-Financial-performance-section.pdf" rel="noopener noreferrer">ASML 2024 年报财务部分：确认 44 台 EUV（42 台低数值孔径 + 2 台高数值孔径）</a> · <a href="https://www.sec.gov/Archives/edgar/data/937966/000093796625000003/a2025_01x29presentationi.htm" rel="noopener noreferrer">ASML 2024 Q4 投资者材料（2025-01-29，SEC 6-K）：EUV 销售额 €8.3B、确认 44 台——低数值孔径单台约 €1.7-1.8 亿由披露推导</a></li>
         <li id="src-fab-cycle"><a href="https://semiengineering.com/battling-fab-cycle-times/" rel="noopener noreferrer">SemiEngineering：Battling Fab Cycle Times（先进制程 500-1,000+ 道工序、80-120 次循环、3-4 个月周期）</a></li>
         <li id="src-lead-times"><a href="https://www.bloomberg.com/news/articles/2022-10-17/chip-delivery-times-shrink-in-sign-that-supply-crunch-is-easing" rel="noopener noreferrer">彭博：Chip Delivery Times Shrink in Sign That Supply Crunch Is Easing（2022-10-17，援引 Susquehanna 数据）</a> · <a href="https://www.datacenterdynamics.com/en/news/chip-lead-times-hit-202-weeks-as-semiconductor-shortage-drags-on/" rel="noopener noreferrer">DCD：Chip Lead Times Hit 20.2 Weeks（2021-08）</a></li>
         <li id="src-samsung-2023"><a href="https://www.cnbc.com/2023/04/27/samsung-earnings-q1-2023.html" rel="noopener noreferrer">CNBC：Samsung Q1 2023 利润 6,400 亿韩元、同比 -95%（2023-04-27）</a> · <a href="https://www.theregister.com/2023/04/27/samsung_sk_hynix_losses/" rel="noopener noreferrer">The Register：Samsung、SK Hynix 十年最大营业变化（2023-04-27）</a> · <a href="https://www.fool.com/investing/2023/04/12/samsung-production-cut-win-for-micron/" rel="noopener noreferrer">Motley Fool：Samsung Cuts Memory Production（2023-04-12）</a> · <a href="https://www.cnbc.com/2023/04/26/sk-hynix-reports-record-quarterly-operating-loss-forecasts-better-outlook.html" rel="noopener noreferrer">CNBC：SK Hynix Q1 2023 record operating loss 3.4 万亿韩元</a></li>

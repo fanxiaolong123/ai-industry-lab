@@ -78,13 +78,13 @@
     <header class="page-head">
       <p class="crumb">骨架层 · 卡 6 / 15</p>
       <h1>卡 6 · 库存结构决定波动结构</h1>
-      <p class="core-q"><b>一句话：</b>同样是「缺货 / 过剩」，不同品类的波动幅度可以差几个数量级。差别不在需求端，在合同结构与销售链条——HBM / CoWoS 走直供长约，波形被合同拉平；DDR / NAND / 成熟制程走现货和短期合同，波形被中间层放大到最凶。判断一个存储或芯片标的的周期风险，先把它的收入拆成「合同锁死的量」和「随现货起伏的量」两栏。</p>
+      <p class="core-q"><b>一句话：</b>同样是「缺货 / 过剩」，不同品类的波动速率可以差一个数量级以上。差别不在需求端，在合同结构与销售链条——HBM / CoWoS 走直供长约，波形被合同拉平；DDR / NAND / 成熟制程走现货和短期合同，波形被中间层放大到最凶。判断一个存储或芯片标的的周期风险，先把它的收入拆成「合同锁死的量」和「随现货起伏的量」两栏。</p>
     </header>
 
     <div class="note" style="max-width:860px">
       <span class="note-label">读完这张卡你要能答的三个问题（现在答不上来是正常的）</span>
       <ol style="margin:0;padding-left:1.3em;font-size:var(--fs-15)">
-        <li>同一批 12 吋 DRAM 车间在同一时间窗生产 HBM3E 和 DDR5——HBM3E 2026 年只涨 20%、DDR5 现货一季度就涨 +90%。同一批车间、同一批产品家族，波动幅度为什么能差 5 倍？</li>
+        <li>同一批 12 吋 DRAM 车间在同一时间窗生产 HBM3E 和 DDR5——HBM3E 2026 年全年只涨 20%、DDR5 季度合约价一个季度就涨 +90%。同一批车间、同一批产品家族，波动速率为什么能差一个数量级？</li>
         <li>看到一家存储厂公告涨价 X%，你的第一反应问什么？（答案不是「毛利率会涨 X%」）</li>
         <li>「HBM 直供长约」听起来是无风险稳态生意——它反向的风险藏在哪里？</li>
       </ol>
@@ -92,16 +92,16 @@
 
     <section class="prose">
 
-      <h2>1 · 现象：同一批车间，两条产品线波动幅度差 5 倍</h2>
+      <h2>1 · 现象：同一批车间，两条产品线波动速率差一个数量级</h2>
 
       <p>先看两个真实的、可对照的反差现场——都发生在同一批 12 吋 DRAM 晶圆的车间里，但形状完全不同。</p>
 
       <div class="flip">
         <div class="neg">
-          <div class="cap"><span>DDR5 现货 · 2025 Q4 → 2026 Q1</span><span>商品化现货</span></div>
+          <div class="cap"><span>DDR5 季度合约价 · 2025 Q4 → 2026 Q1</span><span>商品化短约桶</span></div>
           <div class="big">+90–95%</div>
           <div class="row">1Q26 常规 DRAM 涨幅（单季环比）<span class="badge badge-verified">已核验 · TrendForce 2026-02-02</span></div>
-          <div class="row">TrendForce 4Q25 曾把涨幅从原本预期的 8-13% 上修到 18-23% QoQ</div>
+          <div class="row">TrendForce 2025-10-29 把 4Q25 涨幅从 9 月预期的 8-13% 上修到 18-23%（该季最终实际 45-50%）</div>
           <div class="row">同一 TrendForce 口径：1Q26 PC DRAM 单季 +100%</div>
         </div>
         <div class="pos">
@@ -109,32 +109,32 @@
           <div class="big">+20%</div>
           <div class="row">2026 年年度涨幅（对上一代锁定的定价重议）<span class="badge badge-verified">已核验 · TrendForce 2025-12-24</span></div>
           <div class="row">三家（三星 / SK 海力士 / 美光）向 Nvidia、AMD、Google TPU 直供</div>
-          <div class="row">价格几年前就在多年 take-or-pay 协议里锁定</div>
+          <div class="row">量提前几年锁进多年 take-or-pay 协议；价格按年重议</div>
         </div>
       </div>
 
-      <p>同一时间窗、同一批车间、同一批产品家族（DRAM）——现货一个季度涨 +90-95%、长约一整年涨 +20%。单季速率差 15 倍以上。<strong>这不是需求侧的差别</strong>——HBM 的需求增速比 DDR 还快（AI 训练直接拉动，多家 CEO 已公开说 medium term 供给只能满足需求的 50-2/3）；差别在<strong>合同结构本身</strong>。</p>
+      <p>同一时间窗、同一批车间、同一批产品家族（DRAM）——商品化短约桶一个季度涨 +90-95%、长约一整年涨 +20%——换算成单季速率，差约 15-19 倍、一个数量级以上。<strong>这不是需求侧的差别</strong>——HBM 的需求增速比 DDR 还快（AI 训练直接拉动；美光 CEO 公开说中期供给只能满足需求的约一半到三分之二——DRAM/NAND 整体口径；SK 海力士 CEO 与三星存储负责人也公开警告短缺至少持续到 2027 之后）；差别在<strong>合同结构本身</strong>。</p>
 
       <div class="flip">
         <div class="neg">
           <div class="cap"><span>三星电子 DS 部门 · 2023 全年</span><span>DRAM/NAND 现货塌方</span></div>
           <div class="big">-14.87 万亿韩元</div>
           <div class="row">全年营业亏损，约 -111 亿美元<span class="badge badge-verified">已核验 · Samsung FY23 press release</span></div>
-          <div class="row">Q1 单季亏损 4.58 万亿韩元（三星集团 Q1 利润从上年 14.12 万亿跳崖到 6,400 亿、-96%）</div>
+          <div class="row">Q1 单季亏损 4.58 万亿韩元（三星集团 Q1 利润从上年 14.12 万亿跳崖到 6,400 亿、约 -95%）</div>
           <div class="row">4 月 7 日三星官方宣布 meaningful level 减产</div>
         </div>
         <div class="pos">
           <div class="cap"><span>SK 海力士 · 3Q25</span><span>HBM 长约兑现</span></div>
           <div class="big">47%</div>
           <div class="row">季度营业利润率<span class="badge badge-verified">已核验 · SK 海力士 3Q25 财报</span></div>
-          <div class="row">HBM / DRAM / NAND 2026 产能全部售罄（合同侧）</div>
+          <div class="row">DRAM / NAND 2026 产能已全部锁定客户；HBM 已与主要客户完成供应协商（合同侧）</div>
           <div class="row">这个季度是历史第一次营业利润破 10 万亿韩元</div>
         </div>
       </div>
 
       <p>这不是「一家赢、一家输」的公司差别——两家其实都是三家 DRAM 大厂之一、都同时做 HBM 和 DDR。区别是<strong>时间点的合同侧覆盖率不同</strong>：2023 年时 HBM 长约的量还没起来，公司利润里主要是现货那半边（塌方）；到 2025-2026 年，HBM 长约那半边已经能撑起 47% 的营业利润率、把商品化那半边可能出现的波动稀释掉。</p>
 
-      <p>这就是卡 6 要讲透的一个模型：<strong>同样是「缺货 / 过剩」，不同品类的波动幅度可以差几个数量级。差别在合同结构与销售链条</strong>——合同锁多少、走现货多少，决定了同一次需求变化会在利润里长成什么形状。存储手册全景（详见 m07）已经讲过五种存储的分层与格局；本卡只从「波动幅度」这一个维度重新组织。</p>
+      <p>这就是卡 6 要讲透的一个模型：<strong>同样是「缺货 / 过剩」，不同品类的波动速率可以差一个数量级以上。差别在合同结构与销售链条</strong>——合同锁多少、走现货多少，决定了同一次需求变化会在利润里长成什么形状。存储手册全景（详见 m07）已经讲过五种存储的分层与格局；本卡只从「波动幅度」这一个维度重新组织。</p>
 
       <h2>2 · 机制：两条销售链条，把同一次需求变化压成两种波形</h2>
 
@@ -143,12 +143,12 @@
       <p>从「下单」到「结账」的完整链条是一段直线：<strong>GPU 厂 / 云厂 → 存储厂或代工厂 → 出货</strong>。中间没有分销商、贸易商、模组厂。三个关键动作把波形一层层压平：</p>
 
       <ul>
-        <li><strong>客户预付款 + take-or-pay 承诺</strong>：客户在产能建成前几年就把预付款打过来、把「不拿货也要付钱」的承诺写进合同。真实刻度：美光 FY26 Q3 一个季度里就签下 <strong>16 份 take-or-pay 战略客户协议、合同最低收入合计约 1000 亿美元</strong>，覆盖 2026-2030 年 HBM 供应<span class="badge badge-verified">已核验 · Micron FY26 Q3 电话会备稿</span>。这一步把<strong>量的波动</strong>提前锁死——客户不能因为下季度需求疲软就撤单。</li>
+        <li><strong>客户预付款 + take-or-pay 承诺</strong>：客户在产能建成前几年就把预付款打过来、把「不拿货也要付钱」的承诺写进合同。真实刻度：美光 FY26 Q3 一个季度里就签下 <strong>16 份 take-or-pay 战略客户协议、合同最低收入合计约 1000 亿美元</strong>，覆盖约 20% 的 DRAM 出货量与约 1/3 的 NAND 出货量、至 2030 年（HBM3E/HBM4 另已订满至 2027）<span class="badge badge-verified">已核验 · Micron FY26 Q3 电话会备稿</span>。这一步把<strong>量的波动</strong>提前锁死——客户不能因为下季度需求疲软就撤单。</li>
         <li><strong>认证周期 12-18 个月</strong>：一颗新 HBM 芯片进入 Nvidia 平台要通过整套认证测试，动辄一年到一年半（HBM 认证竞赛：Silicon Analysts 已核验、m07 引用）。<strong>认证是双向锁</strong>：卖方前期投入太重不能随便换客户，买方重新认证一颗新供应商又要再等一年——所以关系被合同期限锁定，短期的市场波动进不来。</li>
         <li><strong>代际锁定</strong>：每代 HBM 只服务一个 GPU 代际、商业寿命 12 个月上下（对应 Nvidia / AMD 12-18 个月的 GPU 迭代节奏）。一代产品的合同结构和下代要重新谈——所以定价周期天然是「按代际、按年」，不是按季度、按周。</li>
       </ul>
 
-      <p>三件事叠加的效果：<strong>同一次下游需求变化传到 HBM 侧，被前置锁量、前置锁价、前置锁客户三层过滤后，只剩下一小截波幅落到当期报表</strong>。所以 HBM3E 2026 年只涨 20%——不是因为供需只错配了 20%（实际错配远大于此，多家 CEO 说 medium term 供给只能满足需求的 50-2/3），是因为合同结构把大部分错配都过滤掉、留给下一代或下一次合同签订窗口。</p>
+      <p>三件事叠加的效果：<strong>同一次下游需求变化传到 HBM 侧，被前置锁量、前置锁价、前置锁客户三层过滤后，只剩下一小截波幅落到当期报表</strong>。所以 HBM3E 2026 年只涨 20%——不是因为供需只错配了 20%（实际错配远大于此——美光 CEO 说中期供给只能满足需求的约一半到三分之二，DRAM/NAND 整体口径），是因为合同结构把大部分错配都过滤掉、留给下一代或下一次合同签订窗口。</p>
 
       <h3>2.2 商品化现货（DDR、NAND、成熟制程逻辑）——波形被中间层放大到最凶</h3>
 
@@ -156,7 +156,7 @@
 
       <ul>
         <li><strong>订单可撤、库存可抛</strong>：贸易商看到现货价起飞就多囤货抢货、看到现货价下跌就抛货甚至撤单——终端需求变 10%，经过中间三层放大后到存储厂手里可以变 30-50%。这就是<strong>卡 5 讲过的牛鞭效应</strong>，本卡引用不重推。</li>
-        <li><strong>价格靠现货每天重新出清</strong>：没有长约锁定，价格就必须靠现货报价随时更新——TrendForce 每季（有时每月）发一次涨跌口径，2023 年跌破成本、2025-2026 年季度涨 +18-23% → +90-95%，都是这个价格发现机制在正常工作。<strong>没有合同锁在中间，价格就是波动的一部分而不是它的滤波器</strong>。</li>
+        <li><strong>价格靠现货与短约随时重新定价</strong>：没有长约锁定，现货报价每天更新、短期合约按季（有时按月）重议——TrendForce 追踪的季度合约价就是这条链的读数，2023 年跌破成本、2025-2026 年季度涨 +18-23% → +90-95%，都是这个价格发现机制在正常工作。<strong>没有合同锁在中间，价格就是波动的一部分而不是它的滤波器</strong>。</li>
         <li><strong>产能可移动、切换成本低</strong>：DDR 是三家（三星 / SK / 美光）都能做的通用商品，谁便宜谁多买；NAND 是五家，切换成本更低。<strong>切换成本低反向意味着价格竞争激烈</strong>——下游一软化，价格立刻反噬到卖家，因为客户随时可以换供应商。</li>
       </ul>
 
@@ -228,15 +228,15 @@
 
       <h3>锚点一 · HBM 长约的合同层锁定能力：一个季度锁到三年营收</h3>
 
-      <p>Micron FY26 Q3 电话会（2026 年 6 月发布）披露：<strong>单一季度签下 16 份 take-or-pay 战略客户协议、合同最低收入合计约 1000 亿美元、覆盖 2026-2030 年 HBM 供应</strong><span class="badge badge-verified">已核验 · Micron FY26 Q3 电话会备稿</span>。这个规模是什么概念——美光 FY25 全年营收 374 亿美元<span class="badge badge-verified">已核验 · Micron 10-K FY2025</span>，<strong>一个季度签的合同就锁到公司三年的营收</strong>。</p>
+      <p>Micron FY26 Q3 电话会（2026 年 6 月发布）披露：<strong>单一季度签下 16 份 take-or-pay 战略客户协议、合同最低收入合计约 1000 亿美元，覆盖约 20% 的 DRAM 出货量与约 1/3 的 NAND 出货量、至 2030 年；HBM3E/HBM4 另已订满至 2027</strong><span class="badge badge-verified">已核验 · Micron FY26 Q3 电话会备稿</span>。这个规模是什么概念——美光 FY25 全年营收 374 亿美元<span class="badge badge-verified">已核验 · Micron 10-K FY2025</span>，<strong>一个季度签的合同就锁到公司三年的营收</strong>。</p>
 
-      <p>「合同锁死量」不是营销话术、是有法律拘束力的书面承诺：take-or-pay 意味着客户不拿货也要付钱，违约有明确对价。同期 SK 海力士 3Q25 财报（2025-10-29）：HBM / DRAM / NAND 2026 产能全部售罄、<strong>季度营业利润率 47%、季度营业利润首次破 10 万亿韩元</strong><span class="badge badge-verified">已核验 · SK 海力士 3Q25 财报</span>。利润率能到 47% 靠的不是运气——是<strong>产能在几个季度前锁在长约里，涨价的兑现时点到了直接落到当期报表</strong>。这套「合同层证据先于收入兑现」的完整时间线，m07「怎么判断」页工具二里有完整拆解。</p>
+      <p>「合同锁死量」不是营销话术、是有法律拘束力的书面承诺：take-or-pay 意味着客户不拿货也要付钱，违约有明确对价。同期 SK 海力士 3Q25 财报（2025-10-29）：DRAM / NAND 2026 产能全部锁定客户、HBM 已与主要客户完成供应协商，<strong>季度营业利润率 47%、季度营业利润首次破 10 万亿韩元</strong><span class="badge badge-verified">已核验 · SK 海力士 3Q25 财报</span>。利润率能到 47% 靠的不是运气——是<strong>产能在几个季度前锁在长约里，涨价的兑现时点到了直接落到当期报表</strong>。这套「合同层证据先于收入兑现」的完整时间线，m07「怎么判断」页工具二里有完整拆解。</p>
 
       <h3>锚点二 · DDR / NAND 现货的季度暴涨暴跌能力</h3>
 
-      <p><strong>现货塌方端 · 2023 Q1：</strong>三星电子集团 Q1 营业利润从上年同期 14.12 万亿韩元跳崖到 6,400 亿韩元（-96%）；<strong>DS（半导体）部门单季亏损 4.58 万亿韩元</strong>；4 月 7 日三星官方宣布 meaningful level 减产、加入 SK 海力士与美光的减产阵营<span class="badge badge-verified">已核验 · CNBC 2023-04-27、TechCrunch 2023-04-06</span>。全年 DS 部门累计亏损 <strong>14.87 万亿韩元</strong>（约 -111 亿美元）<span class="badge badge-verified">已核验 · Samsung FY23 press release</span>。</p>
+      <p><strong>现货塌方端 · 2023 Q1：</strong>三星电子集团 Q1 营业利润从上年同期 14.12 万亿韩元跳崖到 6,400 亿韩元（约 -95%）；<strong>DS（半导体）部门单季亏损 4.58 万亿韩元</strong>；4 月 7 日三星官方宣布 meaningful level 减产、加入 SK 海力士与美光的减产阵营<span class="badge badge-verified">已核验 · CNBC 2023-04-27、TechCrunch 2023-04-06</span>。全年 DS 部门累计亏损 <strong>14.87 万亿韩元</strong>（约 -111 亿美元）<span class="badge badge-verified">已核验 · Samsung FY23 press release</span>。</p>
 
-      <p><strong>现货冲高端 · 2025 Q4 → 2026 Q1：</strong>TrendForce 2025-09-24 把 4Q25 常规 DRAM 涨幅从原本预期的 8-13% 上修到 <strong>18-23% QoQ</strong>；2026-02-02 又把 1Q26 涨幅上修到 <strong>+90-95% QoQ、PC DRAM 单季 +100%</strong><span class="badge badge-verified">已核验 · TrendForce 报告</span>。同一批 DRAM 车间的商品化产品，两年时间内可以走完「季度亏损 111 亿美元 → 季度价格翻倍」的全谱波动。</p>
+      <p><strong>现货冲高端 · 2025 Q4 → 2026 Q1：</strong>TrendForce 2025-10-29 把 4Q25 常规 DRAM 涨幅从 9 月预期的 8-13% 上修到 <strong>18-23% QoQ</strong>（该季最终实际涨 45-50%）；2026-02-02 又把 1Q26 涨幅上修到 <strong>+90-95% QoQ、PC DRAM 单季 +100%</strong><span class="badge badge-verified">已核验 · TrendForce 报告</span>。同一批 DRAM 车间的商品化产品，两年时间内可以走完「季度亏损 111 亿美元 → 季度价格翻倍」的全谱波动。</p>
 
       <h3>锚点三 · 同一时间窗、同一产品家族的直接对比</h3>
 
@@ -300,14 +300,14 @@
       <div class="scenario">
         <h4>练习一 · 复述题（合上卡片，3 分钟讲给完全不懂的人听）</h4>
         <p>题目：<strong>为什么同一家存储厂 HBM 业务能稳如老狗、DDR 业务能一年爆亏一年暴利？</strong></p>
-        <p class="scenario-hint">提示：不用出现「合同结构」或「牛鞭效应」这些词。用两句大白话入手就够——「HBM 是几年前就跟客户把量和价签死的」、「DDR 是每天上市场对价的」。三星 DS 部门 2023 亏 111 亿美元、2024 赚 113 亿美元是同一批车间的现货那半边；同期 SK 海力士的 HBM 长约业务几乎不受这场波动影响、稳步爬升，到 2025 Q3 直接把公司季度营业利润率推到 47%。两半边的波形不一样——这就是本卡的模型。</p>
+        <p class="scenario-hint">提示：不用出现「合同结构」或「牛鞭效应」这些词。用两句大白话入手就够——「HBM 是几年前就跟客户把量和价签死的」、「DDR 是每天上市场对价的」。三星 DS 部门 2023 亏约 111 亿美元、2024 赚约 113 亿美元（官方四个季度营业利润加总约 15.1 万亿韩元折算），主要是现货那半边的摆动；同期 SK 海力士的 HBM 长约业务几乎不受这场波动影响、稳步爬升，到 2025 Q3 直接把公司季度营业利润率推到 47%。两半边的波形不一样——这就是本卡的模型。</p>
       </div>
 
       <div class="scenario">
         <h4>练习二 · 推演题（用已核验事实做前提，用本卡机制推）</h4>
         <p>已核验的两件真事：</p>
         <ul>
-          <li><strong>SK 海力士 3Q25 财报（2025-10-29）</strong>：HBM / DRAM / NAND 2026 产能全部售罄，季度营业利润率 47%；美光 FY26 Q3（2026-06）签下 16 份 take-or-pay 战略客户协议、合同最低收入合计 100 亿美元 × 10 = <strong>1000 亿美元</strong>；</li>
+          <li><strong>SK 海力士 3Q25 财报（2025-10-29）</strong>：DRAM / NAND 2026 产能全部锁定客户、HBM 已与主要客户完成供应协商，季度营业利润率 47%；美光 FY26 Q3（2026-06）签下 16 份 take-or-pay 战略客户协议、合同最低收入合计 <strong>1000 亿美元</strong>；</li>
           <li><strong>TrendForce 4Q25 / 1Q26 数据（2025-09、2026-02）</strong>：常规 DRAM 现货涨幅从 8-13% 上修到 18-23% QoQ、再上修到 +90-95% QoQ。</li>
         </ul>
         <p>请你推：<strong>假设 2026 下半年 DRAM 现货价格开始软化（比如 3Q26 环比 -20%）而 HBM 长约维持已签订水平，一线厂（SK 海力士 / 三星 / 美光）和二线厂（南亚科 / 华邦 / 长江存储）2026-2027 年的利润路径会有什么不同？波动幅度差别会体现在哪几个报表指标上？</strong></p>
@@ -329,10 +329,10 @@
       <strong>卡 6 来源</strong>
       <ul style="margin:8px 0 0;padding-left:1.3em">
         <li><a href="https://www.trendforce.com/news/2025/12/24/news-samsung-sk-hynix-reportedly-plan-20-hbm3e-price-hike-for-2026-as-nvidia-h200-asic-demand-rises/" rel="noopener noreferrer">TrendForce 2025-12-24：三星与 SK 海力士 HBM3E 2026 年涨价约 20%</a></li>
-        <li><a href="https://www.trendforce.com/presscenter/news/20250924-12733.html" rel="noopener noreferrer">TrendForce 2025-09-24：4Q25 常规 DRAM 涨幅从 8-13% 上修到 18-23% QoQ</a> · <a href="https://www.trendforce.com/presscenter/news/20260202-12911.html" rel="noopener noreferrer">TrendForce 2026-02-02：1Q26 常规 DRAM 涨幅上修至 +90-95% QoQ、PC DRAM +100%</a></li>
+        <li><a href="https://www.trendforce.com/presscenter/news/20250924-12733.html" rel="noopener noreferrer">TrendForce 2025-09-24：4Q25 常规 DRAM 基线预测 8-13% QoQ（含 HBM 13-18%）</a> · <a href="https://www.trendforce.com/presscenter/news/20251029-12758.html" rel="noopener noreferrer">TrendForce 2025-10-29：4Q25 常规 DRAM 上修至 18-23% QoQ</a> · <a href="https://www.trendforce.com/presscenter/news/20260202-12911.html" rel="noopener noreferrer">TrendForce 2026-02-02：1Q26 常规 DRAM 涨幅上修至 +90-95% QoQ、PC DRAM +100%</a></li>
         <li><a href="https://investors.micron.com/static-files/631b1a32-5537-46ae-8f40-82e42fc79dfe" rel="noopener noreferrer">Micron FY26 Q3 电话会备稿（2026-06）：16 份 take-or-pay 战略客户协议、$100B 最低合同收入</a></li>
-        <li><a href="https://news.skhynix.com/sk-hynix-announces-3q25-financial-results/" rel="noopener noreferrer">SK 海力士 3Q25 财报公告（2025-10-29）：HBM / DRAM / NAND 2026 产能全部售罄、季度营业利润率 47%</a></li>
-        <li><a href="https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2023-results" rel="noopener noreferrer">Samsung Electronics 4Q23 / FY23 press release（2024-01-31）：DS 部门 2023 全年亏损 14.87 万亿韩元、Q1 亏损 4.58 万亿</a></li>
+        <li><a href="https://news.skhynix.com/sk-hynix-announces-3q25-financial-results/" rel="noopener noreferrer">SK 海力士 3Q25 财报公告（2025-10-29）：DRAM/NAND 明年产能全部锁定客户需求、HBM 已与主要客户完成供应协商、季度营业利润率 47%</a></li>
+        <li><a href="https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2023-results" rel="noopener noreferrer">Samsung Electronics 4Q23 / FY23 press release（2024-01-31）：DS 部门 2023 全年亏损 14.87 万亿韩元（Q1 单季 4.58 万亿出自三星 2023-04-27 Q1 财报，见下条 CNBC 报道）</a></li>
         <li><a href="https://www.cnbc.com/2023/04/27/samsung-earnings-q1-2023.html" rel="noopener noreferrer">CNBC 2023-04-27：三星 Q1 2023 集团营业利润 6,400 亿韩元、同比 -96%（上年同期 14.12 万亿）</a> · <a href="https://techcrunch.com/2023/04/06/samsung-cuts-memory-chip-production-as-it-hits-worst-quarterly-profit-since-2009/" rel="noopener noreferrer">TechCrunch 2023-04-06：三星官方宣布 meaningful level 减产</a></li>
         <li><a href="https://www.koreaherald.com/article/3382821" rel="noopener noreferrer">Korea Herald 2024-05-02：SK 海力士 CEO Kwak Noh-jung「HBM 2024 已售罄、2025 也差不多售罄」（HBM 长约先于收入兑现的时间线）</a></li>
         <li><a href="https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-fourth-quarter-and-full-8" rel="noopener noreferrer">Micron FY25 Q4 及全年业绩公告（2025-09）：全年营收 374 亿美元、+49%、HBM + 高容量 DIMM + LP DRAM 合计 100 亿美元</a> · <a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312525000028/mu-20250828.htm" rel="noopener noreferrer">Micron Form 10-K FY2025（SEC filing）</a></li>
@@ -397,7 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
       /* 长约调整期：延后开始，每季 amp 方向的 5%，累计不超过 20%（一整年） */
       const adjQ = Math.min(q - delay, 4);                 /* 最多 4 季度调整期 */
       const dir = amp === 0 ? 0 : (amp > 0 ? 1 : -1);
-      const cap = Math.min(Math.abs(amp) * 0.25, 20);      /* 长约调整上限：需求变化的 25% 或 20 个基点 */
+      const cap = Math.min(Math.abs(amp) * 0.25, 20);      /* 长约调整上限：需求变化的 25% 或 20 个指数点 */
       const adjMag = Math.min(cap, adjQ * 5);
       let v = 100 + dir * adjMag;
       /* 长约调整完成后维持，除非需求已完全回落且长约期到 —— 简化：不做二次重议，一直维持 */
@@ -527,9 +527,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       readout.innerHTML =
         "现货价格：<b>" + spotMax.toFixed(0) + " → " + spotMin.toFixed(0) +
-        "</b>（区间 " + spotRange.toFixed(0) + " 个基点，最大偏离出现在第 " + Math.round(spotPeakQ) + " 季度）。" +
+        "</b>（区间 " + spotRange.toFixed(0) + " 个指数点，最大偏离出现在第 " + Math.round(spotPeakQ) + " 季度）。" +
         "<br>长约价格：<b>" + ctrMax.toFixed(0) + " → " + ctrMin.toFixed(0) +
-        "</b>（区间 " + ctrRange.toFixed(0) + " 个基点）。" +
+        "</b>（区间 " + ctrRange.toFixed(0) + " 个指数点）。" +
         "<br><b>波动幅度比 ≈ " + ratio + " ×</b>——同一次需求脉冲，现货侧的价格区间是长约侧的 " + ratio + " 倍。" +
         "<br><span" + (amp < 0 ? ' class="warn"' : "") + ">" + flavor + "</span>";
 

@@ -123,7 +123,7 @@
 
       <p>先看这个行业的第一个物理事实：<strong>它的钱大部分变成了设备和厂房</strong>。台积电在美国亚利桑那的扩产计划，2025 年 3 月官方公告加码到 <strong>1,650 亿美元</strong>（六座晶圆厂 + 两座先进封装厂 + 一个研发中心）；2026 年 5 月董事会又批准对亚利桑那子公司再注资 200 亿美元<a class="badge badge-verified" href="#src-tsmc-arizona">已核验 · 台积电官方公告 2025-03、Tom's Hardware/TechPowerUp 2026-05 报道</a>——单座先进 12 吋厂的量级就是<strong>百亿到两百亿美元</strong>。这笔钱下去，绝大部分不会立刻变成收入，会先变成 EUV 光刻机、刻蚀机、量测机、洁净室，然后按会计规则一年一年地折旧回来。</p>
 
-      <p>台积电的折旧规则是这样的：机器设备的折旧年限约 <strong>5 年</strong>（部分口径 5-7 年）；折旧占公司营业成本的比例约 <strong>48%</strong><a class="badge badge-verified" href="#src-tsmc-depr">已核验 · TSMC 财务报表附注机器设备折旧年限；48% 由第三方拆解 TSMC 2024 财报得出</a>。换成大白话：<strong>台积电每卖一块钱的服务，大约有五毛钱是在还机器和厂房的账</strong>。这五毛钱是不是每月都要还？是。工厂开满还是没开满，都要还？都要还——这就是「固定成本」的含义。它跟你今年卖了几片晶圆、卖到什么价格没关系。</p>
+      <p>台积电的折旧规则是这样的：机器设备的折旧年限约 <strong>5 年</strong>（部分口径 5-7 年）；折旧占公司营业成本的比例约 <strong>48%</strong><a class="badge badge-assume" href="#src-tsmc-depr">估算 · 由台积电 2024 审计财报推导</a>。换成大白话：<strong>台积电每花一块钱的营业成本，约有五毛是在还机器和厂房的账；折到每卖一块钱的收入上，约两毛</strong>（毛利率约 56%，营业成本只占收入的四成多）。这笔折旧是不是每月都要提？是。工厂开满还是没开满，都要提？都要提——这就是「固定成本」的含义。它跟你今年卖了几片晶圆、卖到什么价格没关系。</p>
 
       <p>存储厂（三星 DS、SK 海力士、美光）与代工厂（台积电、中芯国际）的成本结构差不多是同一套逻辑：折旧+厂房+基础运维占营业成本的一半上下，剩下的一半才是随产量变化的原材料（硅片、光刻胶、特气）和电力。这一半跟着卖多少走，那一半你今天卖零片也要照付。<a class="badge badge-expert" href="#src-cost-mix-expert">专家判断 · 综合行业口径</a></p>
 
@@ -151,7 +151,7 @@
 
       <p>这就是 2023 年存储三巨头（三星、SK 海力士、美光）的现场：产品价格跌破每片的现金成本（P - Z 甚至变负），越卖越亏；然而折旧照提，不生产也照提——结果是「减产也亏、生产也亏、越生产越亏」，最后三家先后大幅减产（卡 1 讲过）。</p>
 
-      <p>还有一个隐性放大器：会计上，产能利用率跌破某个阈值（一般 65-70%）时，一部分固定制造费用不能进存货、要直接进当期损益（unabsorbed overhead，未吸收制造费用）——2023 年三星、美光都在报表附注里明确列出过这一项<a class="badge badge-verified" href="#src-micron-10k-fy25">已核验 · Micron 2023 年报附注、Samsung 2023 年报附注</a>。数学上等价于 F 在低利用率时突然抬升，跳变更陡。</p>
+      <p>还有一个隐性放大器：会计上，产能利用率显著低于「正常产能」时，一部分固定制造费用不能进存货、要直接进当期损益（unabsorbed overhead，未吸收制造费用）——会计准则只讲「正常产能」，没有统一的百分比门槛；这不是纸面条款，美光 FY2023 就在 10-K 里列出过 <strong>3.82 亿美元</strong>的这类费用<a class="badge badge-verified" href="https://www.sec.gov/Archives/edgar/data/723125/000072312523000054/mu-20230831.htm" target="_blank" rel="noopener">已核验 · Micron FY2023 10-K</a>。数学上等价于 F 在低利用率时突然抬升，跳变更陡。</p>
 
       <h3>2.3 正面：产量高、涨价时，多卖的钱几乎全变利润</h3>
 
@@ -165,7 +165,7 @@
 
       <p>看清了：收入涨了约 21%（10×11 相对于 10×10），利润<strong>从 15,000 涨到 33,000，涨了 120%</strong>。收入涨 21%、利润涨 120%——这就是<strong>经营杠杆</strong>。同一台机器、同一群工人，因为它们的钱已经<strong>提前</strong>付出去了、每季固定的折旧已经计上，多卖出来的钱除了那点原材料成本几乎全变利润。</p>
 
-      <p>反过来看 2024 年三星 DS 部门：DRAM 涨价、HBM 满载出货、利用率从 2023 年的深度不足恢复到接近满载——同一批车间的营业利润从 -14.87 万亿韩元跳到 +15.09 万亿韩元。这个 30 万亿韩元的翻转不是奇迹，是<strong>经营杠杆的正向兑现</strong>。</p>
+      <p>反过来看 2024 年三星 DS 部门：常规 DRAM 涨价、利用率从 2023 年的深度不足恢复到接近满载，HBM 增长为辅（三星 2024 年在英伟达 HBM3E 认证上掉队，HBM 不是它的主引擎）——同一批车间的营业利润从 -14.87 万亿韩元跳到 +15.09 万亿韩元。这个 30 万亿韩元的翻转不是奇迹，是<strong>经营杠杆的正向兑现</strong>。</p>
 
       <h3>2.4 亲手拉一下：跳变有多陡取决于「固定成本占比」</h3>
 
@@ -271,11 +271,11 @@
       <h2>5 · 边界：这张卡什么时候不适用</h2>
 
       <ul>
-        <li><strong>无厂设计公司经营杠杆结构完全不同。</strong>英伟达、博通、AMD、联发科不承担晶圆厂折旧——他们主要的固定成本在研发和人员，杠杆倍数远低于制造/存储。同样的下游涨价，英伟达毛利率变化会显得温和得多；反过来，同样的下游砍单，它们也不会跟着深亏——因为没有那堆一直照提的折旧压着。<strong>卡 11（财务估值手册）</strong>会展开经营杠杆的行业差异。</li>
+        <li><strong>无厂设计公司经营杠杆结构完全不同。</strong>英伟达、博通、AMD、联发科不承担晶圆厂折旧——他们主要的固定成本在研发和人员，杠杆倍数远低于制造/存储。同样的下游涨价，英伟达毛利率变化会显得温和得多；反过来，同样的下游砍单，它们也不会跟着深亏——因为没有那堆一直照提的折旧压着。<strong>手册模块 11（财务语言与估值）</strong>会展开经营杠杆的行业差异。</li>
         <li><strong>长约锁定的产品价格没有跳变。</strong>HBM、部分定制芯片都是长期供货协议锁死价格，短期毛利率跳变来源主要是<strong>产品结构（mix shift）</strong>和工艺进度（良率爬坡带来单位成本下降），不是现货 ASP。<strong>卡 3（良率 = 成本曲线）</strong>展开单位成本的另一个维度。</li>
         <li><strong>爬坡早期的「跳变」是另一种性质。</strong>台积电 N3 在 2024 年上半年电话会给的指引是「稀释毛利率 3-4 个百分点」——这是<strong>时间性成本</strong>（利用率还没上来、良率还在爬），不是结构性恶化。同一个模型下、方向是负的、性质完全不同。<strong>模块 2 · 制造 101</strong>已经完整拆过这个例子。</li>
-        <li><strong>会计口径切换会人为改变杠杆读数。</strong>英特尔 2023 年把服务器等设备的折旧年限从 5 年拉长到 8 年，会计上摊销压力人为放缓——毛利率会因此上升，但公司真实的经济现实没变。遇到毛利率的会计口径跳变，先查附注（10-K 里 Property, Plant and Equipment 会计政策段落）<a class="badge badge-verified" href="#src-intel-depr-2023">已核验 · Intel 2023 会计政策变更</a>。</li>
-        <li><strong>跨环节的利润转移。</strong>整条产业链存在一个瓶颈时，瓶颈环节拿走定价权，其他环节的经营杠杆会被压缩甚至消失。<strong>卡 4（出货 = 最短板）</strong>展开跨环节的利润再分配；<strong>卡 11</strong>展开由此引发的估值端 PB→PE 重估。</li>
+        <li><strong>会计口径切换会人为改变杠杆读数。</strong>英特尔 2023 年把生产设备（晶圆厂机台）的折旧年限从 5 年拉长到 8 年，会计上摊销压力人为放缓——毛利率会因此上升，但公司真实的经济现实没变。遇到毛利率的会计口径跳变，先查附注（10-K 里 Property, Plant and Equipment 会计政策段落）<a class="badge badge-verified" href="#src-intel-depr-2023">已核验 · Intel 2023 会计政策变更</a>。</li>
+        <li><strong>跨环节的利润转移。</strong>整条产业链存在一个瓶颈时，瓶颈环节拿走定价权，其他环节的经营杠杆会被压缩甚至消失。<strong>卡 4（出货 = 最短板）</strong>展开跨环节的利润再分配；<strong>手册模块 11</strong>展开由此引发的估值端 PB→PE 重估。</li>
       </ul>
 
       <h2>6 · 练习两道</h2>
@@ -290,8 +290,8 @@
         <h4>练习二 · 推演题（用已核验事实做前提，用本卡机制推）</h4>
         <p>已核验的两件真事：</p>
         <ul>
-          <li>美光 FY25（截止 2025-08）HBM + 高容量 DIMM + LP 服务器 DRAM 合计收入 <strong>100 亿美元</strong>，是前一年的 5 倍<a class="badge badge-verified" href="#src-micron-fy25-press">已核验 · Micron FY25 Q4 8-K</a>；</li>
-          <li>SK 海力士 <strong>2026 年 HBM 已售罄</strong>；三星与 SK 海力士 <strong>HBM3E 2026 年涨价约 20%</strong><a class="badge badge-verified" href="#src-hbm-2026-sold-out">已核验 · CNBC 2025-10-29、TrendForce 2025-12-24</a>。</li>
+          <li>美光 FY25（截止 2025-08）HBM + 高容量 DIMM + LP 服务器 DRAM 合计收入 <strong>100 亿美元</strong>，是前一年的 5 倍<a class="badge badge-verified" href="https://investors.micron.com/static-files/5ea95475-639b-4cfc-91fd-b9b4a2bb5e63" target="_blank" rel="noopener">已核验 · Micron FQ4 2025 电话会实录</a>；</li>
+          <li>SK 海力士 <strong>2026 年 HBM 已售罄</strong>；三星与 SK 海力士 <strong>HBM3E 据报道计划 2026 年涨价约 20%</strong><a class="badge badge-verified" href="#src-hbm-2026-sold-out">已核验 · CNBC 2025-10-29、TrendForce 2025-12-24</a>。</li>
         </ul>
         <p>请你推：2026 年存储行业里，一线厂（三星 DS、SK 海力士、美光）在<strong>拿到 HBM 长约的部分</strong>和<strong>还留在标准 DDR/NAND 现货市场的部分</strong>，各自的利润弹性会有什么不同？二三线存储厂（南亚科、华邦、长江存储在现货市场那部分）追赶的时间常数是多少？</p>
         <p class="scenario-hint">提示：先把公司拆成「HBM 长约业务」和「标准品现货业务」两个盘子，各自套一遍卡 2 的固定成本 + 经营杠杆算术；HBM 那部分价格已经锁在长约里、涨价不会立刻传递给一线厂，一线厂的弹性主要在<strong>量</strong>与<strong>产品结构</strong>；标准品那部分是现货，涨价直接放大杠杆。再用卡 1 的「新产能到位 24-36 个月」告诉你二三线厂能不能在 2026 内追上来。<strong>不给标准答案。</strong></p>
@@ -313,15 +313,16 @@
       <ul style="margin:8px 0 0;padding-left:1.3em">
         <li id="src-micron-fy23-8k"><a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312523000051/a2023q4ex991-pressrelease.htm">Micron Technology FY23 Q4 8-K 财报公告（2023-09，全年营收 $15.54B、GAAP 毛利率 -9.1%、净亏损 $5.83B）</a></li>
         <li id="src-micron-fy24-8k"><a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312524000023/a2024q4ex991-pressrelease.htm">Micron Technology FY24 Q4 8-K 财报公告（2024-09，全年营收 $25.11B、GAAP 净利润 $0.78B）</a></li>
-        <li id="src-micron-fy25-press"><a href="https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-fourth-quarter-and-full-8">Micron Technology FY25 Q4 及全年业绩公告（2025-09，全年营收 $37.4B、+49%、HBM+HC DIMM+LP DRAM $10B）</a></li>
-        <li id="src-micron-10k-fy25"><a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312525000028/mu-20250828.htm">Micron Technology Form 10-K FY2025（SEC filing，综合毛利率 40%、比较口径 FY24 22%→FY25 40%；附注含存货吸收/unabsorbed overhead 披露）</a></li>
+        <li id="src-micron-fy25-press"><a href="https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-results-fourth-quarter-and-full-8">Micron Technology FY25 Q4 及全年业绩公告（2025-09，全年营收 $37.4B、+49%）</a> · <a href="https://investors.micron.com/static-files/5ea95475-639b-4cfc-91fd-b9b4a2bb5e63">FQ4 2025 电话会 prepared remarks（2025-09-23：HBM+高容量 DIMM+LP 服务器 DRAM 合计 $10B、约前一年 5 倍）</a></li>
+        <li id="src-micron-10k-fy25"><a href="https://www.sec.gov/Archives/edgar/data/0000723125/000072312525000028/mu-20250828.htm">Micron Technology Form 10-K FY2025（SEC filing，综合毛利率 40%、比较口径 FY24 22%→FY25 40%）</a></li>
+        <li id="src-micron-10k-fy23"><a href="https://www.sec.gov/Archives/edgar/data/723125/000072312523000054/mu-20230831.htm">Micron Technology Form 10-K FY2023（SEC filing，FY23 产能未充分利用费用 $382M 直接计入当期成本）</a></li>
         <li id="src-samsung-fy24"><a href="https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2024-results">Samsung Electronics 4Q24/FY24 press release（2025-01-31，DS 部门全年营收 111.07 万亿韩元、营业利润 15.09 万亿韩元）</a></li>
         <li id="src-samsung-fy23"><a href="https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2023-results">Samsung Electronics 4Q23/FY23 press release（2024-01-31，DS 部门季度亏损明细，全年累计约 -14.87 万亿韩元）</a></li>
         <li id="src-samsung-fy23-alt"><a href="https://www.businesskorea.co.kr/news/articleView.html?idxno=118495">Businesskorea：三星半导体 2023 年营业亏损 14.87 万亿韩元的转述报道</a></li>
         <li id="src-intel-10k-fy24"><a href="https://www.sec.gov/Archives/edgar/data/0000050863/000005086325000009/intc-20241228.htm">Intel Corp Form 10-K FY2024（SEC filing，2025-01，Intel Foundry 部门 2024 全年营业亏损 $13,408M）</a></li>
         <li id="src-tsmc-arizona"><a href="https://pr.tsmc.com/english/news/3210">台积电官方公告：亚利桑那总投资扩至 1,650 亿美元（2025-03，6 座 fab + 2 座 CoWoS + 1 研发中心）</a></li>
         <li id="src-tsmc-az-2026"><a href="https://www.tomshardware.com/tech-industry/semiconductors/tsmc-allocates-usd20-billion-to-arizona-expansion-project-faces-water-and-labor-shortages-complicated-by-visa-rules">Tom's Hardware / TechPowerUp：台积电 2026-05 批准对亚利桑那子公司再注资 $20B</a></li>
-        <li id="src-tsmc-depr"><a href="https://globaloutperformers.substack.com/p/taiwan-semiconductor-manufacturing-701">TSMC 财务报表附注（机器设备折旧年限 5 年，折旧占营业成本约 48%，第三方财报拆解）</a></li>
+        <li id="src-tsmc-depr">台积电 2024 合并财报（Deloitte 审计，2025-02 签署）：全年折旧费用 NT$6,536 亿、营业成本 NT$12,700 亿——营业成本内折旧未单列，48% 为推导值（全口径折旧/营业成本约 51.5%，剔除费用端折旧后约 47-50%）；机器设备折旧年限约 5 年出自财报附注 · <a href="https://globaloutperformers.substack.com/p/taiwan-semiconductor-manufacturing-701">第三方拆解（globaloutperformers, 2025-07）得 48.5%，与推导一致</a></li>
         <li id="src-hbm-2026-sold-out"><a href="https://www.cnbc.com/2025/10/29/sk-hynix-q3-profit-revenue-record-.html">CNBC 2025-10-29：SK 海力士 2026 年 HBM 已售罄</a></li>
         <li id="src-hbm-2026-pricing"><a href="https://www.trendforce.com/news/2025/12/24/news-samsung-sk-hynix-reportedly-plan-20-hbm3e-price-hike-for-2026-as-nvidia-h200-asic-demand-rises/">TrendForce 2025-12-24：三星与 SK 海力士 HBM3E 2026 年涨价约 20%</a></li>
         <li id="src-intel-depr-2023"><a href="https://www.intc.com/filings-reports/all-sec-filings/content/0000050863-23-000005/0000050863-23-000005.pdf">Intel Q4-2022 财报 8-K（2023-01 提交 SEC）：明写「effective January 2023, we increased the estimated useful life of certain production machinery and equipment from five to eight years」——折旧年限 5→8 年的原始披露</a></li>
