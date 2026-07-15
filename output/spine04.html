@@ -134,7 +134,7 @@
         </div>
       </div>
 
-      <p class="spine-lead">这里有个投资上必须想通的直觉难题：<b>GPU 芯片本身供应正在飞速扩张，为什么 AI 卡还是缺？</b>答案不在英伟达身上——一颗加速卡不是一颗 GPU。它是 GPU + HBM + CoWoS 封装 + ABF 载板 + 测试装配的一串刚性装配，缺一样整卡就交不出去。整个链条的出货量 = <strong>所有环节里最矮的那根柱子</strong>。这张卡从这个"木桶定律"往下推。</p>
+      <p class="spine-lead">这里有个投资上必须想通的直觉难题：<b>英伟达数据中心营收两年翻了 7 倍多（含 ASP 上行），为什么 AI 卡还是缺？</b>答案不在英伟达身上——一颗加速卡不是一颗 GPU。它是 GPU + HBM + CoWoS 封装 + ABF 载板 + 测试装配的一串刚性装配，缺一样整卡就交不出去。整个链条的出货量 = <strong>所有环节里最矮的那根柱子</strong>。这张卡从这个"木桶定律"往下推。</p>
     </section>
 
     <!-- ==================== 2. 机制 ==================== -->
@@ -144,15 +144,15 @@
 
       <h3>a. 最短板的两个必然结论</h3>
       <ol>
-        <li><strong>串联装配 = 各环节相乘、不是相加</strong>。GPU 大芯片 + 3-8 颗 HBM 堆叠 + CoWoS 中介层封装 + ABF 载板 + 测试。这五个环节不是并联，是串联——你不能"少要 CoWoS 多要 GPU"来凑数，也不能"用两颗 GPU 顶一颗 HBM"。任何一环缺，整卡就交不出。</li>
-        <li><strong>整体产能 = min(各环节产能)</strong>。数学结论直白：出货被最矮那根柱子钉死。GPU 产能过剩会变成在手库存，HBM 产能过剩也会变库存——都不会转成出货。</li>
-        <li><strong>瓶颈获得边际涨价能力（缺货溢价），但留不留得住超额利润是另一回事</strong>。客户拿不到 CoWoS 时，宁愿付溢价插队也不能让 GPU 变废硅——这给了瓶颈环节涨价的底气。但涨出来的钱能不能变成持续的超额利润，取决于这个环节自身的<strong>差异化与可替代性</strong>：重资本、终会被追平的瓶颈（CoWoS——毛利率低于台积电公司平均）拿到的溢价有限；寡头且有技术代差的瓶颈（HBM——SK 海力士 3Q25 营业利润率 47%）拿得多；而全周期最大的价值捕获方，可能是链条里最不可替代的那个环节，哪怕它不是物理瓶颈（英伟达 FY25 毛利率 75%）。<strong>物理瓶颈锁产量，超额利润看不可替代性——两者可以不在同一环节。</strong></li>
+        <li><strong>串联装配 = 各环节缺一不可（不是可替代的并联）</strong>。GPU 大芯片 + 3-8 颗 HBM 堆叠 + CoWoS 中介层封装 + ABF 载板 + 测试。这五个环节不是并联，是串联——你不能"少要 CoWoS 多要 GPU"来凑数，也不能"用两颗 GPU 顶一颗 HBM"。任何一环缺，整卡就交不出。整体产能由下一条 min() 决定。</li>
+        <li><strong>整体产能 = min(各环节产能)</strong>。数学结论直白：出货被最矮那根柱子钉死。GPU 产能过剩会变成在手库存，HBM 产能过剩也会变库存——都不会转成出货。（<strong>教学简化提示</strong>：min() 严格成立在"当期各环节产量必须严格对齐当期出货"时；现实里存在 2-3 季度的安全库存与在途缓冲，会让短期出货 ≠ 当期最矮产能——但方向仍由 min() 决定。）</li>
+        <li><strong>瓶颈获得边际涨价能力（缺货溢价），但留不留得住超额利润是另一回事</strong>。客户拿不到 CoWoS 时，宁愿付溢价插队也不能让 GPU 变废硅——这给了瓶颈环节涨价的底气。但涨出来的钱能不能变成持续的超额利润，取决于这个环节自身的<strong>差异化与可替代性</strong>：重资本、终会被追平的瓶颈（CoWoS——TSMC 未官方披露该业务毛利率，业界估算低于台积电公司平均<a class="badge badge-assume" href="#src-cowos-margin">业界估算 · TrendForce 2026-04</a>）拿到的溢价有限；寡头且有技术代差的瓶颈（HBM——SK 海力士 3Q25 公司整体营业利润率 47%<a class="badge badge-verified" href="#src-skhynix-3q25">已核验 · SK 海力士 3Q25 财报</a>，含 DRAM+NAND+HBM 全部业务，HBM 分部单独业绩未披露）拿得多；而全周期最大的价值捕获方，可能是链条里最不可替代的那个环节，哪怕它不是物理瓶颈（英伟达 FY25 公司整体毛利率 75%<a class="badge badge-verified" href="#src-nvda-fy25">已核验 · NVIDIA FY25 10-K</a>）。<strong>物理瓶颈锁产量，超额利润看不可替代性——两者可以不在同一环节。</strong>（本条为多个案例归纳出的产业规律、非物理定律；边界见 §5。）</li>
       </ol>
 
       <h3>b. 瓶颈为什么会漂移</h3>
       <ol>
-        <li><strong>瓶颈环节被砸钱，扩产是必然反应</strong>。客户把预付款、多年长约堆到最短板厂门口——这台机器一旦启动，24-36 个月后（供给的时间常数，卡 1）新产能到货。</li>
-        <li><strong>瓶颈解除的那一刻，下一环节立刻变新短板</strong>。假设 CoWoS 从需求的 70% 扩到 130%，装配能力顶到 HBM 供应上限——HBM 立刻变成新的最短板，涨价权和超额利润转移过去。这不是慢慢过渡，是接力棒突然换手。</li>
+        <li><strong>瓶颈环节被砸钱，扩产是必然反应</strong>。客户把预付款、多年长约堆到最短板厂门口——这台机器一旦启动，24-36 个月后（供给的时间常数，卡 1）新产能到货。（<strong>「砸钱=扩产落地」是简化</strong>：真实约束还有设备交期（ASML EUV 18-24 个月、TCB 键合机长交期）+ 良率爬坡 + 熟练人才——所以「客户砸钱」不是自动等于「产能按期到货」；瓶颈滞留时间可能比 24-36 个月更长。）</li>
+        <li><strong>瓶颈解除时，下一环节立刻变新短板</strong>。假设 CoWoS 从需求的 70% 扩到 130%，装配能力顶到 HBM 供应上限——HBM 立刻变成新的最短板，涨价权和超额利润转移过去。（<strong>教学表述</strong>：现实中产能爬坡与柔性替代路径会让漂移在 1-3 个季度渐进完成，「突然换手」是教学比喻——历史上 CoWoS 缓解过程也是逐季 unwind，不是单日切换。）</li>
         <li><strong>漂移会一层一层往外传</strong>。CoWoS → HBM → 光模块 → 电力 → 液冷 → 电网。每一环的扩产周期不同（半年到十年），漂移速度不均匀——但方向清楚。<strong>投资视角看，瓶颈漂移就是产业链上一根"利润接力棒"，从一段传到下一段</strong>。这里预告一下卡 10（需求传导链）和卡 11（领先指标）：这两张卡教你怎么用设备订单、交期、长约这些前置信号判断棒往哪儿传。</li>
       </ol>
 
@@ -185,6 +185,15 @@
       </div>
 
       <p>玩三个情景一遍，就把这张卡最重要的三件事装进了眼睛：<strong>①瓶颈环节的柱子涂琥珀色，其余环节的多余高度都是闲置</strong>；<strong>②扩产一环，瓶颈跳到下一环</strong>；<strong>③非瓶颈环节的产能扩张对整卡出货毫无帮助——却会持续消耗它们自己的资本开支和库存</strong>。</p>
+
+      <h3>d. 本卡讲的机制只是其中一条 · 完整解释还要另外两条</h3>
+      <p>这张卡讲的核心结论是<strong>「加速卡出货 = min(各环节产能)，最短板决定链条整体出货、瓶颈获得缺货溢价、瓶颈会漂移；超额利润归谁看链条上不可替代的那一环」</strong>——但<strong>读者拿这个模型去解释一次具体的"AI 卡缺货涨价"新闻、往下推投资判断时，还要过另外两条独立机制</strong>。三条一起摆出来：</p>
+      <ol>
+        <li><strong>物理产能瓶颈（本卡讲的这条）</strong>——链条五环任一环缺就交不出，整卡出货被最矮那根柱子钉死；瓶颈环节拿到缺货溢价、瓶颈会漂移；但超额利润归谁看不可替代性（英伟达非瓶颈但拿走大部分利润）。这条决定<strong>整条链的出货天花板与利润分配比例</strong>。</li>
+        <li><strong>需求真实性 · 牛鞭虚火</strong>——所谓"卡还是缺"里有多少是真需求、多少是重复下单？终端-经销-客户三级供应链里，客户在缺货时下重复订单、涨价前抢货——表观订单可能是真实需求的几倍。<strong>本卡讲的"瓶颈定价权"，前提是需求本身是真的</strong>——如果这波缺货里大部分是牛鞭虚火，等到牛鞭放开、订单塌方，物理瓶颈"消失"（因为需求塌下来），瓶颈溢价就跟着消失。完整机制在<strong>卡 5</strong>（缺货本身是风险信号）里讲透。</li>
+        <li><strong>合同结构 · 客户端配置权</strong>——同一批瓶颈产能，怎么在客户之间分配？头部客户（Nvidia、谷歌 TPU、亚马逊 Trainium、Meta MTIA）用多年长约锁定 CoWoS/HBM 优先分配权——Custom ASICs 2026 年预计占 CoWoS 分配约 45%；其他客户只能拿剩下的。<strong>合同结构决定同一次缺货里谁能拿到货、谁拿不到</strong>——这条独立于本卡的 min() 机制。完整讨论在<strong>卡 6</strong>（直供长约 vs 现货）。</li>
+      </ol>
+      <p><strong>本卡讲第一条，因为它是最底层的物理约束</strong>——理解了 min()、瓶颈溢价、瓶颈漂移这三件事，另两条读起来才有骨架。<strong>但真实投资判断要三条一起用</strong>：看到"加速卡缺货涨价"这种新闻时，先用本卡判断"物理瓶颈在哪一环、什么时候扩产落地"，再用卡 5 判断"这波缺货里客户重复下单占多少、真实终端需求什么时候塌"，再用卡 6 判断"瓶颈资源已经被哪些长约锁定、我关心的公司在长约名单里吗"。三条都过一遍，才决定这次缺货对哪家公司是买点。深入研究方向：SemiAnalysis "AI Capacity Constraints - CoWoS and HBM"、Epoch AI "Advanced packaging bottlenecks"——见页脚"核心结论的观点讨论"。</p>
     </section>
 
     <!-- ==================== 3. 真实锚点 ==================== -->
@@ -194,7 +203,7 @@
 
       <h3>锚点一 · CoWoS 两年翻倍还是不够（2024-10-17）</h3>
       <p>台积电在 2024-10-17 三季度电话会上明示：<strong>CoWoS 产能 2024 年、2025 年连续两年翻倍，仍然赶不上需求</strong><span class="badge badge-verified">已核验 · TSMC 2024-Q3 电话会经 TrendForce/SemiWiki 转述</span>。TrendForce 拆解的月产能数字：2024 年 35,000-40,000 片、2025 年 80,000 片、2026 年可能到 140,000-150,000 片<span class="badge badge-assume">估算 · TrendForce 2024-10-21（2025-01 将 2025 年口径修正为约 75,000 片）</span>。</p>
-      <p>这是"瓶颈定价权 + 客户砸钱扩产"的现场：产能连翻两年还是被追着跑，说明短板的位置在过去两年一直没变。英伟达数据中心营收两年涨到约 7.7 倍（见锚点二），但加速卡整体出货被 CoWoS 这一环钉住——这就是最短板机制的直接证据。</p>
+      <p>这是"瓶颈定价权 + 客户砸钱扩产"的现场：产能连翻两年还是被追着跑，说明短板的位置在过去两年一直没变。英伟达数据中心营收两年涨到约 7.7 倍（见锚点二，此为营收口径含 ASP 上行；物理出货量 ≠ 营收增速），但加速卡整体出货被 CoWoS 这一环钉住——这就是最短板机制的直接证据。</p>
 
       <h3>锚点二 · GPU 出货猛涨 vs 加速卡缺货并存</h3>
       <p>英伟达数据中心业务：<strong>FY23 $15B → FY24 $47.5B → FY25 $115.2B（+142% 同比）</strong><span class="badge badge-verified">已核验 · NVIDIA FY25 Q4 8-K</span>。如果只看这个数字，"英伟达没货可卖"的说法不成立——两年约 7.7 倍的营收增长，在同规模公司中史无前例。但同一时期，云厂商、大企业客户依然在抱怨"H100/H200/GB200 拿不到"。</p>
@@ -245,7 +254,7 @@
         </div>
         <div class="chain-row">
           <b>反射二</b>
-          <div>看到"瓶颈环节公告扩产完成、产能开始落地"，<strong>第一反应查：下一环节的库存周转天数变化、订单是不是已经跳到那里？</strong>瓶颈解除的那一刻，超额利润就消失，下一环节才是接力棒的下一站。等到市场把接力棒的下一站也定价完毕，认知差就没了——所以这个反射的动作要快。</div>
+          <div>看到"瓶颈环节公告扩产完成、产能开始落地"，<strong>第一反应查：下一环节的库存周转天数变化、订单是不是已经跳到那里？</strong>瓶颈解除时，<strong>该环节的边际缺货溢价</strong>会消失，下一环节成为新的溢价站——但整条链上不可替代环节（如英伟达）的超额利润不由这个逻辑决定（见 a.3 结论）。等到市场把接力棒的下一站也定价完毕，认知差就没了——所以这个反射的动作要快。</div>
         </div>
       </div>
 
@@ -261,6 +270,7 @@
         <li><strong>有替代方案时，最短板效应打折</strong>。HBM3 短缺可以部分用 HBM3E 或多堆栈方案顶（同厂但更新代次）；ABF 长期看有玻璃基板等替代路径（还没量产但有节点）；甚至先进节点缺货时，客户可以退回上一代节点凑量。<strong>替代路径就绪的品类，"最短板"从刚性变成弹性</strong>——瓶颈溢价被削平。</li>
         <li><strong>需求本身塌方时，谁是瓶颈都没意义</strong>。整体需求消失，讨论"哪根柱子最矮"就是无效功课。2023 年一般 DRAM 就是这样：需求塌了、行业深度亏损减产（见卡 1 存储案例）。卡 5（渠道逐层放大订单波动、缺货本身是风险信号）和卡 10（需求传导链）会展开这一层——<strong>不要把每个"缺货"都当利好</strong>。</li>
         <li><strong>本卡只讲"最短板决定整体"的结构性事实，不告诉你怎么找下一个短板</strong>——那是卡 10（需求传导链：模型公司→云 CapEx→芯片→制造→设备→电力）与卡 11（领先指标：设备订单、交期、长约）的工作。三张卡合起来才是完整的"瓶颈接力棒"操作手册。</li>
+        <li><strong>"瓶颈会漂移"作为规律是案例归纳、不是物理定律</strong>。本卡的"漂移"规律来自 ABF→CoWoS→HBM 这几个连续案例归纳出的产业模式，不是从第一性原理演绎出来的定律。含义是：漂移的方向可以判断（沿着扩产周期反向传导），但漂移的时点、幅度、跳跃距离都有不确定性——不能靠这个规律做精确时点预测。</li>
       </ul>
     </section>
 
@@ -272,7 +282,7 @@
       <div class="scenario">
         <h4>练习一 · 复述题（2-3 分钟量级）</h4>
         <p>合上这张卡片，用自己的话把这件事讲给一个完全不懂芯片的朋友：<strong>"英伟达数据中心营收两年涨到约 7.7 倍——从 $15B 到 $115B——但同一时期客户还在抱怨买不到 AI 卡。为什么？"</strong></p>
-        <p class="scenario-hint">要点检查：①"一颗加速卡不是一颗 GPU"讲清楚了没；②"串联装配、min(各环节)"讲清楚了没；③点出当下的短板不在 GPU、在 CoWoS/HBM。三个都到位，这张卡算过了本关。</p>
+        <p class="scenario-hint">要点检查：①"一颗加速卡不是一颗 GPU"讲清楚了没；②"串联装配、min(各环节)"讲清楚了没；③点出当下的短板不在 GPU、在 CoWoS/HBM；④注意到营收 7.7 倍是营收口径（含 ASP 上行）、不是物理供应增速——反差论证的核心不是"GPU 供应飞涨"、是"链条整体出货被最矮那根柱子钉住"。四个都到位，这张卡算过了本关。</p>
       </div>
 
       <article class="scenario">
@@ -296,10 +306,20 @@
         <li><a href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581025000021/q4fy25pr.htm">NVIDIA FY2025 Q4 8-K：数据中心 FY25 营收 $115.2B（+142% 同比）</a></li>
         <li><a href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581024000028/q4fy24pr.htm">NVIDIA FY2024 Q4 8-K：数据中心 FY24 营收 $47.5B</a></li>
         <li><a href="https://www.tomshardware.com/pc-components/gpus/micron-says-high-bandwidth-memory-is-sold-out-for-2024-and-most-of-2025-intense-demand-portends-potential-ai-gpu-production-bottleneck">Tom's Hardware：美光 HBM 2024 售罄、2025 大部分已分配（转述 CEO 电话会原话）</a>；后续售罄延伸至 2026 见 m03 页脚清单</li>
-        <li><a href="https://fortune.com/2021/09/16/chip-shortage-supplier-component-abf-substrate-shares/">Fortune 2021-09-16：ABF 载板配套厂商股价三年涨超 1,200%</a></li>
+        <li><a href="https://fortune.com/2021/09/16/chip-shortage-supplier-component-abf-substrate-shares/">Fortune 2021-09-16：ABF 载板配套厂商股价三年涨超 1,200%</a>（原文起止日、含权与否口径未核，作为极端历史案例引用；量级方向可信）</li>
+        <li id="src-cowos-margin"><a href="https://www.trendforce.com/news/2026/04/28/news-tsmc-cowos-wafer-asp-reportedly-nears-7nm-levels-advanced-packaging-poised-to-become-a-key-profit-driver/">TrendForce 2026-04-28：CoWoS wafer ASP 接近 7nm 水平、advanced packaging 毛利率业界估算低于台积电公司平均（TSMC 未官方披露、原文用 unnamed sources）</a></li>
+        <li id="src-skhynix-3q25"><a href="https://news.skhynix.com/sk-hynix-announces-3q25-financial-results/">SK Hynix 3Q25 财报：营收 24.4489 万亿韩元、营业利润 11.3834 万亿韩元、公司整体营业利润率 47%（含 DRAM+NAND+HBM 全部业务；HBM 分部单独业绩未披露）</a></li>
+        <li id="src-nvda-fy25"><a href="https://www.sec.gov/Archives/edgar/data/0001045810/000104581025000021/q4fy25pr.htm">NVIDIA FY2025 10-K/Q4 8-K：公司整体 GAAP 毛利率 75%（数据中心业务占营收 88%、非物理瓶颈但拿走链条最多超额利润的现场）</a></li>
         <li><a href="https://www.yolegroup.com/press-release/advanced-ic-substrate-reach-the-stars/">Yole Group《Advanced IC substrate reach the stars》：2021-2022 两年宣布的先进 IC 载板投资与产能扩张合计超 $15.5B、近半在亚洲、含客户共投</a>；<a href="https://a2globalelectronics.com/shortage-mitigation/abf-substrate-shortages/">a2 Global Electronics 2022：ABF 载板短缺背景综述</a></li>
         <li>预告参考：卡 10（需求传导链）、卡 11（领先指标）——本卡边界与推演题指向的下一步</li>
       </ul>
+      <div style="margin-top:14px;padding-top:10px;border-top:1px dashed var(--border)">
+        <strong>核心结论的观点讨论（延伸阅读）</strong>
+        <ul style="margin:6px 0 0;padding-left:1.3em">
+          <li><a href="https://newsletter.semianalysis.com/p/ai-capacity-constraints-cowos-and" target="_blank" rel="noopener">SemiAnalysis · Dylan Patel + Myron Xie + Gerald Wong, "AI Capacity Constraints - CoWoS and HBM Supply Chain"</a>——半导体投资圈头部深度分析。原文直接讨论 "CoWoS 和 HBM 已经是 AI 专属技术，所有余量已在 Q1 被吸收"、"GPU 4N 稼动率不到 70% 但 HBM/CoWoS 100%"——正是本卡"最短板决定出货、瓶颈定价权"的教科书级材料。</li>
+          <li><a href="https://epoch.ai/data-insights/ai-chip-supply-chain-constraints" target="_blank" rel="noopener">Epoch AI, "Advanced packaging and HBM, not logic dies, were the bottlenecks on AI chip production in 2025"</a>——AI 计算与半导体交叉的严肃研究机构。给出定量论据："四大设计公司 2025 年消耗全球约 90% CoWoS 产能和 HBM 供应，但只消耗 12% 先进逻辑 die 产量"——原始定量论证本卡"物理瓶颈锁产量"这一断言。</li>
+        </ul>
+      </div>
     </div>
 
     <footer class="page-foot">

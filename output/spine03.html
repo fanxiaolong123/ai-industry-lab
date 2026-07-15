@@ -44,7 +44,7 @@
         <span class="unit">分母越大，成本越小</span>
       </div>
 
-      <p>这条公式的形状是双曲线：Y 从 0 到 100%，单颗成本从「无穷大」沿一条陡的下降曲线走。<strong>良率翻倍，成本减半；良率再翻倍，成本再减半——良率不是加法，它是分母。</strong>Cannon Lake 那种「整片晶圆里 GPU 部分合格的太少」的情况，正是这个分母压得抬不起头——不砍功能，每颗芯片摊到的成本高过售价。</p>
+      <p>这条公式的形状是双曲线：Y 从 0 到 100%，单颗成本从「无穷大」沿一条陡的下降曲线走。<strong>良率翻倍，成本减半；良率再翻倍，成本再减半——良率不是加法，它是分母。</strong>业界推断中的 Cannon Lake（英特尔未正面承认、见 §1 归因）就属这种「分母压得抬不起头」的形态——如果推断成立，不砍功能就是每颗芯片摊到的成本高过售价。</p>
 
       <p><strong>第三步 · 为什么会爬坡。</strong>新制程首次投产时缺陷密度 D0 高——每平方厘米上飘着的致命颗粒和工艺偏差多。台积电在 2020 年技术论坛给过一个真实刻度：<strong>N5 制程投产初期 D0 约 0.1 个/平方厘米（官方趋势图读数），一年内逼近 0.06</strong><a class="badge badge-verified" href="#src-tsmc-d0">已核验 · 台积电 2020 技术论坛披露</a>。缺陷随机散布时，一颗面积 A 平方厘米的 die「一个都不沾」的概率是 <strong>e<sup>−A×D0</sup></strong>——泊松良率公式（完整推导见 m02 手册页第 3 节）。这里的重点不是公式本身，而是它的动态：</p>
       <ul>
@@ -92,18 +92,27 @@
 
       <p>拖到极端一点你会看到两件事：<strong>①</strong> 起始良率 40%、月相对改善 3% 时，追平上一代要两年出头（约 25 个月）；把改善率拖到 8%，缩到约十个月——<strong>斜率就是日历</strong>。<strong>②</strong> 同样起点、同样是「每月 7%」，切成「绝对」的话追平时间比「相对」快得多——因为「相对 7%」在低良率时每月实际抬 3 个百分点，在高良率时抬 6 个百分点，前慢后快；而「绝对 7 个点」是均匀的。<strong>行业惯例是「相对」（复利口径），但管理层原话未必严谨说明</strong><a class="badge badge-expert" href="#src-tsmc-n3-dilution">专家判断 · 通行的买方跟踪法</a>——投资人第一件事是追问口径。</p>
 
+      <h3>本卡讲的机制只是其中一条 · 完整解释还要另外两条</h3>
+      <p>这张卡讲的核心结论是<strong>「良率爬坡决定单颗芯片成本、单颗成本随时间构成一张三年长的日历」</strong>——但<strong>读者拿这张日历去解释一家公司的季度报表毛利率变化时，还要过另外两条独立机制</strong>。三条一起摆出来：</p>
+      <ol>
+        <li><strong>良率爬坡（本卡讲的这条）</strong>——新节点点火良率低、单颗成本高；良率沿曲线爬升，单颗成本沿其镜像沉降。这条决定的是<strong>单个节点</strong>的成本日历。</li>
+        <li><strong>稼动率</strong>（产线利用率）——同一批设备的折旧要照提、气水要照通，当客户订单占不满产能时，固定成本被更少的产量摊薄，单位毛利率下降。<strong>稼动率降 10 个百分点能完全吃掉一年的良率改善</strong>。台积电 2024 年逐季毛利率抬升，官方口径主因就是"稼动率回升与成本改善"——不是 N3 良率兑现。这条的完整机制在<strong>卡 2</strong>（固定成本主导）里讲透了。</li>
+        <li><strong>多节点加权 + 折旧节奏</strong>——一家代工厂同时在跑 6-8 个节点（N28、N16、N7、N5、N3、N2 …），公司报表毛利率是各节点加权平均，各在不同爬坡位置；同时新 fab 折旧压力大、老 fab 折旧结束后毛利率跳升——这些也在改公司报表毛利率。完整拆解在<strong>手册页 m11</strong>（财务语言与估值）。</li>
+      </ol>
+      <p><strong>本卡讲第一条，因为它是最底层的物理约束</strong>——理解了良率爬坡的形状，另两条读起来才有骨架。<strong>但真实投资判断要三条一起用</strong>：看到一家公司季度毛利率变化时，先用本卡判断"单个新节点良率兑现能贡献多少"，再用卡 2 判断"稼动率贡献多少"，再用 m11 判断"节点组合和折旧变化贡献多少"。三条一起过一遍，再说这次毛利率变化是什么原因。深入研究方向：Weber 2004（Yield Learning 学术源头级论文）、SemiAnalysis "TSMC's Heroic Assumption"（讨论稼动率 × 良率 × 利润率三角）——见页脚"核心结论的观点讨论"。</p>
+
       <h2>3. 真实锚点 · 两个已核验的现场</h2>
 
       <p><strong>锚点一：台积电 3nm（N3）的三年长日历。</strong>台积电管理层把整套语言分两场电话会放上桌：<strong>2024-01-18</strong> 先给幅度——3nm 爬坡将<strong>稀释</strong> 2024 全年毛利率约 3-4 个百分点<a class="badge badge-verified" href="https://www.fool.com/earnings/call-transcripts/2024/01/18/taiwan-semiconductor-manufacturing-tsm-q4-2023-ear/" target="_blank" rel="noopener">已核验 · 2024-01-18 电话会转录</a>；三个月后的 <strong>2024-04-18</strong> 电话会再给时间维度——历史上 N5/N7 用 8-10 个季度回到公司平均毛利率水平，N3 因复杂度和早期定价预计 10-12 个季度<a class="badge badge-verified" href="https://www.fool.com/earnings/call-transcripts/2024/04/18/taiwan-semiconductor-manufacturing-tsm-q1-2024-ear/" target="_blank" rel="noopener">已核验 · 2024-04-18 电话会转录</a>。翻译：管理层自己把一张 3 年长的毛利率日历告诉了投资人。随后 2024 年逐季毛利率走出 53.1% → 53.2% → 57.8% → 59.0%、全年 56.1%，2025 年全年 59.9%<a class="badge badge-verified" href="#src-tsmc-n3-dilution">已核验 · 公司业绩公告</a>——但别把这条报表曲线直接读成「稀释一格格消退」：台积电官方把这段抬升主要归因于<strong>稼动率回升与成本改善</strong>，2024 年 N3 收入占比其实还在上升、稀释仍在；稀释本身的兑现，要看 N3 自己那条「约 10-12 个季度追平公司平均」的爬坡日历，不是全公司报表曲线。（案例复盘的完整决策拆解在手册页 m02 · 决策复盘二。）</p>
 
-      <p><strong>锚点二：英特尔 18A 的当代验证。</strong>2026 年 2 月，英特尔 CEO 陈立武在 Cisco AI 峰会上说：接手时 18A 良率「相当差」，他把 PDF Solutions 和 KLA 请来一起攻，「<strong>现在良率以每月 7-8% 的速度改善</strong>——这是行业最佳实践的速度」；并预期 2026 下半年拿到多家代工客户承诺。<a class="badge badge-verified" href="#src-intel-18a-yield">已核验 · Cisco AI Summit 2026-02 · Yahoo Finance / Motley Fool / TrendForce 报道</a> 这一句里塞了两层信息：① 「月改善 7-8%」是可以直接验证的成本曲线斜率；② 「下半年拿承诺」暗示他觉得几个月内能到给客户看的良率水平——两个数字放到同一张日历上，投资人可以自己核验一致性（正是下面「练习」要做的事）。</p>
+      <p><strong>锚点二：英特尔 18A 的当代验证。</strong>2026 年 2 月，英特尔 CEO 陈立武在 Cisco AI 峰会上说：接手时 18A 良率「相当差」，他把 PDF Solutions 和 KLA 请来一起攻，「<strong>现在良率以每月 7-8% 的速度改善</strong>——这是行业最佳实践的速度」；并预期 2026 下半年拿到多家代工客户承诺。<a class="badge badge-verified" href="#src-intel-18a-yield">已核验·发言 · Cisco AI Summit 2026-02 · Yahoo Finance / Motley Fool / TrendForce 报道</a>（<strong>徽章只担保「他说过」这层事实，7-8% 的具体数字与「下半年拿承诺」的实际兑现是待验证 · 需 2H26 财报与客户名单验证</strong>）。这一句里塞了两层信息：① 「月改善 7-8%」是可以直接验证的成本曲线斜率；② 「下半年拿承诺」暗示他觉得几个月内能到给客户看的良率水平——两个数字放到同一张日历上，投资人可以自己核验一致性（正是下面「练习」要做的事）。</p>
 
       <h2>4. 投资含义 · 两个条件反射</h2>
 
       <div class="note">
         <span class="note-label">问句一</span>
         <p><strong>「听到某厂公告『良率月改善 X%』时，我第一反应算什么？」</strong></p>
-        <p style="margin-bottom:0">三个数一算：<strong>①</strong> X 是相对还是绝对（差异见上）——先追问口径；<strong>②</strong> 从当前良率到目标良率需要几个月（公式：相对是 <code>ln(目标/当前)/ln(1+r)</code>，绝对是 <code>(目标−当前)/r</code>）；<strong>③</strong> 这几个月对应哪几个季度的毛利率？三个数一放，管理层给的「财务日历」是否自洽就摆在桌面。<strong>如果 CEO 又说「月改善 7-8%」又说「下半年拿承诺」，两句话的日历对不上，那其中一句话是嘴上功夫。</strong></p>
+        <p style="margin-bottom:0">三个数一算：<strong>①</strong> X 是相对还是绝对（差异见上）——先追问口径；<strong>②</strong> 从当前良率到目标良率需要几个月（公式：相对是 <code>ln(目标/当前)/ln(1+r)</code>，绝对是 <code>(目标−当前)/r</code>）；<strong>③</strong> 这几个月对应哪几个季度的毛利率？三个数一放，管理层给的「财务日历」是否自洽就摆在桌面。<strong>如果 CEO 又说「月改善 7-8%」又说「下半年拿承诺」，日历对不上时先追问三件事：月改善的口径（相对/绝对）、起点良率是多少、「客户承诺」对应的良率阈值不必等于追平上一代成本——三件里任一件解释不通，才叫嘴上功夫。</strong></p>
       </div>
 
       <div class="note">
@@ -119,6 +128,8 @@
         <li><strong>「售价固定」是教学简化。</strong>真实合同里代工价可以按节点、按窗口调整，客户在爬坡末段常拿到降价换更长订单——m11 展开这类合同细节。这张卡的公式让你先看到日历的形状；手册页告诉你日历上每一节的合同条款。</li>
         <li><strong>月改善率会衰减。</strong>良率越接近 100%，进一步改善越难——同样 7% 复利，在 40% 起点是「每月抬 3 个绝对百分点」，到 85% 起点是「每月抬 6 个百分点」；但物理上到 85% 之后 D0 已经很难再压下去。<strong>「best practice」这个词说的是行业标杆速度，不是可持续保持的承诺</strong>——外推末段要打折。</li>
         <li><strong>「良率」这两个字可能是复合口径。</strong>先进制程晚期常出现「D0 良率 vs 参数良率」「机械良率 vs 电测良率」「Wafer sort vs Final test」的口径混淆，管理层不总是讲清——问句一里追问口径不只是问相对绝对，也是问「哪一层良率」。</li>
+        <li><strong>稼动率能对冲或放大良率信号。</strong>本卡讲的是单颗成本随良率变化，但公司报表毛利率同时受产线稼动率影响——稼动率降 10 个百分点（如客户下修订单、旧节点减产）能完全吃掉一年的良率改善。台积电 2024 年逐季毛利率抬升，官方主因就归给稼动率回升与成本改善，而不是 N3 稀释消退。看到毛利率变化时，先分离「稼动率贡献 vs 良率贡献」，不能直接把公司报表曲线当良率日历读。</li>
+        <li><strong>DRAM/NAND、模拟节点不适用本卡机制。</strong>本卡讲的是逻辑先进制程（3nm/5nm/7nm）——DRAM/NAND 存储良率也在爬，但产品价格周期波动幅度远大于良率贡献，「斜率 = 日历」在存储上会被价格覆盖；模拟节点（28nm 以上、TXN/ADI/Infineon 部分产线）产品生命周期 10-30 年，D0 早已磨平，本卡的爬坡曲线在这类节点上不成立。看这两类公司别套本卡口径。</li>
       </ul>
 
       <h2>6. 练习两道</h2>
@@ -131,7 +142,7 @@
           <li>新制程刚点火时，为什么合格 die 的比例必然低？</li>
           <li>合格 die 少，是通过哪条数学关系拉低毛利率的？</li>
         </ol>
-        <p style="margin-bottom:0">不用背具体数字（0.10、0.06、53.1%……），把三步因果讲对就行——讲得出来，模型才算装进脑子。</p>
+        <p style="margin-bottom:0">不用背具体数字（0.1、0.06、53.1%……），把三步因果讲对就行——讲得出来，模型才算装进脑子。</p>
       </article>
 
       <article class="scenario">
@@ -139,7 +150,7 @@
         <p>已知两件已核验的真事：</p>
         <ul>
           <li>台积电 N5 制程投产初期 D0 约 0.1 个/平方厘米（趋势图读数），一年内逼近 0.06<a class="badge badge-verified" href="#src-tsmc-d0">已核验 · 台积电 2020 技术论坛披露</a>；</li>
-          <li>英特尔 CEO 陈立武 2026 年 2 月说 18A 良率以每月 7-8% 的速度改善<a class="badge badge-verified" href="#src-intel-18a-yield">已核验 · Cisco AI Summit</a>。</li>
+          <li>英特尔 CEO 陈立武 2026 年 2 月说 18A 良率以每月 7-8% 的速度改善<a class="badge badge-verified" href="#src-intel-18a-yield">已核验·发言 · Cisco AI Summit</a>（数字实质兑现待 2H26 财报验证）。</li>
         </ul>
         <p>再给两个作练习假设的前提（未披露，标估算）：</p>
         <ul>
@@ -164,8 +175,15 @@
           <li id="src-tsmc-d0">台积电 N5 D0 投产初期约 0.1（趋势图读数）、一年内约 0.06——台积电 2020 技术论坛材料，经 <a href="https://semiwiki.com/forum/threads/tsm-defect-density-trend-and-projection-for-5nm.12942/" target="_blank" rel="noopener">SemiWiki 论坛存档（引 AnandTech 报道截图，2020）</a>记录；N2 与 N3/N5 的相对水平另见 <a href="https://www.tomshardware.com/tech-industry/tsmc-discloses-n2-defect-density-lower-than-n3-at-the-same-stage-of-development" target="_blank" rel="noopener">Tom's Hardware（2025）</a>。</li>
           <li id="src-intel-18a-yield">英特尔 18A 每月 7-8% 良率改善、请来 PDF Solutions/KLA、2H26 拿客户承诺——<a href="https://www.dailypolitical.com/2026/02/03/intel-conference-lip-bu-tan-talks-foundry-turnaround-18a-yield-gains-and-14a-roadmap-push.html" target="_blank" rel="noopener">Cisco AI Summit 陈立武发言报道（2026-02）</a>；<a href="https://www.trendforce.com/news/2026/05/19/news-intel-18a-yields-improve-7-8-monthly-with-2h26-customers-expected-reportedly-pushes-18a-cpus-amid-tight-supply/" target="_blank" rel="noopener">TrendForce 后续报道（2026-05）</a>。</li>
           <li id="src-hopper">H100 die 面积 814 mm²、坏区余量 144/132/114 组计算单元——<a href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/" target="_blank" rel="noopener">英伟达 Hopper 架构技术博客</a>；「每片晶圆约 63 颗」为按 814mm² 在 300mm 晶圆标准排版公式的推算值（白皮书未给此数，业界估算区间约 60-80）。</li>
-          <li id="src-cset-wafer-cost">先进制程晶圆成本约 1.5-1.7 万美元/片——CSET 《AI Chips: What They Are and Why They Matter》（2020）估算。</li>
+          <li id="src-cset-wafer-cost"><a href="https://cset.georgetown.edu/publication/ai-chips-what-they-are-and-why-they-matter/" target="_blank" rel="noopener">CSET《AI Chips: What They Are and Why They Matter》（2020，Center for Security and Emerging Technology）</a>——报告 Table 5 给出各节点晶圆成本估算：5nm ≈ $16,988/片、7nm ≈ $9,346/片、10nm ≈ $5,992/片；本卡正文用「1.5-1.7 万美元/片」为 5nm 起步区间。</li>
         </ul>
+        <div style="margin-top:14px;padding-top:10px;border-top:1px dashed var(--border)">
+          <strong>核心结论的观点讨论（延伸阅读）</strong>
+          <ul style="margin:6px 0 0;padding-left:1.3em">
+            <li><a href="https://web.pdx.edu/~webercm/documents/2004%20Weber%20Yield%20Learning.pdf" target="_blank" rel="noopener">Weber, "Yield Learning and the Sources of Profitability in Semiconductor Manufacturing"（Portland State, 2004；同年发表于 IEEE Transactions on Semiconductor Manufacturing Vol.17 No.4）</a>——学术金标准论文，用 37 位专家 69 个案例的实证研究证明"良率学习速率比其他任何因素都更决定盈利能力"，是本卡"良率 = 成本曲线 = 毛利率日历"结论的学术源头级支撑。</li>
+            <li><a href="https://semianalysis.com/2023/04/20/tsmcs-heroic-assumption-low-utilization/" target="_blank" rel="noopener">SemiAnalysis · Dylan Patel, "TSMC's Heroic Assumption — Low Utilization Rates, Fab Cancellation, 3nm Volumes"（2023-04-20）</a>——半导体投资圈头部分析师深度拆解，直接讨论"利用率是半导体业最重要的指标"与 N3 稀释、毛利率之间的三角关系——恰好对话本卡边界段的"稼动率对冲/放大良率信号"，是本卡结论在观点市场上另一深度声音。</li>
+          </ul>
+        </div>
       </div>
 
     </section>
