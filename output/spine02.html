@@ -126,6 +126,7 @@
       <p>台积电的折旧规则是这样的：机器设备的折旧年限约 <strong>5 年</strong>（部分口径 5-7 年）；折旧占公司营业成本的比例约 <strong>48%</strong><a class="badge badge-assume" href="#src-tsmc-depr">估算 · 由台积电 2024 审计财报推导</a>。换成大白话：<strong>台积电每花一块钱的营业成本，约有五毛是在还机器和厂房的账；折到每卖一块钱的收入上，约两毛</strong>（毛利率约 56%，营业成本只占收入的四成多）。这笔折旧是不是每月都要提？是。工厂开满还是没开满，都要提？都要提——这就是「固定成本」的含义。它跟你今年卖了几片晶圆、卖到什么价格没关系。</p>
 
       <p>存储厂（三星 DS、SK 海力士、美光）与代工厂（台积电、中芯国际）的成本结构差不多是同一套逻辑：折旧+厂房+基础运维占营业成本的一半上下，剩下的一半才是随产量变化的原材料（硅片、光刻胶、特气）和电力。这一半跟着卖多少走，那一半你今天卖零片也要照付。<a class="badge badge-expert" href="#src-cost-mix-expert">专家判断 · 综合行业口径</a></p>
+      <p class="hint" style="margin:6px 0 0"><strong>口径提醒</strong>：§2.1 讲的"48% / 一半上下"是<strong>折旧或全部固定成本占营业成本（COGS）的比例</strong>（TSMC 折旧占 COGS 约 48%、折到营收约 20%；存储/代工全部固定成本占 COGS 约一半）；下面 §2.4 计算器里的 f 是<strong>全部固定成本占营收的比例</strong>（存储厂典型 f≈55% of revenue）。两个是不同的分母，不能直接比大小——毛利率越高，固定成本占营收的比例就越低于占 COGS 的比例。</p>
 
       <h3>2.2 反面：产量低、跌价时，固定成本吞掉利润</h3>
 
@@ -195,7 +196,7 @@
           <div class="viz-foot" style="margin:0">
             <button class="btn btn-ghost" type="button" data-preset-lev="storage">存储厂典型（f=55%、跌价 10%、开工 60%）</button>
             <button class="btn btn-ghost" type="button" data-preset-lev="rebound">周期反转（f=55%、涨价 15%、满载）</button>
-            <button class="btn btn-ghost" type="button" data-preset-lev="fabless">设计公司参照（f=15%、跌价 10%、开工 60%）</button>
+            <button class="btn btn-ghost" type="button" data-preset-lev="fabless">设计公司参照（f=20%、跌价 10%、开工 60%）</button>
           </div>
         </div>
         <div id="levChart" role="img" aria-label="曲线图：营业利润率随利用率变化，两条曲线对比不同固定成本占比下的斜率"></div>
@@ -203,6 +204,15 @@
         <div class="viz-readout" id="levReadout" aria-live="polite"></div>
         <p style="font-size:var(--fs-13);color:var(--muted);margin:8px 0 0">读完这条：<strong>「跌价 10%」这条新闻放在存储厂身上和放在设计公司身上，是两个不同的世界</strong>——同一句新闻要按公司类型分别读。</p>
       </div>
+
+      <h3>2.5 完整机制其实是三条独立链条 · 本卡承载哪一条</h3>
+      <p>教学上一张卡承载一条链条是必要的简化——但真实的存储/代工毛利率跳变至少由<strong>三条独立机制</strong>共同驱动。把三条摆出来、再明说本卡承载第一条，是这张卡的模型定义本身的一部分：</p>
+      <ol>
+        <li><strong>经营杠杆</strong>（本卡承载）：F 固定 + Q（利用率）× (P - Z)（贡献毛利）——ASP 与利用率中等幅度变化被固定成本结构放大成毛利率跳变。这条是本卡的核心机制、也是三条里最底层的会计-物理约束（折旧照提、利用率决定摊薄）。</li>
+        <li><strong>客户库存周期 · 牛鞭效应</strong>（卡 5 承载）：终端-经销-厂商三级供应链里，客户在跌价时清空存货、涨价时抢货——这个动作把厂商端的 P（ASP）与 Q（订单量）在跌价/涨价周期两端<strong>同时向两个方向拉大</strong>，直接改变本卡机制的输入变量。存储分析师最常追问的"客户库存天数"就是这个变量的观察指标；2023 年存储深亏和 2024 年反转都有客户端库存周期的推力。</li>
+        <li><strong>寡头产能纪律 vs 机械杠杆</strong>（卡 6 承载）：本卡默认厂商产能决策是"被杠杆推着走"的被动模式——但当前 DRAM 是 3 家寡头（三星、SK、美光），2023 年三家先后主动减产、2024 年三家纪律性避免抢产能、2025-2026 年三家用 SCA（战略客户协议）长约 + take-or-pay 锁量——这是主动管理产能、把"跌价→深亏→加速跌价"死亡螺旋掐掉的动作。<strong>寡头纪律段部分打破本卡机制的对称性</strong>：下行段的杠杆强度会被削弱，本卡讲的"利润跳变凶得像刀切"在纪律段会变钝。</li>
+      </ol>
+      <p><strong>本卡讲第一条，因为它是最底层的会计-物理约束</strong>——库存周期和产能纪律都建立在"存在大额固定成本 + F 长期固定"这个前提之上。理解了这一条，另两条读起来才有骨架。<strong>但真实投资判断需要三条一起用</strong>：读一家存储厂当期毛利率跳变时，先用本卡判断"F 主导下的跳变会有多陡"，再用卡 5 判断"客户端库存周期把 P 和 Q 拉到了什么位置"，再用卡 6 判断"厂商是被推着走还是纪律性调节"。三条都过一遍再下判断。深入研究方向：Pzena "Memory's Margins" 2Q 2026 直接量化本卡机制、SemiAnalysis "Memory Mania" 用物理限制 + 固定成本 + 三家纪律共同解释本轮超级周期（见页脚"核心结论的观点讨论"）。</p>
 
       <h2>3 · 真实锚点：跳变在报表里长什么样</h2>
 
@@ -220,7 +230,7 @@
         </tbody>
       </table>
 
-      <p>两年间毛利率从 -9 点跨到 +40 点，跨了 49 个百分点。管理层在 FY25 10-K 里自己归因（原话大意）：价格改善、制造成本下降、加上前期存货减值转回的正向影响——三个都是本卡讲的机制在同一份报表里的三种表现。<strong>它不是新建了什么工厂，也不是运气爆棚，是同一批车间在跌价周期与涨价周期两端的两个截面</strong>。</p>
+      <p>两年间毛利率从 -9 点跨到 +40 点，跨了 49 个百分点。管理层在 FY25 10-K 里自己归因（原话大意）：<strong>价格改善</strong>（这一条直接对应本卡机制——ASP 上升同时利用率回升，固定成本被更大的贡献毛利覆盖）、<strong>制造成本下降</strong>（这一条更贴近卡 3「良率 = 成本曲线」的机制——工艺进度让单位可变成本下降）、<strong>前期存货减值转回</strong>（这一条是一次性会计事件——2023 年计提的减值损失在 2024-2025 年价格回升时转回收益，与经营杠杆机制无关）。三条的性质不同：<strong>本卡机制主导第一条，卡 3 机制主导第二条，第三条是一次性影响</strong>。<strong>它不是新建了什么工厂，也不是运气爆棚，是同一批车间在跌价周期与涨价周期两端的两个截面——但真读电话会时要把三类归因分开</strong>。</p>
 
       <h3>锚点二 · 三星 DS 部门一年翻转 30 万亿韩元</h3>
 
@@ -231,15 +241,15 @@
         </thead>
         <tbody>
           <tr><td>2023 全年</td><td>约 66.6 万亿韩元</td><td>-14.87 万亿韩元（亏）</td><td>Q1 -4.58 · Q2 -4.36 · Q3 -3.75 · Q4 -2.18（万亿韩元）</td></tr>
-          <tr><td>2024 全年</td><td>111.07 万亿韩元（+67%）</td><td>+15.09 万亿韩元</td><td>随 DRAM 涨价、HBM 放量、利用率恢复，一路走高</td></tr>
+          <tr><td>2024 全年</td><td>111.07 万亿韩元（+67%）</td><td>+15.09 万亿韩元</td><td>常规 DRAM 涨价 + 利用率恢复主导；HBM 增长为辅（2024 年三星 HBM3E 未通过英伟达认证、HBM 不是它的主引擎）</td></tr>
         </tbody>
       </table>
 
-      <p>三星这一部门的收入涨了约 67%，利润却从 -14.87 万亿翻到 +15.09 万亿——绝对值上跨了 30 万亿韩元。收入涨 67% 只是让你看到「量+价」两端都在恢复；利润的跳变，是<strong>被 2023 年那些一直照提的折旧、一直照付的固定运维「攒着」，等到 2024 年产量与价格双回升时一次性释放</strong>。</p>
+      <p>三星这一部门的收入涨了约 67%，利润却从 -14.87 万亿翻到 +15.09 万亿——绝对值上跨了 30 万亿韩元。收入涨 67% 只是让你看到「量+价」两端都在恢复；利润的跳变，是<strong>被 2023 年那些一直照提的折旧、一直照付的固定运维「攒着」，等到 2024 年产量与价格双回升时一次性释放</strong>。（<strong>「攒着」是教学比喻</strong>——折旧按会计原理是每期按原表流过 P&amp;L，不存在「攒起来一次性释放」的会计项目；比喻的实际含义是：2023 年支付掉但没被贡献毛利覆盖的固定成本挤压了当期利润，2024 年贡献毛利数倍增长后就不再挤压——同一笔折旧被更大的营收和 P-Z 缺口摊薄了。）</p>
 
       <h3>锚点三（反面）· 英特尔 Foundry：产能建成、客户还没到</h3>
 
-      <p>Intel Corp. Form 10-K FY2024 里披露：Intel Foundry 部门 2024 全年营业亏损 <strong>134.08 亿美元</strong><a class="badge badge-verified" href="#src-intel-10k-fy24">已核验 · Intel 10-K FY2024（2025-01 提交 SEC）</a>。这笔亏损的性质，跟 2023 年存储厂的深亏不完全一样——它更早一步：<strong>先进产能（18A 等新节点）已经装完、折旧已经开始计提，但客户还没起量，利用率不足以覆盖固定成本</strong>。这是同一个模型的另一种表达：<strong>没有等到需求就先开始计提折旧的产能，第一年必然巨亏</strong>——不因为经营烂，因为经营杠杆先反向地开始工作了。</p>
+      <p>Intel Corp. Form 10-K FY2024 里披露：Intel Foundry 部门 2024 全年营业亏损 <strong>134.08 亿美元</strong><a class="badge badge-verified" href="#src-intel-10k-fy24">已核验 · Intel 10-K FY2024（2025-01 提交 SEC）</a>。这笔亏损的性质，跟 2023 年存储厂的深亏不完全一样——它更早一步：<strong>先进产能（18A 等新节点）已经装完、折旧已经开始计提，但客户还没起量，利用率不足以覆盖固定成本</strong>。这是同一个模型的另一种表达：<strong>没有等到需求就先开始计提折旧的产能，第一年会被折旧吞出深亏</strong>（亏损规模由折旧强度和内部客户占比共同决定——若资本密度高、内部客户少，深亏尤为剧烈；反之则程度可控）——不因为经营烂，因为经营杠杆先反向地开始工作了。</p>
 
       <p>三个锚点合起来读：正向兑现（美光 FY23→FY25、三星 DS 2023→2024）与反向堆积（英特尔 Foundry 2024）——同一个成本结构，看你现在处在杠杆哪一端。</p>
 
@@ -250,8 +260,8 @@
       <div class="qa">
         <p class="q">看到某厂公告涨价 X%，我第一反应问什么？</p>
         <ul>
-          <li><strong>利用率在哪个位置？</strong>——如果本来在 70% 以下，涨价 + 复产双击，利润会跳；如果本来已经 95% 满载，涨价基本全部变利润，但没有量的乘数。</li>
-          <li><strong>这家公司固定成本占比多高？</strong>——存储厂、代工厂 &gt; 50%，无厂设计公司 &lt; 20%。同样涨 10%，前者利润弹性可能是后者的两三倍。</li>
+          <li><strong>利用率在哪个位置？</strong>——如果本来明显低于满载（有较大恢复空间），涨价 + 复产双击，利润会跳；如果本来已经接近或满载，涨价基本全部变利润，但没有量的乘数。（教学口径，不是 unabsorbed overhead 那种硬会计门槛。）</li>
+          <li><strong>这家公司固定成本占比多高？</strong>——存储厂全部固定成本占营收约 50-55%（f of revenue）、代工厂折旧占营收约 20%（毛利率更高、固定成本占营收比例低于存储厂）、无厂设计公司通常 15-25%（R&amp;D 是主要固定成本；AMD FY24 单 R&amp;D 就占营收 25%）。同样涨 10%，存储厂利润弹性明显高于代工厂，代工厂又明显高于设计公司。</li>
           <li><strong>供需拐点在哪、涨价能持续几季？</strong>——卡 1（供给慢，需求快）告诉你：新产能到位要 24-36 个月，红利期长度可估算，不是玄学。</li>
         </ul>
       </div>
@@ -271,12 +281,16 @@
       <h2>5 · 边界：这张卡什么时候不适用</h2>
 
       <ul>
-        <li><strong>无厂设计公司经营杠杆结构完全不同。</strong>英伟达、博通、AMD、联发科不承担晶圆厂折旧——他们主要的固定成本在研发和人员，杠杆倍数远低于制造/存储。同样的下游涨价，英伟达毛利率变化会显得温和得多；反过来，同样的下游砍单，它们也不会跟着深亏——因为没有那堆一直照提的折旧压着。<strong>手册模块 11（财务语言与估值）</strong>会展开经营杠杆的行业差异。</li>
+        <li><strong>无厂设计公司经营杠杆结构不同（但不是"没有杠杆"）。</strong>英伟达、博通、AMD、联发科不承担晶圆厂折旧——但 R&amp;D 和人员是他们主要的固定成本（AMD FY24 单 R&amp;D 就占营收 25%）；fabless 全部固定成本占营收<strong>通常 15-25%</strong>，明显低于制造/存储 50%+ 但也不是可忽略。同样的下游涨价，英伟达毛利率变化会显得温和得多；反过来同样的下游砍单，它们也不会跟着深亏——因为没有那堆一直照提的折旧压着。<strong>手册模块 11（财务语言与估值）</strong>会展开经营杠杆的行业差异。</li>
+        <li><strong>模拟/成熟节点 IDM 跳变振幅小得多。</strong>TXN、ADI、ON Semi、ST、Infineon 部分产线也是自建厂、也有固定成本，但下游端市场极度分散（工业、汽车、消费混合）、单一周期波动幅度远小于 DRAM 或先进逻辑代工——历史毛利率波动振幅通常在 5-10 个百分点、不是 40+ 个百分点。读者若把 TI 或 ADI 按"存储/代工"框架读，会预期毛利率跳变，实际不会。</li>
         <li><strong>长约锁定的产品价格没有跳变。</strong>HBM、部分定制芯片都是长期供货协议锁死价格，短期毛利率跳变来源主要是<strong>产品结构（mix shift）</strong>和工艺进度（良率爬坡带来单位成本下降），不是现货 ASP。<strong>卡 3（良率 = 成本曲线）</strong>展开单位成本的另一个维度。</li>
         <li><strong>爬坡早期的「跳变」是另一种性质。</strong>台积电 N3 在 2024 年上半年电话会给的指引是「稀释毛利率 3-4 个百分点」——这是<strong>时间性成本</strong>（利用率还没上来、良率还在爬），不是结构性恶化。同一个模型下、方向是负的、性质完全不同。<strong>模块 2 · 制造 101</strong>已经完整拆过这个例子。</li>
         <li><strong>会计口径切换会人为改变杠杆读数。</strong>英特尔 2023 年把生产设备（晶圆厂机台）的折旧年限从 5 年拉长到 8 年，会计上摊销压力人为放缓——毛利率会因此上升，但公司真实的经济现实没变。遇到毛利率的会计口径跳变，先查附注（10-K 里 Property, Plant and Equipment 会计政策段落）<a class="badge badge-verified" href="#src-intel-depr-2023">已核验 · Intel 2023 会计政策变更</a>。</li>
+        <li><strong>减值/关厂/资产处置会真实压低 F。</strong>本卡默认 F 长期不变。极端下行时厂家会做资产减值、mothball 部分产线、卖厂——这些动作会真实拉低后续折旧基数，让"跳变"不完全对称（下行段会有非对称的"F 收缩"动作）。Micron FY23 就有可观规模的产能相关减值。这不是次要边界，是模型对称性的一个真实漏洞。</li>
         <li><strong>跨环节的利润转移。</strong>整条产业链存在一个瓶颈时，瓶颈环节拿走定价权，其他环节的经营杠杆会被压缩甚至消失。<strong>卡 4（出货 = 最短板）</strong>展开跨环节的利润再分配；<strong>手册模块 11</strong>展开由此引发的估值端 PB→PE 重估。</li>
       </ul>
+
+      <p class="hint" style="margin-top:12px"><strong>与本卡并列的另两条机制</strong>已在机制段 §2.5（"完整机制其实是三条独立链条"）写进核心模型：客户库存周期 · 牛鞭效应（卡 5 展开）、寡头产能纪律 vs 机械杠杆（卡 6 展开）。真实投资判断三条一起用；边界段说的"本卡不适用"，通常是指本卡这一条机制在该场景退化，另两条机制可能仍主导——具体判断路径回机制段 §2.5 的三条链条列表。</p>
 
       <h2>6 · 练习两道</h2>
 
@@ -322,12 +336,19 @@
         <li id="src-intel-10k-fy24"><a href="https://www.sec.gov/Archives/edgar/data/0000050863/000005086325000009/intc-20241228.htm">Intel Corp Form 10-K FY2024（SEC filing，2025-01，Intel Foundry 部门 2024 全年营业亏损 $13,408M）</a></li>
         <li id="src-tsmc-arizona"><a href="https://pr.tsmc.com/english/news/3210">台积电官方公告：亚利桑那总投资扩至 1,650 亿美元（2025-03，6 座 fab + 2 座 CoWoS + 1 研发中心）</a></li>
         <li id="src-tsmc-az-2026"><a href="https://www.tomshardware.com/tech-industry/semiconductors/tsmc-allocates-usd20-billion-to-arizona-expansion-project-faces-water-and-labor-shortages-complicated-by-visa-rules">Tom's Hardware / TechPowerUp：台积电 2026-05 批准对亚利桑那子公司再注资 $20B</a></li>
-        <li id="src-tsmc-depr">台积电 2024 合并财报（Deloitte 审计，2025-02 签署）：全年折旧费用 NT$6,536 亿、营业成本 NT$12,700 亿——营业成本内折旧未单列，48% 为推导值（全口径折旧/营业成本约 51.5%，剔除费用端折旧后约 47-50%）；机器设备折旧年限约 5 年出自财报附注 · <a href="https://globaloutperformers.substack.com/p/taiwan-semiconductor-manufacturing-701">第三方拆解（globaloutperformers, 2025-07）得 48.5%，与推导一致</a></li>
+        <li id="src-tsmc-depr"><a href="https://investor.tsmc.com/sites/ir/annual-report/2024/2024_Annual_Report_E_%20.pdf" rel="noopener noreferrer">台积电 2024 年度报告 · 合并财务报表（Deloitte 审计，2025-02 签署）</a>：全年折旧费用 NT$6,536 亿、营业成本 NT$12,700 亿——营业成本内折旧未单列，48% 为推导值（全口径折旧/营业成本约 51.5%，剔除费用端折旧后约 47-50%）；机器设备折旧年限约 5 年出自财报附注 · <a href="https://globaloutperformers.substack.com/p/taiwan-semiconductor-manufacturing-701" rel="noopener noreferrer">第三方拆解（globaloutperformers, 2025-07）得 48.5%，与推导一致</a></li>
         <li id="src-hbm-2026-sold-out"><a href="https://www.cnbc.com/2025/10/29/sk-hynix-q3-profit-revenue-record-.html">CNBC 2025-10-29：SK 海力士 2026 年 HBM 已售罄</a></li>
-        <li id="src-hbm-2026-pricing"><a href="https://www.trendforce.com/news/2025/12/24/news-samsung-sk-hynix-reportedly-plan-20-hbm3e-price-hike-for-2026-as-nvidia-h200-asic-demand-rises/">TrendForce 2025-12-24：三星与 SK 海力士 HBM3E 2026 年涨价约 20%</a></li>
+        <li id="src-hbm-2026-pricing"><a href="https://www.trendforce.com/news/2025/12/24/news-samsung-sk-hynix-reportedly-plan-20-hbm3e-price-hike-for-2026-as-nvidia-h200-asic-demand-rises/">TrendForce 2025-12-24：据报道，三星与 SK 海力士计划 HBM3E 2026 年涨价约 20%（第三方转述，非官方声明）</a></li>
         <li id="src-intel-depr-2023"><a href="https://www.intc.com/filings-reports/all-sec-filings/content/0000050863-23-000005/0000050863-23-000005.pdf">Intel Q4-2022 财报 8-K（2023-01 提交 SEC）：明写「effective January 2023, we increased the estimated useful life of certain production machinery and equipment from five to eight years」——折旧年限 5→8 年的原始披露</a></li>
         <li id="src-cost-mix-expert">通行行业口径：晶圆代工厂（TSMC、中芯国际）与存储厂（Samsung DS、SK Hynix、Micron）折旧+厂房+基础运维占营业成本约一半——各卖方研究与公司电话会通行口径（无单一权威链接）</li>
       </ul>
+      <div style="margin-top:14px;padding-top:10px;border-top:1px dashed var(--border)">
+        <strong>核心结论的观点讨论（延伸阅读）</strong>
+        <ul style="margin:6px 0 0;padding-left:1.3em">
+          <li><a href="https://www.pzena.com/americas/institutional-investors/insights/memorys-margins-2q-2026/" rel="noopener noreferrer">Pzena Investment Management · "Memory's Margins"（2Q 2026 机构研究）</a>——深价值资管 Pzena 机构研究组。直接量化本卡核心机制："tripling DRAM prices translates into a sixfold increase in gross profit and a doubling of the gross margin"、"Costs per gigabit are relatively fixed in the short run, as fabrication plants take years to build and ramp"——是本卡"ASP × 利用率对固定成本的放大"的机构级复述，且给出 2026-2028 反向杠杆的时点讨论，属于对立/风险面观点。</li>
+          <li><a href="https://newsletter.semianalysis.com/p/memory-mania-how-a-once-in-four-decades" rel="noopener noreferrer">SemiAnalysis · Dylan Patel 等，"Memory Mania: How a Once-in-Four-Decades Shortage Is Fueling a Memory Boom"（2026-02-06）</a>——半导体圈头部深度分析机构。用"物理限制（HBM 每 bit 消耗更多晶圆）+ 固定成本 + 三家纪律"共同解释本轮存储超级周期的正向兑现幅度，是本卡结论的同侧独立论证。</li>
+        </ul>
+      </div>
       <p style="margin-top:14px;font-size:var(--fs-12)">徽章说明：<a class="badge badge-verified" href="#src-micron-fy25-press">已核验</a> 直接引用一手来源（年报、10-K、8-K、官方公告）或经权威媒体转述的一手数据 · <a class="badge badge-expert" href="#src-cost-mix-expert">专家判断</a> 综合行业口径的判断性表达，无单一权威来源 · <a class="badge badge-assume" href="#src-tsmc-depr">估算</a> 明确的推算，标注方法与年份。</p>
     </div>
 
@@ -479,7 +500,7 @@ document.addEventListener("DOMContentLoaded", () => {
         + "<br><span" + (cv < 0 ? ' class="warn"' : "") + ">" + flavor + "</span>";
 
       legend.innerHTML = '<li><span class="key" style="background:var(--primary)"></span>你设定的公司（f=' + Math.round(f * 100) + '%）</li>' +
-        '<li><span class="key" style="background:var(--muted)"></span>无厂设计公司参照（f=15%）</li>' +
+        '<li><span class="key" style="background:var(--muted)"></span>无厂设计公司参照（f=20%）</li>' +
         '<li><span class="key" style="background:var(--primary-tint);height:8px;border-radius:2px"></span>盈利区</li>';
     }
 
@@ -490,7 +511,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const k = btn.dataset.presetLev;
         if (k === "storage") { levF.value = 0.55; levDp.value = -0.10; levU.value = 0.60; }
         else if (k === "rebound") { levF.value = 0.55; levDp.value = 0.15; levU.value = 1.00; }
-        else if (k === "fabless") { levF.value = 0.15; levDp.value = -0.10; levU.value = 0.60; }
+        else if (k === "fabless") { levF.value = 0.20; levDp.value = -0.10; levU.value = 0.60; }
         paint();
       });
     });

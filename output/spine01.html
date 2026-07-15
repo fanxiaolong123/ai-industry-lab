@@ -134,7 +134,7 @@
     <header class="page-head">
       <p class="crumb">骨架层 · 卡 1 / 15</p>
       <h1>卡 1 · 供给慢，需求快</h1>
-      <p class="core-q"><b>本卡模型：</b>半导体行业的供给和需求，时间常数不在一个数量级上——供给要按年计的时间才能变，需求可以按月计的时间就变。这条不对称是这个行业一切周期现象（缺货、涨价、砍单、库存山）的根源。</p>
+      <p class="core-q"><b>本卡模型：</b>半导体行业的供给和需求，时间常数不在一个数量级上——供给要按年计的时间才能变，需求可以按月计的时间就变。这条不对称是这个行业周期现象（缺货、涨价、砍单、库存山）的根源。<span style="display:block;margin-top:6px;font-size:0.92em;color:var(--muted)">（补充说明：库存放大（牛鞭效应）与集体扩产博弈是与之并列的两个机制——本卡先讲时间常数不对称这一条，它是最底层的物理约束；博弈论周期模型也依赖 capacity 建设期长这个前提，所以是嵌套关系。库存与博弈这两条在卡 5 / 手册层里展开。）</span></p>
     </header>
 
     <div class="prose" style="max-width:860px">
@@ -160,7 +160,7 @@
         <p>反方向同样慢：<strong>产能收缩也踩不了急刹车</strong>。工厂建成后设备折旧照提，减产等于单位成本上升，所以过剩时厂商会拖到深度亏损才肯砍产量。2023 年存储行业就是现场：芯片卖价跌破成本，<strong>三星 2023 年一季度利润从上年同期的 14.1 万亿韩元跌到 0.6 万亿</strong>，随后宣布大幅减产，海力士砍掉 2023 年资本开支的一半以上、美光砍约四成并同步减产（三星维持投资、只减产量）<a class="badge badge-verified" href="#src-samsung-2023">已核验 · CNBC / The Register / Motley Fool 2023</a>。供给这台机器，油门和刹车都要踩很久才起作用。</p>
 
         <h3>需求为什么快，以及为什么永远摆不到「刚刚好」</h3>
-        <p>需求可以几个月内改天换地——<strong>ChatGPT 2022 年 11 月上线</strong>，几个月内全世界都在抢算力。更深一层的结构是：今天的扩产决策是对今天的价格和缺口做出的，但产能两三年后才到货，<strong>到货时的世界已经不是下单时的世界</strong>；而且所有厂商看到同一个缺口、同时做出同样的扩产决定，新产能会在同一个时间窗集中涌出。所以系统天然过冲：缺货时涨过头，过剩时跌过头。农产品的猪周期是同一个数学，但芯片建设期更长、单厂投资以百亿美元计，摆得更猛。</p>
+        <p>需求可以几个月内改天换地——<strong>ChatGPT 2022 年 11 月上线</strong>，几个月内全世界都在抢算力。更深一层的结构是：今天的扩产决策是对今天的价格和缺口做出的，但产能两三年后才到货，<strong>到货时的世界已经不是下单时的世界</strong>；而且所有厂商看到同一个缺口，<strong>倾向于同期做出扩产决定但幅度分化</strong>（如后面锚点四会看到 2023 年三家分别砍 capex 一半、砍四成、维持投资），新产能仍会在相近的时间窗集中涌出。所以系统天然过冲：缺货时涨过头，过剩时跌过头。农产品的猪周期是<strong>同一族模型</strong>（cobweb 蛛网模型），但芯片建设期更长、单厂投资以百亿美元计、沉没成本极大——共用结构、参数完全不同，摆得更猛、恢复更慢。</p>
 
         <!-- ================= A 类组件：供需时间尺度对比 ================= -->
         <div class="viz">
@@ -190,6 +190,15 @@
           <div class="viz-readout" id="sdReadout" aria-live="polite"></div>
           <p style="font-size:var(--fs-13);color:var(--muted);margin:8px 0 0">教学模型；真实每个环节的时间常数会随节点（先进/成熟）、地区（本土/海外）、模式（代工/IDM）差别浮动。三段延迟以卡 1 已核验锚点（24-36 个月周期、亚利桑那 2020-05 到 2024 年底量产、EUV 交付节奏、3-4 个月产线周期）为参数默认值。</p>
         </div>
+
+        <h3>完整机制其实是三条独立链条 · 本卡承载哪一条</h3>
+        <p>教学上一张卡承载一条链条是必要的简化——但真实半导体周期至少由<strong>三条独立机制</strong>共同驱动。把这三条摆出来，再明说本卡承载第一条，是这张卡的模型定义本身的一部分：</p>
+        <ol>
+          <li><strong>供给-需求时间常数不对称</strong>（本卡承载）：供给按年动、需求按月动，产能到货时的世界已经不是下单时的世界。这是最底层的物理约束——晶圆厂建设期由物理和资本决定，压不下去。</li>
+          <li><strong>客户库存周期 · 牛鞭效应</strong>（卡 5 展开）：终端-经销-厂商三级供应链里，每一级都会在跌价时清空库存、涨价时抢货——这个动作把厂商端的价与量同时向两个方向拉大，是一个独立于时间常数的波动放大机制。真实周期里，牛鞭效应贡献了大部分「订单/现货价格月尺度波动」的动能。</li>
+          <li><strong>寡头产能纪律 vs 集体扩产博弈</strong>：多家寡头的产能决策本身是博弈均衡——2004 年 National Academies 学术研讨会已证明，即使需求稳定，多家厂商在博弈均衡下的集体同期扩产也能内生周期；反过来，2023-2026 年 DRAM 三家先后主动减产 + 2025-2026 年用 SCA（战略客户协议）长约锁量的动作，是主动纪律把「跌价→深亏→加速跌价」死亡螺旋掐掉——博弈机制依赖 capacity 建设期长这个物理前提，因此嵌套在本卡链条之上，是与之呼应的第二层机制。</li>
+        </ol>
+        <p><strong>本卡讲第一条，因为它是最底层的物理约束</strong>——库存放大与产能博弈都建立在「扩产需要 24-36 个月」这个前提之上。理解了这一条，另两条读起来才有骨架。<strong>但真实投资判断需要三条一起用</strong>：本卡讲完之后，卡 5 展开牛鞭效应；寡头产能纪律部分穿插在卡 6（直供长约 vs 现货）与卡 2（固定成本主导）的边界段里。碰到具体行情，三条都要过一遍。深入研究方向：Fabricated Knowledge、SemiAnalysis 对各条机制的独立拆解；National Academies 圆桌与 Liu &amp; Chien 的学术模型对博弈驱动周期的独立论证（见页脚"核心结论的观点讨论"）。</p>
       </section>
 
       <!-- =================== 3. 真实锚点 =================== -->
@@ -242,9 +251,11 @@
       <section class="card-sec">
         <h2>5. 边界（这张卡什么时候不适用）</h2>
         <ul>
-          <li>不是所有环节都一样慢：无厂设计公司的「产能」是人和代工配额，弹性完全不同；封装扩产比晶圆厂快；成熟制程扩产比先进制程容易——不同环节摆动幅度差别巨大（<strong>卡 6、卡 9 展开</strong>）。</li>
-          <li>「需求快」也可能是假象：缺货时订单里混着大量重复下单，表观需求高估真实需求（<strong>卡 5 讲这个陷阱</strong>）。</li>
+          <li>不是所有环节都一样慢：无厂设计公司的「产能」是人和代工配额，弹性完全不同；封装扩产比晶圆厂快；成熟制程扩产比先进制程容易——本卡机制在这些环节退化，摆动幅度差别巨大（<strong>卡 6、卡 9 展开</strong>）。</li>
+          <li>「需求快」也可能是假象：缺货时订单里混着大量重复下单，表观需求高估真实需求——本卡的"需求可以按月计变化"讲的是订单/现货价格这类信号层，不是终端真实需求（终端仍是季度到年级别变化）；把信号当真实需求会误判（<strong>卡 5 讲这个陷阱</strong>）。</li>
+          <li><strong>两侧时间常数都长的品类模型退化</strong>：模拟/工业/车规（TXN、ADI、Infineon 部分产线）产品生命周期 10-30 年、下游端市场分散，需求侧时间常数也是年级别；成熟制程车规常有 5-8 年供货长约锁定；政策/补贴/管制驱动的段（CHIPS Act、大基金、出口管制）会改写供给侧默认参数——这些场景本卡"需求快、供给慢"的不对称前提不成立，直接套模型会错判。</li>
         </ul>
+        <p class="hint" style="margin-top:12px"><strong>与本卡并列的另两条机制</strong>已在机制段末（"完整机制其实是三条独立链条"）写进核心模型：客户库存周期 · 牛鞭效应（卡 5 展开）、寡头产能纪律 vs 集体扩产博弈（卡 6、National Academies 圆桌）。真实投资判断三条一起用；边界段说的"本卡不适用"，通常是指本卡这一条机制在该场景退化，另两条机制可能仍主导——具体判断路径回机制段末的三条链条列表。</p>
       </section>
 
       <!-- =================== 6. 练习 =================== -->
@@ -264,7 +275,7 @@
           <button class="btn btn-ghost" data-reveal aria-controls="drill2-hint" data-open-text="收起推演提示">展开推演提示（不含标准答案）</button>
           <div id="drill2-hint" hidden>
             <div class="hint" style="margin-top:10px">
-              <p style="margin:0 0 8px"><strong>提示一 · 用「供给刹车也慢」推：</strong>2023 年砍掉的产能到 2026 年还没恢复——被砍掉的供给不会在需求回来时立刻长回来。这时候新加的产能哪来？谁宣布了扩产、加 24-36 个月落到哪一年？</p>
+              <p style="margin:0 0 8px"><strong>提示一 · 用「供给刹车也慢」推：</strong>2023 年海力士与美光大幅削减资本开支（capex）+ 三家共同减产的产量缺口，到 2026 年还没完全恢复——被砍的 capex 会延迟对应的新产能，被减的产量恢复也需要重新爬坡。这时候新加的产能哪来？谁宣布了扩产、加 24-36 个月落到哪一年？（三星 2023 年维持投资只减产量，2025-2026 年新产能兑现节奏与海力士/美光不同——这也是分化。）</p>
               <p style="margin:0 0 8px"><strong>提示二 · 用「新产能什么时候到」推：</strong>AI 需求 2024 年爆发时，如果那一刻才拍板扩产，最早到货落在什么时候？2026 年 AI 需求还在增长的话，供需两条曲线在这一年会是什么样？</p>
               <p style="margin:0"><strong>提示三 · 分别推厂商和买家的行为：</strong>厂商会更愿意接长约还是现货？会给谁配货、给谁排队？买家（比如买 HBM 的英伟达、买普通 DRAM 的服务器 OEM）会做什么动作对冲？<em>这题没有标准答案，你的推理链是不是完整、有没有落在两条真事和一张卡的机制上，就是评分标准。</em></p>
             </div>
@@ -285,6 +296,13 @@
         <li id="src-samsung-2023"><a href="https://www.cnbc.com/2023/04/27/samsung-earnings-q1-2023.html" rel="noopener noreferrer">CNBC：Samsung Q1 2023 利润 6,400 亿韩元、同比 -95%（2023-04-27）</a> · <a href="https://www.theregister.com/2023/04/27/samsung_sk_hynix_losses/" rel="noopener noreferrer">The Register：Samsung、SK Hynix 十年最大营业变化（2023-04-27）</a> · <a href="https://www.fool.com/investing/2023/04/12/samsung-production-cut-win-for-micron/" rel="noopener noreferrer">Motley Fool：Samsung Cuts Memory Production（2023-04-12）</a> · <a href="https://www.cnbc.com/2023/04/26/sk-hynix-reports-record-quarterly-operating-loss-forecasts-better-outlook.html" rel="noopener noreferrer">CNBC：SK Hynix Q1 2023 record operating loss 3.4 万亿韩元</a></li>
         <li id="src-fab-cycle-expert">通行行业口径：晶圆厂从拍板到有效产出通常需 24-36 个月——各卖方研究与公司电话会常见口径（无单一权威链接）</li>
       </ol>
+      <div style="margin-top:14px;padding-top:10px;border-top:1px dashed var(--border)">
+        <strong>核心结论的观点讨论（延伸阅读）</strong>
+        <ul style="margin:6px 0 0;padding-left:1.3em">
+          <li><a href="https://www.fabricatedknowledge.com/p/capital-cycles-and-ai" rel="noopener noreferrer">Fabricated Knowledge · Doug O'Laughlin, "Capital Cycles and AI"（2025-01-13）</a>——半导体投资圈头部分析人。用 Marathon Asset "Capital Cycle" 框架讨论 AI 时期的供给响应滞后，把"需求到供给的响应"直接量化为约 12 个月的时间常数不对称。跟本卡机制正面对话。</li>
+          <li><a href="https://www.nationalacademies.org/read/11134/chapter/8" rel="noopener noreferrer">National Academies Press · "Productivity and Cyclicality in Semiconductors"（Kenneth Flamm 主持圆桌，2004）</a>——学术源头级文献。把"需求跳升引发的扩产决策要 1.5-2 年才形成产能"作为周期性的核心解释，与本卡机制段几乎重合，可作为核心结论的学术锚定。</li>
+        </ul>
+      </div>
     </section>
 
     <footer class="page-foot">
