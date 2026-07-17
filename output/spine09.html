@@ -75,7 +75,7 @@
     <header class="page-head">
       <p class="crumb">骨架层 · 卡 9 / 15</p>
       <h1>卡 9 · 生态分工与耦合度</h1>
-      <p class="core-q"><b>一句话：</b>一部分半导体是「分工型」生意——设计（fabless）从 EDA、IP、代工里拼积木，工艺进步的成本由代工厂承担；这类公司毛利率能一步一台阶。另一部分是「耦合型」生意——存储的每一代产品与工艺同代绑死，只能一体化经营、产品无法拆开卖，工艺跳代要全厂重投；这类公司必然经历极凶周期。差别不是「运营好不好」，是<strong>「技术分工能不能拆」</strong>。判断一个标的的周期风险，先判断它所处的环节是「能拆开卖」还是「绑死一体」。</p>
+      <p class="core-q"><b>一句话：</b>一部分半导体是「分工型」生意——设计（fabless）从 EDA、IP、代工里拼积木，工艺进步的成本由代工厂承担；这类公司毛利率能一步一台阶。另一部分是「耦合型」生意——存储的每一代产品与工艺同代绑死，至今只能一体化经营、产品无法拆开卖，工艺跳代要全厂重投；这类公司必然经历极凶周期。差别不是「运营好不好」，是<strong>「技术分工能不能拆」</strong>。判断一个标的的周期风险，先判断它所处的环节是「能拆开卖」还是「绑死一体」。</p>
     </header>
 
     <div class="note" style="max-width:860px">
@@ -138,7 +138,7 @@
 
       <h3>2.2 耦合型（高耦合）：IDM 存储</h3>
 
-      <p>美光、SK 海力士、三星 DS 部门——单颗主流 DRAM 芯片（16Gb）里就有约 160 亿个几乎完全一样的极小电容，一代新工艺要既缩存储单元、又调外围电路、又改材料——设计与工艺必须由同一伙人做同一次<span class="badge badge-expert">专家判断 · 存储物理特性</span>。物理上 cell 设计与工艺深度耦合，历史上分离尝试（如 Rambus RDRAM 授权模式）未能替代一体化，成为产业实践。所以存储三家都是 <strong>IDM（整合器件制造商，设计+制造+封测一条龙）</strong>。</p>
+      <p>美光、SK 海力士、三星 DS 部门——单颗主流 DRAM 芯片（16Gb）里就有约 160 亿个几乎完全一样的极小电容，一代新工艺要既缩存储单元、又调外围电路、又改材料——设计与工艺必须由同一伙人做同一次<span class="badge badge-expert">专家判断 · 存储物理特性</span>。物理上 cell 设计与工艺深度耦合；历史上的分离尝试也没能改变这一点——Rambus 的 RDRAM 走接口授权模式，芯片仍由三星/美光等一体化厂制造，最终败于版税成本与 JEDEC 开放标准（DDR）的竞争——败因是经济和标准之争，不能直接证明「物理上不可分」，但「至今没有一家成功的 fabless 存储厂」这个事实本身成立，一体化是存储的产业实践。所以存储三家都是 <strong>IDM（整合器件制造商，设计+制造+封测一条龙）</strong>。</p>
 
       <p>存储厂的结构：</p>
       <ul>
@@ -156,23 +156,23 @@
 
       <p><strong>foundry（中耦合）</strong>：工艺自己做但产品是客户的。台积电、联电、SMIC 都是。产能空转时也痛（折旧照提），但客户分散在几十家 fabless——一家砍单其他家补，波动比存储小。</p>
 
-      <p><strong>这里有个反直觉的推论</strong>：中耦合公司（foundry）反而比低耦合公司（fabless）波动更小。原因有两条：一是客户分散在几十家 fabless，一家砍单其他家补，需求侧被摊平；二是台积电在先进制程近乎垄断（3nm 独家、5nm 主导），带来 pricing power 与长约锁定，供给侧还有毛利保护。两条机制合起来，foundry 反而是所有环节里波动最小的。台积电 2020-2025 六年跨度 8pt，英伟达六年跨度 18pt——foundry 反而是所有环节里波动最小的。</p>
+      <p><strong>这里有个反直觉的观察</strong>：台积电反而比低耦合的 fabless 波动更小——2020-2025 六年毛利率跨度只有 8pt，英伟达同期 18pt。原因有两条：一是客户分散在几十家 fabless，一家砍单其他家补，需求侧被摊平；二是台积电在先进制程近乎垄断（3nm 独家、5nm 主导），带来定价权与长约锁定，供给侧还有毛利保护。<strong>注意第二条是台积电专属，不是 foundry 通性</strong>——没有先进制程垄断的 foundry，在扩产期+利用率下行时照样凶：中芯国际 2023 年毛利率从上年的 38.0% 掉到 19.3%，单年掉约 19pt、是台积电整个六年区间的两倍多<a class="badge badge-verified" href="https://www.prnewswire.com/news-releases/smic-reports-2022-fourth-quarter-results-301743116.html" target="_blank" rel="noopener">已核验 · SMIC 2022 Q4 业绩公告（2022 全年 38.0%）</a><a class="badge badge-verified" href="https://www.design-reuse.com/news/55658/smic-q4-2023-financial-results.html" target="_blank" rel="noopener">已核验 · SMIC 2023 Q4 业绩公告（2023 全年 19.3%）</a>。「客户分散」摊得平需求波动，摊不平「无定价权 + 扩产期折旧」这个组合。所以准确的说法是：<strong>垄断定价权和客户分散两条都占的头部 foundry，波动最小；缺垄断那条的成熟制程 foundry，波动可以逼近存储</strong>。</p>
 
-      <p><strong>逻辑 IDM（中高耦合）</strong>：设计+工艺+封测一体，但产品可以代际升级（CPU 每两年一代，工艺同一节点可以支撑几代产品）。英特尔（未拆分前）、TI、ADI 都是。周期居中——工艺不出问题时最稳（设计和工艺互相知道对方所有细节），工艺一掉队时最痛（工艺慢产品也慢，两头都塌）。英特尔 2019-2024 GAAP 毛利率从 58.6% 掉到 32.7%<span class="badge badge-verified">已核验 · Intel 各年 10-K</span>——主要是工艺掉队的结构性衰退，不是纯周期。</p>
+      <p><strong>逻辑 IDM（中高耦合）</strong>：设计+工艺+封测一体，但产品可以代际升级（CPU 每两年一代，工艺同一节点可以支撑几代产品）。英特尔（未拆分前）、TI、ADI 都是。周期居中，但「稳」的来源分两种：英特尔这类先进逻辑 IDM，稳靠工艺不掉队（设计和工艺互相知道对方所有细节），一掉队就最痛——工艺慢产品也慢，两头都塌；TI、ADI 这类模拟 IDM，稳靠的是另一套——产品高度差异化、生命周期十几年、跑折旧完的成熟制程（低资本密度），不追尖端也常年 50-70% 毛利（卡 8 边界段展开）。英特尔 2019-2024 GAAP 毛利率从 58.6% 掉到 32.7%<span class="badge badge-verified">已核验 · Intel 各年 10-K</span>——主要是工艺掉队的结构性衰退，不是纯周期。</p>
 
       <div class="note">
         <span class="note-label">核心洞察</span>
-        <p>耦合度不是「运营好不好」，是<strong>「技术分工能不能拆」</strong>。差别写在半导体的物理约束里，不是管理层能改的。存储的物理决定了它必须一体化经营；GPU 的物理决定了它可以分工——公司选择的是能不能顺着物理走。</p>
+        <p>耦合度不是「运营好不好」，是<strong>「技术分工能不能拆」</strong>。这条差别主要写在物理耦合里、又被几十年的产业演化固化——不是管理层短期能改的。存储的物理加上产业史决定了它至今必须一体化经营；GPU 的结构决定了它可以分工——公司选择的是能不能顺着这个结构走。</p>
       </div>
 
       <h3>2.4 亲手拉一下：耦合度评分器</h3>
 
-      <p>下面这台评分器把上面的分工/耦合谱系开放给你调。<strong>看什么：</strong>①拉滑块从 fabless（0-3）向 IDM 存储（8-10）滑，看蓝色的<strong>预测毛利率年波动区间</strong>怎么变宽——这是耦合度→周期烈度的直接可视化；②特别注意在 <strong>foundry（5 附近）</strong>那个「波动谷」——中耦合反而比低耦合更平，因为客户分散把风险摊到了几十家 fabless 身上；③每个耦合度会匹配一家已核验公司，下方橙点显示它<strong>实际历史六年的毛利率</strong>——用真实数据校验模型的判断。</p>
+      <p>下面这台评分器把上面的分工/耦合谱系开放给你调。<strong>看什么：</strong>①拉滑块从 fabless（0-3）向 IDM 存储（8-10）滑，看蓝色的<strong>预测毛利率年波动区间</strong>怎么变宽——这是耦合度→周期烈度的直接可视化；②特别注意在 <strong>foundry（5 附近）</strong>那个「波动谷」——中耦合反而比低耦合更平，因为客户分散把风险摊到了几十家 fabless 身上（这个谷以台积电为样本、是头部专属——无垄断的 foundry 不在谷里，见 2.3）；③每个耦合度会匹配一家已核验公司，下方橙点显示它<strong>实际历史六年的毛利率</strong>——用真实数据校验模型的判断。</p>
 
       <div class="viz">
         <div class="viz-head">
           <span class="viz-title">耦合度评分器 · 预测周期烈度 vs 实际历史</span>
-          <span class="viz-sub">教学简化：分工型/耦合型/中间态三档，预测区间由已核验四家公司的历史峰谷跨度拟合而来</span>
+          <span class="viz-sub">教学简化：分工型/耦合型/中间态三档，预测区间由已核验四家公司的历史峰谷跨度拟合而来；四个样本各有特殊性（台积电含垄断定价权、英伟达含矿卡异常、英特尔含掉队），刻度是示意不是定律，「耦合度」刻度里也混着产品商品化程度这条子维度</span>
         </div>
         <div class="ctl-panel">
           <div class="ctl">
@@ -194,6 +194,15 @@
         <div class="viz-readout" id="coupReadout" aria-live="polite"></div>
       </div>
 
+      <h3>本卡讲的机制只是其中一条 · 完整解释还要另外两条</h3>
+      <p>这张卡讲的核心结论是<strong>「设计与工艺能不能拆（耦合度）决定一家公司毛利率波动的结构形状——能拆开卖的软周期、绑死一体的硬周期」</strong>——但<strong>读者拿"耦合度 → 周期烈度"这个规律去预判一家公司的波动时，还要过另外两条独立机制</strong>。三条一起摆出来：</p>
+      <ol>
+        <li><strong>耦合度（本卡讲的这条）</strong>——决定波动的<strong>结构形状</strong>：fabless 把工厂交给别人、周期软；存储把工厂扛在自己账上、产品又同质化、周期硬。这条决定你面对的是哪一种周期。</li>
+        <li><strong>经营杠杆·稼动率</strong>——决定绑死一体时<strong>跳多凶</strong>：固定成本（折旧）在成本里占比越高，利用率的波动被放大得越狠。耦合度决定你在不在这台放大器里，放大器的倍数由固定成本结构定。完整机制在<strong>卡 2</strong>（固定成本主导）里讲透。</li>
+        <li><strong>合同结构</strong>——决定波动<strong>实际兑现多少</strong>：同样是极高耦合的存储，HBM 长约锁量后海力士的波动比过去平缓——耦合度给的是波动上限，收入里合同锁定的比例决定实际兑现几成。完整机制在<strong>卡 6</strong>（库存结构决定波动结构）里讲透。</li>
+      </ol>
+      <p><strong>本卡讲第一条，因为它是拿到陌生公司名字后能最快判断的一条</strong>——翻一眼 10-K 的 PP&amp;E 和业务描述就能定型，不用等任何季度数据。<strong>但真实投资判断要三条一起用</strong>：拿到一家新公司，先用本卡判耦合度、定波动的结构形状；再用卡 2 看固定成本占比、定波动倍数；再用卡 6 看收入里长约锁定的比例、定波动实际会兑现几成。三步合出这家公司的「周期烈度画像」，才谈估值该用 PE 还是 PB。深入研究方向：Tech Investments "Industrial analog semis: Texas Instruments vs Analog Devices"（差异化模拟 IDM 为什么完整一体化却极稳——本卡边界最重要的对照样本）、UncoverAlpha "Every Memory Cycle Ends the Same. Until It Doesn't."（讨论极高耦合的存储周期是否正被 HBM 与合同结构改变）——见页脚"核心结论的观点讨论"。</p>
+
       <h2>3 · 真实锚点：三家公司的毛利率区间</h2>
 
       <p>三家已核验的样本，放在一起就是「耦合度决定波动结构」这句话的证据。</p>
@@ -208,7 +217,7 @@
           <tr><td>GAAP 毛利率</td><td class="num">62%</td><td class="num">62%</td><td class="num">65%</td><td class="num">57%</td><td class="num">73%</td><td class="num">75%</td></tr>
         </tbody>
       </table>
-      <p>六年区间跨度 <strong>18pt</strong>（低点 FY23 57%、高点 FY25 75%）。深跌点 FY23（截止 2023-01-29）主要是加密矿卡崩盘（以太坊 2022-09 转 PoS，矿卡需求消失）+ 消费 GPU 库存冲销（FY23 库存 provision $21.7 亿美元）<span class="badge badge-verified">已核验 · NVIDIA FY23 10-K</span>——不是折旧压出来的，也不是被 AMD 追平（RDNA 2/Ada 时期 AMD 在高端 GPU 上并未真正追平）。fabless 的深跌是「需求端塌方」，不是「被折旧压死」——<strong>卡 8（技术代际是生死）</strong>会展开代际之间的胜负逻辑。</p>
+      <p>六年区间跨度 <strong>18pt</strong>（低点 FY23 57%、高点 FY25 75%）。深跌点 FY23（截止 2023-01-29）主要是加密矿卡崩盘（以太坊 2022-09 转 PoS，矿卡需求消失）+ 消费 GPU 库存冲销（FY23 库存 provision $21.7 亿美元）<a class="badge badge-verified" href="https://www.sec.gov/Archives/edgar/data/1045810/000104581023000017/nvda-20230129.htm" target="_blank" rel="noopener">已核验 · NVIDIA FY23 10-K</a>——不是折旧压出来的，也不是被 AMD 追平（RDNA 2/Ada 时期 AMD 在高端 GPU 上并未真正追平）。fabless 的深跌是「需求端塌方」，不是「被折旧压死」——<strong>卡 8（技术代际是生死）</strong>会展开代际之间的胜负逻辑。</p>
 
       <h3>锚点二 · 台积电（中耦合，foundry）</h3>
       <table class="tbl">
@@ -220,7 +229,7 @@
           <tr><td>GAAP 毛利率</td><td class="num">53%</td><td class="num">52%</td><td class="num">60%</td><td class="num">54%</td><td class="num">56%</td><td class="num">60%</td></tr>
         </tbody>
       </table>
-      <p>六年区间跨度 <strong>8pt</strong>——比 fabless 英伟达还小 10pt。稍微被拉低的 2023-2024 是 N3 稀释期（先进制程爬坡时的时间性成本，<strong>手册模块 2</strong> 讲过 3-4pt 稀释）。波动比 fabless 更小的原因是双重：客户分散把风险摊到几十家 fabless，加上先进制程近乎垄断带来的定价权与长约锁定。</p>
+      <p>六年区间跨度 <strong>8pt</strong>——比 fabless 英伟达还小 10pt。稍微被拉低的 2023-2024 是 N3 稀释期（先进制程爬坡时的时间性成本，<strong>手册模块 2</strong> 讲过 3-4pt 稀释）。波动比 fabless 更小的原因是双重：客户分散把风险摊到几十家 fabless，加上先进制程近乎垄断带来的定价权与长约锁定。选样提醒：这组对比里两个样本都不「典型」——台积电的 8pt 被垄断定价权压平（不是 foundry 通性，对照中芯 2023 单年约 -19pt，见 2.3），英伟达的 18pt 被矿卡崩盘这个异常事件抬高（见锚点一）。方向性结论（台积电比 fabless 稳）成立，但别把 8pt 和 18pt 当成两个环节的通用常数。</p>
 
       <h3>锚点三 · 美光（极高耦合，IDM 存储）</h3>
       <table class="tbl">
@@ -259,8 +268,8 @@
         <p style="margin:0 0 8px"><strong>这是「高耦合环节的正常波动」还是「低耦合环节的异常事件」？</strong>两种解读的下一步动作完全不同——</p>
         <ul>
           <li><strong>如果标的是 IDM 存储（美光、海力士、三星 DS）</strong>——10pt+ 是周期常态，问方向不是幅度：往上跳看是不是需求刚回来（买点信号）；往下掉看是不是产能开始过剩（卖点信号）。</li>
-          <li><strong>如果标的是 fabless（英伟达、AMD、博通、联发科）</strong>——10pt+ 是重大事件，多半是产品结构切换（英伟达从游戏为主到数据中心为主）或竞争格局变化（AMD 追平/掉队）。要判断结构性拐点是否可持续。</li>
-          <li><strong>如果标的是 foundry（台积电、联电、SMIC）</strong>——10pt+ 罕见，通常是工艺节点节奏（如 N3 稀释期）或大客户砍单事件（如通富微电对 AMD 依赖 50%+ 时<span class="badge badge-verified">已核验 · 通富微电 2024 年报（AMD 占营收 50.35%）</span>）。</li>
+          <li><strong>如果标的是 fabless（英伟达、AMD、博通、联发科）</strong>——10pt+ 是重大事件，多半是产品结构切换（英伟达从游戏为主到数据中心为主）或竞争格局变化（如 CPU 端 AMD Zen 从追赶到反超）。注意别把需求端异常事件误读成竞争格局——英伟达 FY23 的深跌是矿卡崩盘、不是被 AMD 追平（见锚点一）。要判断结构性拐点是否可持续。</li>
+          <li><strong>如果标的是 foundry，先分头部还是非头部</strong>——台积电这类有先进制程垄断的：10pt+ 罕见，通常是工艺节点节奏（如 N3 稀释期）；中芯、联电这类无垄断的 foundry：扩产期+利用率下行时 10pt+ 不罕见（中芯 2023 单年约 -19pt，见 2.3），读法接近「弱化版存储」——盯利用率和折旧节奏。封测厂的大客户集中是另一类风险（如通富微电对 AMD 依赖 50%+ 时<a class="badge badge-verified" href="http://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=002156&amp;id=10867421" target="_blank" rel="noopener">已核验 · 通富微电 2024 年报（AMD 占营收 50.35%）</a>）。</li>
           <li><strong>如果标的是逻辑 IDM（英特尔）</strong>——10pt+ 要区分是周期还是结构性衰退：连续多个季度往下走是掉队信号，不是周期。</li>
         </ul>
         <p style="margin:6px 0 0;font-size:var(--fs-14)">写成动作：<strong>看到毛利率跳变新闻，先按标的的耦合度分四类，再决定它是买点、卖点还是要继续观察。</strong></p>
@@ -271,11 +280,12 @@
       <ul>
         <li><strong>分工型不等于「稳赢」。</strong>fabless 之间也有代际生死。英伟达 1996-97 曾一度距破产 30 天（NV1 失败、Sega 项目告吹、赌 RIVA 128 翻身），后来放弃移动 SoC、押注 CUDA 也曾让市值大幅回撤但公司现金流健康；AMD 一度跌到破产边缘；3dfx 曾是 Voodoo 时代的 3D 加速卡市场领导者、Cyrix 曾在 1996 短暂拿到 CPU 性能王冠，都在下一代技术切换（GeForce 256 / Pentium II）押错路口后消失。低耦合意味着周期烈度低，不等于「公司不会死」。<strong>卡 8（技术代际是生死）</strong>展开。</li>
         <li><strong>高耦合不等于「必败」。</strong>耦合越深，进入壁垒越高——存储只剩三家（三星、海力士、美光），先进封装台积电一家做主力。周期底部（如 2023 存储深亏）往往是买点，深度亏损时期是估值重估的机会。<strong>卡 14（产业周期与股价周期错位）</strong>展开。</li>
+        <li><strong>「foundry 波动小」只适用于头部。</strong>它依赖两条：先进制程垄断定价权 + 客户分散。两条都占的（台积电）波动最小；缺垄断那条的（中芯、联电这类），扩产期+利用率下行时波动可逼近存储（中芯 2023 单年约 -19pt，见 2.3）。用耦合度预判一家 foundry 的波动之前，先问它有没有定价权。</li>
         <li><strong>中间态很多，本卡只讲三个主类。</strong>
           <ul>
             <li>HBM 是存储厂（IDM 高耦合）的耦合业务，但走长约锁价，短期波动被压制——SK 海力士 4Q24 单季 HBM 已占 DRAM 收入 40%+（全年占比略低），海力士整体波动比过去平缓（<strong>手册模块 5、7</strong> 讲过）；</li>
             <li>CoWoS 是台积电（foundry 中耦合）内部的耦合业务，产能瓶颈时定价权在台积电（<strong>卡 4（出货 = 最短板）</strong>讲过）；</li>
-            <li>定制 ASIC（如 Google TPU 的 backend/封装/网络协同由博通承担，Google 主导前端 RTL 设计）是 fabless 的一种但客户高度集中，砍单风险放大到少数几家云厂商身上（<strong>手册模块 5</strong> 讲过）。</li>
+            <li>定制 ASIC 业务（如 Google TPU：Google 主导前端设计，博通承担后端实现/封装/网络协同，两家都不自建晶圆厂）整体属 fabless 模式，但客户高度集中，砍单风险放大到少数几家云厂商身上（<strong>手册模块 5</strong> 讲过）。</li>
           </ul>
         </li>
         <li><strong>本卡与卡 2 的关系。</strong>卡 2（固定成本主导）讲<strong>同一家公司</strong>在杠杆两端的两个截面——为什么美光同一批工厂能一年深亏一年暴利。本卡讲<strong>跨公司</strong>的耦合度差异——为什么英伟达的杠杆方向和幅度与美光完全不同。两张卡合起来是「周期烈度」的完整解释：<strong>耦合度决定「能不能拆开卖」，固定成本主导决定「拆不开时利润率跳多凶」</strong>。</li>
@@ -330,9 +340,19 @@
         <li><a href="https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2024-results">Samsung 4Q24/FY24 press release（DS 部门 2024 全年营业利润 15.09 万亿韩元）</a>· <a href="https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2023-results">Samsung 4Q23/FY23 press release（DS 部门 2023 全年亏损）</a></li>
         <li><a href="m02.html">卡 2 · 固定成本主导</a>——同一家公司经营杠杆两端的展开</li>
         <li><a href="m05.html">手册模块 5 · 半导体产业链总地图</a>——七层产业链、三种商业模式、10 分钟定位工具</li>
+        <li><a href="https://www.sec.gov/Archives/edgar/data/1045810/000104581023000017/nvda-20230129.htm" target="_blank" rel="noopener">NVIDIA FY2023 10-K</a>——FY23 库存 provision $21.7 亿美元（$2.17B：在手库存约 $1.04B + 超出需求预测的采购义务约 $1.13B），锚点一深跌归因的来源</li>
+        <li><a href="https://www.prnewswire.com/news-releases/smic-reports-2022-fourth-quarter-results-301743116.html" target="_blank" rel="noopener">SMIC 2022 Q4 业绩公告（2022 全年毛利率 38.0%）</a>· <a href="https://www.design-reuse.com/news/55658/smic-q4-2023-financial-results.html" target="_blank" rel="noopener">SMIC 2023 Q4 业绩公告（2023 全年毛利率 19.3%、收入 $6.32B -13%）</a>——2.3/4.2/边界段中芯反例的来源</li>
+        <li><a href="http://money.finance.sina.com.cn/corp/view/vCB_AllBulletinDetail.php?stockid=002156&amp;id=10867421" target="_blank" rel="noopener">通富微电 2024 年年度报告（新浪财经公告镜像）</a>——第一大客户（AMD）占营业收入 50.35%，4.2 节客户集中例的来源</li>
       </ul>
+      <div style="margin-top:14px;padding-top:10px;border-top:1px dashed var(--line)">
+        <strong>核心结论的观点讨论（延伸阅读）</strong>
+        <ul style="margin:6px 0 0;padding-left:1.3em">
+          <li><a href="https://www.techinvestments.io/p/industrial-analog-semis-texas-instruments" target="_blank" rel="noopener">Tech Investments, "Industrial analog semis: Texas Instruments vs Analog Devices"</a>——独立投资分析长文，系统对比两家完整一体化 IDM 为什么毛利率极稳：产品差异化、超长生命周期、成熟制程低资本密度——是本卡「耦合度 → 周期烈度」结论最重要的边界对照（一体化不等于凶周期，商品化程度是隐含前提）。</li>
+          <li><a href="https://www.uncoveralpha.com/p/every-memory-cycle-ends-the-same" target="_blank" rel="noopener">UncoverAlpha · Rihard Jarc, "Every Memory Cycle Ends the Same. Until It Doesn't."（2026-03-12）</a>——独立投资分析师原创论证，讨论极高耦合的存储周期是否正被 HBM 长约与需求结构改变——是本卡「存储必然极凶周期」半边在观点市场上的对话与挑战。</li>
+        </ul>
+      </div>
       <p style="margin-top:14px;font-size:var(--fs-12)">徽章说明：<span class="badge badge-verified">已核验</span> 直接引用一手来源（年报、10-K、8-K、官方公告）或经权威媒体转述的一手数据 · <span class="badge badge-expert">专家判断</span> 综合行业口径或物理约束的判断性表达 · <span class="badge badge-assume">估算</span> 明确的推算，标注方法与年份。</p>
-    </div>
+    </section>
 
     <footer class="page-foot">
       <div class="complete-box">
@@ -375,7 +395,7 @@ document.addEventListener("DOMContentLoaded", () => {
         name: "台积电（foundry · 中耦合）",
         years: ["2020", "2021", "2022", "2023", "2024", "2025"],
         data:  [53,     52,     60,     54,     56,     60],
-        flavor: "中耦合环节。工艺自己做但产品分给几十家客户——一家砍单其他家补，波动被摊平。周期反而比 fabless 更平。看毛利率跳变要先问是不是工艺节点节奏（如 N3 稀释）。"
+        flavor: "中耦合环节。工艺自己做但产品分给几十家客户——一家砍单其他家补，波动被摊平。周期反而比 fabless 更平。注意：8pt 的「波动谷」是台积电专属（先进制程垄断定价权）；无垄断的 foundry 不在谷里——中芯 2023 单年毛利率掉约 19pt。看毛利率跳变要先问是不是工艺节点节奏（如 N3 稀释）。"
       },
       {
         threshold: 8.5,
