@@ -1,5 +1,5 @@
 /* ============================================================
-   半导体投资学习台 · 公共脚本
+   AI 投资学习台 · 公共脚本
    负责：导航渲染、Tab、展开面板、自测题、学习进度、移动端目录、问题暂存
    页面专属的模拟器逻辑写在各页面的内联脚本里。
    ============================================================ */
@@ -95,15 +95,21 @@
 
     const frag = document.createDocumentFragment();
 
-    const firstBuiltSpine = (SPINES.find((s) => s.built) || SPINES[0]).file;
     const brand = document.createElement("a");
     brand.className = "rail-brand";
-    brand.href = firstBuiltSpine;
-    brand.innerHTML = "<b>半导体投资学习台</b><span>AI 半导体投资 · 从零到独立研究</span>";
+    brand.href = "index.html";
+    brand.innerHTML = "<b>AI 投资学习台</b><span>从入门到独立投研</span>";
     frag.appendChild(brand);
 
-    /* 判断当前所在层：骨架卡 or 手册/index */
+    /* 判断当前所在层：主页 · 骨架卡 · 手册 */
+    const isHome = current === "index";
     const isSpinePage = /^s\d+$/.test(current);
+
+    /* 主页只保留品牌 logo,不渲染任何层的目录 */
+    if (isHome) {
+      rail.appendChild(frag);
+      return;
+    }
 
     if (isSpinePage) {
       /* 骨架卡页 · 只显示 15 张骨架卡目录 */
@@ -189,7 +195,8 @@
     if (!topbar) return;
     const current = document.body.dataset.page || "";
     const isSpine = /^s\d+$/.test(current);
-    const isModule = /^m\d+$/.test(current) || current === "index";
+    const isModule = /^m\d+$/.test(current);
+    /* 主页(current === "index")两个 tab 都不高亮 */
 
     /* 找到第一个 firstBuilt 的目标：骨架层默认跳 s01，若 s01 未 built 则找第一张 built */
     const firstSpine = (SPINES.find((s) => s.built) || SPINES[0]).file;

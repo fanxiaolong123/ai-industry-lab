@@ -1,5 +1,5 @@
 /* ============================================================
-   半导体投资学习台 · 全站样式
+   AI 投资学习台 · 全站样式
    设计基调：安静的买方分析师工作台。白底、深墨、克制的绿色
    信号色、琥珀色标注风险与不确定。参见项目 DESIGN.md。
    ============================================================ */
@@ -226,14 +226,24 @@ a.rail-item:hover { background: var(--surface-2); color: var(--ink); }
   align-items: center;
 }
 
-/* topbar 层切换按钮 · 骨架 / 模块 */
-.layer-switch { display: inline-flex; gap: 2px; padding: 3px; background: var(--surface); border-radius: 8px; }
+/* topbar 层切换 tab · 骨架 / 模块 —— 文字 tab + 底边选中线 */
+.layer-switch { display: inline-flex; gap: 4px; }
 .layer-switch a {
-  padding: 6px 14px; border-radius: 6px; font-size: var(--fs-14); font-weight: 600;
-  color: var(--muted); text-decoration: none; transition: background 160ms ease, color 160ms ease;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  font-size: var(--fs-15);
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color 160ms ease, border-color 160ms ease;
 }
 .layer-switch a:hover { color: var(--ink); }
-.layer-switch a[aria-current="page"] { background: var(--bg); color: var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.layer-switch a[aria-current="page"] {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
 .topbar-title { flex: 1; font-weight: 600; font-size: var(--fs-15); color: var(--ink); }
 /* 桌面端 navToggle 隐藏（只有移动端才需要目录按钮） */
 @media (min-width: 861px) {

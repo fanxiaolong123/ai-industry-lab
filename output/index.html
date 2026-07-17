@@ -3,45 +3,315 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="refresh" content="0; url=spine01.html">
-<title>半导体投资学习台</title>
-<link rel="canonical" href="spine01.html">
+<title>AI 投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
 <style>
-  body {
+  /* ---------- 主页专属样式 ---------- */
+
+  /* 主页不显示左侧 rail,主内容居中 */
+  body[data-page="index"] .rail { display: none; }
+  body[data-page="index"] .page { padding: 40px clamp(20px, 5vw, 64px) 72px; }
+  body[data-page="index"] main.prose { margin: 0 auto; max-width: 720px; }
+  body[data-page="index"] .topbar-title { color: var(--muted); font-weight: 500; font-size: var(--fs-14); }
+
+  .home-lead {
+    font-size: var(--fs-17);
+    color: var(--muted);
+    line-height: 1.75;
+    margin: 8px 0 32px;
+    max-width: 40em;
+  }
+
+  .home-intro {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 18px 22px;
+    margin-bottom: 32px;
+  }
+  .home-intro p { margin: 0 0 10px; font-size: var(--fs-14); color: var(--muted); }
+  .home-intro ul {
     margin: 0;
-    min-height: 100vh;
+    padding: 0;
+    list-style: none;
     display: grid;
-    place-items: center;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC",
-      "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
-    color: oklch(0.18 0.018 145);
-    background: oklch(1 0 0);
-  }
-  main {
-    max-width: 520px;
-    padding: 32px;
-    text-align: center;
-  }
-  h1 {
-    margin: 0 0 12px;
-    font-size: 1.625rem;
-    line-height: 1.35;
-  }
-  p {
-    margin: 0;
-    color: oklch(0.45 0.018 145);
+    gap: 8px;
+    font-size: var(--fs-15);
     line-height: 1.7;
   }
-  a {
-    color: oklch(0.35 0.11 140);
-    text-underline-offset: 3px;
+  .home-intro li b {
+    display: inline-block;
+    min-width: 3.2em;
+    color: var(--primary);
+    font-weight: 650;
+    margin-right: 8px;
   }
+
+  .home-list {
+    border-top: 1px solid var(--line);
+    padding: 18px 0 22px;
+  }
+  .home-list:last-of-type { border-bottom: 1px solid var(--line); }
+
+  .home-list summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 4px 0;
+  }
+  .home-list summary::-webkit-details-marker { display: none; }
+  .home-list summary::before {
+    content: "▸";
+    display: inline-block;
+    width: 12px;
+    color: var(--muted);
+    font-size: var(--fs-13);
+    transition: transform 160ms var(--ease);
+    flex: none;
+  }
+  .home-list[open] > summary::before { transform: rotate(90deg); }
+  .home-list summary b {
+    font-size: var(--fs-19);
+    font-weight: 650;
+    color: var(--ink);
+  }
+  .home-list summary .home-summary-sub {
+    color: var(--muted);
+    font-size: var(--fs-14);
+  }
+  .home-count {
+    margin-left: auto;
+    font-size: var(--fs-12);
+    color: var(--muted);
+    padding: 2px 10px;
+    border: 1px solid var(--line);
+    border-radius: 99px;
+    background: var(--bg);
+    font-variant-numeric: tabular-nums;
+  }
+  .home-count-todo {
+    background: var(--surface-2);
+    color: var(--muted);
+    border-style: dashed;
+  }
+
+  .home-desc {
+    margin: 12px 0 14px 24px;
+    font-size: var(--fs-14);
+    color: var(--muted);
+    line-height: 1.75;
+    max-width: 42em;
+  }
+
+  .home-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0 12px;
+    display: grid;
+    gap: 1px;
+  }
+  .home-items a {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    align-items: baseline;
+    gap: 14px;
+    padding: 8px 12px;
+    border-radius: var(--radius-s);
+    text-decoration: none;
+    color: var(--ink);
+    transition: background 140ms var(--ease);
+  }
+  .home-items a:hover { background: var(--surface); color: var(--ink); }
+  .home-items .num {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--fs-14);
+    text-align: right;
+  }
+  .home-items .title { font-weight: 600; font-size: var(--fs-15); }
+  .home-items .sub {
+    color: var(--muted);
+    font-size: var(--fs-13);
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 22em;
+  }
+  @media (max-width: 640px) {
+    .home-items a { grid-template-columns: 28px 1fr; padding: 8px 10px; }
+    .home-items .sub {
+      grid-column: 2 / -1;
+      text-align: left;
+      white-space: normal;
+      max-width: none;
+      font-size: var(--fs-12);
+      margin-top: 2px;
+    }
+  }
+
+  .home-group { margin: 16px 0 4px 12px; }
+  .home-group + .home-group { margin-top: 20px; }
+  .home-group-name {
+    font-size: var(--fs-13);
+    color: var(--muted);
+    margin: 0 0 4px;
+    padding: 0 12px;
+    font-weight: 600;
+  }
+  .home-group .home-items { margin-left: 0; }
+
+  .home-todo {
+    margin: 12px 0 0 12px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-m);
+    font-size: var(--fs-14);
+    color: var(--muted);
+    line-height: 1.75;
+    max-width: 42em;
+  }
+
+  .home-foot {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: var(--fs-13);
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .home-foot p { margin: 0; }
 </style>
 </head>
-<body>
-  <main>
-    <h1>半导体投资学习台</h1>
-    <p>正在进入学习路径。如果页面没有自动跳转，<a href="spine01.html">从第一张核心模型卡开始</a>。</p>
-  </main>
+<body data-page="index">
+<a class="skip" href="#main">跳到正文</a>
+
+<div class="layout">
+  <nav id="rail" class="rail" aria-label="全站导航"></nav>
+  <div class="page">
+    <header class="topbar">
+      <span class="topbar-title">总览</span>
+    </header>
+
+    <main id="main" class="prose">
+      <header class="page-head">
+        <h1>AI 投资学习台</h1>
+        <p class="home-lead">从入门到独立投研。用 15 张核心模型卡搭思考骨架，12 个真实决策案例做训练，14 篇手册按需查，跟一个财报季走完实盘。</p>
+      </header>
+
+      <section class="home-intro" aria-label="四层内容分工">
+        <p>四层各有分工：</p>
+        <ul>
+          <li><b>骨架</b>15 张核心模型卡，一次过完给一切细节搭架子。</li>
+          <li><b>案例</b>12 个真实决策复盘，推理链达到专业 memo 水准。</li>
+          <li><b>手册</b>14 篇模块页，不通读、卡住时查。</li>
+          <li><b>实盘</b>跟一个财报季从预判卡走到季度对账。</li>
+        </ul>
+      </section>
+
+      <details class="home-list">
+        <summary>
+          <b>骨架层</b>
+          <span class="home-summary-sub">15 张核心模型卡</span>
+          <span class="home-count">15 / 15</span>
+        </summary>
+        <p class="home-desc">一次过完，先建立整体骨架。每张卡讲透一个模型，含真实锚点、边界与验收题。</p>
+        <ol class="home-items">
+          <li><a href="spine01.html"><span class="num">1</span><span class="title">供给慢、需求快</span><span class="sub">扩产 24-36 个月 · 一切周期的根源</span></a></li>
+          <li><a href="spine02.html"><span class="num">2</span><span class="title">固定成本主导</span><span class="sub">涨价与利用率的利润弹性是跳变</span></a></li>
+          <li><a href="spine03.html"><span class="num">3</span><span class="title">良率 = 成本曲线</span><span class="sub">爬坡斜率就是毛利率的日历</span></a></li>
+          <li><a href="spine04.html"><span class="num">4</span><span class="title">出货 = 最短板</span><span class="sub">瓶颈拿走定价权 · 且瓶颈会漂移</span></a></li>
+          <li><a href="spine05.html"><span class="num">5</span><span class="title">缺货是牛鞭极值信号</span><span class="sub">渠道逐层放大 · 反转常在其后几个月</span></a></li>
+          <li><a href="spine06.html"><span class="num">6</span><span class="title">库存结构决定波动结构</span><span class="sub">直供品类平缓 · 商品化品类最凶</span></a></li>
+          <li><a href="spine07.html"><span class="num">7</span><span class="title">需求分两种</span><span class="sub">换机式（周期）与范式革命（台阶）</span></a></li>
+          <li><a href="spine08.html"><span class="num">8</span><span class="title">技术代际是生死</span><span class="sub">掉队瞒不住 · 掌门人押注决定命运</span></a></li>
+          <li><a href="spine09.html"><span class="num">9</span><span class="title">生态分工与耦合度</span><span class="sub">门槛降低但工艺-设计耦合越深周期越凶</span></a></li>
+          <li><a href="spine10.html"><span class="num">10</span><span class="title">需求传导链</span><span class="sub">模型 → 云 → 芯片 → 制造 → 设备 → 电力</span></a></li>
+          <li><a href="spine11.html"><span class="num">11</span><span class="title">领先指标来自扩产时序</span><span class="sub">设备订单 · 交期 · 测试设备</span></a></li>
+          <li><a href="spine12.html"><span class="num">12</span><span class="title">价格是滞后读数</span><span class="sub">先行量是交期 · 长约 · 预付款</span></a></li>
+          <li><a href="spine13.html"><span class="num">13</span><span class="title">标题层与流程层</span><span class="sub">市场定价在标题层 · 超额认知在流程层</span></a></li>
+          <li><a href="spine14.html"><span class="num">14</span><span class="title">产业周期与股价错位</span><span class="sub">产业刚开始 ≠ 股价便宜</span></a></li>
+          <li><a href="spine15.html"><span class="num">15</span><span class="title">规则五件套齐全</span><span class="sub">来源 · 机制 · 案例 · 操作 · 失效</span></a></li>
+        </ol>
+      </details>
+
+      <details class="home-list">
+        <summary>
+          <b>案例层</b>
+          <span class="home-summary-sub">真实决策复盘</span>
+          <span class="home-count home-count-todo">建设中</span>
+        </summary>
+        <p class="home-desc">每个案例是对一次真实投研决策的忠实重建。判断点之前只用当时可得的信息，含反方观点、可证伪的判断信号与事后对照。骨架卡完成后进入，与真实财报季同步推进。</p>
+        <div class="home-todo">
+          首批 12 个案例。已核验三个：台积电 N3 稀释（2024）、ASML→KLA 传导（2026-01）、Intel 18A 爬坡（2026）；其余包括 2020-22 缺货到骤然逆转、存储 2023 减产到 2026 紧缺、量跌价涨的利润结构、云厂商 CapEx 拐点识别、A 股映射类炒作辨伪等。
+        </div>
+      </details>
+
+      <details class="home-list">
+        <summary>
+          <b>手册层</b>
+          <span class="home-summary-sub">14 篇按需查参考</span>
+          <span class="home-count">14 / 14</span>
+        </summary>
+        <p class="home-desc">不通读。骨架卡与案例里卡住的点，跳到对应模块页查。四层组织与骨架卡的推理层对齐。</p>
+        <div class="home-group">
+          <p class="home-group-name">第一层 · 零基础体感</p>
+          <ol class="home-items">
+            <li><a href="m01.html"><span class="num">1</span><span class="title">AI 为什么会变成硬件和制造业问题</span><span class="sub">token · 训练与推理 · 内存墙 · CapEx 传导</span></a></li>
+            <li><a href="m02.html"><span class="num">2</span><span class="title">芯片前端制造 101</span><span class="sub">晶圆 · 光刻 · 良率 · WFE 设备</span></a></li>
+            <li><a href="m03.html"><span class="num">3</span><span class="title">封装、测试与系统集成 101</span><span class="sub">CoWoS · HBM 堆叠 · capable 与 delivery</span></a></li>
+            <li><a href="m04.html"><span class="num">4</span><span class="title">半导体行业前史</span><span class="sub">50 年兴衰 · 牛鞭效应 · 掌门人决定论</span></a></li>
+          </ol>
+        </div>
+        <div class="home-group">
+          <p class="home-group-name">第二层 · 产业结构</p>
+          <ol class="home-items">
+            <li><a href="m05.html"><span class="num">5</span><span class="title">半导体产业链总地图</span><span class="sub">设计 · 制造 · 封装 · 设备 · 材料</span></a></li>
+            <li><a href="m06.html"><span class="num">6</span><span class="title">AI Infra 十层传导链</span><span class="sub">从云到电力的十层地图</span></a></li>
+            <li><a href="m07.html"><span class="num">7</span><span class="title">Memory / Storage 深水区</span><span class="sub">DRAM · HBM · NAND · eSSD · HDD</span></a></li>
+            <li><a href="m08.html"><span class="num">8</span><span class="title">光、电力、液冷与上游材料</span><span class="sub">光模块 · InP · ABF · 液冷电力</span></a></li>
+          </ol>
+        </div>
+        <div class="home-group">
+          <p class="home-group-name">第三层 · 投资判断</p>
+          <ol class="home-items">
+            <li><a href="m09.html"><span class="num">9</span><span class="title">四铁律</span><span class="sub">瓶颈 · 垄断 · 库存弹性 · 扩产创伤</span></a></li>
+            <li><a href="m10.html"><span class="num">10</span><span class="title">周期、库存与供需拐点</span><span class="sub">Secular 与 Cyclic · 泡沫观察信号</span></a></li>
+            <li><a href="m11.html"><span class="num">11</span><span class="title">财务语言与估值</span><span class="sub">毛利率 · 经营杠杆 · PB / PE / DCF</span></a></li>
+            <li><a href="m12.html"><span class="num">12</span><span class="title">美股 / A 股 / 港股 / 台韩日市场差异</span><span class="sub">同一逻辑在不同市场的验证与折扣</span></a></li>
+          </ol>
+        </div>
+        <div class="home-group">
+          <p class="home-group-name">第四层 · 研究输出</p>
+          <ol class="home-items">
+            <li><a href="m13.html"><span class="num">13</span><span class="title">证据链与研究流程</span><span class="sub">财报电话会 · 10-Q · 买方视角</span></a></li>
+            <li><a href="m14.html"><span class="num">14</span><span class="title">投资 Memo 与个人系统</span><span class="sub">memo 模板 · 仓位与策略匹配</span></a></li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="home-list">
+        <summary>
+          <b>实盘层</b>
+          <span class="home-summary-sub">财报季操作</span>
+          <span class="home-count home-count-todo">建设中</span>
+        </summary>
+        <p class="home-desc">跟一个完整财报季走一遍：预判卡 → 电话会转录标注 → 半页 mini-memo → 下季度按判断日志对账。前提是骨架卡与前三个案例完成。</p>
+        <div class="home-todo">
+          工作表模板与操作手册建设中。预计与案例主线并行上线：判断日志、预判卡、电话会标注工作表、mini-memo 模板、季度对账表。
+        </div>
+      </details>
+
+      <footer class="home-foot">
+        <p>学习方式来自 Learn Plan 四层体系。骨架与手册的正式内容以本站页面为准。</p>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<script src="assets/app.js"></script>
 </body>
 </html>
