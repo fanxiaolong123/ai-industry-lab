@@ -69,6 +69,22 @@
     },
   ];
 
+  /* 案例层 · 12 个真实决策复盘：用真实历史决策把骨架卡练成体感 */
+  const CASES = [
+    { id: "c01", file: "case01.html", num: "1",  title: "台积电 N3 稀释",           sub: "2024-01-18 · Q4 2023 电话会散会 · 稀释是暂时还是永久", built: true  },
+    { id: "c02", file: "case02.html", num: "2",  title: "ASML→KLA 传导",           sub: "2026-01-02 · Aletheia 上调 · 信号硬度与卖方视角",     built: false },
+    { id: "c03", file: "case03.html", num: "3",  title: "Intel 18A 爬坡",         sub: "2026-02 · 陈立武发言 · 叙事与证据辨别",                built: false },
+    { id: "c04", file: "case04.html", num: "4",  title: "2020-22 缺货到骤然逆转", sub: "牛鞭极值信号如何在实盘认出",                             built: false },
+    { id: "c05", file: "case05.html", num: "5",  title: "存储 2023 减产到 2026 紧缺",sub: "库存结构决定波动结构 · 长约的双刃",                     built: false },
+    { id: "c06", file: "case06.html", num: "6",  title: "量跌价涨的利润结构",       sub: "存储厂季报 · 固定成本主导的经营杠杆",                    built: false },
+    { id: "c07", file: "case07.html", num: "7",  title: "云厂商 CapEx 拐点识别",    sub: "从「发债融资」到「节奏放缓」的前置信号",                    built: false },
+    { id: "c08", file: "case08.html", num: "8",  title: "A 股映射类炒作辨伪",       sub: "国产替代 vs 真实订单 vs 交易性映射",                     built: false },
+    { id: "c09", file: "case09.html", num: "9",  title: "DeepSeek 2025-01 冲击", sub: "推理成本骤降 · 训练需求是否见顶",                        built: false },
+    { id: "c10", file: "case10.html", num: "10", title: "英伟达数据中心节奏",       sub: "FY23 到 FY26 · 需求台阶的判断与兑现",                     built: false },
+    { id: "c11", file: "case11.html", num: "11", title: "AAOI 类模块厂",           sub: "有缺口但无垄断和交付风险",                               built: false },
+    { id: "c12", file: "case12.html", num: "12", title: "掌门人换帅翻身",           sub: "AMD 苏姿丰 · Intel 陈立武 · 押注决定命运",                built: false },
+  ];
+
   const EXTRAS = [];
 
   /* ---------- 学习进度（localStorage） ---------- */
@@ -101,14 +117,44 @@
     brand.innerHTML = "<b>AI 投资学习台</b><span>从入门到独立投研</span>";
     frag.appendChild(brand);
 
-    /* 判断当前所在层：主页 · 骨架卡 · 手册 */
+    /* 判断当前所在层：主页 · 骨架卡 · 案例 · 手册 */
     const isHome = current === "index";
     const isSpinePage = /^s\d+$/.test(current);
+    const isCasePage = /^c\d+$/.test(current);
 
     /* 主页只保留品牌 logo,不渲染任何层的目录 */
     if (isHome) {
       rail.appendChild(frag);
       return;
+    }
+
+    if (isCasePage) {
+      /* 案例页 · 只显示案例目录 */
+      const gCase = document.createElement("div");
+      gCase.className = "rail-group";
+      const nameCase = document.createElement("div");
+      nameCase.className = "rail-group-name";
+      const builtCount = CASES.filter((c) => c.built).length;
+      nameCase.textContent = "案例层 · " + builtCount + " / 12 决策复盘";
+      gCase.appendChild(nameCase);
+      CASES.forEach((it) => {
+        let el;
+        if (it.built) {
+          el = document.createElement("a");
+          el.href = it.file;
+          el.className = "rail-item";
+          if (progress[it.id]) el.classList.add("is-done");
+          if (current === it.id) el.setAttribute("aria-current", "page");
+          el.innerHTML = '<span class="num">' + it.num + "</span><span>" + it.title + "</span>" +
+            (progress[it.id] ? '<span class="done-mark" title="已标记完成">✓</span>' : "");
+        } else {
+          el = document.createElement("span");
+          el.className = "rail-item is-todo";
+          el.innerHTML = '<span class="num">' + it.num + "</span><span>" + it.title + '</span><span class="todo-chip">待建</span>';
+        }
+        gCase.appendChild(el);
+      });
+      frag.appendChild(gCase);
     }
 
     if (isSpinePage) {
@@ -139,7 +185,7 @@
       frag.appendChild(gSpine);
     }
 
-    if (!isSpinePage) LAYERS.forEach((layer) => {
+    if (!isSpinePage && !isCasePage) LAYERS.forEach((layer) => {
       const g = document.createElement("div");
       g.className = "rail-group";
       const name = document.createElement("div");
@@ -195,19 +241,22 @@
     if (!topbar) return;
     const current = document.body.dataset.page || "";
     const isSpine = /^s\d+$/.test(current);
+    const isCase = /^c\d+$/.test(current);
     const isModule = /^m\d+$/.test(current);
-    /* 主页(current === "index")两个 tab 都不高亮 */
+    /* 主页(current === "index")三个 tab 都不高亮 */
 
-    /* 找到第一个 firstBuilt 的目标：骨架层默认跳 s01，若 s01 未 built 则找第一张 built */
+    /* 找到各层第一个已建页面作为跳转目标 */
     const firstSpine = (SPINES.find((s) => s.built) || SPINES[0]).file;
+    const firstCase = (CASES.find((c) => c.built) || CASES[0]).file;
     const firstModule = (LAYERS.flatMap((l) => l.items).find((m) => m.built) || SPINES[0]).file;
 
     const sw = document.createElement("div");
     sw.className = "layer-switch";
     sw.setAttribute("role", "tablist");
-    sw.setAttribute("aria-label", "在骨架层与手册层之间切换");
+    sw.setAttribute("aria-label", "在骨架层 · 案例层 · 手册层之间切换");
     sw.innerHTML =
       '<a href="' + firstSpine + '"' + (isSpine ? ' aria-current="page"' : "") + '>骨架</a>' +
+      '<a href="' + firstCase + '"' + (isCase ? ' aria-current="page"' : "") + '>案例</a>' +
       '<a href="' + firstModule + '"' + (isModule ? ' aria-current="page"' : "") + '>模块</a>';
 
     /* 插到 navToggle 之后（若存在），否则插在最前 */
@@ -334,10 +383,11 @@
     const btn = document.getElementById("markDone");
     if (!btn) return;
     const id = document.body.dataset.page;
+    const originalText = btn.textContent;
     function paint() {
       const done = !!getProgress()[id];
       btn.setAttribute("aria-pressed", String(done));
-      btn.textContent = done ? "已完成 ✓（点击撤销）" : "标记本模块为已完成";
+      btn.textContent = done ? "已完成 ✓（点击撤销）" : originalText;
     }
     btn.addEventListener("click", () => {
       setDone(id, !getProgress()[id]);
@@ -425,6 +475,8 @@
   function questionPageMeta(pageId) {
     const spine = SPINES.find((it) => it.id === pageId);
     if (spine) return { file: spine.file, title: "卡 " + spine.num + " · " + spine.title };
+    const caseIt = CASES.find((it) => it.id === pageId);
+    if (caseIt) return { file: caseIt.file, title: "案例 " + caseIt.num + " · " + caseIt.title };
     const module = LAYERS.flatMap((layer) => layer.items).find((it) => it.id === pageId);
     if (module) return { file: module.file, title: "模块 " + module.num + " · " + module.title };
     return { file: "", title: pageId || "未知页面" };
@@ -844,5 +896,5 @@
     initQuestionStash();
   });
 
-  window.APP = { SPINES, LAYERS, EXTRAS, getProgress, setDone, svgEl, showTip, hideTip, fmt, fmt1 };
+  window.APP = { SPINES, CASES, LAYERS, EXTRAS, getProgress, setDone, svgEl, showTip, hideTip, fmt, fmt1 };
 })();

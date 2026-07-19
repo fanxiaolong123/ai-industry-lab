@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>案例 1 · 台积电 N3 稀释 2024-01-18 · AI 投资学习台</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---------- 案例页专属样式 ---------- */
+  .case-sec { margin-top: 44px; }
+  .case-sec:first-of-type { margin-top: 28px; }
+  .case-sec > h2 {
+    font-size: var(--fs-22);
+    font-weight: 650;
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .case-sec > h3 {
+    font-size: var(--fs-17);
+    font-weight: 650;
+    margin: 22px 0 8px;
+    color: var(--primary);
+  }
+
+  /* 判断日前后视觉切开 */
+  .cutoff-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--info-tint);
+    border-left: 3px solid var(--info);
+    padding: 12px 16px;
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    font-size: var(--fs-14);
+    color: var(--info-ink);
+    margin: 10px 0 20px;
+  }
+  .case-post {
+    margin-top: 60px;
+    padding-top: 28px;
+    border-top: 3px double var(--danger);
+  }
+  .case-post > h2 { color: var(--danger); border-bottom-color: var(--danger); }
+  .case-post-notice {
+    background: var(--danger-tint);
+    border-left: 3px solid var(--danger);
+    padding: 12px 16px;
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    font-size: var(--fs-14);
+    color: var(--danger-ink);
+    margin: 10px 0 20px;
+  }
+
+  /* 信息集数字表 */
+  .info-table {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px 18px;
+    margin: 12px 0;
+    font-size: var(--fs-15);
+    line-height: 1.7;
+  }
+  .info-table > .k {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .info-table > .v {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .info-table > .k:last-of-type,
+  .info-table > .v:last-of-type { border-bottom: none; }
+
+  /* 逐字原话引文块 */
+  .quote-block {
+    border-left: 3px solid var(--primary);
+    background: var(--surface);
+    padding: 14px 18px;
+    margin: 14px 0;
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+  }
+  .quote-block .q-en {
+    font-family: ui-serif, Georgia, serif;
+    font-size: var(--fs-15);
+    color: var(--ink);
+    margin: 0 0 6px;
+    line-height: 1.65;
+  }
+  .quote-block .q-en em { color: var(--primary); font-style: normal; font-weight: 600; }
+  .quote-block .q-cn {
+    color: var(--muted);
+    font-size: var(--fs-14);
+    margin: 0 0 8px;
+  }
+  .quote-block .q-attr {
+    font-size: var(--fs-13);
+    color: var(--muted);
+  }
+
+  /* 学习者先下判断组件 */
+  .learner-cue {
+    background: var(--accent-tint);
+    border: 1px solid oklch(0.85 0.06 75);
+    border-radius: var(--radius-m);
+    padding: 16px 20px;
+    margin: 18px 0;
+  }
+  .learner-cue h4 {
+    margin: 0 0 6px;
+    font-size: var(--fs-15);
+    color: var(--accent-ink);
+  }
+  .learner-cue .cue-note {
+    font-size: var(--fs-13);
+    color: var(--accent-ink);
+    margin: 0 0 10px;
+  }
+  .learner-cue ol { margin: 0; padding-left: 22px; }
+  .learner-cue li { margin: 4px 0; font-size: var(--fs-15); }
+
+  details.reveal-expert,
+  details.reveal-calc {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 0;
+    margin: 14px 0;
+    background: var(--bg);
+  }
+  details.reveal-expert > summary,
+  details.reveal-calc > summary {
+    cursor: pointer;
+    padding: 12px 18px;
+    font-size: var(--fs-14);
+    font-weight: 600;
+    color: var(--primary);
+    list-style: none;
+  }
+  details.reveal-expert > summary::-webkit-details-marker,
+  details.reveal-calc > summary::-webkit-details-marker { display: none; }
+  details.reveal-expert > summary::before,
+  details.reveal-calc > summary::before {
+    content: "▸";
+    display: inline-block;
+    width: 14px;
+    color: var(--muted);
+    transition: transform 160ms var(--ease);
+  }
+  details.reveal-expert[open] > summary::before,
+  details.reveal-calc[open] > summary::before { transform: rotate(90deg); }
+  details.reveal-expert > .reveal-body,
+  details.reveal-calc > .reveal-body {
+    padding: 0 18px 18px;
+    font-size: var(--fs-15);
+    line-height: 1.75;
+    border-top: 1px solid var(--line);
+  }
+
+  /* 推理链五要素 */
+  .link-list {
+    display: grid;
+    gap: 12px;
+    margin: 12px 0;
+    padding: 0;
+    list-style: none;
+  }
+  .link-list > li {
+    border-left: 3px solid var(--primary);
+    background: var(--surface);
+    padding: 12px 16px;
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    font-size: var(--fs-15);
+    line-height: 1.75;
+  }
+  .link-list .l-head {
+    font-weight: 650;
+    color: var(--primary);
+    margin-bottom: 4px;
+  }
+  .link-list.link-fail > li { border-left-color: var(--danger); background: var(--danger-tint); }
+  .link-list.link-fail .l-head { color: var(--danger-ink); }
+
+  /* 数字兑现对照表 */
+  .verify-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: var(--fs-14);
+  }
+  .verify-table th, .verify-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .verify-table th {
+    background: var(--surface);
+    font-weight: 650;
+    color: var(--ink);
+    font-size: var(--fs-13);
+  }
+  .verify-table td.num { font-variant-numeric: tabular-nums; }
+  .verify-table .beat { color: var(--primary); font-weight: 600; }
+  .verify-table .miss { color: var(--danger); font-weight: 600; }
+  .verify-table .in { color: var(--muted); }
+
+  /* 四象限归因 */
+  .quadrant {
+    display: grid;
+    grid-template-columns: max-content 1fr 1fr;
+    grid-template-rows: max-content 1fr 1fr max-content;
+    gap: 0;
+    margin: 16px 0;
+    font-size: var(--fs-14);
+  }
+  .quadrant .q-blank { }
+  .quadrant .q-axis-top {
+    grid-column: 2 / 4;
+    text-align: center;
+    color: var(--muted);
+    font-size: var(--fs-13);
+    padding-bottom: 8px;
+  }
+  .quadrant .q-axis-left {
+    grid-column: 1;
+    grid-row: 2 / 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: var(--fs-13);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    padding-right: 8px;
+  }
+  .quadrant .q-cell {
+    border: 1px solid var(--line);
+    padding: 14px 16px;
+    min-height: 100px;
+    background: var(--surface);
+    position: relative;
+  }
+  .quadrant .q-cell .q-label {
+    font-size: var(--fs-12);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .quadrant .q-cell .q-desc {
+    font-size: var(--fs-14);
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+  .quadrant .q-cell.q-here {
+    background: var(--primary-tint);
+    border-color: var(--primary);
+  }
+  .quadrant .q-cell.q-here .q-label { color: var(--primary); font-weight: 650; }
+  .quadrant .q-cell.q-here::after {
+    content: "◉ 本案例落点";
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: var(--fs-12);
+    color: var(--primary);
+    font-weight: 650;
+  }
+  .quadrant .q-axis-bottom {
+    grid-column: 2 / 4;
+    text-align: center;
+    color: var(--muted);
+    font-size: var(--fs-13);
+    padding-top: 8px;
+  }
+
+  /* 时间线 SVG */
+  .case-timeline {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 20px 16px 12px;
+    margin: 14px 0;
+  }
+  .case-timeline svg { width: 100%; height: auto; display: block; }
+  .case-timeline .tl-caption {
+    font-size: var(--fs-13);
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* 一句判断 lead */
+  .case-lead {
+    font-size: var(--fs-16);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 14px 18px;
+    margin: 14px 0 20px;
+    line-height: 1.75;
+  }
+
+  /* 现场三行表 */
+  .scene-3 {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 4px 14px;
+    margin: 10px 0;
+    font-size: var(--fs-15);
+  }
+  .scene-3 > .k { color: var(--muted); font-weight: 600; }
+
+  @media (max-width: 640px) {
+    .quadrant { grid-template-columns: 1fr; grid-template-rows: repeat(6, max-content); }
+    .quadrant .q-blank, .quadrant .q-axis-left { display: none; }
+    .quadrant .q-axis-top, .quadrant .q-axis-bottom { grid-column: 1; }
+    .info-table { grid-template-columns: 1fr; gap: 0; }
+    .info-table > .k { padding-top: 12px; border-bottom: none; font-weight: 600; }
+    .info-table > .v { padding-bottom: 12px; }
+  }
+</style>
+</head>
+<body data-page="c01">
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="topbar">
+  <button class="btn btn-ghost" id="navToggle" type="button" aria-expanded="false" aria-controls="rail">目录</button>
+  <span class="topbar-title">案例 1 · 台积电 N3 稀释</span>
+</header>
+
+<div class="layout">
+  <nav class="rail" id="rail" aria-label="学习路径"></nav>
+
+  <main id="main" class="page">
+
+    <header class="page-head">
+      <p class="crumb">案例层 · 案例 1 / 12 · 决策复盘</p>
+      <h1>案例 1 · 台积电 N3 稀释</h1>
+      <p class="core-q"><b>决策问题：</b>2024-01-18 台积电 Q4 2023 电话会散会当晚，管理层刚披露：Q4 2023 毛利率 53.0%（Q3 电话会指引 51.5-53.5% 的中偏上）；Q1 2024 指引 52-54%；N3 稀释全年毛利率 3-4pt；下半年因 N5 工具转 N3 追加稀释 1-2pt；N3 收入 2024 三倍以上，达晶圆总收入中十几个百分点。你是跟踪 TSM 的美股买方分析师，散会当晚要判断：<strong>这会不会永久压低 TSMC 的利润率？多久回正？现在 $100 一线能不能继续持有或加仓？</strong></p>
+    </header>
+
+    <div class="prose" style="max-width:860px">
+
+      <!-- =================== 1. 决策现场 =================== -->
+      <section class="case-sec">
+        <h2>1. 决策现场</h2>
+        <div class="scene-3">
+          <div class="k">判断日</div><div>2024-01-18（台积电 Q4 2023 电话会当日 · 台北时间 14:00 举行 · 美股当天开盘前）</div>
+          <div class="k">决策方</div><div>跟踪 TSMC 的美股买方分析师</div>
+          <div class="k">决策问题</div><div>N3 稀释是暂时的还是结构性的？多久回正？当前仓位怎么调？</div>
+        </div>
+        <p>选这场电话会做案例的原因：它是 2024 全年 TSMC 投资节奏的第一个锚点。管理层同时给出了 Q1 指引 + 全年 N3 稀释 pt + 3nm 收入路径三条硬信息，加上 Q4 2023 实际 GM 数字，是可以支撑一次严肃推理的完整信息集。TSMC 又是先进制程唯一主导厂（全球代工份额 60%+、先进节点 90%+），它的毛利率轨迹会直接影响后续 Nvidia、AVGO、AMD 的成本假设，也是 ASML 需求判断的锚。因此这不只是一家公司的判断，是整个 AI 硬件链的一次校准。</p>
+      </section>
+
+      <!-- =================== 2. 判断点前的信息集 =================== -->
+      <section class="case-sec">
+        <h2>2. 判断点前的信息集</h2>
+        <p class="cutoff-notice">下面所有信息严格截至 2024-01-18 电话会散会当晚 · 事后数据在第 6 节。</p>
+
+        <h3>2.1 时间线</h3>
+        <div class="case-timeline">
+          <svg viewBox="0 0 780 220" role="img" aria-label="TSMC N3 与毛利率时间线,红竖线为判断日 2024-01-18">
+            <!-- 底部时间轴 -->
+            <line x1="40" y1="170" x2="740" y2="170" stroke="var(--line)" stroke-width="1"></line>
+            <!-- 年份刻度 -->
+            <g font-size="11" fill="var(--muted)" text-anchor="middle">
+              <line x1="80" y1="167" x2="80" y2="173" stroke="var(--line)"></line>
+              <text x="80" y="188">2022-Q4</text>
+              <line x1="200" y1="167" x2="200" y2="173" stroke="var(--line)"></line>
+              <text x="200" y="188">2023-Q1</text>
+              <line x1="320" y1="167" x2="320" y2="173" stroke="var(--line)"></line>
+              <text x="320" y="188">2023-Q2</text>
+              <line x1="440" y1="167" x2="440" y2="173" stroke="var(--line)"></line>
+              <text x="440" y="188">2023-Q3</text>
+              <line x1="560" y1="167" x2="560" y2="173" stroke="var(--line)"></line>
+              <text x="560" y="188">2023-Q4</text>
+              <line x1="680" y1="167" x2="680" y2="173" stroke="var(--line)"></line>
+              <text x="680" y="188">判断日 2024-01-18</text>
+            </g>
+            <!-- 判断日红竖线 -->
+            <line x1="680" y1="30" x2="680" y2="170" stroke="var(--danger)" stroke-width="2" stroke-dasharray="none"></line>
+            <text x="680" y="24" font-size="11" fill="var(--danger)" text-anchor="middle" font-weight="650">★ 判断日</text>
+            <!-- 事件点 -->
+            <g font-size="11" fill="var(--ink)">
+              <!-- 2022-Q4 N3 量产 -->
+              <circle cx="80" cy="120" r="5" fill="var(--primary)"></circle>
+              <text x="80" y="108" text-anchor="middle">N3 量产</text>
+              <!-- 2023-02 Apple 独家 -->
+              <circle cx="150" cy="90" r="5" fill="var(--primary)"></circle>
+              <text x="150" y="78" text-anchor="middle">Apple 独家 N3</text>
+              <!-- 2023-Q1 GM 56.3% -->
+              <circle cx="200" cy="60" r="5" fill="var(--primary)"></circle>
+              <text x="200" y="48" text-anchor="middle">Q1 GM 56.3%</text>
+              <!-- 2023-Q2 GM 54.1% -->
+              <circle cx="320" cy="130" r="5" fill="var(--primary)"></circle>
+              <text x="320" y="118" text-anchor="middle">Q2 GM 54.1%</text>
+              <!-- 2023-Q3 GM 54.3% + 指引 51.5-53.5 -->
+              <circle cx="440" cy="130" r="5" fill="var(--primary)"></circle>
+              <text x="440" y="118" text-anchor="middle">Q3 GM 54.3% · 指引 51.5-53.5</text>
+              <!-- iPhone 15 Pro 上市 09 -->
+              <circle cx="410" cy="80" r="4" fill="var(--accent)"></circle>
+              <text x="410" y="68" text-anchor="middle" font-size="10">iPhone 15 Pro 上市</text>
+              <!-- Q4 GM 53.0 -->
+              <circle cx="620" cy="140" r="5" fill="var(--primary)"></circle>
+              <text x="620" y="128" text-anchor="middle">Q4 GM 53.0%</text>
+              <!-- 判断日披露 -->
+              <circle cx="680" cy="60" r="6" fill="var(--danger)"></circle>
+              <text x="680" y="48" text-anchor="middle" font-size="10" fill="var(--danger)">Q1 24 指引 52-54 · N3 稀释 3-4pt · 3nm×3</text>
+            </g>
+          </svg>
+          <p class="tl-caption">看什么：判断日以左是已知数据（连续四季 GM 序列 + Q3 电话会给的 Q4 指引 + 当日披露）。以右是未来事实，在第 6 节展开。红竖线告诉你哪些信息可用、哪些不可用。</p>
+        </div>
+
+        <h3>2.2 已知数字与事件</h3>
+        <div class="info-table">
+          <div class="k">2022-Q4</div>
+          <div class="v">TSMC N3 量产 <a class="badge badge-verified" href="#src-macrumors-n3">已核验 · MacRumors 2023-02 · 转述 TSMC 官方</a></div>
+          <div class="k">2023-02-22</div>
+          <div class="v">Apple 被报道拿下 TSMC 全部 N3 初期产能，A17 Pro（iPhone 15 Pro）与 M3 Mac 独家使用 <a class="badge badge-verified" href="https://www.macrumors.com/2023/02/22/apple-secures-tsmc-3nm-chips/" target="_blank" rel="noopener">已核验 · MacRumors 2023-02-22</a></div>
+          <div class="k">2023-04</div>
+          <div class="v">Q1 2023 毛利率 <strong>56.3%</strong>（TSMC 4Q23 PR 回顾表） <a class="badge badge-verified" href="https://pr.tsmc.com/english/news/3101" target="_blank" rel="noopener">已核验 · TSMC 4Q23 PR</a></div>
+          <div class="k">2023-07</div>
+          <div class="v">Q2 2023 毛利率 <strong>54.1%</strong>（同上）<a class="badge badge-verified" href="https://pr.tsmc.com/english/news/3101" target="_blank" rel="noopener">已核验 · TSMC 4Q23 PR</a></div>
+          <div class="k">2023-09-22</div>
+          <div class="v">iPhone 15 Pro 上市，采用 N3 制造的 A17 Pro 芯片（唯一进入消费终端的 N3 SoC）<a class="badge badge-verified" href="#src-macrumors-n3">已核验 · MacRumors</a></div>
+          <div class="k">2023-10-19</div>
+          <div class="v">Q3 2023 毛利率 <strong>54.3%</strong>；Q4 2023 指引 GM <strong>51.5-53.5%</strong>（Q3 电话会当天披露）<a class="badge badge-verified" href="https://www.sec.gov/Archives/edgar/data/1046179/000104617923000014/a3q23e_withguidancexfinal.htm" target="_blank" rel="noopener">已核验 · TSMC 3Q23 6-K</a></div>
+          <div class="k">2024-01-18（判断日当天披露）</div>
+          <div class="v">
+            Q4 2023 毛利率 <strong>53.0%</strong>（打在 Q3 指引区间中偏上）；FY23 全年毛利率 <strong>54.4%</strong>；Q1 2024 指引 GM <strong>52-54%</strong>；N3 稀释全年 3-4pt；2H 2024 追加 1-2pt 稀释（N5 转 N3 工具改造）；N3 收入 2024 三倍以上、达晶圆总收入 <strong>mid-teens%</strong>；FY24 收入指引 low to mid 20% USD 同比。<a class="badge badge-verified" href="https://pr.tsmc.com/english/news/3101" target="_blank" rel="noopener">已核验 · TSMC 4Q23 PR</a> <a class="badge badge-verified" href="https://www.fool.com/earnings/call-transcripts/2024/01/18/taiwan-semiconductor-manufacturing-tsm-q4-2023-ear/" target="_blank" rel="noopener">已核验 · Motley Fool 转录</a>
+          </div>
+        </div>
+
+        <h3>2.3 已有原话引文（判断日电话会 · 逐字保留）</h3>
+        <p style="color:var(--muted);font-size:var(--fs-13);margin:6px 0 10px;">下面 4 段是散会当晚可查到的管理层原话（英文逐字，附中文对照）。用来支持推理的原文级证据，不是编者转述。</p>
+
+        <div class="quote-block">
+          <p class="q-en">"N3 is expected to <em>dilute our gross margin by about 3 to 4 percentage points</em> for the full year of 2024."</p>
+          <p class="q-cn">中文对照：N3 预计将全年 2024 毛利率稀释约 3 到 4 个百分点。</p>
+          <p class="q-attr">Wendell Huang（CFO）· 2024-01-18 Q4 2023 电话会 · <a class="badge badge-verified" href="https://www.fool.com/earnings/call-transcripts/2024/01/18/taiwan-semiconductor-manufacturing-tsm-q4-2023-ear/" target="_blank" rel="noopener">已核验 · Motley Fool 转录</a></p>
+        </div>
+
+        <div class="quote-block">
+          <p class="q-en">"gross margin is expected to be <em>between 52% and 54%</em>."</p>
+          <p class="q-cn">中文对照：（Q1 2024）毛利率预计在 52% 到 54% 之间。</p>
+          <p class="q-attr">Wendell Huang · 同上 · <a class="badge badge-verified" href="https://www.fool.com/earnings/call-transcripts/2024/01/18/taiwan-semiconductor-manufacturing-tsm-q4-2023-ear/" target="_blank" rel="noopener">已核验 · Motley Fool 转录</a></p>
+        </div>
+
+        <div class="quote-block">
+          <p class="q-en">"we expect our business to grow quarter over quarter throughout 2024, and our full year revenue expect to <em>increase by low to mid 20% in U.S. dollar terms</em>."</p>
+          <p class="q-cn">中文对照：预计 2024 全年业务将逐季增长，全年美元口径收入增速为 low to mid 20%。</p>
+          <p class="q-attr">C.C. Wei（CEO）· 同上 · <a class="badge badge-verified" href="https://www.fool.com/earnings/call-transcripts/2024/01/18/taiwan-semiconductor-manufacturing-tsm-q4-2023-ear/" target="_blank" rel="noopener">已核验 · Motley Fool 转录</a></p>
+        </div>
+
+        <div class="quote-block">
+          <p class="q-en">"we expect revenue from our 3-nanometer technology to <em>more than triple in 2024</em> and account for mid teens percentage of our total wafer revenue."</p>
+          <p class="q-cn">中文对照：预计 2024 年 3 纳米收入将增长三倍以上，占晶圆总收入的十几个百分点。</p>
+          <p class="q-attr">C.C. Wei · 同上 · <a class="badge badge-verified" href="https://www.fool.com/earnings/call-transcripts/2024/01/18/taiwan-semiconductor-manufacturing-tsm-q4-2023-ear/" target="_blank" rel="noopener">已核验 · Motley Fool 转录</a></p>
+        </div>
+
+        <h3>2.4 市场情绪与共识</h3>
+        <p>判断日前，TSMC 美股 ADR 从 2022-10 的低点已有显著反弹（各大行情站可查证具体每日收盘价）。2023 年 AI 主线已由 Nvidia H100 大规模出货带动。<strong>卖方对 TSMC FY24 毛利率的具体一致数字随机构不同、无统一口径</strong>——共同担忧是 N3 稀释会压顶，但对稀释持续多久、见底时点均无一致预期。散户话题聚焦两点：N3 稀释是不是永久的？CoWoS 紧张能不能延伸到 TSMC 收入？</p>
+      </section>
+
+      <!-- =================== 3. 学习者动作 · 先下判断 =================== -->
+      <section class="case-sec">
+        <h2>3. 学习者动作 · 先下判断</h2>
+        <div class="learner-cue">
+          <h4>合上笔记本先自己写完再展开</h4>
+          <p class="cue-note">用第 2 节的信息集，回答下面 5 个问题。写下来（不是想一想）。写完再展开专家答案对照。</p>
+          <ol>
+            <li>N3 稀释 3-4pt 会持续多久？依据是什么？</li>
+            <li>Q1 2024 GM 指引 52-54%（中位 53%），如果 N3 稀释 3-4pt，"未稀释基准" 大约在多少？这个基准合理吗（跟 2023 全年 54.4% 对照）？</li>
+            <li>列 2 条反方论证：为什么 N3 稀释可能<strong>比历史节点更持久或更严重</strong>？</li>
+            <li>写 2 条可证伪信号：什么数字变到什么值，你承认判断错了？</li>
+            <li>给自己一个持有周期建议：3 个月内？1-2 季？4 季以上？依据是什么？</li>
+          </ol>
+        </div>
+
+        <details class="reveal-expert">
+          <summary>先写完再展开 · 专家答案光谱（非唯一标准答案）</summary>
+          <div class="reveal-body">
+            <p><strong>问题 1</strong>：参照 N7 / N5 历史 GM 序列（判断日前公开季度数据可推导），新节点从量产到稀释见底通常 <strong>6-10 个季度</strong> <a class="badge badge-expert" href="#src-node-dilution-cadence">专家判断 · N7/N5 历史 GM 序列推导</a>。N3 从 2022-Q4 量产起算，到 2024-Q4 是 8 个季度，2025 年中前后见底是合理估计。答案在"6-10 季"区间都是可辩护的；如果你写"永久"或"不到 3 季"，跟历史规律不合。</p>
+            <p><strong>问题 2</strong>：未稀释基准 = 53% + 3.5pt ≈ <strong>56.5%</strong>。这与 FY23 全年 54.4% 相当（差 2pt 由 N5 稀释残留 + 汇率 + 稼动率解释）。基准合理。<strong>如果你算出的基准 &lt; 55% 或 &gt; 58%</strong>，回头查加减方向。</p>
+            <p><strong>问题 3</strong>：合理反方光谱 —— ① N3 EUV 层数（N3B 25 层、N3E 19 层）显著多于 N5（约翻倍），fab 层面单 wafer 投资强度高 38-55%，折旧压力实质大于历史类比 <a class="badge badge-verified" href="https://newsletter.semianalysis.com/p/tsmcs-3nm-conundrum-does-it-even" target="_blank" rel="noopener">已核验 · SemiAnalysis</a>；② Huang 说 2H 2024 追加 1-2pt 稀释（N5 转 N3 工具改造），意味着稀释高点不在 Q1 而在 2H；③ N3E 与 N3P 派生节点会延续稀释到 2025-2026。写"AI 需求见顶"是外部条件，属第 5 节；写"竞争加剧"不成立（先进节点唯一供应）。</p>
+            <p><strong>问题 4</strong>：合格可证伪信号 —— Q2 2024 GM 未回到 &ge; 53%；FY24 全年 GM &lt; 54%；2H 2024 GM 反跌到 51% 一线；Q3 2024 电话会里 3nm 收入进度未达"tripling"路径。每条都具体到数字与时点。写"股价跌 15%"不合格（那是结果不是可证伪信号）。</p>
+            <p><strong>问题 5</strong>：合理持有周期 <strong>2-4 季</strong>，看到 Q2/Q3 2024 GM 序列再决定加减。写 &lt; 1 季属短线博弈（不适用本模型）；写 &gt; 6 季忽略了稀释节奏可能反面（AI 见顶或 CapEx 兑现不足）。</p>
+          </div>
+        </details>
+      </section>
+
+      <!-- =================== 4. 专家推理链 =================== -->
+      <section class="case-sec">
+        <h2>4. 专家推理链</h2>
+
+        <h3>4.1 定位</h3>
+        <ol class="link-list">
+          <li>
+            <div class="l-head">TSMC 在产业链的位置</div>
+            制造层 · foundry · 全球代工份额 60%+、先进制程（&le; 7nm）份额 90%+ <a class="badge badge-verified" href="#src-tsmc-2023-ar">已核验 · TSMC 2023 年报 20-F</a>。TSMC 卖的是**给别人的产能**：客户下单、TSMC 生产、按 wafer 收钱。所以 TSMC 的收入由客户订单驱动，毛利率由稼动率 × 单位 wafer ASP × 单位成本决定。
+          </li>
+          <li>
+            <div class="l-head">需求端谁在拉</div>
+            fabless 客户（Nvidia · AVGO · AMD · MediaTek）+ 独立设计的 Apple + 云 ASIC 制造。2024-01 判断日前，Nvidia 数据中心 FY23 $15.0B → FY24 $47.5B（+217%）已披露 <a class="badge badge-verified" href="#src-nvda-fy24">已核验 · Nvidia FY24 财报</a>——AI 需求已在 N4/N5 节点上兑现。
+          </li>
+          <li>
+            <div class="l-head">上游谁掐着</div>
+            ASML 是先进节点 EUV 光刻机唯一供应商，2024 年设备交期 12-18 个月（判断日前公开口径）<a class="badge badge-expert" href="#src-asml-lead-time">专家判断 · 通行口径</a>。这条约束了 TSMC 产能扩张的物理上限。
+          </li>
+          <li>
+            <div class="l-head">用到的骨架卡</div>
+            本案例调用 4 张卡：<a href="spine02.html">卡 2 · 固定成本主导</a>（稀释的根本机制）· <a href="spine03.html">卡 3 · 良率 = 成本曲线</a>（稀释持续时长的决定项）· <a href="spine04.html">卡 4 · 出货 = 最短板</a>（CoWoS 是当下更紧的瓶颈，与 N3 产能矛盾无直接冲突）· <a href="spine10.html">卡 10 · 需求传导链</a>（AI CapEx 传导到 TSMC）。
+          </li>
+        </ol>
+
+        <h3>4.2 机制拆解</h3>
+        <p><strong>卡 2 机制（固定成本主导）</strong>：新节点开发 CapEx 巨大（N3 fab 层面单 wafer starts/month 投资强度比 N5 高 38-55% <a class="badge badge-verified" href="https://newsletter.semianalysis.com/p/tsmcs-3nm-conundrum-does-it-even" target="_blank" rel="noopener">已核验 · SemiAnalysis</a>），量产初期产量小，折旧被少量 wafer 摊，单位成本被推高，稀释 GM。这条是<strong>数学</strong>，跟客户是谁、需求好不好无关。稀释 pt 的大小 = (未稀释基准 GM - N3 本身 GM) × N3 wafer 占比。</p>
+        <p><strong>卡 3 机制（良率决定回正节奏）</strong>：N3 良率从量产初期的低点爬到经济水平参照 N7/N5 历史节奏约需 6-10 季度 <a class="badge badge-expert" href="#src-node-dilution-cadence">专家判断 · N7/N5 历史 GM 序列推导</a>。良率上升 = 单位 wafer 成本下降 = N3 GM 上升 = 稀释 pt 收窄。回正时点由良率 + 单价 + 产能利用率三条一起决定，但基线是良率。</p>
+        <p><strong>卡 4 机制（瓶颈会漂移）</strong>：判断日前，CoWoS 才是 AI 芯片出货真正的短板（Nvidia H100 供不应求主因是 CoWoS 不是 N4 die）<a class="badge badge-expert" href="#src-cowos-bottleneck">专家判断 · 判断日前公开口径</a>。这意味着 N3 产能扩张速度**不会因为需求不足而放缓**——先进节点晶圆有客户排队等，问题只是良率与产能爬坡。</p>
+        <p><strong>卡 10 机制（需求传导链）</strong>：AI CapEx（判断日前云 CapEx 已明显加速）→ Nvidia/AVGO 订单 → TSMC N4/N5/CoWoS → ASML/AMAT。这条链意味着 TSMC 的**稼动率**在 2024 有一个正向 tailwind，会对冲 N3 稀释的部分负面影响。</p>
+
+        <h3>4.3 数量化算账</h3>
+        <p>用管理层给的三条硬数据算未稀释基准与稀释节奏：</p>
+        <ul>
+          <li>Q1 2024 GM 指引 = 52-54%（中位 53%）</li>
+          <li>N3 稀释 = 3-4pt for FY24</li>
+          <li>N3 wafer 占比 mid-teens ≈ 15%</li>
+        </ul>
+        <p>假设 Q1 稀释与全年相当（3-4pt 全年 = 每季约 3-4pt 匀分）：</p>
+
+        <details class="reveal-calc">
+          <summary>先自己算：假设未稀释基准 = X。给定 Q1 GM 53% + N3 稀释 3.5pt，X 是多少？N3 本身 GM 大约多少？</summary>
+          <div class="reveal-body">
+            <p><strong>算 1（未稀释基准）</strong>：X = 53% + 3.5% = <strong>56.5%</strong>。跟 FY23 全年 54.4% 对齐（差 2pt，来自 N5 残余稀释 + 稼动率恢复 + 汇率）。</p>
+            <p><strong>算 2（N3 本身 GM）</strong>：稀释 pt = (未稀释基准 - N3 GM) × N3 占比。3.5 = (56.5 - N3 GM) × 15%。解得 N3 GM ≈ <strong>33%</strong>。这个数字合理（初期 N3 良率低 + 折旧强）。</p>
+            <p><strong>看什么</strong>：56.5% 是本节点稀释期结束后 TSMC 的"目标基准"。判断"N3 稀释暂时还是永久"的量化方式是：观察后续季度 GM 是否往 56.5% 一线走。如果 FY24 全年 GM 打到 55% 以上（比 Wei 的低到中 20% 收入增速 + 3-4pt 稀释叠加隐含更好），说明**回正比预期快**；如果全年只有 52-53%，说明稀释比预期严重。</p>
+          </div>
+        </details>
+
+        <p>用 N7/N5 历史节奏参照（新节点稀释约 6-10 季）+ N3 量产起点 2022-Q4：</p>
+        <ul>
+          <li>2022-Q4 起算 7 季 = 2024-Q2；10 季 = 2025-Q1</li>
+          <li>见底时点合理估计：<strong>2024 下半年到 2025 上半年之间</strong></li>
+          <li>Huang 说 2H 2024 追加 1-2pt（N5 转 N3 工具改造）——这条会**把见底时点推后到 2024-Q4 或 2025-Q1**</li>
+        </ul>
+
+        <h3>4.4 反方观点（2-3 条真对抗）</h3>
+        <ol class="link-list link-fail">
+          <li>
+            <div class="l-head">反方 1 · N3 CapEx 强度显著高于 N5，稀释更持久</div>
+            N3 EUV 光刻层数比 N5 明显增加（N3B 达 <strong>25 层</strong>、N3E 达 <strong>19 层</strong>，N5 约 14 层）<a class="badge badge-verified" href="https://newsletter.semianalysis.com/p/tsmcs-3nm-conundrum-does-it-even" target="_blank" rel="noopener">已核验 · SemiAnalysis "TSMC's 3nm Conundrum"</a>；fab 层面单 wafer starts/month 投资强度比 N5 高 <strong>38-55%</strong>，N3E 晶圆 ASP 比 N5 高约 <strong>35%</strong>（同源）。这意味着折旧压力实质大于历史类比。如果稀释持续 12 季（比 N5 多 2-4 季），FY24 全年 GM 不会打到 55%。<strong>如果这条成立，第 3 节的"未稀释基准 56.5%"里有部分是永久性下移，不会完全回来</strong>。
+          </li>
+          <li>
+            <div class="l-head">反方 2 · 稀释高点在 2H，不在 Q1</div>
+            Huang 明说 2H 2024 因 N5 工具转 N3 追加 1-2pt 稀释。这意味着 Q1 的 53% 中位不是全年低点，Q3/Q4 可能更低。如果 2H 单季 GM 反跌到 51%，全年 GM 会滑到 52% 以下。<strong>如果这条成立，第 3 节持有周期建议要相应压缩</strong>。
+          </li>
+          <li>
+            <div class="l-head">反方 3 · 3nm 收入 tripling 兑现不足</div>
+            Wei 说 3nm 收入 2024 三倍。如果 Apple iPhone 15 系列销量疲软（判断日前 Q4 2023 全球 iPhone 出货已放缓），tripling 兑现不足，稀释 pt 会**长期**保持在 3-4pt 高位不收窄。<strong>如果这条成立，见底时点整个后推 2-3 季</strong>。
+          </li>
+        </ol>
+
+        <h3>4.5 可证伪判断</h3>
+        <ol class="link-list">
+          <li>
+            <div class="l-head">信号 1 · Q2 2024 GM 未回到 &ge; 53%</div>
+            跟踪频次：季度电话会。如 Q2 打到 51% 一线，反方 1 或反方 2 成立，稀释比预期严重，判断错，需减仓。
+          </li>
+          <li>
+            <div class="l-head">信号 2 · FY24 全年 GM &lt; 54%</div>
+            跟踪频次：Q4 2024 电话会（2025-01）。全年落在 52-54% 之下意味着稀释永久性影响大于类比历史节点，中长期估值锚要下移。
+          </li>
+          <li>
+            <div class="l-head">信号 3 · Q2/Q3 2024 电话会 3nm 收入进度不足</div>
+            跟踪频次：季度电话会。管理层如未明确重申"tripling in 2024"，或披露 3nm wafer 占比进展 &lt; 10%，反方 3 成立。
+          </li>
+        </ol>
+      </section>
+
+      <!-- =================== 5. 反方与失效 =================== -->
+      <section class="case-sec">
+        <h2>5. 反方与失效分析（外部条件）</h2>
+        <p>第 4.4 节反方是**同信息集下的另一种合理判断**；本节列的是**判断链条外的失效条件**——外部条件变化能让整条推理归零：</p>
+        <ol class="link-list link-fail">
+          <li>
+            <div class="l-head">外部 1 · 地缘政治升级（台海）</div>
+            军事或严重经济制裁会让 TSMC 无法正常出货，稀释-回正模型不适用。虽概率低但一旦发生，估值锚整体重设。跟踪：美国国务院 · 台湾选举后美中关系温度 · Fab 8/9 亚利桑那进度作为对冲信号。
+          </li>
+          <li>
+            <div class="l-head">外部 2 · 美对华出口管制升级</div>
+            如果扩展到 N7/N5（判断日前只到 N14），TSMC 中国区业务受损、稼动率整体下压，正向 tailwind 消失。
+          </li>
+          <li>
+            <div class="l-head">外部 3 · AI 需求见顶</div>
+            如果云厂商 CapEx 从 2024 中开始明显减速（如从判断日前的 low to mid 20% 收入增速降到 10% 以下），本案例的稀释对冲机制（AI 需求推稼动率）失效。跟踪：Meta/MSFT/GOOGL/AMZN 单季 CapEx 指引。
+          </li>
+          <li>
+            <div class="l-head">外部 4 · 亚利桑那扩产失败或成本大幅超支</div>
+            如果亚利桑那扩产成本超原预算 50% 或 2024 年底量产计划推迟，TSMC 长期毛利率结构受损（海外 fab 稀释是长期负担），估值多重下移。
+          </li>
+        </ol>
+        <p style="color:var(--muted);font-size:var(--fs-13);">与第 4.4 节反方的边界：反方是**推理链能不能撑住**（判断错），本节是**推理链外的世界能不能撑住**（判断本可以是对的、但世界变了）。混淆两者会把"推理错"归到"运气差"。</p>
+      </section>
+
+      <!-- =================== 6. 事后对照与归因 =================== -->
+      <section class="case-sec case-post">
+        <h2>6. 事后对照与归因</h2>
+        <p class="case-post-notice">以下全部内容是判断日 2024-01-18 <strong>之后</strong>的实际发生 · 严禁与前面节混用 · 事后对照用来评价推理质量、不修改判断本身。</p>
+
+        <h3>6.1 实际发生了什么（判断日后事实序列）</h3>
+        <div class="info-table">
+          <div class="k">2024-04-18</div>
+          <div class="v">Q1 2024 电话会 · GM <strong>53.1%</strong>（指引 52-54% 中位偏上，兑现良好）<a class="badge badge-verified" href="#src-tsmc-fy24-quarterly">已核验 · TSMC IR 各季度 PR</a></div>
+          <div class="k">2024-07-18</div>
+          <div class="v">Q2 2024 电话会 · GM <strong>53.2%</strong>（几乎持平 Q1）<a class="badge badge-verified" href="#src-tsmc-fy24-quarterly">已核验 · TSMC IR</a></div>
+          <div class="k">2024-10-17</div>
+          <div class="v">Q3 2024 电话会 · GM <strong>57.8%</strong>（<span class="beat">大幅跳升 +4.6pt</span>，远超判断日预期）<a class="badge badge-verified" href="#src-tsmc-fy24-quarterly">已核验 · TSMC IR</a></div>
+          <div class="k">2025-01-16</div>
+          <div class="v">Q4 2024 电话会 · GM <strong>59.0%</strong>；FY24 全年 GM <strong>56.1%</strong>（远超判断日估算基准 56.5% 的稀释区间 51-53%）<a class="badge badge-verified" href="#src-tsmc-fy24-quarterly">已核验 · TSMC IR</a></div>
+          <div class="k">FY24 收入</div>
+          <div class="v">TSMC 官方披露 <strong>$90.08B</strong>（+30% USD YoY），高于 Wei 指引的 low to mid 20%<a class="badge badge-verified" href="#src-tsmc-2024-ar">已核验 · TSMC 2024 年报</a></div>
+          <div class="k">FY24 CoWoS 与 AI 需求</div>
+          <div class="v">Wei 在 2024-04-18 Q1 电话会明确"翻倍仍不够满足需求"；CoWoS 月产能从 2023 年底 ~20K 拉到 2024 年底 35-40K<a class="badge badge-expert" href="#src-cowos-ramp">专家判断 · 综合口径</a></div>
+        </div>
+
+        <h3>6.2 数字兑现对照</h3>
+        <table class="verify-table">
+          <thead>
+            <tr>
+              <th>项目</th>
+              <th>判断日估算（2024-01-18 时）</th>
+              <th>实际兑现</th>
+              <th>差</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Q1 2024 GM</td>
+              <td class="num">52-54%（管理层指引区间）</td>
+              <td class="num">53.1%</td>
+              <td class="in">区间内偏上</td>
+            </tr>
+            <tr>
+              <td>Q2 2024 GM</td>
+              <td class="num">52-54%（推演延续）</td>
+              <td class="num">53.2%</td>
+              <td class="in">区间内</td>
+            </tr>
+            <tr>
+              <td>Q3 2024 GM</td>
+              <td class="num">51-53%（Huang 说 2H 追加稀释 1-2pt）</td>
+              <td class="num">57.8%</td>
+              <td class="beat">超预期 +5-7pt</td>
+            </tr>
+            <tr>
+              <td>Q4 2024 GM</td>
+              <td class="num">51-53%（同上）</td>
+              <td class="num">59.0%</td>
+              <td class="beat">超预期 +6-8pt</td>
+            </tr>
+            <tr>
+              <td>FY24 GM</td>
+              <td class="num">51-53%（稀释 3-4pt from 56.5% 基准 · Huang 追加口径叠加）</td>
+              <td class="num">56.1%</td>
+              <td class="beat">超预期 +3-5pt</td>
+            </tr>
+            <tr>
+              <td>FY24 收入增速</td>
+              <td class="num">low to mid 20% USD（Wei）</td>
+              <td class="num">+30% USD</td>
+              <td class="beat">超指引</td>
+            </tr>
+            <tr>
+              <td>N3 收入 tripling</td>
+              <td class="num">Wei：三倍以上 mid-teens</td>
+              <td class="num">兑现（且比预期快）</td>
+              <td class="beat">按路径</td>
+            </tr>
+            <tr>
+              <td>Huang 2H 追加 1-2pt 稀释</td>
+              <td class="num">会兑现</td>
+              <td class="num">未兑现（被利用率对冲盖过）</td>
+              <td class="miss">口径与结果相反</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>6.3 四象限归因</h3>
+        <div class="quadrant" aria-label="推理质量 × 结果对错 四象限归因">
+          <div class="q-blank"></div>
+          <div class="q-axis-top">横轴：推理链质量</div>
+          <div class="q-axis-left">纵轴：结果对错</div>
+          <div class="q-cell">
+            <div class="q-label">推理错 · 结果对</div>
+            <div class="q-desc">运气偶合。看着"对了"但复现不了。</div>
+          </div>
+          <div class="q-cell q-here">
+            <div class="q-label">推理对 · 结果对</div>
+            <div class="q-desc">能力。推理链正确抓住机制（卡 2/3/10），结果兑现且更好。</div>
+          </div>
+          <div class="q-cell">
+            <div class="q-label">推理错 · 结果错</div>
+            <div class="q-desc">判断失败。机制没抓住，结果也差。</div>
+          </div>
+          <div class="q-cell">
+            <div class="q-label">推理对 · 结果错</div>
+            <div class="q-desc">运气不佳。机制对但被外部冲击盖过。</div>
+          </div>
+          <div class="q-axis-bottom">看什么：本案例落在"推理对且结果对"格，但要注意<strong>结果远超推理</strong>——第 4 节判断"回正在 2024-Q4 到 2025-Q1"，实际 2024-Q3 GM 就跳到 57.8%，比推理预期早 1-2 季且幅度大 3-5pt。</div>
+        </div>
+        <p style="color:var(--muted);font-size:var(--fs-13);">教学简化标注：四象限本身是简化框架，真实决策落点常在灰色地带（如"推理部分对、结果部分兑现"）。本案例把重点放在"推理机制是否抓住"，具体落点交给读者从上面数据表自己判断。</p>
+
+        <h3>6.4 教训</h3>
+        <ol class="link-list">
+          <li>
+            <div class="l-head">教训 1 · 稀释是数学，回正时点由利用率决定</div>
+            卡 2/3 讲的稀释机制是本案例推理骨架。但**回正时点不是良率的一元函数**——利用率是关键的对冲/放大项。AI 需求把 N4/N5 利用率打到极限，稀释 pt 被"利润引擎"覆盖，见底时点比历史节点提前 1-2 季。<strong>这次强化了 <a href="spine03.html">卡 3</a> 边界段"稼动率对冲/放大良率信号"的判断</strong>——它不只是理论边界，是本轮的主导变量。
+          </li>
+          <li>
+            <div class="l-head">教训 2 · 管理层的稀释口径是保守下限</div>
+            Huang 说 3-4pt 稀释 + 2H 追加 1-2pt——这两条口径都倾向保守。实际发生的是稀释 pt 显著低于管理层区间。原因是管理层给的是"最坏情况下的下限指引"（避免后续 Q3/Q4 miss），不是精确预期。<strong>下次看到管理层给稀释 pt 区间时，应把它当作下限而非中位</strong>。
+          </li>
+          <li>
+            <div class="l-head">教训 3 · Wei 的"3nm tripling"是判断日最硬信号</div>
+            Wei 平时给收入数字很保守。"三倍以上"这个具体数量级指引已经隐含了 AI 需求驱动的加成。**判断日读懂这条本可以更早预见 Q3 2024 的跳升**——因为 tripling 意味着 N3 wafer 占比会显著上升，配合 N3 良率同期爬坡，GM 上升幅度会远超简单类比。次序：Wei 给出的**具体倍数**比 Huang 给出的**稀释 pt 区间**信息量更大。
+          </li>
+          <li>
+            <div class="l-head">教训 4 · N5 类比是有效的但可能低估恢复速度</div>
+            用 N5 类比推稀释周期（8-10 季）对了方向。但如果需求端有<strong>范式革命级驱动</strong>（本次 AI），恢复可能比历史节点快 1-2 季度。<strong>回到 <a href="spine07.html">卡 7</a></strong>——需求分两种：换机式是周期振幅、范式革命是台阶。AI 是台阶。用换机式规律预测台阶期回正节奏，会系统性慢半拍。
+          </li>
+        </ol>
+      </section>
+
+      <!-- =================== 7. 来源清单 =================== -->
+      <section class="src">
+        <h2>案例 1 来源</h2>
+        <ol>
+          <li id="src-tsmc-4q23-pr"><a href="https://pr.tsmc.com/english/news/3101" target="_blank" rel="noopener">TSMC Reports Fourth Quarter EPS of NT$9.21（TSMC 官方 PR · 2024-01-18）</a>—— Q4 2023 与 FY23 全年收入、毛利率官方数字；Q1 2024 收入与毛利率指引区间；FY23 各季度 GM 序列。</li>
+          <li id="src-fool-q4-2023-transcript"><a href="https://www.fool.com/earnings/call-transcripts/2024/01/18/taiwan-semiconductor-manufacturing-tsm-q4-2023-ear/" target="_blank" rel="noopener">TSMC Q4 2023 Earnings Call Transcript（Motley Fool · 2024-01-18）</a>—— C.C. Wei / Wendell Huang 逐字原话；N3 稀释 3-4pt 口径；2H 2024 追加 1-2pt 稀释口径；3nm tripling 与 mid-teens wafer 占比口径。</li>
+          <li id="src-tsmc-3q23-6k"><a href="https://www.sec.gov/Archives/edgar/data/1046179/000104617923000014/a3q23e_withguidancexfinal.htm" target="_blank" rel="noopener">TSMC 3Q 2023 Financial Results（SEC 6-K · 2023-10-19）</a>—— Q3 2023 GM 54.3% 官方披露；Q4 2023 GM 指引 51.5-53.5%（判断日前的对照基线）。</li>
+          <li id="src-macrumors-n3"><a href="https://www.macrumors.com/2023/02/22/apple-secures-tsmc-3nm-chips/" target="_blank" rel="noopener">Apple Orders Entire Supply of TSMC's 3nm Chips（MacRumors · 2023-02-22）</a>—— Apple 独家 N3 供应链的判断日前公开报道；iPhone 15 Pro 与 M3 Mac 采用 N3 的信息。</li>
+          <li id="src-node-dilution-cadence">N7/N5 历史 GM 序列推导的稀释期约 6-10 季度 —— 由判断日前公开的 TSMC 季度 GM 序列（N7 量产 2018-Q2 起、N5 量产 2020-Q2 起）自行推导；本案例不引用任何单一 TSMC 电话会关于"具体几季"的原话（判断日前 Wei / Huang 通常以"参照 N7/N5 ramp-up 节奏"回应分析师问题，但未公开给出具体季数）。</li>
+          <li id="src-semianalysis-n3-conundrum"><a href="https://newsletter.semianalysis.com/p/tsmcs-3nm-conundrum-does-it-even" target="_blank" rel="noopener">TSMC's 3nm Conundrum, Does It Even Make Sense?（SemiAnalysis · Dylan Patel 团队 · 判断日前发布）</a>—— N3B 25 EUV 层 / N3E 19 EUV 层 / N5 约翻倍关系；fab 层面单 wafer starts/month 投资强度比 N5 高 38-55%；N3E 晶圆 ASP 比 N5 高约 35%。</li>
+          <li id="src-asml-lead-time">ASML EUV 设备交期 12-18 个月 —— TSMC / ASML 判断日前多次电话会通行表述，具体单次交期视机型与订单窗口而异。</li>
+          <li id="src-cowos-bottleneck">CoWoS 是 Nvidia H100 出货短板 —— 2023 年下半年判断日前的行业共识（Nvidia FY24 Q2/Q3 电话会 · SemiAnalysis 多次报告均支持）。</li>
+          <li id="src-tsmc-2023-ar"><a href="https://investor.tsmc.com/static/annualReports/2023/english/index.html" target="_blank" rel="noopener">TSMC 2023 Annual Report</a>—— 全球代工份额、先进节点份额、FY23 CapEx 官方口径。</li>
+          <li id="src-nvda-fy24">Nvidia FY24 Data Center 收入 $47.5B（+217% YoY）—— 判断日前 Nvidia Q3 FY24 电话会（2023-11）已披露 YTD 数据，FY24 全年数据在 2024-02 才官宣但趋势判断日前已明确。</li>
+          <li id="src-tsmc-fy24-quarterly">TSMC FY24 各季度毛利率序列 53.1 / 53.2 / 57.8 / 59.0% —— TSMC IR 各季度官方 PR 汇总（2024-04 / 2024-07 / 2024-10 / 2025-01 分别披露）。</li>
+          <li id="src-tsmc-2024-ar"><a href="https://investor.tsmc.com/static/annualReports/2024/english/index.html" target="_blank" rel="noopener">TSMC 2024 Annual Report</a>—— FY24 全年收入 $90.08B、GM 56.1% 官方数字。</li>
+          <li id="src-cowos-ramp">CoWoS 月产能 2023 底 ~20K → 2024 底 35-40K —— TSMC 电话会（2024-04-18 Wei "翻倍仍不够"）+ SemiAnalysis / TrendForce 转述，综合估算口径。</li>
+        </ol>
+      </section>
+
+    </div>
+
+    <footer class="page-foot">
+      <div class="complete-box">
+        <button class="btn" id="markDone" type="button">标记本案例为已完成</button>
+        <span class="complete-note">进度只存在本机浏览器中</span>
+      </div>
+      <div class="foot-nav">
+        <a href="spine15.html"><span class="dir">← 上一层</span>骨架层 · 卡 15 · 规则五件套齐全</a>
+        <a href="m01.html" style="text-align:right"><span class="dir">→ 下一层</span>手册层 · 模块 1 · AI 为什么是硬件问题</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
